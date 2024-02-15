@@ -1,0 +1,23 @@
+#!/bin/bash
+
+
+function cleanup {
+    pkill -P $$
+}
+trap cleanup EXIT
+
+# Function to keep running a command until it succeeds
+function keep_running {
+    while true; do
+        dart run build_runner watch --delete-conflicting-outputs;
+        echo "Command failed with no zero exit code. Respawning.."
+        sleep 1
+    done
+}
+
+# Navigate to each project directory and run the watcher in the background
+(cd app && keep_running) &
+(cd data && keep_running) &
+
+# Wait for all background processes to finish
+wait
