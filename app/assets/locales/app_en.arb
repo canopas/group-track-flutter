@@ -1,3 +1,18 @@
 {
-  "app_title": "YourSpace"
+  "app_title": "YourSpace",
+  "app_tag_line":"Stay Close, Anywhere!",
+  "@_COMMON":{
+  },
+  "common_get_started":"Get Started",
+   "@_INTRO":{
+   },
+   "intro_1_title":"Share your location seamlessly, connecting with just a click.",
+   "intro_2_title":"Stay in the know with instant alerts – whether loved ones enter or leave.",
+   "intro_3_title":"Simplify your connections and insights – explore drive reports, location history effortlessly.",
+
+   "@_AUTH": {
+   },
+   "sign_in_options_continue_with_google_btn_title":"Continue with Google",
+    "sign_in_options_continue_with_phone_btn_title":"Continue with Phone"
+
 }

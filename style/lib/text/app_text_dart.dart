@@ -6,8 +6,8 @@ class AppTextStyle {
 
   static const TextStyle logo = TextStyle(
     fontFamily: kalamFontFamily,
-    fontWeight: FontWeight.normal,
-    fontSize: 42,
+    fontWeight: FontWeight.w400,
+    fontSize: 28,
     letterSpacing: -1.68,
     package: 'style',
   );
