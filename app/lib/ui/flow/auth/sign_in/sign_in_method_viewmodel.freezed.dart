@@ -19,6 +19,7 @@ mixin _$SignInMethodsScreenState {
   bool get showAppleLoading => throw _privateConstructorUsedError;
   bool get showGoogleLoading => throw _privateConstructorUsedError;
   dynamic get socialSignInCompleted => throw _privateConstructorUsedError;
+  bool get isNewUser => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -36,6 +37,7 @@ abstract class $SignInMethodsScreenStateCopyWith<$Res> {
       {bool showAppleLoading,
       bool showGoogleLoading,
       dynamic socialSignInCompleted,
+      bool isNewUser,
       Object? error});
 }
 
@@ -56,6 +58,7 @@ class _$SignInMethodsScreenStateCopyWithImpl<$Res,
     Object? showAppleLoading = null,
     Object? showGoogleLoading = null,
     Object? socialSignInCompleted = freezed,
+    Object? isNewUser = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -71,6 +74,10 @@ class _$SignInMethodsScreenStateCopyWithImpl<$Res,
           ? _value.socialSignInCompleted
           : socialSignInCompleted // ignore: cast_nullable_to_non_nullable
               as dynamic,
+      isNewUser: null == isNewUser
+          ? _value.isNewUser
+          : isNewUser // ignore: cast_nullable_to_non_nullable
+              as bool,
       error: freezed == error ? _value.error : error,
     ) as $Val);
   }
@@ -89,6 +96,7 @@ abstract class _$$SignInMethodsScreenStateImplCopyWith<$Res>
       {bool showAppleLoading,
       bool showGoogleLoading,
       dynamic socialSignInCompleted,
+      bool isNewUser,
       Object? error});
 }
 
@@ -108,6 +116,7 @@ class __$$SignInMethodsScreenStateImplCopyWithImpl<$Res>
     Object? showAppleLoading = null,
     Object? showGoogleLoading = null,
     Object? socialSignInCompleted = freezed,
+    Object? isNewUser = null,
     Object? error = freezed,
   }) {
     return _then(_$SignInMethodsScreenStateImpl(
@@ -122,6 +131,10 @@ class __$$SignInMethodsScreenStateImplCopyWithImpl<$Res>
       socialSignInCompleted: freezed == socialSignInCompleted
           ? _value.socialSignInCompleted!
           : socialSignInCompleted,
+      isNewUser: null == isNewUser
+          ? _value.isNewUser
+          : isNewUser // ignore: cast_nullable_to_non_nullable
+              as bool,
       error: freezed == error ? _value.error : error,
     ));
   }
@@ -134,6 +147,7 @@ class _$SignInMethodsScreenStateImpl implements _SignInMethodsScreenState {
       {this.showAppleLoading = false,
       this.showGoogleLoading = false,
       this.socialSignInCompleted = false,
+      this.isNewUser = false,
       this.error});
 
   @override
@@ -146,11 +160,14 @@ class _$SignInMethodsScreenStateImpl implements _SignInMethodsScreenState {
   @JsonKey()
   final dynamic socialSignInCompleted;
   @override
+  @JsonKey()
+  final bool isNewUser;
+  @override
   final Object? error;
 
   @override
   String toString() {
-    return 'SignInMethodsScreenState(showAppleLoading: $showAppleLoading, showGoogleLoading: $showGoogleLoading, socialSignInCompleted: $socialSignInCompleted, error: $error)';
+    return 'SignInMethodsScreenState(showAppleLoading: $showAppleLoading, showGoogleLoading: $showGoogleLoading, socialSignInCompleted: $socialSignInCompleted, isNewUser: $isNewUser, error: $error)';
   }
 
   @override
@@ -164,6 +181,8 @@ class _$SignInMethodsScreenStateImpl implements _SignInMethodsScreenState {
                 other.showGoogleLoading == showGoogleLoading) &&
             const DeepCollectionEquality()
                 .equals(other.socialSignInCompleted, socialSignInCompleted) &&
+            (identical(other.isNewUser, isNewUser) ||
+                other.isNewUser == isNewUser) &&
             const DeepCollectionEquality().equals(other.error, error));
   }
 
@@ -173,6 +192,7 @@ class _$SignInMethodsScreenStateImpl implements _SignInMethodsScreenState {
       showAppleLoading,
       showGoogleLoading,
       const DeepCollectionEquality().hash(socialSignInCompleted),
+      isNewUser,
       const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
@@ -188,6 +208,7 @@ abstract class _SignInMethodsScreenState implements SignInMethodsScreenState {
       {final bool showAppleLoading,
       final bool showGoogleLoading,
       final dynamic socialSignInCompleted,
+      final bool isNewUser,
       final Object? error}) = _$SignInMethodsScreenStateImpl;
 
   @override
@@ -196,6 +217,8 @@ abstract class _SignInMethodsScreenState implements SignInMethodsScreenState {
   bool get showGoogleLoading;
   @override
   dynamic get socialSignInCompleted;
+  @override
+  bool get isNewUser;
   @override
   Object? get error;
   @override

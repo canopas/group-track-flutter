@@ -1,3 +1,4 @@
+import 'package:data/service/auth/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -11,32 +12,44 @@ final googleSignInProvider = Provider<GoogleSignIn>((ref) {
 
 final signInMethodsStateProvider = StateNotifierProvider.autoDispose<
     SignInMethodsScreenViewNotifier, SignInMethodsScreenState>((ref) {
-  return SignInMethodsScreenViewNotifier(ref.read(googleSignInProvider));
+  return SignInMethodsScreenViewNotifier(
+      ref.read(googleSignInProvider), ref.read(authServiceProvider));
 });
 
-class SignInMethodsScreenViewNotifier
-    extends StateNotifier<SignInMethodsScreenState> {
+class SignInMethodsScreenViewNotifier extends StateNotifier<SignInMethodsScreenState> {
   final GoogleSignIn googleSignIn;
+  final AuthService authService;
 
-  SignInMethodsScreenViewNotifier(this.googleSignIn)
+  SignInMethodsScreenViewNotifier(this.googleSignIn, this.authService)
       : super(const SignInMethodsScreenState());
 
   Future<void> signInWithGoogle() async {
     try {
       state = state.copyWith(showGoogleLoading: true, error: null);
-      final userCredential = await _getUserCredentialFromGoogle();
+      final (userCredential, account) = await _getUserCredentialFromGoogle();
       if (userCredential != null) {
         final String userIdToken =
             await userCredential.user?.getIdToken() ?? '';
+        final isNewUser = await authService.verifiedLogin(
+            uid: userCredential.user?.uid,
+            firebaseToken: userIdToken,
+            email: account!.email,
+            firstName: account.displayName,
+            profileImg: account.photoUrl);
+
+        print("isNewUser: $isNewUser");
+        state = state.copyWith(
+            showGoogleLoading: false,
+            socialSignInCompleted: true,
+            isNewUser: isNewUser);
       }
     } catch (e, stack) {
       state = state.copyWith(showGoogleLoading: false, error: e);
     }
   }
 
-  signInWithPhone() {}
-
-  Future<UserCredential?> _getUserCredentialFromGoogle() async {
+  Future<(UserCredential?, GoogleSignInAccount?)>
+      _getUserCredentialFromGoogle() async {
     final signInAccount = await googleSignIn.signIn();
     if (signInAccount != null) {
       final signInAuthentication = await signInAccount.authentication;
@@ -47,9 +60,9 @@ class SignInMethodsScreenViewNotifier
         ),
       );
       await googleSignIn.signOut();
-      return auth;
+      return (auth, signInAccount);
     }
-    return null;
+    return (null, null);
   }
 }
 
@@ -59,6 +72,7 @@ abstract class SignInMethodsScreenState with _$SignInMethodsScreenState {
     @Default(false) bool showAppleLoading,
     @Default(false) bool showGoogleLoading,
     @Default(false) socialSignInCompleted,
+    @Default(false) bool isNewUser,
     Object? error,
   }) = _SignInMethodsScreenState;
 }

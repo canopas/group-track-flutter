@@ -522,7 +522,7 @@ class __$$ApiSessionImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ApiSessionImpl implements _ApiSession {
+class _$ApiSessionImpl extends _ApiSession {
   const _$ApiSessionImpl(
       {required this.id,
       required this.user_id,
@@ -533,7 +533,8 @@ class _$ApiSessionImpl implements _ApiSession {
       this.device_id,
       this.created_at,
       this.battery_status,
-      this.app_version});
+      this.app_version})
+      : super._();
 
   factory _$ApiSessionImpl.fromJson(Map<String, dynamic> json) =>
       _$$ApiSessionImplFromJson(json);
@@ -618,7 +619,7 @@ class _$ApiSessionImpl implements _ApiSession {
   }
 }
 
-abstract class _ApiSession implements ApiSession {
+abstract class _ApiSession extends ApiSession {
   const factory _ApiSession(
       {required final String id,
       required final String user_id,
@@ -630,6 +631,7 @@ abstract class _ApiSession implements ApiSession {
       final DateTime? created_at,
       final String? battery_status,
       final int? app_version}) = _$ApiSessionImpl;
+  const _ApiSession._() : super._();
 
   factory _ApiSession.fromJson(Map<String, dynamic> json) =
       _$ApiSessionImpl.fromJson;

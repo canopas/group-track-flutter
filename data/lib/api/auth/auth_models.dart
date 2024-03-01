@@ -1,7 +1,13 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_models.freezed.dart';
 part 'auth_models.g.dart';
+
+const LOGIN_TYPE_GOOGLE = 1;
+const LOGIN_TYPE_PHONE = 2;
 
 @freezed
 class ApiUser with _$ApiUser {
@@ -21,14 +27,25 @@ class ApiUser with _$ApiUser {
 
   factory ApiUser.fromJson(Map<String, dynamic> json) =>
       _$ApiUserFromJson(json);
+
+  factory ApiUser.fromFireStore(DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    Map<String, dynamic>? data = snapshot.data();
+    return ApiUser.fromJson(data!);
+  }
+
+  String toJsonString() => jsonEncode(toJson());
+
+  Map<String, dynamic> toFireStore(ApiUser instance) => instance.toJson();
 }
 
 @freezed
 class ApiSession with _$ApiSession {
-  const factory ApiSession(
-      {required String id,
-      required String user_id,
-      int? platform,
+  const ApiSession._();
+
+  const factory ApiSession({required String id,
+    required String user_id,
+    int? platform,
       String? fcm_token,
       required bool session_active,
       String? device_name,
@@ -39,4 +56,15 @@ class ApiSession with _$ApiSession {
 
   factory ApiSession.fromJson(Map<String, dynamic> json) =>
       _$ApiSessionFromJson(json);
+
+  factory ApiSession.fromFireStore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    Map<String, dynamic>? data = snapshot.data();
+    return ApiSession.fromJson(data!);
+  }
+
+  String toJsonString() => jsonEncode(toJson());
+
+  Map<String, dynamic> toFireStore(ApiSession instance) => instance.toJson();
 }

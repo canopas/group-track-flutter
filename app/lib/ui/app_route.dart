@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
+import 'flow/auth/sign_in/phone/sign_in_with_phone_screen.dart';
 import 'flow/auth/sign_in/sign_in_methos_screen.dart';
 import 'flow/home/home_screen.dart';
 import 'flow/intro/intro_screen.dart';
@@ -70,6 +71,12 @@ class AppRoute {
     return GoRouter.of(context).pushNamed(name!, extra: builder);
   }
 
+  GoRoute goRoute() => GoRoute(
+        path: path,
+        name: path,
+        builder: (context, state) => state.widget(context),
+      );
+
   static AppRoute get intro =>
       AppRoute("/intro", builder: (_) => const IntroScreen());
 
@@ -78,6 +85,16 @@ class AppRoute {
 
   static AppRoute get signInMethod =>
       AppRoute("/sign-in", builder: (_) => const SignInMethodScreen());
+
+  static AppRoute get signInWithPhone => AppRoute(
+        "/sign-in-with-phone",
+        builder: (_) => const SignInWithPhoneScreen(),
+      );
+
+  static AppRoute get pickName => AppRoute(
+        "/pick-name",
+        builder: (_) => const SignInWithPhoneScreen(),
+      );
 
   static final routes = [
     GoRoute(
@@ -102,6 +119,8 @@ class AppRoute {
             : state.widget(context);
       },
     ),
+    signInWithPhone.goRoute(),
+    pickName.goRoute(),
   ];
 }
 

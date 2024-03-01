@@ -54,7 +54,10 @@ class SignInMethodButton extends StatelessWidget {
               ),
             ],
           ),
-          child: AppProgressIndicator(color: foregroundColor),
+          child: AppProgressIndicator(
+            color: foregroundColor,
+            size: AppProgressIndicatorSize.small,
+          ),
         ),
       ),
     );

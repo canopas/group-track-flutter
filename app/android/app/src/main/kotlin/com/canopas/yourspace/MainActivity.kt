@@ -1,4 +1,4 @@
-package com.canopas.yourspace_flutter
+package com.canopas.yourspace
 
 import io.flutter.embedding.android.FlutterActivity
 
