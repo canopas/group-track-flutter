@@ -45,6 +45,7 @@ class SignInWithPhoneViewNotifier extends StateNotifier<SignInWithPhoneState> {
   Future<void> verifyPhone() async {
     state = state.copyWith(verifying: true, error: null);
     await firebaseAuth.verifyPhoneNumber(
+        phoneNumber: state.code.dialCode + state.phone,
         verificationCompleted: (authCredential) async {
           final userCredential =
               await firebaseAuth.signInWithCredential(authCredential);

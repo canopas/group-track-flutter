@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
 
 import 'flow/auth/sign_in/phone/sign_in_with_phone_screen.dart';
 import 'flow/auth/sign_in/sign_in_methos_screen.dart';
@@ -7,6 +8,8 @@ import 'flow/home/home_screen.dart';
 import 'flow/intro/intro_screen.dart';
 
 class AppRoute {
+  static const pathPhoneNumberVerification = '/phone-number-verification';
+
   final String path;
   final String? name;
   final WidgetBuilder builder;
@@ -25,17 +28,16 @@ class AppRoute {
     }
   }
 
-  static void popTo(
-    BuildContext context,
-    String path, {
-    bool inclusive = false,
-  }) {
+  static void popTo(BuildContext context,
+      String path, {
+        bool inclusive = false,
+      }) {
     while (GoRouter.of(context)
-            .routerDelegate
-            .currentConfiguration
-            .matches
-            .last
-            .matchedLocation !=
+        .routerDelegate
+        .currentConfiguration
+        .matches
+        .last
+        .matchedLocation !=
         path) {
       if (!GoRouter.of(context).canPop()) {
         return;
@@ -72,10 +74,10 @@ class AppRoute {
   }
 
   GoRoute goRoute() => GoRoute(
-        path: path,
-        name: path,
-        builder: (context, state) => state.widget(context),
-      );
+    path: path,
+    name: path,
+    builder: (context, state) => state.widget(context),
+  );
 
   static AppRoute get intro =>
       AppRoute("/intro", builder: (_) => const IntroScreen());
@@ -95,6 +97,14 @@ class AppRoute {
         "/pick-name",
         builder: (_) => const SignInWithPhoneScreen(),
       );
+
+  static AppRoute otpVerification(
+      {required String phoneNumber, required String verificationId}) {
+    return AppRoute(
+      pathPhoneNumberVerification,
+      builder: (_) => PhoneVerificationScreen(phoneNumber, verificationId),
+    );
+  }
 
   static final routes = [
     GoRoute(
@@ -121,6 +131,13 @@ class AppRoute {
     ),
     signInWithPhone.goRoute(),
     pickName.goRoute(),
+    GoRoute(
+        path: pathPhoneNumberVerification,
+        builder: (context, state) {
+          return state.extra == null
+              ? const PhoneVerificationScreen('', '')
+              : state.widget(context);
+        }),
   ];
 }
 

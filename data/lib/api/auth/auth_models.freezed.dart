@@ -28,7 +28,8 @@ mixin _$ApiUser {
   String? get profile_image => throw _privateConstructorUsedError;
   String? get provider_firebase_id_token => throw _privateConstructorUsedError;
   int get auth_type => throw _privateConstructorUsedError;
-  DateTime? get created_at => throw _privateConstructorUsedError;
+
+  int? get created_at => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -39,6 +40,7 @@ mixin _$ApiUser {
 abstract class $ApiUserCopyWith<$Res> {
   factory $ApiUserCopyWith(ApiUser value, $Res Function(ApiUser) then) =
       _$ApiUserCopyWithImpl<$Res, ApiUser>;
+
   @useResult
   $Res call(
       {String id,
@@ -49,7 +51,7 @@ abstract class $ApiUserCopyWith<$Res> {
       String? profile_image,
       String? provider_firebase_id_token,
       int auth_type,
-      DateTime? created_at});
+      int? created_at});
 }
 
 /// @nodoc
@@ -111,7 +113,7 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as int?,
     ) as $Val);
   }
 }
@@ -132,7 +134,7 @@ abstract class _$$ApiUserImplCopyWith<$Res> implements $ApiUserCopyWith<$Res> {
       String? profile_image,
       String? provider_firebase_id_token,
       int auth_type,
-      DateTime? created_at});
+      int? created_at});
 }
 
 /// @nodoc
@@ -192,7 +194,7 @@ class __$$ApiUserImplCopyWithImpl<$Res>
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as int?,
     ));
   }
 }
@@ -232,7 +234,7 @@ class _$ApiUserImpl extends _ApiUser {
   @override
   final int auth_type;
   @override
-  final DateTime? created_at;
+  final int? created_at;
 
   @override
   String toString() {
@@ -292,7 +294,7 @@ abstract class _ApiUser extends ApiUser {
       final String? profile_image,
       final String? provider_firebase_id_token,
       required final int auth_type,
-      final DateTime? created_at}) = _$ApiUserImpl;
+      final int? created_at}) = _$ApiUserImpl;
   const _ApiUser._() : super._();
 
   factory _ApiUser.fromJson(Map<String, dynamic> json) = _$ApiUserImpl.fromJson;
@@ -311,10 +313,13 @@ abstract class _ApiUser extends ApiUser {
   String? get profile_image;
   @override
   String? get provider_firebase_id_token;
+
   @override
   int get auth_type;
+
   @override
-  DateTime? get created_at;
+  int? get created_at;
+
   @override
   @JsonKey(ignore: true)
   _$$ApiUserImplCopyWith<_$ApiUserImpl> get copyWith =>
@@ -333,8 +338,11 @@ mixin _$ApiSession {
   String? get fcm_token => throw _privateConstructorUsedError;
   bool get session_active => throw _privateConstructorUsedError;
   String? get device_name => throw _privateConstructorUsedError;
+
   String? get device_id => throw _privateConstructorUsedError;
-  DateTime? get created_at => throw _privateConstructorUsedError;
+
+  int? get created_at => throw _privateConstructorUsedError;
+
   String? get battery_status => throw _privateConstructorUsedError;
   int? get app_version => throw _privateConstructorUsedError;
 
@@ -358,7 +366,7 @@ abstract class $ApiSessionCopyWith<$Res> {
       bool session_active,
       String? device_name,
       String? device_id,
-      DateTime? created_at,
+      int? created_at,
       String? battery_status,
       int? app_version});
 }
@@ -419,7 +427,7 @@ class _$ApiSessionCopyWithImpl<$Res, $Val extends ApiSession>
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as int?,
       battery_status: freezed == battery_status
           ? _value.battery_status
           : battery_status // ignore: cast_nullable_to_non_nullable
@@ -448,7 +456,7 @@ abstract class _$$ApiSessionImplCopyWith<$Res>
       bool session_active,
       String? device_name,
       String? device_id,
-      DateTime? created_at,
+      int? created_at,
       String? battery_status,
       int? app_version});
 }
@@ -507,7 +515,7 @@ class __$$ApiSessionImplCopyWithImpl<$Res>
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+              as int?,
       battery_status: freezed == battery_status
           ? _value.battery_status
           : battery_status // ignore: cast_nullable_to_non_nullable
@@ -554,7 +562,7 @@ class _$ApiSessionImpl extends _ApiSession {
   @override
   final String? device_id;
   @override
-  final DateTime? created_at;
+  final int? created_at;
   @override
   final String? battery_status;
   @override
@@ -628,7 +636,7 @@ abstract class _ApiSession extends ApiSession {
       required final bool session_active,
       final String? device_name,
       final String? device_id,
-      final DateTime? created_at,
+      final int? created_at,
       final String? battery_status,
       final int? app_version}) = _$ApiSessionImpl;
   const _ApiSession._() : super._();
@@ -648,10 +656,13 @@ abstract class _ApiSession extends ApiSession {
   bool get session_active;
   @override
   String? get device_name;
+
   @override
   String? get device_id;
+
   @override
-  DateTime? get created_at;
+  int? get created_at;
+
   @override
   String? get battery_status;
   @override

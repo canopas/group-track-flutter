@@ -49,7 +49,7 @@ class ApiUserService {
         app_version: await _device.appVersion,
       );
       await deactivateOldSessions(uid);
-      await sessionDocRef.set(session.toJson());
+      await sessionDocRef.set(session);
       final user = await getUser(uid);
       return {'isNewUser': false, 'user': user, 'session': session};
     } else {
