@@ -30,6 +30,7 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _listenSignInSuccess();
     final bgDecoration = BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topCenter,
@@ -49,17 +50,17 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
           decoration: bgDecoration,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 60),
-        child: Column(
-          children: [
-            const SizedBox(height: 80),
-            const AppLogo(),
-            const Spacer(),
-            _googleSignInButton(),
-            _phoneSignInButton(),
-            const Spacer(),
-          ],
-        ),
-      ),
+            child: Column(
+              children: [
+                const SizedBox(height: 80),
+                const AppLogo(),
+                const Spacer(),
+                _googleSignInButton(),
+                _phoneSignInButton(),
+                const Spacer(),
+              ],
+            ),
+          ),
         ));
   }
 
@@ -87,18 +88,34 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
           if (isGoogleLoading) return;
           final List<bool> data =
               await AppRoute.signInWithPhone.push(context) ?? List.empty();
-          if (data.isNotEmpty && data.first == true && context.mounted)
+          if (data.isNotEmpty && data.first == true && context.mounted) {
             onSignInSuccess();
+          }
         },
         title: context.l10n.sign_in_options_continue_with_phone_btn_title,
         //  isLoading: ref.watch(signInMethodsStateProvider.select((value) => value.aho)),
       ));
 
   void onSignInSuccess() async {
+    print("onSignInSuccess");
     final user = ref.read(currentUserPod);
-    if (user?.first_name == null || user!.first_name!.isEmpty) {
+    print("onSignInSuccess user $user");
+
+    if (mounted && (user?.first_name == null || user!.first_name!.isEmpty)) {
       await AppRoute.pickName.push(context);
     }
+
+    print("onSignInSuccess go home");
     if (mounted) AppRoute.home.go(context);
+  }
+
+  _listenSignInSuccess() {
+    ref.listen(
+        signInMethodsStateProvider
+            .select((value) => value.socialSignInCompleted), (previous, next) {
+      if (next) {
+        onSignInSuccess();
+      }
+    });
   }
 }

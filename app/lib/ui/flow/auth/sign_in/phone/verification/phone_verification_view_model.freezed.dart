@@ -17,19 +17,12 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$PhoneVerificationState {
   bool get verifying => throw _privateConstructorUsedError;
-
   bool get verificationSucceed => throw _privateConstructorUsedError;
-
   bool get enableVerify => throw _privateConstructorUsedError;
-
   bool get isNewUser => throw _privateConstructorUsedError;
-
   String? get verificationId => throw _privateConstructorUsedError;
-
   String? get otp => throw _privateConstructorUsedError;
-
   Object? get error => throw _privateConstructorUsedError;
-
   Duration get activeResendDuration => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -42,7 +35,6 @@ abstract class $PhoneVerificationStateCopyWith<$Res> {
   factory $PhoneVerificationStateCopyWith(PhoneVerificationState value,
           $Res Function(PhoneVerificationState) then) =
       _$PhoneVerificationStateCopyWithImpl<$Res, PhoneVerificationState>;
-
   @useResult
   $Res call(
       {bool verifying,
@@ -63,7 +55,6 @@ class _$PhoneVerificationStateCopyWithImpl<$Res,
 
   // ignore: unused_field
   final $Val _value;
-
   // ignore: unused_field
   final $Res Function($Val) _then;
 
@@ -120,7 +111,6 @@ abstract class _$$PhoneVerificationStateImplCopyWith<$Res>
           _$PhoneVerificationStateImpl value,
           $Res Function(_$PhoneVerificationStateImpl) then) =
       __$$PhoneVerificationStateImplCopyWithImpl<$Res>;
-
   @override
   @useResult
   $Res call(
@@ -285,28 +275,20 @@ abstract class _PhoneVerificationState implements PhoneVerificationState {
 
   @override
   bool get verifying;
-
   @override
   bool get verificationSucceed;
-
   @override
   bool get enableVerify;
-
   @override
   bool get isNewUser;
-
   @override
   String? get verificationId;
-
   @override
   String? get otp;
-
   @override
   Object? get error;
-
   @override
   Duration get activeResendDuration;
-
   @override
   @JsonKey(ignore: true)
   _$$PhoneVerificationStateImplCopyWith<_$PhoneVerificationStateImpl>

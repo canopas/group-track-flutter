@@ -24,8 +24,10 @@ class _AppState extends ConsumerState<App> {
     final AppRoute initialRoute;
     if (!ref.read(isIntroScreenShownPod)) {
       initialRoute = AppRoute.intro;
-    } else {
+    } else if (ref.read(currentUserPod) == null) {
       initialRoute = AppRoute.signInMethod;
+    } else {
+      initialRoute = AppRoute.home;
     }
 
     _router =

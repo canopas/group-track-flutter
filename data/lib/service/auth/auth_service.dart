@@ -38,6 +38,7 @@ class AuthService {
     userJsonNotifier.state = (data['user'] as ApiUser).toJsonString();
     userSessionJsonNotifier.state =
         (data['session'] as ApiSession).toJsonString();
+
     return data['isNewUser'] as bool;
   }
 }

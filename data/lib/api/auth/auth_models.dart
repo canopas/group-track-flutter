@@ -19,9 +19,11 @@ class ApiUser with _$ApiUser {
     String? last_name,
     String? phone,
     String? email,
-    String? profile_image,
     String? provider_firebase_id_token,
     required int auth_type,
+    String? profile_image,
+    @Default(true) bool? location_enabled,
+    @Default([]) List<String>? space_ids,
     int? created_at,
   }) = _ApiUser;
 
@@ -46,8 +48,8 @@ class ApiSession with _$ApiSession {
   const factory ApiSession(
       {required String id,
       required String user_id,
-      int? platform,
-      String? fcm_token,
+      @Default(1) int? platform,
+      @Default("") String? fcm_token,
       required bool session_active,
       String? device_name,
       String? device_id,

@@ -1,3 +1,4 @@
+import 'package:data/api/auth/auth_models.dart';
 import 'package:data/service/auth/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +17,8 @@ final signInMethodsStateProvider = StateNotifierProvider.autoDispose<
       ref.read(googleSignInProvider), ref.read(authServiceProvider));
 });
 
-class SignInMethodsScreenViewNotifier extends StateNotifier<SignInMethodsScreenState> {
+class SignInMethodsScreenViewNotifier
+    extends StateNotifier<SignInMethodsScreenState> {
   final GoogleSignIn googleSignIn;
   final AuthService authService;
 
@@ -34,22 +36,28 @@ class SignInMethodsScreenViewNotifier extends StateNotifier<SignInMethodsScreenS
             uid: userCredential.user?.uid,
             firebaseToken: userIdToken,
             email: account!.email,
-            firstName: account.displayName,
-            profileImg: account.photoUrl);
+            firstName:
+                userCredential.additionalUserInfo?.profile?['given_name'],
+            lastName:
+                userCredential.additionalUserInfo?.profile?['family_name'],
+            profileImg: account.photoUrl,
+            authType: LOGIN_TYPE_GOOGLE);
 
-        print("isNewUser: $isNewUser");
         state = state.copyWith(
             showGoogleLoading: false,
             socialSignInCompleted: true,
             isNewUser: isNewUser);
+      } else {
+        state = state.copyWith(showGoogleLoading: false);
       }
     } catch (e, stack) {
+      print(e);
       state = state.copyWith(showGoogleLoading: false, error: e);
     }
   }
 
   Future<(UserCredential?, GoogleSignInAccount?)>
-      _getUserCredentialFromGoogle() async {
+  _getUserCredentialFromGoogle() async {
     final signInAccount = await googleSignIn.signIn();
     if (signInAccount != null) {
       final signInAuthentication = await signInAccount.authentication;
@@ -59,6 +67,7 @@ class SignInMethodsScreenViewNotifier extends StateNotifier<SignInMethodsScreenS
           idToken: signInAuthentication.idToken,
         ),
       );
+
       await googleSignIn.signOut();
       return (auth, signInAccount);
     }

@@ -25,10 +25,11 @@ mixin _$ApiUser {
   String? get last_name => throw _privateConstructorUsedError;
   String? get phone => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
-  String? get profile_image => throw _privateConstructorUsedError;
   String? get provider_firebase_id_token => throw _privateConstructorUsedError;
   int get auth_type => throw _privateConstructorUsedError;
-
+  String? get profile_image => throw _privateConstructorUsedError;
+  bool? get location_enabled => throw _privateConstructorUsedError;
+  List<String>? get space_ids => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -40,7 +41,6 @@ mixin _$ApiUser {
 abstract class $ApiUserCopyWith<$Res> {
   factory $ApiUserCopyWith(ApiUser value, $Res Function(ApiUser) then) =
       _$ApiUserCopyWithImpl<$Res, ApiUser>;
-
   @useResult
   $Res call(
       {String id,
@@ -48,9 +48,11 @@ abstract class $ApiUserCopyWith<$Res> {
       String? last_name,
       String? phone,
       String? email,
-      String? profile_image,
       String? provider_firebase_id_token,
       int auth_type,
+      String? profile_image,
+      bool? location_enabled,
+      List<String>? space_ids,
       int? created_at});
 }
 
@@ -72,9 +74,11 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
     Object? last_name = freezed,
     Object? phone = freezed,
     Object? email = freezed,
-    Object? profile_image = freezed,
     Object? provider_firebase_id_token = freezed,
     Object? auth_type = null,
+    Object? profile_image = freezed,
+    Object? location_enabled = freezed,
+    Object? space_ids = freezed,
     Object? created_at = freezed,
   }) {
     return _then(_value.copyWith(
@@ -98,10 +102,6 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String?,
-      profile_image: freezed == profile_image
-          ? _value.profile_image
-          : profile_image // ignore: cast_nullable_to_non_nullable
-              as String?,
       provider_firebase_id_token: freezed == provider_firebase_id_token
           ? _value.provider_firebase_id_token
           : provider_firebase_id_token // ignore: cast_nullable_to_non_nullable
@@ -110,6 +110,18 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
           ? _value.auth_type
           : auth_type // ignore: cast_nullable_to_non_nullable
               as int,
+      profile_image: freezed == profile_image
+          ? _value.profile_image
+          : profile_image // ignore: cast_nullable_to_non_nullable
+              as String?,
+      location_enabled: freezed == location_enabled
+          ? _value.location_enabled
+          : location_enabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      space_ids: freezed == space_ids
+          ? _value.space_ids
+          : space_ids // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -131,9 +143,11 @@ abstract class _$$ApiUserImplCopyWith<$Res> implements $ApiUserCopyWith<$Res> {
       String? last_name,
       String? phone,
       String? email,
-      String? profile_image,
       String? provider_firebase_id_token,
       int auth_type,
+      String? profile_image,
+      bool? location_enabled,
+      List<String>? space_ids,
       int? created_at});
 }
 
@@ -153,9 +167,11 @@ class __$$ApiUserImplCopyWithImpl<$Res>
     Object? last_name = freezed,
     Object? phone = freezed,
     Object? email = freezed,
-    Object? profile_image = freezed,
     Object? provider_firebase_id_token = freezed,
     Object? auth_type = null,
+    Object? profile_image = freezed,
+    Object? location_enabled = freezed,
+    Object? space_ids = freezed,
     Object? created_at = freezed,
   }) {
     return _then(_$ApiUserImpl(
@@ -179,10 +195,6 @@ class __$$ApiUserImplCopyWithImpl<$Res>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String?,
-      profile_image: freezed == profile_image
-          ? _value.profile_image
-          : profile_image // ignore: cast_nullable_to_non_nullable
-              as String?,
       provider_firebase_id_token: freezed == provider_firebase_id_token
           ? _value.provider_firebase_id_token
           : provider_firebase_id_token // ignore: cast_nullable_to_non_nullable
@@ -191,6 +203,18 @@ class __$$ApiUserImplCopyWithImpl<$Res>
           ? _value.auth_type
           : auth_type // ignore: cast_nullable_to_non_nullable
               as int,
+      profile_image: freezed == profile_image
+          ? _value.profile_image
+          : profile_image // ignore: cast_nullable_to_non_nullable
+              as String?,
+      location_enabled: freezed == location_enabled
+          ? _value.location_enabled
+          : location_enabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      space_ids: freezed == space_ids
+          ? _value._space_ids
+          : space_ids // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -208,11 +232,14 @@ class _$ApiUserImpl extends _ApiUser {
       this.last_name,
       this.phone,
       this.email,
-      this.profile_image,
       this.provider_firebase_id_token,
       required this.auth_type,
+      this.profile_image,
+      this.location_enabled = true,
+      final List<String>? space_ids = const [],
       this.created_at})
-      : super._();
+      : _space_ids = space_ids,
+        super._();
 
   factory _$ApiUserImpl.fromJson(Map<String, dynamic> json) =>
       _$$ApiUserImplFromJson(json);
@@ -228,17 +255,31 @@ class _$ApiUserImpl extends _ApiUser {
   @override
   final String? email;
   @override
-  final String? profile_image;
-  @override
   final String? provider_firebase_id_token;
   @override
   final int auth_type;
+  @override
+  final String? profile_image;
+  @override
+  @JsonKey()
+  final bool? location_enabled;
+  final List<String>? _space_ids;
+  @override
+  @JsonKey()
+  List<String>? get space_ids {
+    final value = _space_ids;
+    if (value == null) return null;
+    if (_space_ids is EqualUnmodifiableListView) return _space_ids;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final int? created_at;
 
   @override
   String toString() {
-    return 'ApiUser(id: $id, first_name: $first_name, last_name: $last_name, phone: $phone, email: $email, profile_image: $profile_image, provider_firebase_id_token: $provider_firebase_id_token, auth_type: $auth_type, created_at: $created_at)';
+    return 'ApiUser(id: $id, first_name: $first_name, last_name: $last_name, phone: $phone, email: $email, provider_firebase_id_token: $provider_firebase_id_token, auth_type: $auth_type, profile_image: $profile_image, location_enabled: $location_enabled, space_ids: $space_ids, created_at: $created_at)';
   }
 
   @override
@@ -253,22 +294,37 @@ class _$ApiUserImpl extends _ApiUser {
                 other.last_name == last_name) &&
             (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.email, email) || other.email == email) &&
-            (identical(other.profile_image, profile_image) ||
-                other.profile_image == profile_image) &&
             (identical(other.provider_firebase_id_token,
                     provider_firebase_id_token) ||
                 other.provider_firebase_id_token ==
                     provider_firebase_id_token) &&
             (identical(other.auth_type, auth_type) ||
                 other.auth_type == auth_type) &&
+            (identical(other.profile_image, profile_image) ||
+                other.profile_image == profile_image) &&
+            (identical(other.location_enabled, location_enabled) ||
+                other.location_enabled == location_enabled) &&
+            const DeepCollectionEquality()
+                .equals(other._space_ids, _space_ids) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, first_name, last_name, phone,
-      email, profile_image, provider_firebase_id_token, auth_type, created_at);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      first_name,
+      last_name,
+      phone,
+      email,
+      provider_firebase_id_token,
+      auth_type,
+      profile_image,
+      location_enabled,
+      const DeepCollectionEquality().hash(_space_ids),
+      created_at);
 
   @JsonKey(ignore: true)
   @override
@@ -291,9 +347,11 @@ abstract class _ApiUser extends ApiUser {
       final String? last_name,
       final String? phone,
       final String? email,
-      final String? profile_image,
       final String? provider_firebase_id_token,
       required final int auth_type,
+      final String? profile_image,
+      final bool? location_enabled,
+      final List<String>? space_ids,
       final int? created_at}) = _$ApiUserImpl;
   const _ApiUser._() : super._();
 
@@ -310,16 +368,17 @@ abstract class _ApiUser extends ApiUser {
   @override
   String? get email;
   @override
-  String? get profile_image;
-  @override
   String? get provider_firebase_id_token;
-
   @override
   int get auth_type;
-
+  @override
+  String? get profile_image;
+  @override
+  bool? get location_enabled;
+  @override
+  List<String>? get space_ids;
   @override
   int? get created_at;
-
   @override
   @JsonKey(ignore: true)
   _$$ApiUserImplCopyWith<_$ApiUserImpl> get copyWith =>
@@ -338,11 +397,8 @@ mixin _$ApiSession {
   String? get fcm_token => throw _privateConstructorUsedError;
   bool get session_active => throw _privateConstructorUsedError;
   String? get device_name => throw _privateConstructorUsedError;
-
   String? get device_id => throw _privateConstructorUsedError;
-
   int? get created_at => throw _privateConstructorUsedError;
-
   String? get battery_status => throw _privateConstructorUsedError;
   int? get app_version => throw _privateConstructorUsedError;
 
@@ -534,8 +590,8 @@ class _$ApiSessionImpl extends _ApiSession {
   const _$ApiSessionImpl(
       {required this.id,
       required this.user_id,
-      this.platform,
-      this.fcm_token,
+      this.platform = 1,
+      this.fcm_token = "",
       required this.session_active,
       this.device_name,
       this.device_id,
@@ -552,8 +608,10 @@ class _$ApiSessionImpl extends _ApiSession {
   @override
   final String user_id;
   @override
+  @JsonKey()
   final int? platform;
   @override
+  @JsonKey()
   final String? fcm_token;
   @override
   final bool session_active;
@@ -656,13 +714,10 @@ abstract class _ApiSession extends ApiSession {
   bool get session_active;
   @override
   String? get device_name;
-
   @override
   String? get device_id;
-
   @override
   int? get created_at;
-
   @override
   String? get battery_status;
   @override

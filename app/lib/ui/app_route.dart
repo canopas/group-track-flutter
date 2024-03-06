@@ -83,7 +83,7 @@ class AppRoute {
       AppRoute("/intro", builder: (_) => const IntroScreen());
 
   static AppRoute get home =>
-      AppRoute("/home", builder: (_) => const IntroScreen());
+      AppRoute("/home", builder: (_) => const HomeScreen());
 
   static AppRoute get signInMethod =>
       AppRoute("/sign-in", builder: (_) => const SignInMethodScreen());

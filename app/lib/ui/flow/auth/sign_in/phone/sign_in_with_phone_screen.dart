@@ -37,8 +37,9 @@ class _SignInWithPhoneScreenState extends ConsumerState<SignInWithPhoneScreen> {
               ).push(context) ??
               List.empty();
 
-          if (data.isNotEmpty && data.first == true && context.mounted)
+          if (data.isNotEmpty && data.first == true && context.mounted) {
             context.pop(data);
+          }
         }
       },
     );
