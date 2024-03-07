@@ -5,17 +5,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../storage/app_preferences.dart';
 
 final authServiceProvider = Provider((ref) => AuthService(
+    ref.read(currentUserPod),
     ref.read(apiUserServiceProvider),
     ref.read(currentUserJsonPod.notifier),
     ref.read(currentUserSessionJsonPod.notifier)));
 
 class AuthService {
+  final ApiUser? _currentUser;
   final ApiUserService _userService;
   final StateController<String?> userJsonNotifier;
   final StateController<String?> userSessionJsonNotifier;
 
-  AuthService(
-      this._userService, this.userJsonNotifier, this.userSessionJsonNotifier);
+  AuthService(this._currentUser, this._userService, this.userJsonNotifier,
+      this.userSessionJsonNotifier);
+
+  ApiUser? get currentUser => _currentUser;
 
   Future<bool> verifiedLogin(
       {String? uid,
@@ -40,5 +44,10 @@ class AuthService {
         (data['session'] as ApiSession).toJsonString();
 
     return data['isNewUser'] as bool;
+  }
+
+  Future<void> updateCurrentUser(ApiUser user) async {
+    await _userService.updateUser(user);
+    userJsonNotifier.state = user.toJsonString();
   }
 }

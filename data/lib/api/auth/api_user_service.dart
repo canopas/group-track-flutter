@@ -99,4 +99,8 @@ class ApiUserService {
       await doc.reference.update({"session_active": false});
     }
   }
+
+  Future<void> updateUser(ApiUser user) async {
+    await _userRef.doc(user.id).set(user);
+  }
 }

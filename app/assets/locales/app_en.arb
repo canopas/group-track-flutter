@@ -22,6 +22,11 @@
 
 "otp_verification_resend_code_title": "Resend Code",
   "otp_verification_description": "We've sent a verification code to your phone.",
-  "otp_verification_verification_code_title": "Verification Code"
+  "otp_verification_verification_code_title": "Verification Code",
+
+  "onboard_pick_name_title":"What's your name?",
+  "onboard_pick_name_hint_first_name":"First Name",
+  "onboard_pick_name_hint_last_name":"Last Name"
+
 
 }

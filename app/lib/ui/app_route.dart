@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
+import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
 
 import 'flow/auth/sign_in/phone/sign_in_with_phone_screen.dart';
 import 'flow/auth/sign_in/sign_in_methos_screen.dart';
@@ -94,8 +95,8 @@ class AppRoute {
       );
 
   static AppRoute get pickName => AppRoute(
-        "/pick-name",
-        builder: (_) => const SignInWithPhoneScreen(),
+    "/pick-name",
+        builder: (_) => const PickNameScreen(),
       );
 
   static AppRoute otpVerification(
@@ -116,6 +117,14 @@ class AppRoute {
       },
     ),
     GoRoute(
+      path: pickName.path,
+      builder: (context, state) {
+        return state.extra == null
+            ? const PickNameScreen()
+            : state.widget(context);
+      },
+    ),
+    GoRoute(
       path: home.path,
       builder: (context, state) {
         return state.extra == null ? const HomeScreen() : state.widget(context);
@@ -130,7 +139,6 @@ class AppRoute {
       },
     ),
     signInWithPhone.goRoute(),
-    pickName.goRoute(),
     GoRoute(
         path: pathPhoneNumberVerification,
         builder: (context, state) {
