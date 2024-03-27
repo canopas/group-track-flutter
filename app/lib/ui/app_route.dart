@@ -29,16 +29,17 @@ class AppRoute {
     }
   }
 
-  static void popTo(BuildContext context,
-      String path, {
-        bool inclusive = false,
-      }) {
+  static void popTo(
+    BuildContext context,
+    String path, {
+    bool inclusive = false,
+  }) {
     while (GoRouter.of(context)
-        .routerDelegate
-        .currentConfiguration
-        .matches
-        .last
-        .matchedLocation !=
+            .routerDelegate
+            .currentConfiguration
+            .matches
+            .last
+            .matchedLocation !=
         path) {
       if (!GoRouter.of(context).canPop()) {
         return;
@@ -75,10 +76,10 @@ class AppRoute {
   }
 
   GoRoute goRoute() => GoRoute(
-    path: path,
-    name: path,
-    builder: (context, state) => state.widget(context),
-  );
+        path: path,
+        name: path,
+        builder: (context, state) => state.widget(context),
+      );
 
   static AppRoute get intro =>
       AppRoute("/intro", builder: (_) => const IntroScreen());
