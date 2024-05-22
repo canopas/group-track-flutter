@@ -11,6 +11,8 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'app_route.dart';
 
 class App extends ConsumerStatefulWidget {
+  const App({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _AppState();
 }
@@ -24,8 +26,12 @@ class _AppState extends ConsumerState<App> {
     final AppRoute initialRoute;
     if (!ref.read(isIntroScreenShownPod)) {
       initialRoute = AppRoute.intro;
-    } else {
+    } else if (ref.read(currentUserPod) == null) {
       initialRoute = AppRoute.signInMethod;
+    } else if (ref.read(currentUserPod)?.first_name?.isEmpty ?? true) {
+      initialRoute = AppRoute.pickName;
+    } else {
+      initialRoute = AppRoute.home;
     }
 
     _router =

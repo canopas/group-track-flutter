@@ -24,8 +24,6 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
   final _controller = PageController(keepPage: true);
   List<String> _items = [];
 
-  var _currentPage = 0;
-
   @override
   void initState() {
     super.initState();
@@ -89,7 +87,6 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
             children: _items.map((e) => IntroPageItem(title: e)).toList(),
             onPageChanged: (newPage) {
               setState(() {
-                _currentPage = newPage;
               });
             },
           )),

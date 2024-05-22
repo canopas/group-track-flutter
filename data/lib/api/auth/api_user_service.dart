@@ -47,9 +47,10 @@ class ApiUserService {
         device_name: await _device.deviceName,
         session_active: true,
         app_version: await _device.appVersion,
+        created_at: DateTime.now().millisecondsSinceEpoch,
       );
       await deactivateOldSessions(uid);
-      await sessionDocRef.set(session.toJson());
+      await sessionDocRef.set(session);
       final user = await getUser(uid);
       return {'isNewUser': false, 'user': user, 'session': session};
     } else {
@@ -60,10 +61,12 @@ class ApiUserService {
         auth_type: authType,
         first_name: firstName ?? '',
         last_name: '',
-        provider_firebase_id_token: firebaseToken,
-        profile_image: profileImage ?? '',
+        provider_firebase_id_token: firebaseToken ?? '',
+        profile_image: '',
+        created_at: DateTime.now().millisecondsSinceEpoch,
       );
-      await _userRef.doc(uid).set(user.toJson());
+
+      await _userRef.doc(uid).set(user);
       final sessionDocRef = sessionRef(uid).doc();
       final ApiSession session = ApiSession(
         id: sessionDocRef.id,
@@ -72,8 +75,9 @@ class ApiUserService {
         device_name: await _device.deviceName,
         session_active: true,
         app_version: await _device.appVersion,
+        created_at: DateTime.now().millisecondsSinceEpoch,
       );
-      await sessionDocRef.set(session.toJson());
+      await sessionDocRef.set(session);
       //  await _locationService.saveLastKnownLocation(uid);
       return {'isNewUser': true, 'user': user, 'session': session};
     }
@@ -90,9 +94,13 @@ class ApiUserService {
 
   Future<void> deactivateOldSessions(String userId) async {
     final querySnapshot =
-        await sessionRef(userId).where("sessionActive", isEqualTo: true).get();
+        await sessionRef(userId).where("session_active", isEqualTo: true).get();
     for (var doc in querySnapshot.docs) {
-      await doc.reference.update({"sessionActive": false});
+      await doc.reference.update({"session_active": false});
     }
+  }
+
+  Future<void> updateUser(ApiUser user) async {
+    await _userRef.doc(user.id).set(user);
   }
 }

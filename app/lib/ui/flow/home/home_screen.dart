@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:style/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/components/app_page.dart';
+
+import 'components/home_top_bar.dart';
+import 'components/map_view.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -11,8 +16,16 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text("Hello, Home!"),
-    );
+    return AppPage(
+        body: Padding(
+      padding: context.mediaQueryPadding,
+      child: const Stack(
+        children: [
+          MapView(),
+          HomeTopBar(),
+          // SpaceUserFooter()
+        ],
+      ),
+    ));
   }
 }

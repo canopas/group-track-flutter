@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
+import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
 
 import 'flow/auth/sign_in/phone/sign_in_with_phone_screen.dart';
 import 'flow/auth/sign_in/sign_in_methos_screen.dart';
@@ -7,6 +9,8 @@ import 'flow/home/home_screen.dart';
 import 'flow/intro/intro_screen.dart';
 
 class AppRoute {
+  static const pathPhoneNumberVerification = '/phone-number-verification';
+
   final String path;
   final String? name;
   final WidgetBuilder builder;
@@ -81,7 +85,7 @@ class AppRoute {
       AppRoute("/intro", builder: (_) => const IntroScreen());
 
   static AppRoute get home =>
-      AppRoute("/home", builder: (_) => const IntroScreen());
+      AppRoute("/home", builder: (_) => const HomeScreen());
 
   static AppRoute get signInMethod =>
       AppRoute("/sign-in", builder: (_) => const SignInMethodScreen());
@@ -92,9 +96,17 @@ class AppRoute {
       );
 
   static AppRoute get pickName => AppRoute(
-        "/pick-name",
-        builder: (_) => const SignInWithPhoneScreen(),
+    "/pick-name",
+        builder: (_) => const PickNameScreen(),
       );
+
+  static AppRoute otpVerification(
+      {required String phoneNumber, required String verificationId}) {
+    return AppRoute(
+      pathPhoneNumberVerification,
+      builder: (_) => PhoneVerificationScreen(phoneNumber, verificationId),
+    );
+  }
 
   static final routes = [
     GoRoute(
@@ -102,6 +114,14 @@ class AppRoute {
       builder: (context, state) {
         return state.extra == null
             ? const IntroScreen()
+            : state.widget(context);
+      },
+    ),
+    GoRoute(
+      path: pickName.path,
+      builder: (context, state) {
+        return state.extra == null
+            ? const PickNameScreen()
             : state.widget(context);
       },
     ),
@@ -120,7 +140,13 @@ class AppRoute {
       },
     ),
     signInWithPhone.goRoute(),
-    pickName.goRoute(),
+    GoRoute(
+        path: pathPhoneNumberVerification,
+        builder: (context, state) {
+          return state.extra == null
+              ? const PhoneVerificationScreen('', '')
+              : state.widget(context);
+        }),
   ];
 }
 

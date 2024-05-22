@@ -2,7 +2,6 @@ import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/app_logo.dart';
@@ -31,6 +30,7 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _listenSignInSuccess();
     final bgDecoration = BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topCenter,
@@ -46,13 +46,13 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
     );
 
     return AppPage(
-        title: '',
         body: Container(
           decoration: bgDecoration,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 60),
             child: Column(
               children: [
+                const SizedBox(height: 80),
                 const AppLogo(),
                 const Spacer(),
                 _googleSignInButton(),
@@ -86,18 +86,36 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
           final isGoogleLoading = ref.read(signInMethodsStateProvider
               .select((value) => value.showGoogleLoading));
           if (isGoogleLoading) return;
-          final bool? success = await AppRoute.signInWithPhone.push(context);
-          if (success == true && context.mounted) onSignInSuccess();
+          final List<bool> data =
+              await AppRoute.signInWithPhone.push(context) ?? List.empty();
+          if (data.isNotEmpty && data.first == true && context.mounted) {
+            onSignInSuccess();
+          }
         },
         title: context.l10n.sign_in_options_continue_with_phone_btn_title,
         //  isLoading: ref.watch(signInMethodsStateProvider.select((value) => value.aho)),
       ));
 
   void onSignInSuccess() async {
+    print("onSignInSuccess");
     final user = ref.read(currentUserPod);
-    if (user?.first_name == null || user!.first_name!.isEmpty) {
+    print("onSignInSuccess user $user");
+
+    if (mounted && (user?.first_name == null || user!.first_name!.isEmpty)) {
       await AppRoute.pickName.push(context);
     }
-    if (mounted) context.pop(true);
+
+    print("onSignInSuccess go home");
+    if (mounted) AppRoute.home.go(context);
+  }
+
+  _listenSignInSuccess() {
+    ref.listen(
+        signInMethodsStateProvider
+            .select((value) => value.socialSignInCompleted), (previous, next) {
+      if (next) {
+        onSignInSuccess();
+      }
+    });
   }
 }
