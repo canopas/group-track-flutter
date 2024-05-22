@@ -60,7 +60,7 @@ class SignInWithPhoneCountryPicker extends ConsumerWidget {
                   ),
                   context: context,
                 );
-                notifier.changeCountryCode(code!!);
+                notifier.changeCountryCode(code!);
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,

@@ -28,7 +28,7 @@ class SignInWithPhoneViewNotifier extends StateNotifier<SignInWithPhoneState> {
                   WidgetsBinding.instance.platformDispatcher.locale.countryCode,
             ),
           ),
-        ) {}
+        );
 
   void changeCountryCode(CountryCode code) {
     state = state.copyWith(code: code, error: null);

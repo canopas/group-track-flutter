@@ -11,6 +11,8 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'app_route.dart';
 
 class App extends ConsumerStatefulWidget {
+  const App({super.key});
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _AppState();
 }

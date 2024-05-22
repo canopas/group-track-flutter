@@ -1,3 +1,7 @@
+analyzer:
+  errors:
+    depend_on_referenced_packages: ignore
+    non_constant_identifier_names: ignore
 include: package:flutter_lints/flutter.yaml
 
 # Additional information about this file can be found at

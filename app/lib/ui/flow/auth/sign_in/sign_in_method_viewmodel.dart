@@ -50,7 +50,7 @@ class SignInMethodsScreenViewNotifier
       } else {
         state = state.copyWith(showGoogleLoading: false);
       }
-    } catch (e, stack) {
+    } catch (e) {
       print(e);
       state = state.copyWith(showGoogleLoading: false, error: e);
     }

@@ -40,7 +40,7 @@ class PickNameStateNotifier extends StateNotifier<PickNameState> {
       state = state.copyWith(savingUser: true, error: null);
       _authService.updateCurrentUser(state.updatedUser!);
       state = state.copyWith(savingUser: false, saved: true);
-    } catch (e, stack) {
+    } catch (e) {
       state = state.copyWith(savingUser: false, error: e);
       print('Error: $e, Failed to save user');
     }

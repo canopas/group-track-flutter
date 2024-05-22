@@ -14,14 +14,14 @@ _$ApiUserImpl _$$ApiUserImplFromJson(Map<String, dynamic> json) =>
       phone: json['phone'] as String?,
       email: json['email'] as String?,
       provider_firebase_id_token: json['provider_firebase_id_token'] as String?,
-      auth_type: json['auth_type'] as int,
+      auth_type: (json['auth_type'] as num).toInt(),
       profile_image: json['profile_image'] as String?,
       location_enabled: json['location_enabled'] as bool? ?? true,
       space_ids: (json['space_ids'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      created_at: json['created_at'] as int?,
+      created_at: (json['created_at'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$ApiUserImplToJson(_$ApiUserImpl instance) =>
@@ -43,14 +43,14 @@ _$ApiSessionImpl _$$ApiSessionImplFromJson(Map<String, dynamic> json) =>
     _$ApiSessionImpl(
       id: json['id'] as String,
       user_id: json['user_id'] as String,
-      platform: json['platform'] as int? ?? 1,
+      platform: (json['platform'] as num?)?.toInt() ?? 1,
       fcm_token: json['fcm_token'] as String? ?? "",
       session_active: json['session_active'] as bool,
       device_name: json['device_name'] as String?,
       device_id: json['device_id'] as String?,
-      created_at: json['created_at'] as int?,
+      created_at: (json['created_at'] as num?)?.toInt(),
       battery_status: json['battery_status'] as String?,
-      app_version: json['app_version'] as int?,
+      app_version: (json['app_version'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$ApiSessionImplToJson(_$ApiSessionImpl instance) =>
