@@ -11,7 +11,7 @@ _$ApiSpaceImpl _$$ApiSpaceImplFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       admin_id: json['admin_id'] as String,
       name: json['name'] as String,
-      created_at: json['created_at'] as int?,
+      created_at: (json['created_at'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$ApiSpaceImplToJson(_$ApiSpaceImpl instance) =>

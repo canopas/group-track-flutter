@@ -21,15 +21,11 @@ ApiSpace _$ApiSpaceFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ApiSpace {
   String get id => throw _privateConstructorUsedError;
-
   String get admin_id => throw _privateConstructorUsedError;
-
   String get name => throw _privateConstructorUsedError;
-
   int? get created_at => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
   @JsonKey(ignore: true)
   $ApiSpaceCopyWith<ApiSpace> get copyWith =>
       throw _privateConstructorUsedError;
@@ -39,7 +35,6 @@ mixin _$ApiSpace {
 abstract class $ApiSpaceCopyWith<$Res> {
   factory $ApiSpaceCopyWith(ApiSpace value, $Res Function(ApiSpace) then) =
       _$ApiSpaceCopyWithImpl<$Res, ApiSpace>;
-
   @useResult
   $Res call({String id, String admin_id, String name, int? created_at});
 }
@@ -51,7 +46,6 @@ class _$ApiSpaceCopyWithImpl<$Res, $Val extends ApiSpace>
 
   // ignore: unused_field
   final $Val _value;
-
   // ignore: unused_field
   final $Res Function($Val) _then;
 
@@ -90,7 +84,6 @@ abstract class _$$ApiSpaceImplCopyWith<$Res>
   factory _$$ApiSpaceImplCopyWith(
           _$ApiSpaceImpl value, $Res Function(_$ApiSpaceImpl) then) =
       __$$ApiSpaceImplCopyWithImpl<$Res>;
-
   @override
   @useResult
   $Res call({String id, String admin_id, String name, int? created_at});
@@ -197,7 +190,6 @@ abstract class _ApiSpace extends ApiSpace {
       required final String admin_id,
       required final String name,
       final int? created_at}) = _$ApiSpaceImpl;
-
   const _ApiSpace._() : super._();
 
   factory _ApiSpace.fromJson(Map<String, dynamic> json) =
@@ -205,16 +197,12 @@ abstract class _ApiSpace extends ApiSpace {
 
   @override
   String get id;
-
   @override
   String get admin_id;
-
   @override
   String get name;
-
   @override
   int? get created_at;
-
   @override
   @JsonKey(ignore: true)
   _$$ApiSpaceImplCopyWith<_$ApiSpaceImpl> get copyWith =>
