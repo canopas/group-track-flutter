@@ -43,43 +43,37 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
   Widget build(BuildContext context) {
     return AppPage(
       body: SafeArea(
-        child: _content(),
+        child: _body(),
       ),
     );
   }
 
-  Widget _content() {
+  Widget _body() {
     return Container(
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
           image: DecorationImage(
               image: Assets.images.introBg.provider(),
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
               colorFilter: ColorFilter.mode(
                   Colors.black.withOpacity(0.6), BlendMode.srcOver))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(
-            height: 80,
-          ),
-          AppLogo(
-            contentColor: context.colorScheme.onPrimary,
-          ),
+          const SizedBox(height: 154),
+          AppLogo(contentColor: context.colorScheme.primary),
+          const SizedBox(height: 8),
           SizedBox(
-            width: 20,
+            width: 16,
             height: 1,
-            child: Divider(
-              color: context.colorScheme.onPrimary,
-            ),
+            child: Divider(color: context.colorScheme.textDisabled),
           ),
-          const SizedBox(
-            height: 6,
-          ),
+          const SizedBox(height: 12),
           Text(
             context.l10n.app_tag_line,
             textAlign: TextAlign.center,
-            style: AppTextStyle.caption
-                .copyWith(color: context.colorScheme.onPrimary),
+            style: AppTextStyle.subtitle2
+                .copyWith(color: context.colorScheme.textPrimary),
           ),
           Expanded(
               child: PageView(
@@ -90,7 +84,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
               });
             },
           )),
-          const SizedBox(height: 16),
+          const SizedBox(height: 40),
           SmoothPageIndicator(
             controller: _controller,
             count: _items.length,
@@ -98,26 +92,20 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
                 expansionFactor: 2,
                 dotHeight: 8,
                 dotWidth: 8,
-                dotColor: context.colorScheme.onPrimary.withOpacity(0.5),
-                activeDotColor: context.colorScheme.primary),
-          ),
-          const SizedBox(
-            height: 40,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 60),
-            child: PrimaryButton(
-              context.l10n.common_get_started,
-              progress: false,
-              onPressed: () {
-                ref.read(isIntroScreenShownPod.notifier).state = true;
-                AppRoute.signInMethod.push(context);
-              },
+                dotColor: context.colorScheme.containerHigh,
+                activeDotColor: context.colorScheme.primary,
             ),
           ),
-          const SizedBox(
-            height: 80,
+          const SizedBox(height: 40),
+          PrimaryButton(
+            context.l10n.common_get_started,
+            progress: false,
+            onPressed: () {
+              ref.read(isIntroScreenShownPod.notifier).state = true;
+              AppRoute.signInMethod.push(context);
+            },
           ),
+          const SizedBox(height: 24),
         ],
       ),
     );

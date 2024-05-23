@@ -21,7 +21,7 @@ class IntroPageItem extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: AppTextStyle.header3
+            style: AppTextStyle.subtitle1
                 .copyWith(color: context.colorScheme.onPrimary),
           ),
         ],

@@ -4,7 +4,7 @@ import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
 
 import 'flow/auth/sign_in/phone/sign_in_with_phone_screen.dart';
-import 'flow/auth/sign_in/sign_in_methos_screen.dart';
+import 'flow/auth/sign_in/sign_in_method_screen.dart';
 import 'flow/home/home_screen.dart';
 import 'flow/intro/intro_screen.dart';
 
