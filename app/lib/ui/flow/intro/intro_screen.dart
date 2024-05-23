@@ -42,9 +42,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     return AppPage(
-      body: SafeArea(
-        child: _body(),
-      ),
+      body: _body(),
     );
   }
 
