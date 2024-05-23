@@ -19,10 +19,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppPage(
         body: Padding(
       padding: context.mediaQueryPadding,
-      child: const Stack(
-        children: [
-          MapView(),
-          HomeTopBar(),
+          child: const Stack(
+            children: [
+              MapView(),
+              HomeTopBar(),
           // SpaceUserFooter()
         ],
       ),

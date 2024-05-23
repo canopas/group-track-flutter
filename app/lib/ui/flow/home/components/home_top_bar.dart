@@ -1,53 +1,130 @@
 import 'package:flutter/material.dart';
-import 'package:style/animation/on_tap_scale.dart';
-import 'package:style/button/control_button.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:style/button/icon_primary_button.dart';
+import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/app_route.dart';
 
-class HomeTopBar extends StatelessWidget {
+import '../../../../gen/assets.gen.dart';
+
+class HomeTopBar extends StatefulWidget {
   const HomeTopBar({super.key});
 
   @override
+  State<HomeTopBar> createState() => _HomeTopBarState();
+}
+
+class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
+  bool expand = false;
+
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void performAnimation() {
+    if (expand) {
+      _animationController.forward();
+    } else {
+      _animationController.reverse();
+    }
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Row(
-        children: [
-          ControlButton(
-            onTop: () => {},
-            icon: Icons.settings,
-          ),
-          const SizedBox(
-            width: 6,
-          ),
-          _spaceSelection(
-              context: context,
-              onTap: () => {},
-              spaceName: "Office Squard",
-              isExpanded: true),
-          const SizedBox(
-            width: 6,
-          ),
-          ControlButton(onTop: () => {}, icon: Icons.message_rounded),
-          ControlButton(onTop: () => {}, icon: Icons.location_on_rounded)
-        ],
+    return _body(context);
+  }
+
+  Widget _body(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: _topBar(context),
+    );
+  }
+
+  Widget _topBar(BuildContext context) {
+    return IntrinsicHeight(
+      child: Container(
+        color: expand ? context.colorScheme.surface : null,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                _iconButton(
+                    context: context,
+                    icon: Assets.images.icSetting,
+                    visibility: !expand),
+                const SizedBox(width: 8),
+                _spaceSelection(
+                  context: context,
+                  spaceName: "Office Squard",
+                ),
+                const SizedBox(width: 8),
+                _iconButton(
+                    context: context,
+                    icon: Assets.images.icMessage,
+                    visibility: !expand),
+                SizedBox(width: expand ? 0 : 8),
+                _iconButton(
+                    context: context,
+                    icon: Assets.images.icLocation,
+                    visibility: !expand),
+                _iconButton(
+                    context: context,
+                    icon: Assets.images.icAddMember,
+                    visibility: expand,
+                    color: context.colorScheme.textPrimary),
+              ],
+            ),
+            const SizedBox(height: 24),
+            _createJoinButton(context),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _spaceSelection(
-      {required BuildContext context,
-      required Map Function() onTap,
-      required String spaceName,
-      required bool isExpanded}) {
+  Widget _spaceSelection({
+    required BuildContext context,
+    required String spaceName,
+  }) {
     return Flexible(
-      child: OnTapScale(
-        onTap: () => {},
-        child: Card(
-          surfaceTintColor: context.colorScheme.surface,
-          elevation: 6,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            expand = !expand;
+            performAnimation();
+          });
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: context.colorScheme.outline,
+              width: 1,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: Row(
@@ -59,13 +136,60 @@ class HomeTopBar extends StatelessWidget {
                 ),
                 const Spacer(),
                 Icon(
-                  Icons.keyboard_arrow_down_rounded,
+                  expand
+                      ? Icons.keyboard_arrow_down_rounded
+                      : Icons.keyboard_arrow_up_rounded,
                   color: context.colorScheme.primary,
                 )
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _iconButton({
+    required BuildContext context,
+    required String icon,
+    Color? color,
+    required bool visibility,
+  }) {
+    return Visibility(
+      visible: visibility,
+      child: IconPrimaryButton(
+        onTap: () => {},
+        icon: SvgPicture.asset(
+          height: 16,
+          width: 14,
+          icon,
+          colorFilter: ColorFilter.mode(
+            color ?? context.colorScheme.primary,
+            BlendMode.srcATop,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _createJoinButton(BuildContext context) {
+    return SizeTransition(
+      sizeFactor: _animation,
+      axis: Axis.vertical,
+      child: Row(
+        children: [
+          Expanded(
+            child: PrimaryButton(context.l10n.home_create_space_title, onPressed: () {
+              AppRoute.createSpace.push(context);
+            }),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: PrimaryButton(context.l10n.home_join_space_title, onPressed: () {
+              AppRoute.joinSpace.push(context);
+            }),
+          ),
+        ],
       ),
     );
   }

@@ -26,7 +26,12 @@
 
   "onboard_pick_name_title":"What's your name?",
   "onboard_pick_name_hint_first_name":"First Name",
-  "onboard_pick_name_hint_last_name":"Last Name"
+  "onboard_pick_name_hint_last_name":"Last Name",
 
+  "@_HOME": {
+
+  },
+  "home_create_space_title": "Create new",
+  "home_join_space_title": "Join space"
 
 }

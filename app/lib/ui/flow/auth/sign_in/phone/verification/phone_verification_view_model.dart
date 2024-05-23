@@ -26,7 +26,7 @@ class PhoneVerificationViewNotifier
   late Timer timer;
 
   PhoneVerificationViewNotifier(this.authService, this.firebaseAuth)
-      : super(PhoneVerificationState()) {
+      : super(const PhoneVerificationState()) {
     updateResendCodeTimerDuration();
   }
 

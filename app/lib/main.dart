@@ -20,7 +20,7 @@ void main() async {
   final container = await _initContainer();
 
   runApp(
-    UncontrolledProviderScope(container: container, child: App()),
+    UncontrolledProviderScope(container: container, child: const App()),
   );
 }
 
