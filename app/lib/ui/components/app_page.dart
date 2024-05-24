@@ -27,7 +27,7 @@ class AppPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (Platform.isIOS) {
-      return _cupertino(context);
+      return Material(child: _cupertino(context));
     } else {
       return _material();
     }

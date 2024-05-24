@@ -105,7 +105,7 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
       await AppRoute.pickName.push(context);
     }
 
-    print("onSignInSuccess go home");
+       print("onSignInSuccess go home");
     if (mounted) AppRoute.home.go(context);
   }
 

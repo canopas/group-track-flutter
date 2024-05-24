@@ -6,7 +6,7 @@ import 'package:yourspace_flutter/ui/flow/space/create/create_space_screen.dart'
 import 'package:yourspace_flutter/ui/flow/space/join/join_space_screen.dart';
 
 import 'flow/auth/sign_in/phone/sign_in_with_phone_screen.dart';
-import 'flow/auth/sign_in/sign_in_methos_screen.dart';
+import 'flow/auth/sign_in/sign_in_method_screen.dart';
 import 'flow/home/home_screen.dart';
 import 'flow/intro/intro_screen.dart';
 
