@@ -27,10 +27,9 @@ class InviteCode extends StatefulWidget {
 class _InviteCodeState extends State<InviteCode> {
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      onPopInvoked: (_) {
         AppRoute.popTo(context, AppRoute.home.path);
-        return true;
       },
       child: AppPage(
         title: context.l10n.invite_code_title,
