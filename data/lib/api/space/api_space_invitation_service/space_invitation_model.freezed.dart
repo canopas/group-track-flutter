@@ -23,6 +23,7 @@ mixin _$ApiSpaceInvitation {
   String get id => throw _privateConstructorUsedError;
   String get space_id => throw _privateConstructorUsedError;
   String get code => throw _privateConstructorUsedError;
+  int? get created_at => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -36,7 +37,7 @@ abstract class $ApiSpaceInvitationCopyWith<$Res> {
           ApiSpaceInvitation value, $Res Function(ApiSpaceInvitation) then) =
       _$ApiSpaceInvitationCopyWithImpl<$Res, ApiSpaceInvitation>;
   @useResult
-  $Res call({String id, String space_id, String code});
+  $Res call({String id, String space_id, String code, int? created_at});
 }
 
 /// @nodoc
@@ -55,6 +56,7 @@ class _$ApiSpaceInvitationCopyWithImpl<$Res, $Val extends ApiSpaceInvitation>
     Object? id = null,
     Object? space_id = null,
     Object? code = null,
+    Object? created_at = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -69,6 +71,10 @@ class _$ApiSpaceInvitationCopyWithImpl<$Res, $Val extends ApiSpaceInvitation>
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
               as String,
+      created_at: freezed == created_at
+          ? _value.created_at
+          : created_at // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 }
@@ -81,7 +87,7 @@ abstract class _$$ApiSpaceInvitationImplCopyWith<$Res>
       __$$ApiSpaceInvitationImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String space_id, String code});
+  $Res call({String id, String space_id, String code, int? created_at});
 }
 
 /// @nodoc
@@ -98,6 +104,7 @@ class __$$ApiSpaceInvitationImplCopyWithImpl<$Res>
     Object? id = null,
     Object? space_id = null,
     Object? code = null,
+    Object? created_at = freezed,
   }) {
     return _then(_$ApiSpaceInvitationImpl(
       id: null == id
@@ -112,6 +119,10 @@ class __$$ApiSpaceInvitationImplCopyWithImpl<$Res>
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
               as String,
+      created_at: freezed == created_at
+          ? _value.created_at
+          : created_at // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -120,7 +131,10 @@ class __$$ApiSpaceInvitationImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ApiSpaceInvitationImpl extends _ApiSpaceInvitation {
   const _$ApiSpaceInvitationImpl(
-      {required this.id, required this.space_id, required this.code})
+      {required this.id,
+      required this.space_id,
+      required this.code,
+      this.created_at})
       : super._();
 
   factory _$ApiSpaceInvitationImpl.fromJson(Map<String, dynamic> json) =>
@@ -132,10 +146,12 @@ class _$ApiSpaceInvitationImpl extends _ApiSpaceInvitation {
   final String space_id;
   @override
   final String code;
+  @override
+  final int? created_at;
 
   @override
   String toString() {
-    return 'ApiSpaceInvitation(id: $id, space_id: $space_id, code: $code)';
+    return 'ApiSpaceInvitation(id: $id, space_id: $space_id, code: $code, created_at: $created_at)';
   }
 
   @override
@@ -146,12 +162,14 @@ class _$ApiSpaceInvitationImpl extends _ApiSpaceInvitation {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.space_id, space_id) ||
                 other.space_id == space_id) &&
-            (identical(other.code, code) || other.code == code));
+            (identical(other.code, code) || other.code == code) &&
+            (identical(other.created_at, created_at) ||
+                other.created_at == created_at));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, space_id, code);
+  int get hashCode => Object.hash(runtimeType, id, space_id, code, created_at);
 
   @JsonKey(ignore: true)
   @override
@@ -172,7 +190,8 @@ abstract class _ApiSpaceInvitation extends ApiSpaceInvitation {
   const factory _ApiSpaceInvitation(
       {required final String id,
       required final String space_id,
-      required final String code}) = _$ApiSpaceInvitationImpl;
+      required final String code,
+      final int? created_at}) = _$ApiSpaceInvitationImpl;
   const _ApiSpaceInvitation._() : super._();
 
   factory _ApiSpaceInvitation.fromJson(Map<String, dynamic> json) =
@@ -184,6 +203,8 @@ abstract class _ApiSpaceInvitation extends ApiSpaceInvitation {
   String get space_id;
   @override
   String get code;
+  @override
+  int? get created_at;
   @override
   @JsonKey(ignore: true)
   _$$ApiSpaceInvitationImplCopyWith<_$ApiSpaceInvitationImpl> get copyWith =>

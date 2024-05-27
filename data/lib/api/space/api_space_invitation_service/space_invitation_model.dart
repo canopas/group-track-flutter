@@ -12,6 +12,7 @@ class ApiSpaceInvitation with _$ApiSpaceInvitation {
     required String id,
     required String space_id,
     required String code,
+    int? created_at,
   }) = _ApiSpaceInvitation;
 
   factory ApiSpaceInvitation.fromJson(Map<String, dynamic> data) =>
@@ -24,5 +25,5 @@ class ApiSpaceInvitation with _$ApiSpaceInvitation {
     return ApiSpaceInvitation.fromJson(data!);
   }
 
-  Map<String, dynamic> toFireStore(ApiSpaceInvitation space) => space.toJson();
+  Map<String, dynamic> toFireStore() => toJson();
 }

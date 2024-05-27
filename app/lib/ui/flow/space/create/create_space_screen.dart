@@ -8,6 +8,7 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/space/create/create_space_view_model.dart';
+import 'package:style/button/bottom_sticky_overlay.dart';
 
 class CreateSpace extends ConsumerStatefulWidget {
   const CreateSpace({super.key});
@@ -19,58 +20,55 @@ class CreateSpace extends ConsumerStatefulWidget {
 class _CreateSpaceState extends ConsumerState<CreateSpace> {
   late CreateSpaceViewNotifier notifier;
 
-  @override
-  void initState() {
-    super.initState();
-    notifier = ref.read(createSpaceViewStateProvider.notifier);
+  void _observeNavigation(CreateSpaceViewState state) {
+    ref.listen(createSpaceViewStateProvider.select((state) => state.invitationCode),
+        (_, next) {
+      if (next.isNotEmpty) {
+        AppRoute.inviteCode(
+            code: next, spaceName: state.spaceName.text).push(context);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    notifier = ref.read(createSpaceViewStateProvider.notifier);
+    final state = ref.watch(createSpaceViewStateProvider);
+    _observeNavigation(state);
+
     return AppPage(
       title: '',
       body: SafeArea(
-        child: _body(context),
+        child: _body(context, state),
       ),
     );
   }
 
-  Widget _body(BuildContext context) {
-    final state = ref.watch(createSpaceViewStateProvider);
-    return Column(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.l10n.create_space_give_your_space_name_title,
-                  style: AppTextStyle.header4.copyWith(
-                      color: context.colorScheme.textPrimary
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  context.l10n.create_space_tip_text,
-                  style: AppTextStyle.body1
-                      .copyWith(color: context.colorScheme.textDisabled),
-                ),
-                const SizedBox(height: 24),
-                _textField(context, state),
-                const SizedBox(height: 30),
-                _suggestion(context, state),
-              ],
-            ),
+  Widget _body(BuildContext context, CreateSpaceViewState state) {
+    return Stack(children: [
+      ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const SizedBox(height: 8),
+          Text(
+            context.l10n.create_space_give_your_space_name_title,
+            style: AppTextStyle.header4
+                .copyWith(color: context.colorScheme.textPrimary),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _nextButton(context, state),
-        ),
-      ],
-    );
+          const SizedBox(height: 16),
+          Text(
+            context.l10n.create_space_tip_text,
+            style: AppTextStyle.body1
+                .copyWith(color: context.colorScheme.textDisabled),
+          ),
+          const SizedBox(height: 24),
+          _textField(context, state),
+          const SizedBox(height: 30),
+          _suggestion(context, state),
+        ],
+      ),
+      _nextButton(context, state),
+    ]);
   }
 
   Widget _textField(BuildContext context, CreateSpaceViewState state) {
@@ -97,9 +95,8 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
             onChanged: (text) {
               notifier.onChange(text);
             },
-            style: AppTextStyle.subtitle2.copyWith(
-                color: context.colorScheme.textPrimary
-            ),
+            style: AppTextStyle.subtitle2
+                .copyWith(color: context.colorScheme.textPrimary),
           ),
         ),
       ],
@@ -110,7 +107,7 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
     return UnderlineInputBorder(
       borderSide: BorderSide(
         color:
-        focused ? context.colorScheme.primary : context.colorScheme.outline,
+            focused ? context.colorScheme.primary : context.colorScheme.outline,
         width: 1,
       ),
     );
@@ -154,14 +151,11 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
             notifier.updateSelectedNudgeMessage(element);
           },
           child: Chip(
-            label: Text(
-                element,
+            label: Text(element,
                 style: AppTextStyle.body2.copyWith(
                     color: state.selectedSpaceName == element
                         ? context.colorScheme.onPrimary
-                        : context.colorScheme.textSecondary
-                )
-            ),
+                        : context.colorScheme.textSecondary)),
             labelPadding: const EdgeInsets.symmetric(
               horizontal: 16,
             ),
@@ -179,12 +173,15 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
   }
 
   Widget _nextButton(BuildContext context, CreateSpaceViewState state) {
-    return PrimaryButton(
-      context.l10n.common_next,
-      onPressed: () {
-        notifier.createSpace();
-        AppRoute.joinSpace(invitationCode: state.invitationCode, spaceName: state.spaceName.text).push(context);
-      },
+    return BottomStickyOverlay(
+      child: PrimaryButton(
+        context.l10n.common_next,
+        onPressed: () {
+          notifier.createSpace();
+        },
+        enabled: state.allowSave || state.selectedSpaceName.isNotEmpty,
+        progress: state.isCreating,
+      ),
     );
   }
 }

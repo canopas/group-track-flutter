@@ -1,4 +1,5 @@
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/log/logger.dart';
 import 'package:data/service/auth/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -50,9 +51,13 @@ class SignInMethodsScreenViewNotifier
       } else {
         state = state.copyWith(showGoogleLoading: false);
       }
-    } catch (e) {
-      print(e);
-      state = state.copyWith(showGoogleLoading: false, error: e);
+    } catch (error, stack) {
+      logger.e(
+        'SignInMethodsScreenViewNotifier: error while sign in with google',
+        error: error,
+        stackTrace: stack,
+      );
+      state = state.copyWith(showGoogleLoading: false, error: error);
     }
   }
 

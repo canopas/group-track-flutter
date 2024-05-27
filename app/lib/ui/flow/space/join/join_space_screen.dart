@@ -86,10 +86,10 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
   Widget _buildCodeBox(BuildContext context, double width) {
     return Container(
       width: width,
-      height: 64,
+      height: 60,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        border: Border.all(color: context.colorScheme.primary),
+        color: context.colorScheme.containerLow,
         borderRadius: BorderRadius.circular(8),
       ),
       child: const TextField(

@@ -1,4 +1,5 @@
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/log/logger.dart';
 import 'package:data/service/auth/auth_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -40,9 +41,13 @@ class PickNameStateNotifier extends StateNotifier<PickNameState> {
       state = state.copyWith(savingUser: true, error: null);
       _authService.updateCurrentUser(state.updatedUser!);
       state = state.copyWith(savingUser: false, saved: true);
-    } catch (e) {
-      state = state.copyWith(savingUser: false, error: e);
-      print('Error: $e, Failed to save user');
+    } catch (error, stack) {
+      state = state.copyWith(savingUser: false, error: error);
+      logger.e(
+        'PickNameStateNotifier: error while save user',
+        error: error,
+        stackTrace: stack,
+      );
     }
   }
 }

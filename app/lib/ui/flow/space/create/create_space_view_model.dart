@@ -23,18 +23,15 @@ class CreateSpaceViewNotifier extends StateNotifier<CreateSpaceViewState> {
 
   Future<void> createSpace() async {
     try {
-      state = state.copyWith(creating: true);
+      state = state.copyWith(isCreating: true, invitationCode: '');
       final invitationCode = await spaceService.createSpaceAndGetInviteCode(state.spaceName.text);
-      print(invitationCode);
-      state = state.copyWith(creating: false, invitationCode: invitationCode);
-      print(invitationCode);
+      state = state.copyWith(isCreating: false, invitationCode: invitationCode);
     } catch (error, stack) {
       logger.e(
         'CreateSpaceViewNotifier: $error - error while creating new space',
         error: error,
         stackTrace: stack,
       );
-      state = state.copyWith(creating: false);
     }
   }
 
@@ -53,14 +50,15 @@ class CreateSpaceViewNotifier extends StateNotifier<CreateSpaceViewState> {
   }
 
   void onChange(String spaceName) {
-    state = state.copyWith(selectedSpaceName: spaceName);
+    state = state.copyWith(selectedSpaceName: spaceName, allowSave: spaceName.isNotEmpty);
   }
 }
 
 @freezed
 class CreateSpaceViewState with _$CreateSpaceViewState {
   const factory CreateSpaceViewState({
-    @Default(false) bool creating,
+    @Default(false) bool allowSave,
+    @Default(false) bool isCreating,
     @Default('') String selectedSpaceName,
     @Default('') String invitationCode,
     required TextEditingController spaceName,

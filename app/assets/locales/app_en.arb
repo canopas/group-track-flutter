@@ -50,6 +50,19 @@
 
   "join_space_title": "Join space",
   "join_space_invite_code_title": "Enter the invite code",
-  "join_space_get_code_from_space_text": "Get the code from the space creator to join."
+  "join_space_get_code_from_space_text": "Get the code from the space creator to join.",
+
+  "invite_code_title": "Invite code",
+  "invite_code_invite_member_title": "Invite members to the {spaceName}",
+  "@invite_code_invite_member_title": {
+    "placeholders": {
+      "spaceName": {
+        "type": "String"
+      }
+    }
+  },
+  "invite_code_invite_member_subtitle": "Share this invite code with your trusted ones in your own style. Connecting is as flexible as you are.",
+  "invite_code_active_code_text": "This code will be active for 2 days.",
+  "invite_code_share_code_title": "Share code"
 
 }

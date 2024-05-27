@@ -22,10 +22,10 @@ class ApiSpaceInvitationService {
       id: docRef.id,
       space_id: spaceId,
       code: invitationCode,
+      created_at: DateTime.now().millisecondsSinceEpoch,
     );
 
-    await docRef.set(invitation);
-    print(invitationCode);
+    await docRef.set(invitation.toFireStore());
     return invitationCode;
   }
 
@@ -34,7 +34,6 @@ class ApiSpaceInvitationService {
     final random = Random();
     final code =  List.generate(
         6, (index) => characters[random.nextInt(characters.length)]).join();
-    print(code);
     return code;
   }
 }

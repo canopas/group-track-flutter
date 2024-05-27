@@ -12,6 +12,7 @@ _$ApiSpaceInvitationImpl _$$ApiSpaceInvitationImplFromJson(
       id: json['id'] as String,
       space_id: json['space_id'] as String,
       code: json['code'] as String,
+      created_at: (json['created_at'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$ApiSpaceInvitationImplToJson(
@@ -20,4 +21,5 @@ Map<String, dynamic> _$$ApiSpaceInvitationImplToJson(
       'id': instance.id,
       'space_id': instance.space_id,
       'code': instance.code,
+      'created_at': instance.created_at,
     };

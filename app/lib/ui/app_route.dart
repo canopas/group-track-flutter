@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
 import 'package:yourspace_flutter/ui/flow/space/create/create_space_screen.dart';
+import 'package:yourspace_flutter/ui/flow/space/invite/invite_code_screen.dart';
 import 'package:yourspace_flutter/ui/flow/space/join/join_space_screen.dart';
 
 import 'flow/auth/sign_in/phone/sign_in_with_phone_screen.dart';
@@ -14,6 +15,7 @@ class AppRoute {
   static const pathPhoneNumberVerification = '/phone-number-verification';
   static const pathCreateSpace = '/create';
   static const pathJoinSpace = '/join';
+  static const pathInviteCode = '/invite';
 
   final String path;
   final String? name;
@@ -115,11 +117,19 @@ class AppRoute {
   static AppRoute get createSpace =>
       AppRoute(pathCreateSpace, builder: (_) => const CreateSpace());
 
-  static AppRoute joinSpace(
-      {required String invitationCode, required String spaceName}) {
+  static AppRoute joinSpace({
+    required String invitationCode, required String spaceName}) {
     return AppRoute(
       pathJoinSpace,
       builder: (_) => JoinSpace(invitationCode: invitationCode, spaceName: spaceName),
+    );
+  }
+
+  static AppRoute inviteCode({
+    required String code, required String spaceName}) {
+    return AppRoute(
+      pathInviteCode,
+      builder: (_) => InviteCode(spaceName: spaceName, inviteCode: code),
     );
   }
 
@@ -169,6 +179,10 @@ class AppRoute {
     ),
     GoRoute(
       path: pathJoinSpace,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathInviteCode,
       builder: (context, state) => state.widget(context),
     ),
   ];

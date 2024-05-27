@@ -25,7 +25,7 @@ class ApiSpaceService {
   Future<String> createSpace(String name) async {
     final doc = _spaceRef.doc();
     final adminId = _currentUser?.id ?? "";
-    final space = ApiSpace(id: doc.id, admin_id: adminId, name: name);
+    final space = ApiSpace(id: doc.id, admin_id: adminId, name: name, created_at: DateTime.now().millisecondsSinceEpoch);
     await doc.set(space);
     joinSpace(adminId, doc.id);
     return doc.id;

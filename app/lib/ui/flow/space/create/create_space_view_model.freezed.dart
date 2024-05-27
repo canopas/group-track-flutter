@@ -16,7 +16,8 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$CreateSpaceViewState {
-  bool get creating => throw _privateConstructorUsedError;
+  bool get allowSave => throw _privateConstructorUsedError;
+  bool get isCreating => throw _privateConstructorUsedError;
   String get selectedSpaceName => throw _privateConstructorUsedError;
   String get invitationCode => throw _privateConstructorUsedError;
   TextEditingController get spaceName => throw _privateConstructorUsedError;
@@ -33,7 +34,8 @@ abstract class $CreateSpaceViewStateCopyWith<$Res> {
       _$CreateSpaceViewStateCopyWithImpl<$Res, CreateSpaceViewState>;
   @useResult
   $Res call(
-      {bool creating,
+      {bool allowSave,
+      bool isCreating,
       String selectedSpaceName,
       String invitationCode,
       TextEditingController spaceName});
@@ -53,15 +55,20 @@ class _$CreateSpaceViewStateCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? creating = null,
+    Object? allowSave = null,
+    Object? isCreating = null,
     Object? selectedSpaceName = null,
     Object? invitationCode = null,
     Object? spaceName = null,
   }) {
     return _then(_value.copyWith(
-      creating: null == creating
-          ? _value.creating
-          : creating // ignore: cast_nullable_to_non_nullable
+      allowSave: null == allowSave
+          ? _value.allowSave
+          : allowSave // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isCreating: null == isCreating
+          ? _value.isCreating
+          : isCreating // ignore: cast_nullable_to_non_nullable
               as bool,
       selectedSpaceName: null == selectedSpaceName
           ? _value.selectedSpaceName
@@ -88,7 +95,8 @@ abstract class _$$CreateSpaceViewStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {bool creating,
+      {bool allowSave,
+      bool isCreating,
       String selectedSpaceName,
       String invitationCode,
       TextEditingController spaceName});
@@ -105,15 +113,20 @@ class __$$CreateSpaceViewStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? creating = null,
+    Object? allowSave = null,
+    Object? isCreating = null,
     Object? selectedSpaceName = null,
     Object? invitationCode = null,
     Object? spaceName = null,
   }) {
     return _then(_$CreateSpaceViewStateImpl(
-      creating: null == creating
-          ? _value.creating
-          : creating // ignore: cast_nullable_to_non_nullable
+      allowSave: null == allowSave
+          ? _value.allowSave
+          : allowSave // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isCreating: null == isCreating
+          ? _value.isCreating
+          : isCreating // ignore: cast_nullable_to_non_nullable
               as bool,
       selectedSpaceName: null == selectedSpaceName
           ? _value.selectedSpaceName
@@ -135,14 +148,18 @@ class __$$CreateSpaceViewStateImplCopyWithImpl<$Res>
 
 class _$CreateSpaceViewStateImpl implements _CreateSpaceViewState {
   const _$CreateSpaceViewStateImpl(
-      {this.creating = false,
+      {this.allowSave = false,
+      this.isCreating = false,
       this.selectedSpaceName = '',
       this.invitationCode = '',
       required this.spaceName});
 
   @override
   @JsonKey()
-  final bool creating;
+  final bool allowSave;
+  @override
+  @JsonKey()
+  final bool isCreating;
   @override
   @JsonKey()
   final String selectedSpaceName;
@@ -154,7 +171,7 @@ class _$CreateSpaceViewStateImpl implements _CreateSpaceViewState {
 
   @override
   String toString() {
-    return 'CreateSpaceViewState(creating: $creating, selectedSpaceName: $selectedSpaceName, invitationCode: $invitationCode, spaceName: $spaceName)';
+    return 'CreateSpaceViewState(allowSave: $allowSave, isCreating: $isCreating, selectedSpaceName: $selectedSpaceName, invitationCode: $invitationCode, spaceName: $spaceName)';
   }
 
   @override
@@ -162,8 +179,10 @@ class _$CreateSpaceViewStateImpl implements _CreateSpaceViewState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CreateSpaceViewStateImpl &&
-            (identical(other.creating, creating) ||
-                other.creating == creating) &&
+            (identical(other.allowSave, allowSave) ||
+                other.allowSave == allowSave) &&
+            (identical(other.isCreating, isCreating) ||
+                other.isCreating == isCreating) &&
             (identical(other.selectedSpaceName, selectedSpaceName) ||
                 other.selectedSpaceName == selectedSpaceName) &&
             (identical(other.invitationCode, invitationCode) ||
@@ -173,8 +192,8 @@ class _$CreateSpaceViewStateImpl implements _CreateSpaceViewState {
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, creating, selectedSpaceName, invitationCode, spaceName);
+  int get hashCode => Object.hash(runtimeType, allowSave, isCreating,
+      selectedSpaceName, invitationCode, spaceName);
 
   @JsonKey(ignore: true)
   @override
@@ -187,14 +206,17 @@ class _$CreateSpaceViewStateImpl implements _CreateSpaceViewState {
 
 abstract class _CreateSpaceViewState implements CreateSpaceViewState {
   const factory _CreateSpaceViewState(
-          {final bool creating,
+          {final bool allowSave,
+          final bool isCreating,
           final String selectedSpaceName,
           final String invitationCode,
           required final TextEditingController spaceName}) =
       _$CreateSpaceViewStateImpl;
 
   @override
-  bool get creating;
+  bool get allowSave;
+  @override
+  bool get isCreating;
   @override
   String get selectedSpaceName;
   @override
