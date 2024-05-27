@@ -55,7 +55,7 @@ dependencies:
   firebase_auth: ^4.14.1
   firebase_core: ^2.23.0
   google_sign_in: ^6.1.6
-
+  logger: ^2.3.0
   flutter_svg: ^2.0.9
   # picker
   canopas_country_picker: ^0.0.4

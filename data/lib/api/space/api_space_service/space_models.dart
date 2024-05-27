@@ -25,5 +25,5 @@ class ApiSpace with _$ApiSpace {
     return ApiSpace.fromJson(data!);
   }
 
-  Map<String, dynamic> toFirestore(ApiSpace space) => space.toJson();
+  Map<String, dynamic> toFireStore(ApiSpace space) => space.toJson();
 }

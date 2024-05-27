@@ -115,8 +115,13 @@ class AppRoute {
   static AppRoute get createSpace =>
       AppRoute(pathCreateSpace, builder: (_) => const CreateSpace());
 
-  static AppRoute get joinSpace =>
-      AppRoute(pathJoinSpace, builder: (_) => const JoinSpace());
+  static AppRoute joinSpace(
+      {required String invitationCode, required String spaceName}) {
+    return AppRoute(
+      pathJoinSpace,
+      builder: (_) => JoinSpace(invitationCode: invitationCode, spaceName: spaceName),
+    );
+  }
 
   static final routes = [
     GoRoute(
