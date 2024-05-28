@@ -2,7 +2,7 @@ import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../storage/app_preferences.dart';
+import '../storage/app_preferences.dart';
 
 final authServiceProvider = Provider((ref) => AuthService(
     ref.read(currentUserPod),

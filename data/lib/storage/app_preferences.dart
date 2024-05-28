@@ -38,3 +38,8 @@ final currentUserPod = Provider<ApiUser?>((ref) {
 
 final hasUserSession =
     Provider<bool>((ref) => ref.watch(currentUserPod) != null);
+
+final currentSpaceId = createPrefProvider<String?>(
+  prefKey: "current_space_id",
+  defaultValue: null,
+);

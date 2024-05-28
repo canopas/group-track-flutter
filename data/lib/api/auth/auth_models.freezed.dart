@@ -727,3 +727,251 @@ abstract class _ApiSession extends ApiSession {
   _$$ApiSessionImplCopyWith<_$ApiSessionImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+ApiUserInfo _$ApiUserInfoFromJson(Map<String, dynamic> json) {
+  return _ApiUserInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ApiUserInfo {
+  ApiUser get user => throw _privateConstructorUsedError;
+  ApiLocation? get location => throw _privateConstructorUsedError;
+  bool get isLocationEnabled => throw _privateConstructorUsedError;
+  ApiSession? get session => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ApiUserInfoCopyWith<ApiUserInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ApiUserInfoCopyWith<$Res> {
+  factory $ApiUserInfoCopyWith(
+          ApiUserInfo value, $Res Function(ApiUserInfo) then) =
+      _$ApiUserInfoCopyWithImpl<$Res, ApiUserInfo>;
+  @useResult
+  $Res call(
+      {ApiUser user,
+      ApiLocation? location,
+      bool isLocationEnabled,
+      ApiSession? session});
+
+  $ApiUserCopyWith<$Res> get user;
+  $ApiLocationCopyWith<$Res>? get location;
+  $ApiSessionCopyWith<$Res>? get session;
+}
+
+/// @nodoc
+class _$ApiUserInfoCopyWithImpl<$Res, $Val extends ApiUserInfo>
+    implements $ApiUserInfoCopyWith<$Res> {
+  _$ApiUserInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? user = null,
+    Object? location = freezed,
+    Object? isLocationEnabled = null,
+    Object? session = freezed,
+  }) {
+    return _then(_value.copyWith(
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as ApiUser,
+      location: freezed == location
+          ? _value.location
+          : location // ignore: cast_nullable_to_non_nullable
+              as ApiLocation?,
+      isLocationEnabled: null == isLocationEnabled
+          ? _value.isLocationEnabled
+          : isLocationEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      session: freezed == session
+          ? _value.session
+          : session // ignore: cast_nullable_to_non_nullable
+              as ApiSession?,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $ApiUserCopyWith<$Res> get user {
+    return $ApiUserCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $ApiLocationCopyWith<$Res>? get location {
+    if (_value.location == null) {
+      return null;
+    }
+
+    return $ApiLocationCopyWith<$Res>(_value.location!, (value) {
+      return _then(_value.copyWith(location: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $ApiSessionCopyWith<$Res>? get session {
+    if (_value.session == null) {
+      return null;
+    }
+
+    return $ApiSessionCopyWith<$Res>(_value.session!, (value) {
+      return _then(_value.copyWith(session: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$ApiUserInfoImplCopyWith<$Res>
+    implements $ApiUserInfoCopyWith<$Res> {
+  factory _$$ApiUserInfoImplCopyWith(
+          _$ApiUserInfoImpl value, $Res Function(_$ApiUserInfoImpl) then) =
+      __$$ApiUserInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {ApiUser user,
+      ApiLocation? location,
+      bool isLocationEnabled,
+      ApiSession? session});
+
+  @override
+  $ApiUserCopyWith<$Res> get user;
+  @override
+  $ApiLocationCopyWith<$Res>? get location;
+  @override
+  $ApiSessionCopyWith<$Res>? get session;
+}
+
+/// @nodoc
+class __$$ApiUserInfoImplCopyWithImpl<$Res>
+    extends _$ApiUserInfoCopyWithImpl<$Res, _$ApiUserInfoImpl>
+    implements _$$ApiUserInfoImplCopyWith<$Res> {
+  __$$ApiUserInfoImplCopyWithImpl(
+      _$ApiUserInfoImpl _value, $Res Function(_$ApiUserInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? user = null,
+    Object? location = freezed,
+    Object? isLocationEnabled = null,
+    Object? session = freezed,
+  }) {
+    return _then(_$ApiUserInfoImpl(
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as ApiUser,
+      location: freezed == location
+          ? _value.location
+          : location // ignore: cast_nullable_to_non_nullable
+              as ApiLocation?,
+      isLocationEnabled: null == isLocationEnabled
+          ? _value.isLocationEnabled
+          : isLocationEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      session: freezed == session
+          ? _value.session
+          : session // ignore: cast_nullable_to_non_nullable
+              as ApiSession?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ApiUserInfoImpl extends _ApiUserInfo {
+  const _$ApiUserInfoImpl(
+      {required this.user,
+      this.location,
+      required this.isLocationEnabled,
+      this.session})
+      : super._();
+
+  factory _$ApiUserInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ApiUserInfoImplFromJson(json);
+
+  @override
+  final ApiUser user;
+  @override
+  final ApiLocation? location;
+  @override
+  final bool isLocationEnabled;
+  @override
+  final ApiSession? session;
+
+  @override
+  String toString() {
+    return 'ApiUserInfo(user: $user, location: $location, isLocationEnabled: $isLocationEnabled, session: $session)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ApiUserInfoImpl &&
+            (identical(other.user, user) || other.user == user) &&
+            (identical(other.location, location) ||
+                other.location == location) &&
+            (identical(other.isLocationEnabled, isLocationEnabled) ||
+                other.isLocationEnabled == isLocationEnabled) &&
+            (identical(other.session, session) || other.session == session));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, user, location, isLocationEnabled, session);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ApiUserInfoImplCopyWith<_$ApiUserInfoImpl> get copyWith =>
+      __$$ApiUserInfoImplCopyWithImpl<_$ApiUserInfoImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ApiUserInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ApiUserInfo extends ApiUserInfo {
+  const factory _ApiUserInfo(
+      {required final ApiUser user,
+      final ApiLocation? location,
+      required final bool isLocationEnabled,
+      final ApiSession? session}) = _$ApiUserInfoImpl;
+  const _ApiUserInfo._() : super._();
+
+  factory _ApiUserInfo.fromJson(Map<String, dynamic> json) =
+      _$ApiUserInfoImpl.fromJson;
+
+  @override
+  ApiUser get user;
+  @override
+  ApiLocation? get location;
+  @override
+  bool get isLocationEnabled;
+  @override
+  ApiSession? get session;
+  @override
+  @JsonKey(ignore: true)
+  _$$ApiUserInfoImplCopyWith<_$ApiUserInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
