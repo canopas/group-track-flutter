@@ -97,15 +97,12 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
       ));
 
   void onSignInSuccess() async {
-    print("onSignInSuccess");
     final user = ref.read(currentUserPod);
-    print("onSignInSuccess user $user");
 
     if (mounted && (user?.first_name == null || user!.first_name!.isEmpty)) {
       await AppRoute.pickName.push(context);
     }
 
-       print("onSignInSuccess go home");
     if (mounted) AppRoute.home.go(context);
   }
 

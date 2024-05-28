@@ -26,7 +26,43 @@
 
   "onboard_pick_name_title":"What's your name?",
   "onboard_pick_name_hint_first_name":"First Name",
-  "onboard_pick_name_hint_last_name":"Last Name"
+  "onboard_pick_name_hint_last_name":"Last Name",
 
+  "@_HOME": {
+  },
+  "home_create_space_title": "Create new",
+  "home_join_space_title": "Join space",
+
+  "create_space_give_your_space_name_title": "Give your space name",
+  "create_space_tip_text": "Tips: You create dedicated spaces for work, family, friends, and more.",
+  "create_space_name_title": "Space name",
+  "create_space_suggestion_family_text": "Family",
+  "create_space_suggestion_friends_text": "Friends",
+  "create_space_suggestion_special_someone_text": "Special someone",
+  "create_space_suggestion_siblings_text": "Siblings",
+  "create_space_suggestion_office_squad_text": "Office squad",
+  "create_space_suggestion_colleagues_text": "Colleagues",
+  "create_space_suggestion_team_unity_text": "Team Unity",
+  "create_space_suggestion_my_squad_text": "My Squad",
+  "create_space_suggestion_heart_mates_text": "Heart mates",
+  "create_space_suggestion_blood_bond_text": "Blood bond",
+  "create_space_some_suggestion_title": "Some suggestion...",
+
+  "join_space_title": "Join space",
+  "join_space_invite_code_title": "Enter the invite code",
+  "join_space_get_code_from_space_text": "Get the code from the space creator to join.",
+
+  "invite_code_title": "Invite code",
+  "invite_code_invite_member_title": "Invite members to the {spaceName}",
+  "@invite_code_invite_member_title": {
+    "placeholders": {
+      "spaceName": {
+        "type": "String"
+      }
+    }
+  },
+  "invite_code_invite_member_subtitle": "Share this invite code with your trusted ones in your own style. Connecting is as flexible as you are.",
+  "invite_code_active_code_text": "This code will be active for 2 days.",
+  "invite_code_share_code_title": "Share code"
 
 }

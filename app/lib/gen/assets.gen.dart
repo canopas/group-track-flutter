@@ -16,15 +16,35 @@ class $AssetsImagesGen {
   AssetGenImage get appLogo =>
       const AssetGenImage('assets/images/app_logo.png');
 
+  /// File path: assets/images/ic_add_member.svg
+  String get icAddMember => 'assets/images/ic_add_member.svg';
+
   /// File path: assets/images/ic_google_logo.svg
   String get icGoogleLogo => 'assets/images/ic_google_logo.svg';
+
+  /// File path: assets/images/ic_location.svg
+  String get icLocation => 'assets/images/ic_location.svg';
+
+  /// File path: assets/images/ic_message.svg
+  String get icMessage => 'assets/images/ic_message.svg';
+
+  /// File path: assets/images/ic_setting.svg
+  String get icSetting => 'assets/images/ic_setting.svg';
 
   /// File path: assets/images/intro_bg.jpg
   AssetGenImage get introBg =>
       const AssetGenImage('assets/images/intro_bg.jpg');
 
   /// List of all assets
-  List<dynamic> get values => [appLogo, icGoogleLogo, introBg];
+  List<dynamic> get values => [
+        appLogo,
+        icAddMember,
+        icGoogleLogo,
+        icLocation,
+        icMessage,
+        icSetting,
+        introBg
+      ];
 }
 
 class Assets {

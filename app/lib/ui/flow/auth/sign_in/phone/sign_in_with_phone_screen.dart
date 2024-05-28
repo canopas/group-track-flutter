@@ -65,7 +65,7 @@ class _SignInWithPhoneScreenState extends ConsumerState<SignInWithPhoneScreen> {
                     horizontal: 16,
                   ),
                   children: [
-                    AppLogo(),
+                    const AppLogo(),
                     const SizedBox(height: 80),
                     Text(
                       context.l10n.sign_in_with_phone_enter_phone_number_title,

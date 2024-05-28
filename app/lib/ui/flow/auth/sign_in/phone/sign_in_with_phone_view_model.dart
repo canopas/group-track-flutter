@@ -1,6 +1,6 @@
 import 'package:canopas_country_picker/canopas_country_picker.dart';
 import 'package:data/api/auth/auth_models.dart';
-import 'package:data/service/auth/auth_service.dart';
+import 'package:data/service/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -66,3 +66,23 @@ Map<String, dynamic> _$$ApiSessionImplToJson(_$ApiSessionImpl instance) =>
       'battery_status': instance.battery_status,
       'app_version': instance.app_version,
     };
+
+_$ApiUserInfoImpl _$$ApiUserInfoImplFromJson(Map<String, dynamic> json) =>
+    _$ApiUserInfoImpl(
+      user: ApiUser.fromJson(json['user'] as Map<String, dynamic>),
+      location: json['location'] == null
+          ? null
+          : ApiLocation.fromJson(json['location'] as Map<String, dynamic>),
+      isLocationEnabled: json['isLocationEnabled'] as bool,
+      session: json['session'] == null
+          ? null
+          : ApiSession.fromJson(json['session'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$ApiUserInfoImplToJson(_$ApiUserInfoImpl instance) =>
+    <String, dynamic>{
+      'user': instance.user,
+      'location': instance.location,
+      'isLocationEnabled': instance.isLocationEnabled,
+      'session': instance.session,
+    };

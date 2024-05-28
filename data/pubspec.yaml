@@ -19,7 +19,8 @@ dependencies:
   google_sign_in: ^6.1.6
   device_info_plus: ^9.1.2
   flutter_timezone: ^1.0.8
-  package_info_plus: ^5.0.1
+  package_info_plus: ^8.0.0
+  uuid: ^4.4.0
 
 dev_dependencies:
   flutter_test:
@@ -30,6 +31,8 @@ dev_dependencies:
   freezed: ^2.4.7
   json_serializable: ^6.7.1
 
+  # logging
+  logger: ^2.3.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
