@@ -151,20 +151,19 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
             notifier.updateSelectedSpaceName(element);
           },
           child: Chip(
-            label: Text(element,
-                style: AppTextStyle.body2.copyWith(
-                    color: state.selectedSpaceName == element
-                        ? context.colorScheme.onPrimary
-                        : context.colorScheme.textSecondary)),
+            label: Text(
+              element,
+              style: AppTextStyle.body2.copyWith(
+                  color: context.colorScheme.textSecondary
+              ),
+            ),
             labelPadding: const EdgeInsets.symmetric(
               horizontal: 16,
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
-            backgroundColor: state.selectedSpaceName == element
-                ? context.colorScheme.primary
-                : context.colorScheme.containerLowOnSurface,
+            backgroundColor: context.colorScheme.containerLowOnSurface,
             side: const BorderSide(color: Colors.transparent),
           ),
         );

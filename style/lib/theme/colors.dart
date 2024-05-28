@@ -10,16 +10,15 @@ const secondaryVariantLightColor = Color(0x5234495E);
 const secondaryDarkColor = Color(0xFFCEE5FF);
 const secondaryVariantDarkColor = Color(0x66CEE5FF);
 
-const tertiaryDarkColor = Color(0xFF58633A);
-const tertiaryLightColor = Color(0xFFDCE8B4);
+const containerHighLightColor = Color(0x1E2884B2);
+const containerNormalLightColor = Color(0x0F2884B2);
+const containerLowLightColor = Color(0x0A2884B2);
+const containerLightColor = Color(0x0A61A4C6);
 
-const containerHighLightColor = Color(0x2934495E);
-const containerNormalLightColor = Color(0x1434495E);
-const containerLowLightColor = Color(0x0A34495E);
-
-const containerHighDarkColor = Color(0x3DCEE5FF);
-const containerNormalDarkColor = Color(0x29CEE5FF);
-const containerLowDarkColor = Color(0x14CEE5FF);
+const containerHighDarkColor = Color(0x3DABCFE1);
+const containerNormalDarkColor = Color(0x1EABCFE1);
+const containerLowDarkColor = Color(0x14ABCFE1);
+const containerDarkColor = Color(0x0AABCFE1);
 
 const textPrimaryLightColor = Color(0xDE000000);
 const textSecondaryLightColor = Color(0x99000000);
@@ -48,7 +47,6 @@ final ThemeData materialThemeDataLight = _materialLightTheme.copyWith(
   colorScheme: _materialLightTheme.colorScheme.copyWith(
     primary: primaryColor,
     secondary: secondaryLightColor,
-    tertiary: tertiaryLightColor,
     surface: surfaceLightColor,
     onPrimary: textPrimaryDarkColor,
     onSecondary: textSecondaryDarkColor,
@@ -71,7 +69,6 @@ final ThemeData materialThemeDataDark = _materialDarkTheme.copyWith(
   colorScheme: _materialDarkTheme.colorScheme.copyWith(
     primary: primaryColor,
     secondary: secondaryDarkColor,
-    tertiary: tertiaryDarkColor,
     surface: surfaceDarkColor,
     onPrimary: textPrimaryDarkColor,
     onSecondary: textSecondaryLightColor,
@@ -92,8 +89,6 @@ class AppColorScheme {
   final Color primary;
   final Color secondary;
   final Color secondaryVariant;
-  final Color tertiary;
-  final Color tertiaryVariant;
   final Color surface;
   final Color outline;
   final Color textPrimary;
@@ -109,6 +104,7 @@ class AppColorScheme {
   final Color containerHigh;
   final Color containerNormal;
   final Color containerLow;
+  final Color container;
   final Color positive;
   final Color alert;
   final Color warning;
@@ -123,8 +119,6 @@ class AppColorScheme {
     required this.primary,
     required this.secondary,
     required this.secondaryVariant,
-    required this.tertiary,
-    required this.tertiaryVariant,
     required this.surface,
     required this.outline,
     required this.textPrimary,
@@ -140,6 +134,7 @@ class AppColorScheme {
     required this.containerHigh,
     required this.containerNormal,
     required this.containerLow,
+    required this.container,
     required this.positive,
     required this.alert,
     required this.warning,
@@ -163,8 +158,6 @@ final appColorSchemeLight = AppColorScheme(
   primary: primaryColor,
   secondary: secondaryLightColor,
   secondaryVariant: secondaryVariantLightColor,
-  tertiary: tertiaryDarkColor,
-  tertiaryVariant: tertiaryLightColor,
   surface: surfaceLightColor,
   outline: outlineLightColor,
   textPrimary: textPrimaryLightColor,
@@ -180,6 +173,7 @@ final appColorSchemeLight = AppColorScheme(
   containerHigh: containerHighLightColor,
   containerNormal: containerNormalLightColor,
   containerLow: containerLowLightColor,
+  container: containerLightColor,
   positive: awarenessPositiveColor,
   alert: awarenessAlertColor,
   warning: awarenessWarningColor,
@@ -195,8 +189,6 @@ final appColorSchemeDark = AppColorScheme(
   primary: primaryColor,
   secondary: secondaryDarkColor,
   secondaryVariant: secondaryVariantDarkColor,
-  tertiary: tertiaryLightColor,
-  tertiaryVariant: tertiaryDarkColor,
   surface: surfaceDarkColor,
   outline: outlineDarkColor,
   textPrimary: textPrimaryDarkColor,
@@ -212,6 +204,7 @@ final appColorSchemeDark = AppColorScheme(
   containerHigh: containerHighDarkColor,
   containerNormal: containerNormalDarkColor,
   containerLow: containerLowDarkColor,
+  container: containerDarkColor,
   positive: awarenessPositiveColor,
   alert: awarenessAlertColor,
   warning: awarenessWarningColor,
