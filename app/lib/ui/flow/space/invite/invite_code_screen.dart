@@ -8,8 +8,6 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../app_route.dart';
-
 class InviteCode extends StatefulWidget {
   final String spaceName;
   final String inviteCode;
@@ -27,14 +25,9 @@ class InviteCode extends StatefulWidget {
 class _InviteCodeState extends State<InviteCode> {
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (_) {
-        AppRoute.popTo(context, AppRoute.home.path);
-      },
-      child: AppPage(
-        title: context.l10n.invite_code_title,
-        body: _body(context),
-      ),
+    return AppPage(
+      title: context.l10n.invite_code_title,
+      body: _body(context),
     );
   }
 

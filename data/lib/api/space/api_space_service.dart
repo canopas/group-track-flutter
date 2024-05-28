@@ -63,7 +63,7 @@ class ApiSpaceService {
       user_id: userId,
       role: role,
       location_enabled: true,
-      id: '',
+      id: _spaceRef.doc().id,
     );
 
     await spaceMemberRef(spaceId).doc(userId).set(member.toJson());

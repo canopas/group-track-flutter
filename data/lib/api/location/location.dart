@@ -30,13 +30,3 @@ class ApiLocation with _$ApiLocation {
 
   Map<String, dynamic> toFireStore(ApiLocation space) => space.toJson();
 }
-
-// @JsonEnum(valueField: "value")
-// enum UserState {
-//   steady(0),
-//   moving(1),
-//
-//   final int value;
-//
-//   const UserState(this.value);
-// }

@@ -25,7 +25,7 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
         (_, next) {
       if (next.isNotEmpty) {
         AppRoute.inviteCode(
-            code: next, spaceName: state.spaceName.text).push(context);
+            code: next, spaceName: state.spaceName.text).pushReplacement(context);
       }
     });
   }
@@ -148,7 +148,7 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
       children: suggestions.map((element) {
         return OnTapScale(
           onTap: () {
-            notifier.updateSelectedNudgeMessage(element);
+            notifier.updateSelectedSpaceName(element);
           },
           child: Chip(
             label: Text(element,

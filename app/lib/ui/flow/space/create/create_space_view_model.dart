@@ -35,7 +35,7 @@ class CreateSpaceViewNotifier extends StateNotifier<CreateSpaceViewState> {
     }
   }
 
-  void updateSelectedNudgeMessage(String message) {
+  void updateSelectedSpaceName(String message) {
     if (message != state.selectedSpaceName) {
       state = state.copyWith(
         selectedSpaceName: message,
