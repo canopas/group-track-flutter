@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data/api/location/location.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_models.freezed.dart';
@@ -72,4 +73,30 @@ class ApiSession with _$ApiSession {
   String toJsonString() => jsonEncode(toJson());
 
   Map<String, dynamic> toFireStore(ApiSession instance) => instance.toJson();
+}
+
+@freezed
+class ApiUserInfo with _$ApiUserInfo {
+  const ApiUserInfo._();
+
+  const factory ApiUserInfo({
+    required ApiUser user,
+    ApiLocation? location,
+    required bool isLocationEnabled,
+    ApiSession? session,
+  }) = _ApiUserInfo;
+
+  factory ApiUserInfo.fromJson(Map<String, dynamic> json) =>
+      _$ApiUserInfoFromJson(json);
+
+  factory ApiUserInfo.fromFireStore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    Map<String, dynamic>? data = snapshot.data();
+    return ApiUserInfo.fromJson(data!);
+  }
+
+  String toJsonString() => jsonEncode(toJson());
+
+  Map<String, dynamic> toFireStore(ApiUserInfo instance) => instance.toJson();
 }

@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/network/client.dart';
-import 'package:data/service/device/device_service.dart';
+import 'package:data/service/device_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'auth_models.dart';
 
 final apiUserServiceProvider = StateProvider((ref) => ApiUserService(
@@ -19,7 +18,7 @@ class ApiUserService {
           fromFirestore: ApiUser.fromFireStore,
           toFirestore: (user, options) => user.toJson());
 
-  CollectionReference sessionRef(String userId) => _userRef
+  CollectionReference _sessionRef(String userId) => _userRef
       .doc(userId)
       .collection("user_sessions")
       .withConverter<ApiSession>(
@@ -39,7 +38,7 @@ class ApiUserService {
     final bool isExists = await getUser(uid) != null;
 
     if (isExists) {
-      final sessionDocRef = sessionRef(uid!).doc();
+      final sessionDocRef = _sessionRef(uid!).doc();
       final ApiSession session = ApiSession(
         id: sessionDocRef.id,
         user_id: uid,
@@ -67,7 +66,7 @@ class ApiUserService {
       );
 
       await _userRef.doc(uid).set(user);
-      final sessionDocRef = sessionRef(uid).doc();
+      final sessionDocRef = _sessionRef(uid).doc();
       final ApiSession session = ApiSession(
         id: sessionDocRef.id,
         user_id: uid,
@@ -94,7 +93,7 @@ class ApiUserService {
 
   Future<void> deactivateOldSessions(String userId) async {
     final querySnapshot =
-        await sessionRef(userId).where("session_active", isEqualTo: true).get();
+    await _sessionRef(userId).where("session_active", isEqualTo: true).get();
     for (var doc in querySnapshot.docs) {
       await doc.reference.update({"session_active": false});
     }
@@ -102,5 +101,43 @@ class ApiUserService {
 
   Future<void> updateUser(ApiUser user) async {
     await _userRef.doc(user.id).set(user);
+  }
+
+  Future<void> deleteUser(String userId) async {
+    await _userRef.doc(userId).delete();
+  }
+
+  Future<void> registerFcmToken(String userId, String token) async {
+    await _userRef.doc(userId).update({"fcm_token": token});
+  }
+
+  Future<void> addSpaceId(String userId, String spaceId) async {
+    await _userRef.doc(userId).update({
+      "space_ids": FieldValue.arrayUnion([spaceId])
+    });
+  }
+
+  Future<void> updateBatteryPct(String userId, String sessionId, double batteryPct) async {
+    await _sessionRef(userId).doc(sessionId).update({
+      "battery_pct": batteryPct,
+      "updated_at": FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> updateSessionState(String id, String sessionId, int state) async {
+    await _sessionRef(id).doc(sessionId).update({
+      "user_state": state,
+      "updated_at": FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<ApiSession?> getUserSession(String userId) async {
+    final querySnapshot = await _sessionRef(userId)
+        .where("session_active", isEqualTo: true)
+        .get();
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.data() as ApiSession;
+    }
+    return null;
   }
 }

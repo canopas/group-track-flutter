@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:data/api/auth/auth_models.dart';
-import 'package:data/service/auth/auth_service.dart';
+import 'package:data/log/logger.dart';
+import 'package:data/service/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -26,7 +27,7 @@ class PhoneVerificationViewNotifier
   late Timer timer;
 
   PhoneVerificationViewNotifier(this.authService, this.firebaseAuth)
-      : super(PhoneVerificationState()) {
+      : super(const PhoneVerificationState()) {
     updateResendCodeTimerDuration();
   }
 
@@ -115,9 +116,11 @@ class PhoneVerificationViewNotifier
         isNewUser: isNewUser,
       );
     } catch (error, stackTrace) {
-      print("XXX error");
-      print(error);
-      print(stackTrace);
+      logger.e(
+        'PhoneVerificationViewNotifier: error while verify otp',
+        error: error,
+        stackTrace: stackTrace,
+      );
       state = state.copyWith(verifying: false, error: error);
     }
   }

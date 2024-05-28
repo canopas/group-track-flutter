@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../../storage/app_preferences.dart';
+import '../storage/app_preferences.dart';
 
 final deviceServiceProvider =
     Provider((ref) => DeviceService(deviceId: ref.read(deviceIdPod)));

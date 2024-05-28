@@ -21,7 +21,7 @@ class SignInWithPhoneCountryPicker extends ConsumerWidget {
     return Row(
       children: [
         Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: OnTapScale(
               onTap: () async {
                 final code = await showCountryCodePickerSheet(
