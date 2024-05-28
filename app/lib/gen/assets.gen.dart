@@ -46,16 +46,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<dynamic> get values =>
-      [appLogo, icGoogleLogo, intro1, intro2, intro3, introBg];
-  List<dynamic> get values => [
-        appLogo,
-        icAddMember,
-        icGoogleLogo,
-        icLocation,
-        icMessage,
-        icSetting,
-        introBg
-      ];
+      [appLogo, icAddMember, icLocation, icMessage, icSetting, icGoogleLogo, intro1, intro2, intro3, introBg];
 }
 
 class Assets {
