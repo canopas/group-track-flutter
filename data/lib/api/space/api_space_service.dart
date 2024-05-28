@@ -3,6 +3,7 @@ import 'package:data/api/network/client.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 
 import '../auth/api_user_service.dart';
 import '../auth/auth_models.dart';
@@ -63,7 +64,7 @@ class ApiSpaceService {
       user_id: userId,
       role: role,
       location_enabled: true,
-      id: _spaceRef.doc().id,
+      id: const Uuid().v4(),
     );
 
     await spaceMemberRef(spaceId).doc(userId).set(member.toJson());

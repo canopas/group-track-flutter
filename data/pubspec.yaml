@@ -20,6 +20,7 @@ dependencies:
   device_info_plus: ^9.1.2
   flutter_timezone: ^1.0.8
   package_info_plus: ^8.0.0
+  uuid: ^4.4.0
 
 dev_dependencies:
   flutter_test:
