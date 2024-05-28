@@ -19,12 +19,22 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_google_logo.svg
   String get icGoogleLogo => 'assets/images/ic_google_logo.svg';
 
+  /// File path: assets/images/intro_1.svg
+  String get intro1 => 'assets/images/intro_1.svg';
+
+  /// File path: assets/images/intro_2.svg
+  String get intro2 => 'assets/images/intro_2.svg';
+
+  /// File path: assets/images/intro_3.svg
+  String get intro3 => 'assets/images/intro_3.svg';
+
   /// File path: assets/images/intro_bg.jpg
   AssetGenImage get introBg =>
       const AssetGenImage('assets/images/intro_bg.jpg');
 
   /// List of all assets
-  List<dynamic> get values => [appLogo, icGoogleLogo, introBg];
+  List<dynamic> get values =>
+      [appLogo, icGoogleLogo, intro1, intro2, intro3, introBg];
 }
 
 class Assets {
