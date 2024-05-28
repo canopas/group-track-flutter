@@ -139,7 +139,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   expand
                       ? Icons.keyboard_arrow_down_rounded
                       : Icons.keyboard_arrow_up_rounded,
-                  color: context.colorScheme.primary,
+                  color: context.colorScheme.textPrimary,
                 )
               ],
             ),
@@ -164,7 +164,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
           width: 14,
           icon,
           colorFilter: ColorFilter.mode(
-            color ?? context.colorScheme.primary,
+            color ?? context.colorScheme.textPrimary,
             BlendMode.srcATop,
           ),
         ),

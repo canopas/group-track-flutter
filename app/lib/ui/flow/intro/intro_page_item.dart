@@ -26,12 +26,12 @@ class IntroPageItem {
       ),
       IntroPageItem(
         title: context.l10n.intro_2_title,
-        subtitle: context.l10n.intro_1_subTitle,
+        subtitle: context.l10n.intro_2_subTitle,
         image: Assets.images.intro2
       ),
       IntroPageItem(
         title: context.l10n.intro_3_title,
-        subtitle: context.l10n.intro_1_subTitle,
+        subtitle: context.l10n.intro_3_subTitle,
         image: Assets.images.intro3
       ),
     ];
@@ -45,29 +45,27 @@ class IntroPageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const SizedBox(height: 40),
           Text(
             item.title,
             style: AppTextStyle.header1
                 .copyWith(color: context.colorScheme.textPrimary),
           ),
-          AspectRatio(
-            aspectRatio: 1.3,
-            child: SvgPicture.asset(item.image, width: double.infinity),
-          ),
-          const SizedBox(height: 40),
-          const SizedBox(height: 8),
+          const SizedBox(height: 24),
+          SvgPicture.asset(item.image),
+          const SizedBox(height: 16),
           Text(
             item.subtitle,
             textAlign: TextAlign.center,
             style: AppTextStyle.subtitle1
                 .copyWith(color: context.colorScheme.textSecondary),
           ),
-          const Spacer(flex: 5),
         ],
       ),
     );
