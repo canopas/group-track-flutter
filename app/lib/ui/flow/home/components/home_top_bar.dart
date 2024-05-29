@@ -317,7 +317,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
               const SizedBox(width: 16),
               Expanded(
                 child: PrimaryButton(context.l10n.home_join_space_title, onPressed: () {
-                  // AppRoute.joinSpace.push(context);
+                  AppRoute.joinSpace.push(context);
                 }),
               ),
             ],
