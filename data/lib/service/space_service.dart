@@ -2,7 +2,6 @@ import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/api_space_service.dart';
 import 'package:data/api/space/space_models.dart';
-import 'package:data/log/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/auth/auth_models.dart';
@@ -123,21 +122,13 @@ class SpaceService {
   }
 
   Future<List<ApiSpace?>> getUserSpaces(String userId) async {
-    try {
-      final spaceMembers = await spaceService.getSpaceMemberByUserId(userId);
-      final spaces = await Future.wait(spaceMembers.map((spaceMember) async {
-        final spaceId = spaceMember.space_id;
-        final space = await spaceService.getSpace(spaceId);
-        return space;
-      }).toList());
-      return spaces;
-    } catch (e) {
-      logger.e(
-        'SpaceService: error while get user space',
-        error: e,
-      );
-      return [];
-    }
+    final spaceMembers = await spaceService.getSpaceMemberByUserId(userId);
+    final spaces = await Future.wait(spaceMembers.map((spaceMember) async {
+      final spaceId = spaceMember.space_id;
+      final space = await spaceService.getSpace(spaceId);
+      return space;
+    }).toList());
+    return spaces;
   }
 
   Future<ApiSpace?> getSpace(String spaceId) async {

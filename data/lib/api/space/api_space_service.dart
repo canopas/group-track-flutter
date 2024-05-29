@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/network/client.dart';
 import 'package:data/api/space/space_models.dart';
-import 'package:data/log/logger.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -48,24 +47,11 @@ class ApiSpaceService {
   }
 
   Future<ApiSpace?> getSpace(String spaceId) async {
-    try {
-      DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore.instance
-          .collection('spaces')
-          .doc(spaceId)
-          .get();
-
-      if (doc.exists) {
-        return ApiSpace.fromFireStore(doc, null);
-      } else {
-        return null;
-      }
-    } catch (error) {
-      logger.e(
-        'ApiSpaceService: error while get space',
-        error: error,
-      );
-      return null;
+    final docSnapshot = await _spaceRef.doc(spaceId).get();
+    if (docSnapshot.exists) {
+      return docSnapshot.data() as ApiSpace;
     }
+    return null;
   }
 
   Future<void> joinSpace(String spaceId,
