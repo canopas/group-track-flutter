@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/network/client.dart';
 import 'package:data/api/space/space_models.dart';
+import 'package:data/log/logger.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -42,17 +43,29 @@ class ApiSpaceService {
         name: name,
         created_at: DateTime.now().millisecondsSinceEpoch);
     await doc.set(space);
-    joinSpace(adminId);
+    joinSpace(doc.id);
     return doc.id;
   }
 
   Future<ApiSpace?> getSpace(String spaceId) async {
-    final docSnapshot = await _spaceRef.doc(spaceId).get();
-    if (docSnapshot.exists) {
-      return docSnapshot.data() as ApiSpace;
-    }
+    try {
+      DocumentSnapshot<Map<String, dynamic>> doc = await FirebaseFirestore.instance
+          .collection('spaces')
+          .doc(spaceId)
+          .get();
 
-    return null;
+      if (doc.exists) {
+        return ApiSpace.fromFireStore(doc, null);
+      } else {
+        return null;
+      }
+    } catch (error) {
+      logger.e(
+        'ApiSpaceService: error while get space',
+        error: error,
+      );
+      return null;
+    }
   }
 
   Future<void> joinSpace(String spaceId,
@@ -65,6 +78,7 @@ class ApiSpaceService {
       role: role,
       location_enabled: true,
       id: const Uuid().v4(),
+      created_at: DateTime.now().millisecondsSinceEpoch,
     );
 
     await spaceMemberRef(spaceId).doc(userId).set(member.toJson());
@@ -79,18 +93,18 @@ class ApiSpaceService {
 
     final querySnapshot = await collectionRef.get();
     return querySnapshot.docs.map((doc) {
-      return ApiSpaceMember.fromFireStore(doc, null);
+      return ApiSpaceMember.fromJson(doc.data());
     }).toList();
   }
 
   Future<List<ApiSpaceMember>> getSpaceMemberByUserId(String userId) async {
-    final querySnapshot = await FirebaseFirestore.instance
+    final querySnapshot = await _spaceRef.firestore
         .collectionGroup('space_members')
         .where("user_id", isEqualTo: userId)
         .get();
 
     return querySnapshot.docs
-        .map((doc) => ApiSpaceMember.fromFireStore(doc, null))
+        .map((doc) => ApiSpaceMember.fromJson(doc.data()))
         .toList();
   }
 

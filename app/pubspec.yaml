@@ -49,6 +49,7 @@ dependencies:
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
   share_plus: ^9.0.0
+  visibility_detector: ^0.4.0+2
 
   # auth
   firebase_auth: ^4.14.1

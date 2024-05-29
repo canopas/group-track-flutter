@@ -42,6 +42,10 @@ class ApiUser with _$ApiUser {
   String toJsonString() => jsonEncode(toJson());
 
   Map<String, dynamic> toFireStore(ApiUser instance) => instance.toJson();
+
+  String get fullName {
+    return '$first_name $last_name';
+  }
 }
 
 @freezed

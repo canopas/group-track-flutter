@@ -2,6 +2,7 @@ import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/api_space_service.dart';
 import 'package:data/api/space/space_models.dart';
+import 'package:data/log/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/auth/auth_models.dart';
@@ -53,23 +54,31 @@ class SpaceService {
     final userId = currentUser?.id ?? '';
     final spaces = await getUserSpaces(userId);
     if (spaces.isEmpty) return [];
-    final flows = spaces.map((space) async {
+
+    final flows = spaces
+        .where((space) => space != null)
+        .map((space) async {
       final members = await spaceService.getMembersBySpaceId(space!.id);
-      return SpaceInfo(
-        space: space,
-        members: members
-            .map((member) async {
+
+      final memberInfoList = await Future.wait(
+        members.map((member) async {
           final user = await userService.getUser(member.user_id);
           return user != null
               ? ApiUserInfo(user: user, isLocationEnabled: member.location_enabled)
               : null;
-        })
-            .whereType<ApiUserInfo>()
-            .toList(),
+        }),
       );
-    });
+
+      final nonNullMembers = memberInfoList.whereType<ApiUserInfo>().toList();
+
+      return SpaceInfo(
+        space: space,
+        members: nonNullMembers,
+      );
+    }).toList();
+
     final spaceInfo = await Future.wait(flows);
-    return spaceInfo.toList();
+    return spaceInfo;
   }
 
   Future<SpaceInfo?> getCurrentSpaceInfo() async {
@@ -114,11 +123,21 @@ class SpaceService {
   }
 
   Future<List<ApiSpace?>> getUserSpaces(String userId) async {
-    final spaceMembers = await spaceService.getSpaceMemberByUserId(userId);
-    final spaceIds = spaceMembers.map((member) => member.space_id).toSet();
-    final spaceList =
-        await Future.wait(spaceIds.map((spaceId) => getSpace(spaceId)));
-    return spaceList.toList();
+    try {
+      final spaceMembers = await spaceService.getSpaceMemberByUserId(userId);
+      final spaces = await Future.wait(spaceMembers.map((spaceMember) async {
+        final spaceId = spaceMember.space_id;
+        final space = await spaceService.getSpace(spaceId);
+        return space;
+      }).toList());
+      return spaces;
+    } catch (e) {
+      logger.e(
+        'SpaceService: error while get user space',
+        error: e,
+      );
+      return [];
+    }
   }
 
   Future<ApiSpace?> getSpace(String spaceId) async {
