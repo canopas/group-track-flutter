@@ -181,7 +181,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
           width: 14,
           icon,
           colorFilter: ColorFilter.mode(
-            color ?? context.colorScheme.primary,
+            color ?? context.colorScheme.textPrimary,
             BlendMode.srcATop,
           ),
         ),

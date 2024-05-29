@@ -6,19 +6,21 @@
   },
   "common_get_started": "Get Started",
   "common_next": "Next",
-  "common_verify": "Verify",
-  "commonMembers": "{memberCount} {memberCount, plural, =1{Member} other{Members}}",
+  "common_verify": "Verify","commonMembers": "{memberCount} {memberCount, plural, =1{Member} other{Members}}",
   "@commonMembers": {
     "placeholders": {
       "memberCount": {}
     }
   },
 
-  "@_INTRO": {
-  },
-  "intro_1_title": "Share your location seamlessly, connecting with just a click.",
-  "intro_2_title": "Stay in the know with instant alerts – whether loved ones enter or leave.",
-  "intro_3_title": "Simplify your connections and insights – explore drive reports, location history effortlessly.",
+   "@_INTRO":{
+   },
+  "intro_1_title": "Live location",
+  "intro_2_title": "Receive alerts",
+  "intro_3_title": "Location history",
+   "intro_1_subTitle": "Share your location seamlessly, connecting with just a click.",
+   "intro_2_subTitle": "Stay in the know with instant alerts – whether loved ones enter or leave.",
+   "intro_3_subTitle": "Simplify your connections and insights – explore drive reports, location history effortlessly.",
 
   "@_AUTH": {
   },
