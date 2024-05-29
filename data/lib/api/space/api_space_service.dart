@@ -42,7 +42,7 @@ class ApiSpaceService {
         name: name,
         created_at: DateTime.now().millisecondsSinceEpoch);
     await doc.set(space);
-    joinSpace(adminId);
+    joinSpace(doc.id);
     return doc.id;
   }
 
@@ -51,7 +51,6 @@ class ApiSpaceService {
     if (docSnapshot.exists) {
       return docSnapshot.data() as ApiSpace;
     }
-
     return null;
   }
 
@@ -65,6 +64,7 @@ class ApiSpaceService {
       role: role,
       location_enabled: true,
       id: const Uuid().v4(),
+      created_at: DateTime.now().millisecondsSinceEpoch,
     );
 
     await spaceMemberRef(spaceId).doc(userId).set(member.toJson());
@@ -79,18 +79,18 @@ class ApiSpaceService {
 
     final querySnapshot = await collectionRef.get();
     return querySnapshot.docs.map((doc) {
-      return ApiSpaceMember.fromFireStore(doc, null);
+      return ApiSpaceMember.fromJson(doc.data());
     }).toList();
   }
 
   Future<List<ApiSpaceMember>> getSpaceMemberByUserId(String userId) async {
-    final querySnapshot = await FirebaseFirestore.instance
+    final querySnapshot = await _spaceRef.firestore
         .collectionGroup('space_members')
         .where("user_id", isEqualTo: userId)
         .get();
 
     return querySnapshot.docs
-        .map((doc) => ApiSpaceMember.fromFireStore(doc, null))
+        .map((doc) => ApiSpaceMember.fromJson(doc.data()))
         .toList();
   }
 

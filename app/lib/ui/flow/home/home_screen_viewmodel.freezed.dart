@@ -18,8 +18,10 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$HomeViewState {
   bool get allowSave => throw _privateConstructorUsedError;
   bool get isCreating => throw _privateConstructorUsedError;
+  bool get loading => throw _privateConstructorUsedError;
   String get selectedSpaceName => throw _privateConstructorUsedError;
   String get invitationCode => throw _privateConstructorUsedError;
+  List<SpaceInfo> get spaceList => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeViewStateCopyWith<HomeViewState> get copyWith =>
@@ -35,8 +37,10 @@ abstract class $HomeViewStateCopyWith<$Res> {
   $Res call(
       {bool allowSave,
       bool isCreating,
+      bool loading,
       String selectedSpaceName,
-      String invitationCode});
+      String invitationCode,
+      List<SpaceInfo> spaceList});
 }
 
 /// @nodoc
@@ -54,8 +58,10 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
   $Res call({
     Object? allowSave = null,
     Object? isCreating = null,
+    Object? loading = null,
     Object? selectedSpaceName = null,
     Object? invitationCode = null,
+    Object? spaceList = null,
   }) {
     return _then(_value.copyWith(
       allowSave: null == allowSave
@@ -66,6 +72,10 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
           ? _value.isCreating
           : isCreating // ignore: cast_nullable_to_non_nullable
               as bool,
+      loading: null == loading
+          ? _value.loading
+          : loading // ignore: cast_nullable_to_non_nullable
+              as bool,
       selectedSpaceName: null == selectedSpaceName
           ? _value.selectedSpaceName
           : selectedSpaceName // ignore: cast_nullable_to_non_nullable
@@ -74,6 +84,10 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
           ? _value.invitationCode
           : invitationCode // ignore: cast_nullable_to_non_nullable
               as String,
+      spaceList: null == spaceList
+          ? _value.spaceList
+          : spaceList // ignore: cast_nullable_to_non_nullable
+              as List<SpaceInfo>,
     ) as $Val);
   }
 }
@@ -89,8 +103,10 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
   $Res call(
       {bool allowSave,
       bool isCreating,
+      bool loading,
       String selectedSpaceName,
-      String invitationCode});
+      String invitationCode,
+      List<SpaceInfo> spaceList});
 }
 
 /// @nodoc
@@ -106,8 +122,10 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
   $Res call({
     Object? allowSave = null,
     Object? isCreating = null,
+    Object? loading = null,
     Object? selectedSpaceName = null,
     Object? invitationCode = null,
+    Object? spaceList = null,
   }) {
     return _then(_$HomeViewStateImpl(
       allowSave: null == allowSave
@@ -118,6 +136,10 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
           ? _value.isCreating
           : isCreating // ignore: cast_nullable_to_non_nullable
               as bool,
+      loading: null == loading
+          ? _value.loading
+          : loading // ignore: cast_nullable_to_non_nullable
+              as bool,
       selectedSpaceName: null == selectedSpaceName
           ? _value.selectedSpaceName
           : selectedSpaceName // ignore: cast_nullable_to_non_nullable
@@ -126,6 +148,10 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
           ? _value.invitationCode
           : invitationCode // ignore: cast_nullable_to_non_nullable
               as String,
+      spaceList: null == spaceList
+          ? _value._spaceList
+          : spaceList // ignore: cast_nullable_to_non_nullable
+              as List<SpaceInfo>,
     ));
   }
 }
@@ -136,8 +162,11 @@ class _$HomeViewStateImpl implements _HomeViewState {
   const _$HomeViewStateImpl(
       {this.allowSave = false,
       this.isCreating = false,
+      this.loading = false,
       this.selectedSpaceName = '',
-      this.invitationCode = ''});
+      this.invitationCode = '',
+      final List<SpaceInfo> spaceList = const []})
+      : _spaceList = spaceList;
 
   @override
   @JsonKey()
@@ -147,14 +176,25 @@ class _$HomeViewStateImpl implements _HomeViewState {
   final bool isCreating;
   @override
   @JsonKey()
+  final bool loading;
+  @override
+  @JsonKey()
   final String selectedSpaceName;
   @override
   @JsonKey()
   final String invitationCode;
+  final List<SpaceInfo> _spaceList;
+  @override
+  @JsonKey()
+  List<SpaceInfo> get spaceList {
+    if (_spaceList is EqualUnmodifiableListView) return _spaceList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_spaceList);
+  }
 
   @override
   String toString() {
-    return 'HomeViewState(allowSave: $allowSave, isCreating: $isCreating, selectedSpaceName: $selectedSpaceName, invitationCode: $invitationCode)';
+    return 'HomeViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, selectedSpaceName: $selectedSpaceName, invitationCode: $invitationCode, spaceList: $spaceList)';
   }
 
   @override
@@ -166,15 +206,24 @@ class _$HomeViewStateImpl implements _HomeViewState {
                 other.allowSave == allowSave) &&
             (identical(other.isCreating, isCreating) ||
                 other.isCreating == isCreating) &&
+            (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.selectedSpaceName, selectedSpaceName) ||
                 other.selectedSpaceName == selectedSpaceName) &&
             (identical(other.invitationCode, invitationCode) ||
-                other.invitationCode == invitationCode));
+                other.invitationCode == invitationCode) &&
+            const DeepCollectionEquality()
+                .equals(other._spaceList, _spaceList));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, allowSave, isCreating, selectedSpaceName, invitationCode);
+      runtimeType,
+      allowSave,
+      isCreating,
+      loading,
+      selectedSpaceName,
+      invitationCode,
+      const DeepCollectionEquality().hash(_spaceList));
 
   @JsonKey(ignore: true)
   @override
@@ -187,17 +236,23 @@ abstract class _HomeViewState implements HomeViewState {
   const factory _HomeViewState(
       {final bool allowSave,
       final bool isCreating,
+      final bool loading,
       final String selectedSpaceName,
-      final String invitationCode}) = _$HomeViewStateImpl;
+      final String invitationCode,
+      final List<SpaceInfo> spaceList}) = _$HomeViewStateImpl;
 
   @override
   bool get allowSave;
   @override
   bool get isCreating;
   @override
+  bool get loading;
+  @override
   String get selectedSpaceName;
   @override
   String get invitationCode;
+  @override
+  List<SpaceInfo> get spaceList;
   @override
   @JsonKey(ignore: true)
   _$$HomeViewStateImplCopyWith<_$HomeViewStateImpl> get copyWith =>
