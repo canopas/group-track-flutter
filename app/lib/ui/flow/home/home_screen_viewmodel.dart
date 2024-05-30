@@ -65,9 +65,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     if (space != state.selectedSpace) {
       state = state.copyWith(selectedSpace: space);
       currentSpaceId = space.space.id;
-    } else {
-      state = state.copyWith(selectedSpace: state.spaceList.first);
-      currentSpaceId = state.spaceList.first.space.id;
     }
   }
 }
