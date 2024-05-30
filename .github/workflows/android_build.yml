@@ -68,11 +68,11 @@ jobs:
           buildName="${versionValue[0]}.${versionValue[1]}.${{ github.run_number }}"
           echo "Generating android build $buildName $buildNumber"          
           flutter build apk --release --build-number=$buildNumber --build-name=$buildName
-          mv build/app/outputs/apk/release/app*.apk .
+          mv build/app/outputs/apk/release/*.apk .
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v2
         with:
           name: YourSpace APK
-          path: app*.apk
+          path: app/app*.apk
           retention-days: 2
