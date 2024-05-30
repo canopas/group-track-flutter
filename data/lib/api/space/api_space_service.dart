@@ -83,15 +83,14 @@ class ApiSpaceService {
     }).toList();
   }
 
-  Future<List<ApiSpaceMember>> getSpaceMemberByUserId(String userId) async {
-    final querySnapshot = await _spaceRef.firestore
+  Stream<List<ApiSpaceMember>> getSpaceMemberByUserId(String userId) {
+    return _spaceRef.firestore
         .collectionGroup('space_members')
         .where("user_id", isEqualTo: userId)
-        .get();
-
-    return querySnapshot.docs
+        .snapshots()
+        .map((querySnapshot) => querySnapshot.docs
         .map((doc) => ApiSpaceMember.fromJson(doc.data()))
-        .toList();
+        .toList());
   }
 
   Future<void> enableLocation(
