@@ -48,7 +48,7 @@ jobs:
           cd ../app && flutter clean && flutter pub get
           cd ..
 
-      - name: Deploy Internally
+      - name: Generate build
         env:
           APKSIGN_KEYSTORE_BASE64: ${{ secrets.APKSIGN_KEYSTORE_BASE64 }}
           APKSIGN_KEYSTORE_PASS: ${{ secrets.APKSIGN_KEYSTORE_PASS }}
@@ -68,11 +68,11 @@ jobs:
           buildName="${versionValue[0]}.${versionValue[1]}.${{ github.run_number }}"
           echo "Generating android build $buildName $buildNumber"          
           flutter build apk --release --build-number=$buildNumber --build-name=$buildName
-          mv build/app/outputs/flutter-apk/app-*.apk .
+          mv build/app/outputs/flutter-apk/app*.apk .
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v2
         with:
           name: YourSpace APK
-          path: app-*.apk
+          path: app*.apk
           retention-days: 2
