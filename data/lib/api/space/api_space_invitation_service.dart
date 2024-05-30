@@ -14,7 +14,10 @@ class ApiSpaceInvitationService {
 
   ApiSpaceInvitationService(this._db);
 
-  CollectionReference get _spaceRef => _db.collection("space_invitations");
+  CollectionReference get _spaceRef =>
+      _db.collection("space_invitations").withConverter<ApiSpaceInvitation>(
+          fromFirestore: ApiSpaceInvitation.fromFireStore,
+          toFirestore: (space, options) => space.toJson());
 
   Future<String> createInvitation(String spaceId) async {
     String invitationCode = generateInvitationCode();
@@ -41,7 +44,10 @@ class ApiSpaceInvitationService {
   Future<ApiSpaceInvitation?> getSpaceInviteCode(String spaceId) async {
     final querySnapshot = await _spaceRef.where("space_id", isEqualTo: spaceId).get();
     final docSnapshot = querySnapshot.docs.firstOrNull;
-    return docSnapshot?.data() as ApiSpaceInvitation?;
+    if (docSnapshot!.exists) {
+      return docSnapshot.data() as ApiSpaceInvitation;
+    }
+    return null;
   }
 
   Future<String> regenerateInvitationCode(String spaceId) async {
@@ -58,8 +64,10 @@ class ApiSpaceInvitationService {
   Future<ApiSpaceInvitation?> getInvitation(String inviteCode) async {
     final querySnapshot = await _spaceRef.where("code", isEqualTo: inviteCode.toUpperCase()).get();
     final docSnapshot = querySnapshot.docs.firstOrNull;
-    final invitation = docSnapshot?.data() as ApiSpaceInvitation?;
-    return invitation?.isExpired ?? false ? null : invitation;
+    if (docSnapshot?.exists ?? false) {
+      return docSnapshot?.data() as ApiSpaceInvitation;
+    }
+    return null;
   }
 
   Future<void> deleteInvitations(String spaceId) async {

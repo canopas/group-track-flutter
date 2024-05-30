@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/button/primary_button.dart';
@@ -18,13 +19,39 @@ class JoinSpace extends ConsumerStatefulWidget {
 
 class _JoinSpaceState extends ConsumerState<JoinSpace> {
   late JoinSpaceViewNotifier notifier;
-  final List<TextEditingController> _controllers =
-      List.generate(6, (_) => TextEditingController());
-  final _focusNodes = List.generate(6, (index) => FocusNode());
+  late List<TextEditingController> _controllers;
+  late List<FocusNode> _focusNodes;
+  late bool enabled = false;
+
+  @override
+  void initState() {
+    _controllers = List.generate(6, (index) => TextEditingController());
+    _focusNodes = List.generate(6, (index) => FocusNode(
+        onKeyEvent: (node, event) {
+          if(event.logicalKey == LogicalKeyboardKey.backspace
+              && _controllers[index].text.isEmpty) {
+            if (index > 0) _focusNodes[index - 1].requestFocus();
+          }
+          return KeyEventResult.ignored;
+        }
+    ));
+    super.initState();
+  }
+
+  void _observePop() {
+    ref.listen(joinSpaceViewStateProvider.select((state) => state.pop),
+            (_, next) {
+          if (next) {
+            Navigator.pop(context);
+          }
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
     notifier = ref.watch(joinSpaceViewStateProvider.notifier);
+    _observePop();
+
     return AppPage(
       title: context.l10n.join_space_title,
       body: _body(context),
@@ -32,6 +59,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
   }
 
   Widget _body(BuildContext context) {
+    final state = ref.watch(joinSpaceViewStateProvider);
     return Stack(children: [
       ListView(
         padding: const EdgeInsets.all(16),
@@ -54,7 +82,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
           ),
         ],
       ),
-      _joinSpaceButton(context),
+      _joinSpaceButton(context, state),
     ]);
   }
 
@@ -66,21 +94,21 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            for (int i = 0; i < 6; i++) ...[
+            for (int i = 0; i < 3; i++) ...[
               _buildCodeBox(context, containerWidth, i),
               const SizedBox(width: 4),
             ],
-            // Text(
-            //   '-',
-            //   style: AppTextStyle.header3.copyWith(
-            //     color: context.colorScheme.textPrimary,
-            //   ),
-            // ),
-            // const SizedBox(width: 8),
-            // for (int i = 3; i < 6; i++) ...[
-            //   _buildCodeBox(context, containerWidth, i),
-            //   const SizedBox(width: 4),
-            // ],
+            Text(
+              '-',
+              style: AppTextStyle.header3.copyWith(
+                color: context.colorScheme.textPrimary,
+              ),
+            ),
+            const SizedBox(width: 8),
+            for (int i = 3; i < 6; i++) ...[
+              _buildCodeBox(context, containerWidth, i),
+              const SizedBox(width: 4),
+            ],
           ],
         );
       },
@@ -100,7 +128,6 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
         controller: _controllers[index],
         focusNode: _focusNodes[index],
         textAlign: TextAlign.center,
-        keyboardType: TextInputType.number, // Ensure numerical input
         maxLength: 1,
         decoration: const InputDecoration(
           border: InputBorder.none,
@@ -114,23 +141,59 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
         },
         onChanged: (text) {
           if (text.isEmpty) {
-            _focusNodes[index - 1].requestFocus();
+            if (index > 0) _focusNodes[index - 1].requestFocus();
           } else {
-            _focusNodes[index + 1].requestFocus();
+            if (index < 5) _focusNodes[index + 1].requestFocus();
           }
+          _updateJoinSpaceButtonState();
         },
       ),
     );
   }
 
-  Widget _joinSpaceButton(BuildContext context) {
+  Widget _joinSpaceButton(BuildContext context, JoinSpaceViewState state) {
     return BottomStickyOverlay(
-      child: PrimaryButton(
-        context.l10n.join_space_title,
-        onPressed: () {
-          notifier.joinSpace();
-        },
+      child: Column(
+        children: [
+          _joinSpaceError(context, state),
+          const SizedBox(height: 16),
+          PrimaryButton(
+            context.l10n.join_space_title,
+            progress: state.verifying,
+            enabled: enabled,
+            onPressed: () {
+              final inviteCode = _controllers.map((controller) => controller.text.trim()).join();
+              notifier.joinSpace(inviteCode.toUpperCase());
+            },
+          ),
+        ],
       ),
     );
+  }
+
+  Widget _joinSpaceError(BuildContext context, JoinSpaceViewState state) {
+    return Visibility(
+      visible: state.errorInvalidInvitationCode || state.alreadySpaceMember,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: context.colorScheme.alert
+        ),
+        child: Text(
+          state.errorInvalidInvitationCode
+              ? context.l10n.join_space_invalid_code_error_text
+              : context.l10n.join_space_already_joined_error_text,
+          style: AppTextStyle.subtitle2.copyWith(
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _updateJoinSpaceButtonState() {
+    setState(() {
+      enabled = _controllers.every((controller) => controller.text.trim().isNotEmpty);
+    });
   }
 }
