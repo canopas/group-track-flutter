@@ -1,0 +1,38 @@
+name: Dart Format & Analyze
+
+on: push
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout
+
+      - uses: subosito/flutter-action@v2.12.0
+        name: Set up Flutter SDK
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Retrieve the secret and decode it to file
+        env:
+          FIREBASE_OPTIONS_BASE64: ${{ secrets.FIREBASE_OPTIONS_BASE64 }}
+        run: |
+          cd app
+          echo $FIREBASE_OPTIONS_BASE64 | base64 -di > lib/firebase_options.dart
+
+      - name: Install dependencies
+        run: |
+          cd data && flutter clean && flutter pub get
+          cd ../style && flutter clean && flutter pub get
+          cd ../app && flutter clean && flutter pub get
+          cd ..
+
+      - name: Lint test
+        run: |
+          cd data && flutter analyze --fatal-infos
+          cd ../style && flutter analyze --fatal-infos
+          cd ../app && flutter analyze --fatal-infos
+          cd ..
