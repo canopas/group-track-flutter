@@ -48,6 +48,7 @@
       }
     }
   },
+  "home_select_space_text": "Select a space",
 
   "create_space_give_your_space_name_title": "Give your space name",
   "create_space_tip_text": "Tips: You create dedicated spaces for work, family, friends, and more.",
@@ -67,7 +68,7 @@
   "join_space_title": "Join space",
   "join_space_invite_code_title": "Enter the invite code",
   "join_space_get_code_from_space_text": "Get the code from the space creator to join.",
-  "join_space_already_joined_error_text": "You are already member of that space",
+  "join_space_already_joined_error_text": "You are already member of this space",
   "join_space_invalid_code_error_text": "It appears the code is no longer valid or has expired. please review and enter valid code.",
 
   "invite_code_title": "Invite code",

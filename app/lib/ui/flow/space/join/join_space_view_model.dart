@@ -37,9 +37,9 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
         return;
       }
       var spaceId = invitation.space_id;
-      final joinSpaces = authService.currentUser?.space_ids ?? [];
+      final userSpaces = authService.currentUser?.space_ids ?? [];
 
-      if (joinSpaces.contains(spaceId)) {
+      if (userSpaces.contains(spaceId)) {
         state = state.copyWith(verifying: false, alreadySpaceMember: true);
         return;
       }

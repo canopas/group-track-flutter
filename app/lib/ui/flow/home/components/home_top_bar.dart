@@ -17,7 +17,7 @@ class HomeTopBar extends StatefulWidget {
   final List<SpaceInfo> spaces;
   final String title;
   final bool loading;
-  final bool isCodeGetting;
+  final bool fetchingInviteCode;
 
   const HomeTopBar({
     super.key,
@@ -26,7 +26,7 @@ class HomeTopBar extends StatefulWidget {
     required this.onAddMemberTap,
     required this.title,
     this.loading = false,
-    this.isCodeGetting = false,
+    this.fetchingInviteCode = false,
   });
 
   @override
@@ -171,18 +171,15 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: Row(
               children: [
-                if (widget.loading) ...[
-                  const AppProgressIndicator(
-                      size: AppProgressIndicatorSize.small),
-                ] else ...[
-                  Text(
-                    spaceName,
-                    style: AppTextStyle.subtitle2
-                        .copyWith(color: context.colorScheme.textPrimary),
-                  ),
-                ],
+                Text(
+                  widget.loading
+                      ? context.l10n.home_select_space_text
+                      : spaceName,
+                  style: AppTextStyle.subtitle2
+                      .copyWith(color: context.colorScheme.textPrimary),
+                ),
                 const Spacer(),
-                if (widget.isCodeGetting) ...[
+                if (widget.fetchingInviteCode) ...[
                   const AppProgressIndicator(size: AppProgressIndicatorSize.small)
                 ] else ...[
                   Icon(

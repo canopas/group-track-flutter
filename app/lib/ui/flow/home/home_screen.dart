@@ -61,11 +61,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const MapView(),
           HomeTopBar(
             spaces: state.spaceList,
-            onSpaceItemTap: (name) => notifier.updateSelectedSpaceName(name),
+            onSpaceItemTap: (name) => notifier.updateSelectedSpace(name),
             onAddMemberTap: () => notifier.onAddMemberTap(),
             title: state.selectedSpace?.space.name ?? '',
             loading: state.loading,
-            isCodeGetting: state.isCodeGetting,
+            fetchingInviteCode: state.fetchingInviteCode,
           ),
           // SpaceUserFooter()
         ],

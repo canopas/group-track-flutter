@@ -29,7 +29,7 @@ class ApiSpaceInvitationService {
       created_at: DateTime.now().millisecondsSinceEpoch,
     );
 
-    await docRef.set(invitation.toFireStore());
+    await docRef.set(invitation);
     return invitationCode;
   }
 

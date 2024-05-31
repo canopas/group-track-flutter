@@ -1,3 +1,4 @@
+
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/storage/app_preferences.dart';
@@ -30,14 +31,31 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   void getAllSpace() async {
     try {
       state = state.copyWith(loading: state.spaceList.isEmpty);
-      final spaces = await spaceService.getAllSpaceInfo();
+      final spaceStream = spaceService.getAllSpaceInfo();
+
+      final spaces = await spaceStream.first;
+
       state = state.copyWith(loading: false, spaceList: spaces);
 
-      final selectedSpace = spaces.firstWhere(
-            (space) => space.space.id == currentSpaceId,
-      );
+      if (currentSpaceId != null) {
+        final selectedSpace = spaces.firstWhere(
+              (space) => space.space.id == currentSpaceId,
+        );
 
-      updateSelectedSpaceName(selectedSpace);
+        updateSelectedSpace(selectedSpace);
+      }
+
+      spaceStream.listen((spaces) {
+        state = state.copyWith(loading: false, spaceList: spaces);
+
+        if (currentSpaceId != null) {
+          final selectedSpace = spaces.firstWhere(
+                (space) => space.space.id == currentSpaceId,
+          );
+
+          updateSelectedSpace(selectedSpace);
+        }
+      });
     } catch (error, stack) {
       logger.e(
         'HomeViewNotifier: error while getting all spaces',
@@ -49,9 +67,9 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
   void onAddMemberTap() async {
     try {
-      state = state.copyWith(isCodeGetting: true);
+      state = state.copyWith(fetchingInviteCode: true);
       final code = await spaceService.getInviteCode(state.selectedSpace?.space.id ?? '');
-      state = state.copyWith(spaceInvitationCode: code ?? '', isCodeGetting: false);
+      state = state.copyWith(spaceInvitationCode: code ?? '', fetchingInviteCode: false);
     } catch (error, stack) {
       logger.e(
         'HomeViewNotifier: Error while getting invitation code',
@@ -61,7 +79,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     }
   }
 
-  void updateSelectedSpaceName(SpaceInfo space) {
+  void updateSelectedSpace(SpaceInfo space) {
     if (space != state.selectedSpace) {
       state = state.copyWith(selectedSpace: space);
       currentSpaceId = space.space.id;
@@ -75,7 +93,7 @@ class HomeViewState with _$HomeViewState {
     @Default(false) bool allowSave,
     @Default(false) bool isCreating,
     @Default(false) bool loading,
-    @Default(false) bool isCodeGetting,
+    @Default(false) bool fetchingInviteCode,
     SpaceInfo? selectedSpace,
     @Default('') String spaceInvitationCode,
     @Default([]) List<SpaceInfo> spaceList,
