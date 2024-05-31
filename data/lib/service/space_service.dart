@@ -56,7 +56,7 @@ class SpaceService {
     return userSpacesStream(userId).asyncMap((List<ApiSpace> spaces) async {
       var spaceInfo = await Future.wait(spaces.map((space) async {
         List<ApiSpaceMember> members =
-        await spaceService.getMembersBySpaceId(space.id);
+        await spaceService.getMembersBySpaceId(space.id).first;
         var userInfo = await Future.wait(members.map((member) async {
           var user = await userService.getUser(member.user_id);
           return user == null
@@ -66,58 +66,55 @@ class SpaceService {
 
         userInfo.removeWhere((userInfo) => userInfo == null);
         List<ApiUserInfo> validUserInfo = userInfo.cast<ApiUserInfo>();
+        print('xxx user info == ${validUserInfo.length}');
         return SpaceInfo(space: space, members: validUserInfo);
       }).toList());
       return spaceInfo;
     });
   }
 
-  Stream<SpaceInfo?> streamCurrentSpaceInfo() async* {
-    final currentSpaceStream = getCurrentSpace();
-
-    await for (final currentSpace in currentSpaceStream) {
-      if (currentSpace == null) {
-        yield null;
-      } else {
-        final members = await spaceService.getMembersBySpaceId(currentSpace.id);
-        final memberInfoList = await Future.wait(
-          members.map((member) async {
-            final user = await userService.getUser(member.user_id);
-            return user != null
-                ? ApiUserInfo(
-                    user: user, isLocationEnabled: member.location_enabled)
-                : null;
-          }),
-        );
-
-        final nonNullMembers = memberInfoList.whereType<ApiUserInfo>().toList();
-
-        yield SpaceInfo(
-          space: currentSpace,
-          members: nonNullMembers,
-        );
-      }
-    }
-  }
-
-  Future<SpaceInfo?> getSpaceInfo(String spaceId) async {
-    final space = await getSpace(spaceId);
-    if (space == null) return null;
-    final members = await spaceService.getMembersBySpaceId(space.id);
-    return SpaceInfo(
-      space: space,
-      members: members
-          .map((member) async {
-            final user = await userService.getUser(member.user_id);
-            return user != null
-                ? ApiUserInfo(
-                    user: user, isLocationEnabled: member.location_enabled)
-                : null;
-          })
-          .whereType<ApiUserInfo>()
-          .toList(),
-    );
-  }
+  // Future<Stream<SpaceInfo?>> streamCurrentSpaceInfo() async {
+  //   final currentSpaceStream = getCurrentSpace();
+  //
+  //   await for (final currentSpace in currentSpaceStream) {
+  //     if (currentSpace == null) {
+  //     } else {
+  //       final members = spaceService.getMembersBySpaceId(currentSpace.id).first;
+  //       final memberInfoList = await Future.wait(
+  //         members.map((member) async {
+  //           final user = await userService.getUser(member.user_id);
+  //           return user != null
+  //               ? ApiUserInfo(
+  //                   user: user, isLocationEnabled: member.location_enabled)
+  //               : null;
+  //         }),
+  //       );
+  //
+  //       final nonNullMembers = memberInfoList.whereType<ApiUserInfo>().toList();
+  //
+  //       return SpaceInfo(
+  //         space: currentSpace,
+  //         members: nonNullMembers,
+  //       );
+  //     }
+  //   }
+  // }
+  //
+  // Future<Stream<SpaceInfo?>> getSpaceInfo(String spaceId) async {
+  //   final space = await getSpace(spaceId);
+  //   List<ApiSpaceMember> members =
+  //   await spaceService.getMembersBySpaceId(space?.id ?? '').first;
+  //   var userInfo = await Future.wait(members.map((member) async {
+  //     var user = await userService.getUser(member.user_id);
+  //     return user == null
+  //         ? null
+  //         : ApiUserInfo(user: user, isLocationEnabled: member.location_enabled);
+  //   }).toList());
+  //
+  //   userInfo.removeWhere((userInfo) => userInfo == null);
+  //   List<ApiUserInfo> validUserInfo = userInfo.cast<ApiUserInfo>();
+  //   return SpaceInfo(space: space, members: validUserInfo);
+  // }
 
   Stream<ApiSpace?> getCurrentSpace() async* {
     final spaceId = currentSpaceId;
@@ -137,6 +134,7 @@ class SpaceService {
         .asyncMap(((List<ApiSpaceMember> members) async {
       var spaces = await Future.wait(members
           .map((member) async => spaceService.getSpace(member.space_id)));
+      print('XXX space size ${spaces.length}');
       return spaces.whereType<ApiSpace>().toList();
     }));
   }
@@ -145,10 +143,10 @@ class SpaceService {
     return spaceService.getSpace(spaceId);
   }
 
-  Future<Future<List<ApiSpaceMember>>> getMemberBySpaceId(
-      String spaceId) async {
-    return spaceService.getMembersBySpaceId(spaceId);
-  }
+  // Future<Future<List<ApiSpaceMember>>> getMemberBySpaceId(
+  //     String spaceId) async {
+  //   return spaceService.getMembersBySpaceId(spaceId);
+  // }
 
   Future<String?> getInviteCode(String spaceId) async {
     final code = await spaceInvitationService.getSpaceInviteCode(spaceId);

@@ -30,22 +30,12 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
   void getAllSpace() async {
     try {
+      print('view method get all space');
       state = state.copyWith(loading: state.spaceList.isEmpty);
       final spaceStream = spaceService.getAllSpaceInfo();
 
-      final spaces = await spaceStream.first;
-
-      state = state.copyWith(loading: false, spaceList: spaces);
-
-      if (currentSpaceId != null) {
-        final selectedSpace = spaces.firstWhere(
-              (space) => space.space.id == currentSpaceId,
-        );
-
-        updateSelectedSpace(selectedSpace);
-      }
-
       spaceStream.listen((spaces) {
+        print('XXX space === ${spaces.length}');
         state = state.copyWith(loading: false, spaceList: spaces);
 
         if (currentSpaceId != null) {
