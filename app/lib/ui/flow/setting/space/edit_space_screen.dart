@@ -57,23 +57,25 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
     return AppPage(
       title: state.space?.space.name,
       actions: [
-        actionButton(
-          context,
-          icon: state.saving
-              ? const AppProgressIndicator(size: AppProgressIndicatorSize.small)
-              : Icon(
-                  Icons.check,
-                  size: 24,
-                  color: state.allowSave
-                      ? context.colorScheme.primary
-                      : context.colorScheme.textDisabled,
-                ),
-          onPressed: () {
-            if (state.allowSave) {
-              notifier.updateSpace();
-            }
-          },
-        ),
+        if (state.isAdmin) ...[
+          actionButton(
+            context,
+            icon: state.saving
+                ? const AppProgressIndicator(size: AppProgressIndicatorSize.small)
+                : Icon(
+              Icons.check,
+              size: 24,
+              color: state.allowSave
+                  ? context.colorScheme.primary
+                  : context.colorScheme.textDisabled,
+            ),
+            onPressed: () {
+              if (state.allowSave) {
+                notifier.updateSpace();
+              }
+            },
+          ),
+        ]
       ],
       body: _body(context, state),
     );
@@ -93,9 +95,11 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
             const SizedBox(height: 16),
             _yourLocation(context, state),
             const SizedBox(height: 16),
-            _divider(context),
-            const SizedBox(height: 16),
-            _memberLocation(context, state),
+            if (state.userInfo.isNotEmpty) ...[
+              _divider(context),
+              const SizedBox(height: 16),
+              _memberLocation(context, state),
+            ]
           ],
         ),
         _deleteSpaceButton(context, state),
@@ -112,6 +116,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
             label: context.l10n.edit_space_name_title,
             onChanged: (value) => notifier.onChange(value),
             controller: state.spaceName,
+            enabled: state.isAdmin,
           ),
         ),
         const SizedBox(height: 8),
