@@ -63,7 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             spaces: state.spaceList,
             onSpaceItemTap: (name) => notifier.updateSelectedSpace(name),
             onAddMemberTap: () => notifier.onAddMemberTap(),
-            title: state.selectedSpace?.space.name ?? '',
+            selectedSpace: state.selectedSpace,
             loading: state.loading,
             fetchingInviteCode: state.fetchingInviteCode,
           ),

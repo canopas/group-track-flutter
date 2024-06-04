@@ -15,7 +15,7 @@ class HomeTopBar extends StatefulWidget {
   final void Function(SpaceInfo) onSpaceItemTap;
   final void Function() onAddMemberTap;
   final List<SpaceInfo> spaces;
-  final String title;
+  final SpaceInfo? selectedSpace;
   final bool loading;
   final bool fetchingInviteCode;
 
@@ -24,7 +24,7 @@ class HomeTopBar extends StatefulWidget {
     required this.spaces,
     required this.onSpaceItemTap,
     required this.onAddMemberTap,
-    required this.title,
+    required this.selectedSpace,
     this.loading = false,
     this.fetchingInviteCode = false,
   });
@@ -52,7 +52,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
       parent: _animationController,
       curve: Curves.easeInOut,
     );
-    selectedIndex = _getSelectedIndex();
+    selectedIndex = _getSelectedSpace();
   }
 
   @override
@@ -64,7 +64,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   @override
   void didUpdateWidget(HomeTopBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    selectedIndex = _getSelectedIndex();
+    selectedIndex = _getSelectedSpace();
   }
 
   void performAnimation() {
@@ -75,9 +75,9 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     }
   }
 
-  int _getSelectedIndex() {
+  int _getSelectedSpace() {
     for (int i = 0; i < widget.spaces.length; i++) {
-      if (widget.spaces[i].space.name == widget.title) {
+      if (widget.spaces[i].space == widget.selectedSpace?.space) {
         return i;
       }
     }
@@ -114,7 +114,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   const SizedBox(width: 8),
                   _spaceSelection(
                     context: context,
-                    spaceName: widget.title,
+                    spaceName: widget.selectedSpace?.space.name ?? context.l10n.home_select_space_text,
                   ),
                   const SizedBox(width: 8),
                   _iconButton(
@@ -179,7 +179,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                       .copyWith(color: context.colorScheme.textPrimary),
                 ),
                 const Spacer(),
-                if (widget.fetchingInviteCode) ...[
+                if (widget.fetchingInviteCode || widget.selectedSpace == null) ...[
                   const AppProgressIndicator(size: AppProgressIndicatorSize.small)
                 ] else ...[
                   Icon(
@@ -242,7 +242,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
               onSpaceSelected(space);
             },
             child: _spaceListItem(
-                context, space, index, widget.title == space.space.name),
+                context, space, index, widget.selectedSpace?.space.id == space.space.id),
           ),
         );
       }).toList(),
