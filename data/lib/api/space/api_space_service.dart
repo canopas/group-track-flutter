@@ -71,39 +71,27 @@ class ApiSpaceService {
     await userService.addSpaceId(userId, spaceId);
   }
 
-  // Future<List<ApiSpaceMember>> getMembersBySpaceId(String spaceId) async {
-  //   final collectionRef = FirebaseFirestore.instance
-  //       .collection('spaces')
-  //       .doc(spaceId)
-  //       .collection('space_members');
-  //
-  //   final querySnapshot = await collectionRef.get();
-  //   return querySnapshot.docs.map((doc) {
-  //     return ApiSpaceMember.fromJson(doc.data());
-  //   }).toList();
-  // }
+  Future<List<ApiSpaceMember>> getMembersBySpaceId(String spaceId) async {
+    final collectionRef = FirebaseFirestore.instance
+        .collection('spaces')
+        .doc(spaceId)
+        .collection('space_members');
 
-  Stream<List<ApiSpaceMember>> getMembersBySpaceId(String spaceId) {
-    final collectionRef = spaceMemberRef(spaceId).withConverter<ApiSpaceMember>(
-        fromFirestore: ApiSpaceMember.fromFireStore,
-        toFirestore: (space, options) => space.toJson());
-
-    return collectionRef.snapshots().map((querySnapshot) {
-      return querySnapshot.docs.map((doc) {
-        print('XXX member data $spaceId}');
-        return doc.data();
-      }).toList();
-    });
+    final querySnapshot = await collectionRef.get();
+    return querySnapshot.docs.map((doc) {
+      return ApiSpaceMember.fromJson(doc.data());
+    }).toList();
   }
 
-  Stream<List<ApiSpaceMember>> getSpaceMemberByUserId(String userId) {
-    return _spaceRef.firestore
+  Future<List<ApiSpaceMember>> getSpaceMemberByUserId(String userId) async {
+    final querySnapshot = await _spaceRef.firestore
         .collectionGroup('space_members')
         .where("user_id", isEqualTo: userId)
-        .snapshots()
-        .map((querySnapshot) => querySnapshot.docs
+        .get();
+
+    return querySnapshot.docs
         .map((doc) => ApiSpaceMember.fromJson(doc.data()))
-        .toList());
+        .toList();
   }
 
   Future<void> enableLocation(

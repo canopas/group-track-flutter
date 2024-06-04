@@ -1,4 +1,3 @@
-
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/storage/app_preferences.dart';
@@ -30,22 +29,16 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
   void getAllSpace() async {
     try {
-      print('view method get all space');
       state = state.copyWith(loading: state.spaceList.isEmpty);
-      final spaceStream = spaceService.getAllSpaceInfo();
+      final spaces = await spaceService.getAllSpaceInfo();
+      state = state.copyWith(loading: false, spaceList: spaces);
+      if (currentSpaceId != null && spaces.isNotEmpty) {
+        final selectedSpace = spaces.firstWhere(
+          (space) => space.space.id == currentSpaceId,
+        );
 
-      spaceStream.listen((spaces) {
-        print('XXX space === ${spaces.length}');
-        state = state.copyWith(loading: false, spaceList: spaces);
-
-        if (currentSpaceId != null) {
-          final selectedSpace = spaces.firstWhere(
-                (space) => space.space.id == currentSpaceId,
-          );
-
-          updateSelectedSpace(selectedSpace);
-        }
-      });
+        updateSelectedSpace(selectedSpace);
+      }
     } catch (error, stack) {
       logger.e(
         'HomeViewNotifier: error while getting all spaces',

@@ -118,35 +118,38 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
   Widget _buildCodeBox(BuildContext context, double width, int index) {
     return Container(
       width: width,
-      height: 60,
+      height: 64,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         color: context.colorScheme.containerLow,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: TextField(
-        controller: _controllers[index],
-        focusNode: _focusNodes[index],
-        textAlign: TextAlign.center,
-        maxLength: 1,
-        decoration: const InputDecoration(
-          border: InputBorder.none,
-          counterText: '',
+      child: Center(
+        child: TextField(
+          controller: _controllers[index],
+          focusNode: _focusNodes[index],
+          textAlign: TextAlign.center,
+          maxLength: 1,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            counterText: '',
+          ),
+          textCapitalization: TextCapitalization.characters,
+          style: AppTextStyle.header2.copyWith(
+            color: context.colorScheme.textPrimary,
+          ),
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          onChanged: (text) {
+            if (text.isEmpty) {
+              if (index > 0) _focusNodes[index - 1].requestFocus();
+            } else {
+              if (index < 5) _focusNodes[index + 1].requestFocus();
+            }
+            _updateJoinSpaceButtonState();
+          },
         ),
-        style: AppTextStyle.header2.copyWith(
-          color: context.colorScheme.textPrimary,
-        ),
-        onTapOutside: (event) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        onChanged: (text) {
-          if (text.isEmpty) {
-            if (index > 0) _focusNodes[index - 1].requestFocus();
-          } else {
-            if (index < 5) _focusNodes[index + 1].requestFocus();
-          }
-          _updateJoinSpaceButtonState();
-        },
       ),
     );
   }
