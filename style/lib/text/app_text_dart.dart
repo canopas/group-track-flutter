@@ -65,6 +65,15 @@ class AppTextStyle {
     package: 'style',
   );
 
+  static const TextStyle subtitle3 = TextStyle(
+    fontFamily: interFontFamily,
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    height: 1.4,
+    letterSpacing: -0.64,
+    package: 'style',
+  );
+
   static const TextStyle quote = TextStyle(
     fontFamily: interFontFamily,
     fontWeight: FontWeight.w300,

@@ -2,10 +2,15 @@
   "app_title": "YourSpace",
   "app_tag_line": "Stay Close, Anywhere!",
 
+  "alert_confirm_default_title": "Are you sure",
+
   "@_COMMON": {
   },
   "common_get_started": "Get Started",
   "common_next": "Next",
+  "common_yes": "Yes",
+  "common_cancel": "Cancel",
+  "common_delete": "Delete",
   "common_verify": "Verify","commonMembers": "{memberCount} {memberCount, plural, =1{Member} other{Members}}",
   "@commonMembers": {
     "placeholders": {
@@ -79,6 +84,50 @@
   },
   "invite_code_invite_member_subtitle": "Share this invite code with your trusted ones in your own style. Connecting is as flexible as you are.",
   "invite_code_active_code_text": "This code will be active for 2 days.",
-  "invite_code_share_code_title": "Share code"
+  "invite_code_share_code_title": "Share code",
 
+  "settings_title": "Settings",
+  "settings_profile_title": "Profile",
+  "settings_your_space_title": "Your spaces",
+  "settings_other_title": "Other",
+  "settings_other_option_privacy_policy_text": "Privacy policy",
+  "settings_other_option_contact_support_text": "Contact support",
+  "settings_other_option_about_us_text": "About us",
+  "settings_other_option_sign_out_text": "Sign out",
+
+  "edit_profile_title": "Edit profile",
+  "edit_profile_first_name_title": "First name",
+  "edit_profile_last_name_title": "Last name",
+  "edit_profile_email_title": "Email",
+  "edit_profile_phone_title": "Phone",
+  "edit_profile_alert_title": "Sorry to see you go!",
+  "edit_profile_alert_description": "Deleting your account is permanent and you will lose all your data. Are you sure you want to delete your account?",
+  "edit_profile_gallery_option_text": "Gallery",
+  "edit_profile_camera_option_text": "Camera",
+  "edit_profile_remove_photo_option_text": "Remove photo",
+  "edit_profile_cropper_text": "Cropper",
+  "edit_profile_delete_account_title": "Delete account",
+
+  "edit_space_name_title": "Space name",
+  "edit_space_member_location_sharing_title": "Member location sharing",
+  "edit_space_your_location_sharing_title": "Your location sharing",
+  "edit_space_delete_space_title": "Delete space",
+  "edit_space_leave_space_title": "Leave space",
+  "edit_space_leave_space_alert_message": "Are you sure you want to leave the {spaceName} space.",
+  "@edit_space_leave_space_alert_message": {
+    "placeholders": {
+      "spaceName": {
+        "type": "String"
+      }
+    }
+  },
+  "edit_space_delete_space_alert_message": "Are you sure you want to delete the {spaceName} space.",
+  "@edit_space_delete_space_alert_message": {
+    "placeholders": {
+      "spaceName": {
+        "type": "String"
+      }
+    }
+  },
+  "edit_space_leave_alert_title": "Leave"
 }

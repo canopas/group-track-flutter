@@ -12,11 +12,11 @@ final authServiceProvider = Provider((ref) => AuthService(
 
 class AuthService {
   final ApiUser? _currentUser;
-  final ApiUserService _userService;
+  final ApiUserService userService;
   final StateController<String?> userJsonNotifier;
   final StateController<String?> userSessionJsonNotifier;
 
-  AuthService(this._currentUser, this._userService, this.userJsonNotifier,
+  AuthService(this._currentUser, this.userService, this.userJsonNotifier,
       this.userSessionJsonNotifier);
 
   ApiUser? get currentUser => _currentUser;
@@ -30,7 +30,7 @@ class AuthService {
       String? lastName,
       String? profileImg,
       int authType = LOGIN_TYPE_PHONE}) async {
-    final data = await _userService.saveUser(
+    final data = await userService.saveUser(
         uid: uid,
         firebaseToken: firebaseToken,
         phone: phone,
@@ -47,7 +47,20 @@ class AuthService {
   }
 
   Future<void> updateCurrentUser(ApiUser user) async {
-    await _userService.updateUser(user);
+    await userService.updateUser(user);
     userJsonNotifier.state = user.toJsonString();
   }
+
+  Future<ApiUser?> getUser() {
+    return userService.getUser(_currentUser?.id ?? '');
+  }
+
+  Stream<ApiUser> getUserStream() {
+   return userService.getUserStream(_currentUser?.id ?? '');
+  }
+
+  Future<void> deleteUser() {
+    return userService.deleteUser(_currentUser?.id ?? '');
+  }
+
 }

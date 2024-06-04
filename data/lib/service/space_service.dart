@@ -101,13 +101,16 @@ class SpaceService {
   Future<SpaceInfo?> getSpaceInfo(String spaceId) async {
     final space = await getSpace(spaceId);
     if (space == null) return null;
+
     final members = await spaceService.getMembersBySpaceId(space.id);
+    final memberInfo = await Future.wait(members.map((member) async {
+      final user = await userService.getUser(member.user_id);
+      return user != null ? ApiUserInfo(user: user, isLocationEnabled: member.location_enabled) : null;
+    }).toList());
+
     return SpaceInfo(
       space: space,
-      members: members.map((member) async {
-        final user = await userService.getUser(member.user_id);
-        return user != null ? ApiUserInfo(user: user, isLocationEnabled: member.location_enabled) : null;
-      }).whereType<ApiUserInfo>().toList(),
+      members: memberInfo.whereType<ApiUserInfo>().toList(),
     );
   }
 

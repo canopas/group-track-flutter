@@ -88,7 +88,9 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                 _iconButton(
                     context: context,
                     icon: Assets.images.icSetting,
-                    visibility: !expand),
+                    visibility: !expand, onTap: () {
+                      AppRoute.setting.push(context);
+                }),
                 const SizedBox(width: 8),
                 _spaceSelection(
                   context: context,
@@ -98,17 +100,17 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                 _iconButton(
                     context: context,
                     icon: Assets.images.icMessage,
-                    visibility: !expand),
+                    visibility: !expand, onTap: () {}),
                 SizedBox(width: expand ? 0 : 8),
                 _iconButton(
                     context: context,
                     icon: Assets.images.icLocation,
-                    visibility: !expand),
+                    visibility: !expand, onTap: () {}),
                 _iconButton(
                     context: context,
                     icon: Assets.images.icAddMember,
                     visibility: expand,
-                    color: context.colorScheme.textPrimary),
+                    color: context.colorScheme.textPrimary, onTap: () {}),
               ],
             ),
             _dropDown(context),
@@ -145,13 +147,15 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                 if (widget.loading) ...[
                   const AppProgressIndicator(size: AppProgressIndicatorSize.small),
                 ] else ...[
-                  Text(
-                    spaceName,
-                    style: AppTextStyle.subtitle2
-                        .copyWith(color: context.colorScheme.textPrimary),
+                  Expanded(
+                    child: Text(
+                      spaceName,
+                      style: AppTextStyle.subtitle2
+                          .copyWith(color: context.colorScheme.textPrimary),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
-                const Spacer(),
                 Icon(
                   expand
                       ? Icons.keyboard_arrow_down_rounded
@@ -171,11 +175,13 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     required String icon,
     Color? color,
     required bool visibility,
+    required Function onTap,
   }) {
     return Visibility(
       visible: visibility,
       child: IconPrimaryButton(
-        onTap: () => {},
+        onTap: () => onTap(),
+        radius: 20,
         icon: SvgPicture.asset(
           height: 16,
           width: 14,
@@ -260,6 +266,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   style: AppTextStyle.subtitle2.copyWith(
                     color: context.colorScheme.textPrimary,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Row(

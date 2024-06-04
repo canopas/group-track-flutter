@@ -91,6 +91,16 @@ class ApiUserService {
     return null;
   }
 
+  Stream<ApiUser> getUserStream(String userId) {
+    return _userRef.doc(userId).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        return snapshot.data() as ApiUser;
+      } else {
+        throw Exception('User not found');
+      }
+    });
+  }
+
   Future<void> deactivateOldSessions(String userId) async {
     final querySnapshot =
     await _sessionRef(userId).where("session_active", isEqualTo: true).get();

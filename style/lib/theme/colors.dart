@@ -34,7 +34,7 @@ const outlineDarkColor = Color(0x14FFFFFF);
 const surfaceLightColor = Color(0xFFFFFFFF);
 const surfaceDarkColor = Color(0xFF121212);
 
-const awarenessAlertColor = Color(0xFFCA2F27);
+const awarenessAlertColor = Color(0xFFD32F2F);
 const awarenessPositiveColor = Color(0xFF47A96E);
 const awarenessWarningColor = Color(0xFFD39800);
 
@@ -92,6 +92,8 @@ class AppColorScheme {
   final Color surface;
   final Color outline;
   final Color textPrimary;
+  final Color textPrimaryDark;
+  final Color textPrimaryLight;
   final Color textSecondary;
   final Color textDisabled;
   final Color outlineInverse;
@@ -122,6 +124,8 @@ class AppColorScheme {
     required this.surface,
     required this.outline,
     required this.textPrimary,
+    required this.textPrimaryDark,
+    required this.textPrimaryLight,
     required this.textSecondary,
     required this.textDisabled,
     required this.outlineInverse,
@@ -161,6 +165,8 @@ final appColorSchemeLight = AppColorScheme(
   surface: surfaceLightColor,
   outline: outlineLightColor,
   textPrimary: textPrimaryLightColor,
+  textPrimaryDark: textPrimaryDarkColor,
+  textPrimaryLight: textPrimaryLightColor,
   textSecondary: textSecondaryLightColor,
   textDisabled: textDisabledLightColor,
   outlineInverse: outlineDarkColor,
@@ -192,6 +198,8 @@ final appColorSchemeDark = AppColorScheme(
   surface: surfaceDarkColor,
   outline: outlineDarkColor,
   textPrimary: textPrimaryDarkColor,
+  textPrimaryDark: textPrimaryDarkColor,
+  textPrimaryLight: textPrimaryLightColor,
   textSecondary: textSecondaryDarkColor,
   textDisabled: textDisabledDarkColor,
   outlineInverse: outlineLightColor,
