@@ -21,6 +21,7 @@ mixin _$JoinSpaceViewState {
   String get invitationCode => throw _privateConstructorUsedError;
   bool get errorInvalidInvitationCode => throw _privateConstructorUsedError;
   bool get alreadySpaceMember => throw _privateConstructorUsedError;
+  Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $JoinSpaceViewStateCopyWith<JoinSpaceViewState> get copyWith =>
@@ -38,7 +39,8 @@ abstract class $JoinSpaceViewStateCopyWith<$Res> {
       bool verifying,
       String invitationCode,
       bool errorInvalidInvitationCode,
-      bool alreadySpaceMember});
+      bool alreadySpaceMember,
+      Object? error});
 }
 
 /// @nodoc
@@ -59,6 +61,7 @@ class _$JoinSpaceViewStateCopyWithImpl<$Res, $Val extends JoinSpaceViewState>
     Object? invitationCode = null,
     Object? errorInvalidInvitationCode = null,
     Object? alreadySpaceMember = null,
+    Object? error = freezed,
   }) {
     return _then(_value.copyWith(
       pop: null == pop
@@ -81,6 +84,7 @@ class _$JoinSpaceViewStateCopyWithImpl<$Res, $Val extends JoinSpaceViewState>
           ? _value.alreadySpaceMember
           : alreadySpaceMember // ignore: cast_nullable_to_non_nullable
               as bool,
+      error: freezed == error ? _value.error : error,
     ) as $Val);
   }
 }
@@ -98,7 +102,8 @@ abstract class _$$JoinSpaceViewStateImplCopyWith<$Res>
       bool verifying,
       String invitationCode,
       bool errorInvalidInvitationCode,
-      bool alreadySpaceMember});
+      bool alreadySpaceMember,
+      Object? error});
 }
 
 /// @nodoc
@@ -117,6 +122,7 @@ class __$$JoinSpaceViewStateImplCopyWithImpl<$Res>
     Object? invitationCode = null,
     Object? errorInvalidInvitationCode = null,
     Object? alreadySpaceMember = null,
+    Object? error = freezed,
   }) {
     return _then(_$JoinSpaceViewStateImpl(
       pop: null == pop
@@ -139,6 +145,7 @@ class __$$JoinSpaceViewStateImplCopyWithImpl<$Res>
           ? _value.alreadySpaceMember
           : alreadySpaceMember // ignore: cast_nullable_to_non_nullable
               as bool,
+      error: freezed == error ? _value.error : error,
     ));
   }
 }
@@ -151,7 +158,8 @@ class _$JoinSpaceViewStateImpl implements _JoinSpaceViewState {
       this.verifying = false,
       this.invitationCode = '',
       this.errorInvalidInvitationCode = false,
-      this.alreadySpaceMember = false});
+      this.alreadySpaceMember = false,
+      this.error});
 
   @override
   @JsonKey()
@@ -168,10 +176,12 @@ class _$JoinSpaceViewStateImpl implements _JoinSpaceViewState {
   @override
   @JsonKey()
   final bool alreadySpaceMember;
+  @override
+  final Object? error;
 
   @override
   String toString() {
-    return 'JoinSpaceViewState(pop: $pop, verifying: $verifying, invitationCode: $invitationCode, errorInvalidInvitationCode: $errorInvalidInvitationCode, alreadySpaceMember: $alreadySpaceMember)';
+    return 'JoinSpaceViewState(pop: $pop, verifying: $verifying, invitationCode: $invitationCode, errorInvalidInvitationCode: $errorInvalidInvitationCode, alreadySpaceMember: $alreadySpaceMember, error: $error)';
   }
 
   @override
@@ -189,12 +199,19 @@ class _$JoinSpaceViewStateImpl implements _JoinSpaceViewState {
                 other.errorInvalidInvitationCode ==
                     errorInvalidInvitationCode) &&
             (identical(other.alreadySpaceMember, alreadySpaceMember) ||
-                other.alreadySpaceMember == alreadySpaceMember));
+                other.alreadySpaceMember == alreadySpaceMember) &&
+            const DeepCollectionEquality().equals(other.error, error));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, pop, verifying, invitationCode,
-      errorInvalidInvitationCode, alreadySpaceMember);
+  int get hashCode => Object.hash(
+      runtimeType,
+      pop,
+      verifying,
+      invitationCode,
+      errorInvalidInvitationCode,
+      alreadySpaceMember,
+      const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
   @override
@@ -210,7 +227,8 @@ abstract class _JoinSpaceViewState implements JoinSpaceViewState {
       final bool verifying,
       final String invitationCode,
       final bool errorInvalidInvitationCode,
-      final bool alreadySpaceMember}) = _$JoinSpaceViewStateImpl;
+      final bool alreadySpaceMember,
+      final Object? error}) = _$JoinSpaceViewStateImpl;
 
   @override
   bool get pop;
@@ -222,6 +240,8 @@ abstract class _JoinSpaceViewState implements JoinSpaceViewState {
   bool get errorInvalidInvitationCode;
   @override
   bool get alreadySpaceMember;
+  @override
+  Object? get error;
   @override
   @JsonKey(ignore: true)
   _$$JoinSpaceViewStateImplCopyWith<_$JoinSpaceViewStateImpl> get copyWith =>

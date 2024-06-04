@@ -9,6 +9,7 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_view_model.dart';
 
 import '../../../../../components/app_logo.dart';
@@ -38,16 +39,6 @@ class _PhoneVerificationScreenState
     super.initState();
   }
 
-  void _navBackAfterVerification() {
-    ref.listen(
-        phoneVerificationStateProvider
-            .select((value) => value.verificationSucceed), (previous, next) {
-      if (next) {
-        context.pop([true, ref.read(phoneVerificationStateProvider).isNewUser]);
-      }
-    });
-  }
-
   @override
   void dispose() {
     _otpController.dispose();
@@ -64,6 +55,7 @@ class _PhoneVerificationScreenState
     );
 
     _navBackAfterVerification();
+    _observeError();
 
     return AppPage(
         title: '',
@@ -178,4 +170,22 @@ class _PhoneVerificationScreenState
           ),
         ),
       );
+
+  void _navBackAfterVerification() {
+    ref.listen(
+        phoneVerificationStateProvider
+            .select((value) => value.verificationSucceed), (previous, next) {
+      if (next) {
+        context.pop([true, ref.read(phoneVerificationStateProvider).isNewUser]);
+      }
+    });
+  }
+
+  void _observeError() {
+    ref.listen(phoneVerificationStateProvider.select((state) => state.error), (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
+    });
+  }
 }

@@ -35,7 +35,7 @@ class HomeTopBar extends StatefulWidget {
 
 class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   bool expand = false;
-  late int selectedIndex;
+  late int selectedIndex = 0;
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -52,7 +52,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
       parent: _animationController,
       curve: Curves.easeInOut,
     );
-    selectedIndex = _getSelectedSpace();
   }
 
   @override
@@ -64,7 +63,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   @override
   void didUpdateWidget(HomeTopBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    selectedIndex = _getSelectedSpace();
   }
 
   void performAnimation() {
@@ -73,15 +71,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     } else {
       _animationController.reverse();
     }
-  }
-
-  int _getSelectedSpace() {
-    for (int i = 0; i < widget.spaces.length; i++) {
-      if (widget.spaces[i].space == widget.selectedSpace?.space) {
-        return i;
-      }
-    }
-    return 0;
   }
 
   @override

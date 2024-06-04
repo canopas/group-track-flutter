@@ -31,15 +31,24 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     try {
       state = state.copyWith(loading: state.spaceList.isEmpty);
       final spaces = await spaceService.getAllSpaceInfo();
-      state = state.copyWith(loading: false, spaceList: spaces);
-      if (currentSpaceId != null && spaces.isNotEmpty) {
-        final selectedSpace = spaces.firstWhere(
-          (space) => space.space.id == currentSpaceId,
-        );
 
+      final sortedSpaces = spaces.toList();
+      if (currentSpaceId != null) {
+        final selectedSpaceIndex = sortedSpaces.indexWhere((space) => space.space.id == currentSpaceId);
+        if (selectedSpaceIndex > -1) {
+          final selectedSpace = sortedSpaces.removeAt(selectedSpaceIndex);
+          sortedSpaces.insert(0, selectedSpace);
+        }
+      }
+
+      state = state.copyWith(loading: false, spaceList: sortedSpaces);
+
+      if (currentSpaceId != null && sortedSpaces.isNotEmpty) {
+        final selectedSpace = sortedSpaces.first;
         updateSelectedSpace(selectedSpace);
       }
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e(
         'HomeViewNotifier: error while getting all spaces',
         error: error,
@@ -54,6 +63,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       final code = await spaceService.getInviteCode(state.selectedSpace?.space.id ?? '');
       state = state.copyWith(spaceInvitationCode: code ?? '', fetchingInviteCode: false);
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e(
         'HomeViewNotifier: Error while getting invitation code',
         error: error,
@@ -80,5 +90,6 @@ class HomeViewState with _$HomeViewState {
     SpaceInfo? selectedSpace,
     @Default('') String spaceInvitationCode,
     @Default([]) List<SpaceInfo> spaceList,
+    Object? error,
   }) = _HomeViewState;
 }

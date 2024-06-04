@@ -47,6 +47,7 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
       spaceService.joinSpace(spaceId);
       state = state.copyWith(verifying: false, pop: true);
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e(
         'JoinSpaceViewNotifier: Error while join space with invitation code',
         error: error,
@@ -64,5 +65,6 @@ class JoinSpaceViewState with _$JoinSpaceViewState {
     @Default('') String invitationCode,
     @Default(false) bool errorInvalidInvitationCode,
     @Default(false) bool alreadySpaceMember,
+    Object? error,
   }) = _JoinSpaceViewState;
 }

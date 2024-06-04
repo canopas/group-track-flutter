@@ -4,6 +4,7 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/home/home_screen_viewmodel.dart';
 
@@ -29,19 +30,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
-  void _observeNavigation(HomeViewState state) {
-    ref.listen(homeViewStateProvider.select((state) => state.spaceInvitationCode),
-            (_, next) {
-          if (next.isNotEmpty) {
-            AppRoute.inviteCode(code: next, spaceName: state.selectedSpace?.space.name ?? '').push(context);
-          }
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(homeViewStateProvider);
     _observeNavigation(state);
+    _observeError();
 
     return AppPage(
       body: ResumeDetector(
@@ -71,5 +64,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
     );
+  }
+
+  void _observeNavigation(HomeViewState state) {
+    ref.listen(homeViewStateProvider.select((state) => state.spaceInvitationCode),
+            (_, next) {
+          if (next.isNotEmpty) {
+            AppRoute.inviteCode(code: next, spaceName: state.selectedSpace?.space.name ?? '').push(context);
+          }
+        });
+  }
+
+  void _observeError() {
+    ref.listen(homeViewStateProvider.select((state) => state.error), (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
+    });
   }
 }
