@@ -6,6 +6,7 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_view_model.dart';
 
 class PickNameScreen extends ConsumerStatefulWidget {
@@ -37,8 +38,9 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(pickNameStateNotifierProvider);
-
+    _observeError();
     _navToHomeAfterSave();
+
     return AppPage(body: Builder(builder: (context) {
       return Column(
         children: [
@@ -117,6 +119,14 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
         (previous, next) {
       if (next) {
         AppRoute.home.go(context);
+      }
+    });
+  }
+
+  void _observeError() {
+    ref.listen(pickNameStateNotifierProvider.select((state) => state.error), (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
       }
     });
   }

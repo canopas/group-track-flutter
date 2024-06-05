@@ -21,6 +21,7 @@ mixin _$CreateSpaceViewState {
   String get selectedSpaceName => throw _privateConstructorUsedError;
   String get invitationCode => throw _privateConstructorUsedError;
   TextEditingController get spaceName => throw _privateConstructorUsedError;
+  Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $CreateSpaceViewStateCopyWith<CreateSpaceViewState> get copyWith =>
@@ -38,7 +39,8 @@ abstract class $CreateSpaceViewStateCopyWith<$Res> {
       bool isCreating,
       String selectedSpaceName,
       String invitationCode,
-      TextEditingController spaceName});
+      TextEditingController spaceName,
+      Object? error});
 }
 
 /// @nodoc
@@ -60,6 +62,7 @@ class _$CreateSpaceViewStateCopyWithImpl<$Res,
     Object? selectedSpaceName = null,
     Object? invitationCode = null,
     Object? spaceName = null,
+    Object? error = freezed,
   }) {
     return _then(_value.copyWith(
       allowSave: null == allowSave
@@ -82,6 +85,7 @@ class _$CreateSpaceViewStateCopyWithImpl<$Res,
           ? _value.spaceName
           : spaceName // ignore: cast_nullable_to_non_nullable
               as TextEditingController,
+      error: freezed == error ? _value.error : error,
     ) as $Val);
   }
 }
@@ -99,7 +103,8 @@ abstract class _$$CreateSpaceViewStateImplCopyWith<$Res>
       bool isCreating,
       String selectedSpaceName,
       String invitationCode,
-      TextEditingController spaceName});
+      TextEditingController spaceName,
+      Object? error});
 }
 
 /// @nodoc
@@ -118,6 +123,7 @@ class __$$CreateSpaceViewStateImplCopyWithImpl<$Res>
     Object? selectedSpaceName = null,
     Object? invitationCode = null,
     Object? spaceName = null,
+    Object? error = freezed,
   }) {
     return _then(_$CreateSpaceViewStateImpl(
       allowSave: null == allowSave
@@ -140,6 +146,7 @@ class __$$CreateSpaceViewStateImplCopyWithImpl<$Res>
           ? _value.spaceName
           : spaceName // ignore: cast_nullable_to_non_nullable
               as TextEditingController,
+      error: freezed == error ? _value.error : error,
     ));
   }
 }
@@ -152,7 +159,8 @@ class _$CreateSpaceViewStateImpl implements _CreateSpaceViewState {
       this.isCreating = false,
       this.selectedSpaceName = '',
       this.invitationCode = '',
-      required this.spaceName});
+      required this.spaceName,
+      this.error});
 
   @override
   @JsonKey()
@@ -168,10 +176,12 @@ class _$CreateSpaceViewStateImpl implements _CreateSpaceViewState {
   final String invitationCode;
   @override
   final TextEditingController spaceName;
+  @override
+  final Object? error;
 
   @override
   String toString() {
-    return 'CreateSpaceViewState(allowSave: $allowSave, isCreating: $isCreating, selectedSpaceName: $selectedSpaceName, invitationCode: $invitationCode, spaceName: $spaceName)';
+    return 'CreateSpaceViewState(allowSave: $allowSave, isCreating: $isCreating, selectedSpaceName: $selectedSpaceName, invitationCode: $invitationCode, spaceName: $spaceName, error: $error)';
   }
 
   @override
@@ -188,12 +198,19 @@ class _$CreateSpaceViewStateImpl implements _CreateSpaceViewState {
             (identical(other.invitationCode, invitationCode) ||
                 other.invitationCode == invitationCode) &&
             (identical(other.spaceName, spaceName) ||
-                other.spaceName == spaceName));
+                other.spaceName == spaceName) &&
+            const DeepCollectionEquality().equals(other.error, error));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, allowSave, isCreating,
-      selectedSpaceName, invitationCode, spaceName);
+  int get hashCode => Object.hash(
+      runtimeType,
+      allowSave,
+      isCreating,
+      selectedSpaceName,
+      invitationCode,
+      spaceName,
+      const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
   @override
@@ -206,12 +223,12 @@ class _$CreateSpaceViewStateImpl implements _CreateSpaceViewState {
 
 abstract class _CreateSpaceViewState implements CreateSpaceViewState {
   const factory _CreateSpaceViewState(
-          {final bool allowSave,
-          final bool isCreating,
-          final String selectedSpaceName,
-          final String invitationCode,
-          required final TextEditingController spaceName}) =
-      _$CreateSpaceViewStateImpl;
+      {final bool allowSave,
+      final bool isCreating,
+      final String selectedSpaceName,
+      final String invitationCode,
+      required final TextEditingController spaceName,
+      final Object? error}) = _$CreateSpaceViewStateImpl;
 
   @override
   bool get allowSave;
@@ -223,6 +240,8 @@ abstract class _CreateSpaceViewState implements CreateSpaceViewState {
   String get invitationCode;
   @override
   TextEditingController get spaceName;
+  @override
+  Object? get error;
   @override
   @JsonKey(ignore: true)
   _$$CreateSpaceViewStateImplCopyWith<_$CreateSpaceViewStateImpl>
