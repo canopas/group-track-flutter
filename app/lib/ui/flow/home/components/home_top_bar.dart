@@ -60,11 +60,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  @override
-  void didUpdateWidget(HomeTopBar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-  }
-
   void performAnimation() {
     if (expand) {
       _animationController.forward();

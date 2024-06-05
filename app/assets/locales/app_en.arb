@@ -2,10 +2,16 @@
   "app_title": "YourSpace",
   "app_tag_line": "Stay Close, Anywhere!",
 
+  "alert_confirm_default_title": "Are you sure",
+
   "@_COMMON": {
   },
   "common_get_started": "Get Started",
   "common_next": "Next",
+  "common_yes": "Yes",
+  "common_cancel": "Cancel",
+  "common_delete": "Delete",
+  "common_okay": "Okay",
   "common_verify": "Verify","commonMembers": "{memberCount} {memberCount, plural, =1{Member} other{Members}}",
   "@commonMembers": {
     "placeholders": {
@@ -70,6 +76,15 @@
   "join_space_get_code_from_space_text": "Get the code from the space creator to join.",
   "join_space_already_joined_error_text": "You are already member of this space",
   "join_space_invalid_code_error_text": "It appears the code is no longer valid or has expired. please review and enter valid code.",
+  "join_space_congratulation_title": "Congratulation",
+  "join_space_congratulation_subtitle": "You’re are now member of {spaceName} group for sharing your real-time location.",
+  "@join_space_congratulation_subtitle": {
+    "placeholders": {
+      "spaceName": {
+        "type": "String"
+      }
+    }
+  },
 
   "invite_code_title": "Invite code",
   "invite_code_invite_member_title": "Invite members to the {spaceName}",

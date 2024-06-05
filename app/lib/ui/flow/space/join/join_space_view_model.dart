@@ -1,4 +1,5 @@
 import 'package:data/api/space/api_space_invitation_service.dart';
+import 'package:data/api/space/space_models.dart';
 import 'package:data/service/auth_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -45,7 +46,8 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
       }
 
       spaceService.joinSpace(spaceId);
-      state = state.copyWith(verifying: false, pop: true);
+      final space = await spaceService.getSpace(spaceId);
+      state = state.copyWith(verifying: false, space: space, spaceJoined: true);
     } catch (error, stack) {
       state = state.copyWith(error: error);
       logger.e(
@@ -60,11 +62,12 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
 @freezed
 class JoinSpaceViewState with _$JoinSpaceViewState {
   const factory JoinSpaceViewState({
-    @Default(false) bool pop,
     @Default(false) bool verifying,
+    @Default(false) bool spaceJoined,
     @Default('') String invitationCode,
     @Default(false) bool errorInvalidInvitationCode,
     @Default(false) bool alreadySpaceMember,
     Object? error,
+    ApiSpace? space,
   }) = _JoinSpaceViewState;
 }

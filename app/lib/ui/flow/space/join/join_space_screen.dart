@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/components/alert.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/space/join/join_space_view_model.dart';
 
@@ -42,8 +44,8 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
   @override
   Widget build(BuildContext context) {
     notifier = ref.watch(joinSpaceViewStateProvider.notifier);
-    _observePop();
     _observeError();
+    _showCongratulationPrompt();
 
     return AppPage(
       title: context.l10n.join_space_title,
@@ -193,19 +195,27 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     });
   }
 
-  void _observePop() {
-    ref.listen(joinSpaceViewStateProvider.select((state) => state.pop),
-            (_, next) {
-          if (next) {
-            Navigator.pop(context);
-          }
-        });
-  }
-
   void _observeError() {
     ref.listen(joinSpaceViewStateProvider.select((state) => state.error), (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
+      }
+    });
+  }
+
+  void _showCongratulationPrompt() {
+    ref.listen(joinSpaceViewStateProvider.select((state) => state.space),
+        (previous, next) {
+      if (next != null) {
+        showOkayConfirmation(
+          context,
+          title: context.l10n.join_space_congratulation_title,
+          message: context.l10n
+              .join_space_congratulation_subtitle(next.name),
+          onOkay: () {
+            context.pop();
+          },
+        );
       }
     });
   }
