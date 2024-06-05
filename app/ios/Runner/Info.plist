@@ -54,5 +54,9 @@
         </array>
       </dict>
     </array>
+    <key>NSPhotoLibraryUsageDescription</key>
+   	<string>App requires permission to access photos</string>
+   	<key>NSCameraUsageDescription</key>
+   	<string>App requires permission to access camera</string>
 </dict>
 </plist>

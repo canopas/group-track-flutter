@@ -47,7 +47,9 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
   Widget _body(BuildContext context, CreateSpaceViewState state) {
     return Stack(children: [
       ListView(
-        padding: const EdgeInsets.all(16),
+          padding: MediaQuery.of(context).padding +
+              const EdgeInsets.all(16) +
+              BottomStickyOverlay.padding,
         children: [
           const SizedBox(height: 8),
           Text(

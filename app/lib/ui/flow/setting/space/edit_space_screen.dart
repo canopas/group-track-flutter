@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +28,6 @@ class EditSpaceScreen extends ConsumerStatefulWidget {
 
 class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
   late EditSpaceViewNotifier notifier;
-  final Map<String, Color> _userColors = {};
 
   @override
   void initState() {
@@ -185,7 +182,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
       {bool isCurrentUser = false, bool locationEnabled = false}) {
     return Row(
       children: [
-        _profileImageView(context, member),
+        _profileImageView(context, member, isCurrentUser),
         const SizedBox(width: 16),
         Text(
           member.user.fullName,
@@ -210,26 +207,9 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
     );
   }
 
-  Widget _profileImageView(BuildContext context, ApiUserInfo member) {
+  Widget _profileImageView(BuildContext context, ApiUserInfo member, bool isCurrentUser) {
     final profileImageUrl = member.user.profile_image ?? '';
     final firstLetter = member.user.userNameFirstLetter;
-
-    Color getRandomColor() {
-      Random random = Random();
-      return Color.fromARGB(
-        255,
-        random.nextInt(128),
-        random.nextInt(128),
-        random.nextInt(128),
-      );
-    }
-
-    Color getUserColor(String userId) {
-      if (!_userColors.containsKey(userId)) {
-        _userColors[userId] = getRandomColor();
-      }
-      return _userColors[userId]!;
-    }
 
     return SizedBox(
       width: 40,
@@ -244,7 +224,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                 fit: BoxFit.cover,
               )
             : Container(
-                color: getUserColor(member.user.id),
+                color: isCurrentUser ? context.colorScheme.alert : context.colorScheme.primary,
                 child: Center(
                   child: Text(firstLetter,
                       style: AppTextStyle.header3
@@ -271,6 +251,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
             ? context.l10n.edit_space_delete_space_title
             : context.l10n.edit_space_leave_space_title,
         expanded: false,
+        progress: state.deleting,
         edgeInsets: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
         showIcon: state.isAdmin ? true : false,
         foreground: context.colorScheme.alert,
@@ -280,15 +261,13 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
             context,
             confirmBtnText: state.isAdmin
                 ? context.l10n.common_delete
-                : context.l10n.edit_space_leave_space_title,
+                : context.l10n.edit_space_leave_space_alert_confirm_button_text,
             title: state.isAdmin
-                ? context.l10n.common_delete
-                : context.l10n.edit_space_leave_alert_title,
+                ? context.l10n.edit_space_delete_space_title
+                : context.l10n.edit_space_leave_space_title,
             message: state.isAdmin
-                ? context.l10n.edit_space_delete_space_alert_message(
-                    state.space!.space.name)
-                : context.l10n.edit_space_leave_space_alert_message(
-                    state.space!.space.name),
+                ? context.l10n.edit_space_delete_space_alert_message
+                : context.l10n.edit_space_leave_space_alert_message,
             onConfirm: () => notifier.deleteSpace(),
           );
         },

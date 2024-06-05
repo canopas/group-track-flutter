@@ -1,7 +1,6 @@
 name: data
 description: "A new Flutter package project."
 version: 0.0.1
-homepage:
 
 environment:
   sdk: '>=3.2.6 <4.0.0'
@@ -10,6 +9,8 @@ environment:
 dependencies:
   cloud_firestore: ^4.15.5
   firebase_auth: ^4.16.0
+  cloud_functions: ^4.7.6
+  firebase_storage: ^11.7.7
   flutter:
     sdk: flutter
   flutter_riverpod: ^2.4.10

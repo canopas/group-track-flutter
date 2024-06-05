@@ -113,23 +113,8 @@
   "edit_space_your_location_sharing_title": "Your location sharing",
   "edit_space_delete_space_title": "Delete space",
   "edit_space_leave_space_title": "Leave space",
-  "edit_space_leave_space_alert_message": "Are you sure you want to leave the {spaceName} space.",
-  "@edit_space_leave_space_alert_message": {
-    "placeholders": {
-      "spaceName": {
-        "type": "String"
-      }
-    }
-  },
-  "edit_space_delete_space_alert_message": "Are you sure you want to delete the {spaceName} space.",
-  "@edit_space_delete_space_alert_message": {
-    "placeholders": {
-      "spaceName": {
-        "type": "String"
-      }
-    }
-  },
-  "edit_space_leave_alert_title": "Leave",
+  "edit_space_leave_space_alert_message": "Are you sure you want to leave this space? You will no longer be able to view or share location with member of this space",
+  "edit_space_delete_space_alert_message": "Confirming will permanently delete this space and associated data. This action cannot be undone.",
   "edit_space_no_member_in_space_text": "No members in {spaceName}",
   "@edit_space_no_member_in_space_text": {
     "placeholders": {
@@ -137,5 +122,12 @@
         "type": "String"
       }
     }
-  }
+  },
+  "edit_space_leave_space_alert_confirm_button_text": "Leave",
+
+  "contact_support_title": "Contact support",
+  "contact_support_title_field": "Title",
+  "contact_support_description_title": "Description",
+  "contact_support_attachment": "Attachment (if any)",
+  "contact_support_submit_title": "Submit"
 }

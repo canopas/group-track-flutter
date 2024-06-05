@@ -201,7 +201,9 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
             context: context,
             title: context.l10n.settings_other_option_contact_support_text,
             icon: Assets.images.icContactSupport,
-            onTap: () {}),
+            onTap: () {
+              AppRoute.contactSupport.push(context);
+            }),
         _otherOptionItem(
             context: context,
             title: context.l10n.settings_other_option_privacy_policy_text,

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
+import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_support_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/profile/profile_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/setting_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/space/edit_space_screen.dart';
@@ -22,6 +23,7 @@ class AppRoute {
   static const pathSetting = '/setting';
   static const pathProfile = '/profile';
   static const pathEditSpace = '/space';
+  static const pathContactSupport = '/contact-support';
 
   final String path;
   final String? name;
@@ -152,6 +154,9 @@ class AppRoute {
     );
   }
 
+  static AppRoute get contactSupport =>
+      AppRoute(pathContactSupport, builder: (_) => const ContactSupportScreen());
+
   static final routes = [
     GoRoute(
       path: intro.path,
@@ -214,6 +219,10 @@ class AppRoute {
     ),
     GoRoute(
       path: pathEditSpace,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathContactSupport,
       builder: (context, state) => state.widget(context),
     ),
   ];

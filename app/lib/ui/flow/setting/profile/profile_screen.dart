@@ -69,23 +69,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget _body(BuildContext context, EditProfileViewState state) {
     return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: ListView(
-            children: [
-              _profileImage(context, ref, state.profileUrl),
-              const SizedBox(height: 40),
-              _textFields(context, context.l10n.edit_profile_first_name_title, state.firstName),
-              const SizedBox(height: 16),
-              _textFields(context, context.l10n.edit_profile_last_name_title, state.lastName),
-              const SizedBox(height: 16),
-              _textFields(
-                  context, context.l10n.edit_profile_email_title, state.email, enabled: state.enableEmail),
-              const SizedBox(height: 16),
-              _textFields(
-                  context, context.l10n.edit_profile_phone_title, state.phone, enabled: state.enablePhone),
-            ],
-          ),
+        ListView(
+          padding: MediaQuery.of(context).padding +
+              const EdgeInsets.all(16) +
+              BottomStickyOverlay.padding,
+          children: [
+            _profileImage(context, ref, state.profileUrl),
+            const SizedBox(height: 40),
+            _textFields(context, context.l10n.edit_profile_first_name_title, state.firstName),
+            const SizedBox(height: 16),
+            _textFields(context, context.l10n.edit_profile_last_name_title, state.lastName),
+            const SizedBox(height: 16),
+            _textFields(
+                context, context.l10n.edit_profile_email_title, state.email, enabled: state.enableEmail),
+            const SizedBox(height: 16),
+            _textFields(
+                context, context.l10n.edit_profile_phone_title, state.phone, enabled: state.enablePhone),
+          ],
         ),
         _deleteAccountButton(context),
       ],
