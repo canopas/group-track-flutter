@@ -129,5 +129,13 @@
       }
     }
   },
-  "edit_space_leave_alert_title": "Leave"
+  "edit_space_leave_alert_title": "Leave",
+  "edit_space_no_member_in_space_text": "No members in {spaceName}",
+  "@edit_space_no_member_in_space_text": {
+    "placeholders": {
+      "spaceName": {
+        "type": "String"
+      }
+    }
+  }
 }

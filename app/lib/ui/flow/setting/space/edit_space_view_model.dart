@@ -36,13 +36,13 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
       ).toList();
 
       state = state.copyWith(
-          space: space,
-          currentUserInfo: currentUserInfo,
-          loading: false,
-          userInfo: otherMembers ?? [],
-          isAdmin: space?.space.admin_id == user?.id,
-          spaceName: TextEditingController(text: space?.space.name,
-          ),
+        space: space,
+        currentUserInfo: currentUserInfo,
+        userInfo: otherMembers ?? [],
+        isAdmin: space?.space.admin_id == user?.id,
+        locationEnabled: currentUserInfo!.user.location_enabled ?? false,
+        spaceName: TextEditingController(text: space?.space.name),
+        loading: false,
       );
     } catch (error, stack) {
       logger.e(
@@ -56,7 +56,12 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
   void updateSpace() async {
     try {
       state = state.copyWith(saving: true);
-      await spaceService.updateSpace(state.space!.space.copyWith(name: state.spaceName.text.trim()));
+      if (state.spaceName.text.trim() != state.space?.space.name) {
+        await spaceService.updateSpace(state.space!.space.copyWith(name: state.spaceName.text.trim()));
+      }
+      if (state.currentUserInfo!.user.location_enabled != state.locationEnabled) {
+        await spaceService.enableLocation(state.space!.space.id, state.currentUserInfo!.user.id, state.locationEnabled);
+      }
       state = state.copyWith(saving: false);
     } catch (error, stack) {
       logger.e(
@@ -100,6 +105,10 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
     final changed = state.spaceName.text.trim() != state.space?.space.name;
     state = state.copyWith(allowSave: validSpaceName && changed);
   }
+
+  void toggleLocationSharing(bool isEnabled) {
+    state = state.copyWith(locationEnabled: isEnabled);
+  }
 }
 
 @freezed
@@ -111,6 +120,7 @@ class EditSpaceViewState with _$EditSpaceViewState {
     @Default(false) bool isAdmin,
     @Default(false) bool deleting,
     @Default(false) bool deleted,
+    @Default(false) bool locationEnabled,
     @Default('') String selectedSpaceName,
     @Default('') String currentUserId,
     ApiUserInfo? currentUserInfo,

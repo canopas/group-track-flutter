@@ -37,6 +37,8 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _observeLogOut();
+
     return AppPage(
       title: context.l10n.settings_title,
       body: ResumeDetector(
@@ -214,7 +216,9 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
             context: context,
             title: context.l10n.settings_other_option_sign_out_text,
             icon: Assets.images.icSignOut,
-            onTap: () {}),
+            onTap: () {
+              notifier.signOut();
+            }),
       ],
     );
   }
@@ -295,5 +299,13 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
               ),
       ),
     );
+  }
+
+  void _observeLogOut() {
+    ref.listen(settingViewStateProvider.select((state) => state.logOut), (previous, next) {
+      if (next) {
+        AppRoute.signInMethod.push(context);
+      }
+    });
   }
 }

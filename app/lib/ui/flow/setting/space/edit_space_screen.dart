@@ -30,14 +30,7 @@ class EditSpaceScreen extends ConsumerStatefulWidget {
 
 class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
   late EditSpaceViewNotifier notifier;
-
-  void _observePop() {
-    ref.listen(editSpaceViewStateProvider.select((state) => state.deleted), (previous, next) {
-      if (next) {
-        context.pop();
-      }
-    });
-  }
+  final Map<String, Color> _userColors = {};
 
   @override
   void initState() {
@@ -61,14 +54,15 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           actionButton(
             context,
             icon: state.saving
-                ? const AppProgressIndicator(size: AppProgressIndicatorSize.small)
+                ? const AppProgressIndicator(
+                    size: AppProgressIndicatorSize.small)
                 : Icon(
-              Icons.check,
-              size: 24,
-              color: state.allowSave
-                  ? context.colorScheme.primary
-                  : context.colorScheme.textDisabled,
-            ),
+                    Icons.check,
+                    size: 24,
+                    color: state.allowSave
+                        ? context.colorScheme.primary
+                        : context.colorScheme.textDisabled,
+                  ),
             onPressed: () {
               if (state.allowSave) {
                 notifier.updateSpace();
@@ -95,11 +89,9 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
             const SizedBox(height: 16),
             _yourLocation(context, state),
             const SizedBox(height: 16),
-            if (state.userInfo.isNotEmpty) ...[
-              _divider(context),
-              const SizedBox(height: 16),
-              _memberLocation(context, state),
-            ]
+            _divider(context),
+            const SizedBox(height: 16),
+            _memberLocation(context, state),
           ],
         ),
         _deleteSpaceButton(context, state),
@@ -138,8 +130,12 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           ),
           const SizedBox(height: 24),
           if (state.currentUserInfo != null) ...[
-            _locationSharingItem(context, state.currentUserInfo!),
-          ]
+            _locationSharingItem(context, state.currentUserInfo!,
+                isCurrentUser: state.currentUserInfo?.user.id ==
+                    state.currentUserInfo!.user.id,
+            locationEnabled: state.locationEnabled,
+            ),
+          ],
         ],
       ),
     );
@@ -157,22 +153,36 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                 .copyWith(color: context.colorScheme.textDisabled),
           ),
           const SizedBox(height: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: state.userInfo.asMap().entries.map((entry) {
-              final member = entry.value;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: _locationSharingItem(context, member),
-              );
-            }).toList(),
-          ),
+          if (state.userInfo.isEmpty) ...[
+            const SizedBox(height: 16),
+            Center(
+              child: Text(
+                context.l10n.edit_space_no_member_in_space_text(
+                    state.space?.space.name ?? ''),
+                style: AppTextStyle.subtitle3.copyWith(
+                  color: context.colorScheme.textSecondary,
+                ),
+              ),
+            ),
+          ] else ...[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: state.userInfo.asMap().entries.map((entry) {
+                final member = entry.value;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: _locationSharingItem(context, member),
+                );
+              }).toList(),
+            ),
+          ]
         ],
       ),
     );
   }
 
-  Widget _locationSharingItem(BuildContext context, ApiUserInfo member) {
+  Widget _locationSharingItem(BuildContext context, ApiUserInfo member,
+      {bool isCurrentUser = false, bool locationEnabled = false}) {
     return Row(
       children: [
         _profileImageView(context, member),
@@ -184,10 +194,17 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         ),
         const Spacer(),
         Switch(
-          value: member.isLocationEnabled,
-          onChanged: (bool value) {},
+          value:
+              isCurrentUser ? locationEnabled : member.isLocationEnabled,
+          onChanged: isCurrentUser
+              ? (bool value) {
+                  notifier.toggleLocationSharing(value);
+                  notifier.updateSpace();
+                }
+              : null,
           activeColor: context.colorScheme.textPrimaryDark,
           activeTrackColor: context.colorScheme.primary,
+          inactiveTrackColor: context.colorScheme.containerLowOnSurface,
         ),
       ],
     );
@@ -207,6 +224,13 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
       );
     }
 
+    Color getUserColor(String userId) {
+      if (!_userColors.containsKey(userId)) {
+        _userColors[userId] = getRandomColor();
+      }
+      return _userColors[userId]!;
+    }
+
     return SizedBox(
       width: 40,
       height: 40,
@@ -220,7 +244,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                 fit: BoxFit.cover,
               )
             : Container(
-                color: getRandomColor(),
+                color: getUserColor(member.user.id),
                 child: Center(
                   child: Text(firstLetter,
                       style: AppTextStyle.header3
@@ -243,25 +267,41 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
   Widget _deleteSpaceButton(BuildContext context, EditSpaceViewState state) {
     return BottomStickyOverlay(
       child: PrimaryButton(
-        state.isAdmin ? context.l10n.edit_space_delete_space_title : context.l10n.edit_space_leave_space_title,
+        state.isAdmin
+            ? context.l10n.edit_space_delete_space_title
+            : context.l10n.edit_space_leave_space_title,
         expanded: false,
-        edgeInsets:
-            const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+        edgeInsets: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
         showIcon: state.isAdmin ? true : false,
         foreground: context.colorScheme.alert,
         background: context.colorScheme.containerLow,
         onPressed: () {
           showConfirmation(
             context,
-            confirmBtnText: state.isAdmin ? context.l10n.common_delete : context.l10n.edit_space_leave_space_title,
-            title: state.isAdmin ? context.l10n.common_delete : context.l10n.edit_space_leave_alert_title,
+            confirmBtnText: state.isAdmin
+                ? context.l10n.common_delete
+                : context.l10n.edit_space_leave_space_title,
+            title: state.isAdmin
+                ? context.l10n.common_delete
+                : context.l10n.edit_space_leave_alert_title,
             message: state.isAdmin
-                ? context.l10n.edit_space_delete_space_alert_message(state.space!.space.name)
-                : context.l10n.edit_space_leave_space_alert_message(state.space!.space.name),
+                ? context.l10n.edit_space_delete_space_alert_message(
+                    state.space!.space.name)
+                : context.l10n.edit_space_leave_space_alert_message(
+                    state.space!.space.name),
             onConfirm: () => notifier.deleteSpace(),
           );
         },
       ),
     );
+  }
+
+  void _observePop() {
+    ref.listen(editSpaceViewStateProvider.select((state) => state.deleted),
+        (previous, next) {
+      if (next) {
+        context.pop();
+      }
+    });
   }
 }

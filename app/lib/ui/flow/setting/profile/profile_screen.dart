@@ -34,26 +34,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   late EditProfileViewNotifier notifier;
   final _picker = ImagePicker();
 
-  void _observePop() {
-    ref.listen(
-        editProfileViewStateProvider.select((state) => state.saved), (previous,
-        next) {
-      if (next) {
-        context.pop();
-      }
-    });
-  }
-
-  void _observeAccountDeleted() {
-    ref.listen(
-        editProfileViewStateProvider.select((state) => state.accountDeleted), (
-        previous, next) {
-      if (next) {
-        AppRoute.signInMethod.push(context);
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     notifier = ref.watch(editProfileViewStateProvider.notifier);
@@ -300,5 +280,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         },
       ),
     );
+  }
+
+  void _observePop() {
+    ref.listen(
+        editProfileViewStateProvider.select((state) => state.saved), (previous,
+        next) {
+      if (next) {
+        context.pop();
+      }
+    });
+  }
+
+  void _observeAccountDeleted() {
+    ref.listen(
+        editProfileViewStateProvider.select((state) => state.accountDeleted), (
+        previous, next) {
+      if (next) {
+        AppRoute.signInMethod.push(context);
+      }
+    });
   }
 }

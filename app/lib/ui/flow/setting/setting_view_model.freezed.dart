@@ -17,6 +17,8 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$SettingViewState {
   bool get loading => throw _privateConstructorUsedError;
+  bool get signingOut => throw _privateConstructorUsedError;
+  bool get logOut => throw _privateConstructorUsedError;
   String get selectedSpaceName => throw _privateConstructorUsedError;
   List<ApiSpace> get spaces => throw _privateConstructorUsedError;
   ApiUser? get currentUser => throw _privateConstructorUsedError;
@@ -34,6 +36,8 @@ abstract class $SettingViewStateCopyWith<$Res> {
   @useResult
   $Res call(
       {bool loading,
+      bool signingOut,
+      bool logOut,
       String selectedSpaceName,
       List<ApiSpace> spaces,
       ApiUser? currentUser});
@@ -55,6 +59,8 @@ class _$SettingViewStateCopyWithImpl<$Res, $Val extends SettingViewState>
   @override
   $Res call({
     Object? loading = null,
+    Object? signingOut = null,
+    Object? logOut = null,
     Object? selectedSpaceName = null,
     Object? spaces = null,
     Object? currentUser = freezed,
@@ -63,6 +69,14 @@ class _$SettingViewStateCopyWithImpl<$Res, $Val extends SettingViewState>
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      signingOut: null == signingOut
+          ? _value.signingOut
+          : signingOut // ignore: cast_nullable_to_non_nullable
+              as bool,
+      logOut: null == logOut
+          ? _value.logOut
+          : logOut // ignore: cast_nullable_to_non_nullable
               as bool,
       selectedSpaceName: null == selectedSpaceName
           ? _value.selectedSpaceName
@@ -102,6 +116,8 @@ abstract class _$$SettingViewStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {bool loading,
+      bool signingOut,
+      bool logOut,
       String selectedSpaceName,
       List<ApiSpace> spaces,
       ApiUser? currentUser});
@@ -122,6 +138,8 @@ class __$$SettingViewStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? loading = null,
+    Object? signingOut = null,
+    Object? logOut = null,
     Object? selectedSpaceName = null,
     Object? spaces = null,
     Object? currentUser = freezed,
@@ -130,6 +148,14 @@ class __$$SettingViewStateImplCopyWithImpl<$Res>
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      signingOut: null == signingOut
+          ? _value.signingOut
+          : signingOut // ignore: cast_nullable_to_non_nullable
+              as bool,
+      logOut: null == logOut
+          ? _value.logOut
+          : logOut // ignore: cast_nullable_to_non_nullable
               as bool,
       selectedSpaceName: null == selectedSpaceName
           ? _value.selectedSpaceName
@@ -152,6 +178,8 @@ class __$$SettingViewStateImplCopyWithImpl<$Res>
 class _$SettingViewStateImpl implements _SettingViewState {
   const _$SettingViewStateImpl(
       {this.loading = false,
+      this.signingOut = false,
+      this.logOut = false,
       this.selectedSpaceName = '',
       final List<ApiSpace> spaces = const [],
       this.currentUser})
@@ -160,6 +188,12 @@ class _$SettingViewStateImpl implements _SettingViewState {
   @override
   @JsonKey()
   final bool loading;
+  @override
+  @JsonKey()
+  final bool signingOut;
+  @override
+  @JsonKey()
+  final bool logOut;
   @override
   @JsonKey()
   final String selectedSpaceName;
@@ -177,7 +211,7 @@ class _$SettingViewStateImpl implements _SettingViewState {
 
   @override
   String toString() {
-    return 'SettingViewState(loading: $loading, selectedSpaceName: $selectedSpaceName, spaces: $spaces, currentUser: $currentUser)';
+    return 'SettingViewState(loading: $loading, signingOut: $signingOut, logOut: $logOut, selectedSpaceName: $selectedSpaceName, spaces: $spaces, currentUser: $currentUser)';
   }
 
   @override
@@ -186,6 +220,9 @@ class _$SettingViewStateImpl implements _SettingViewState {
         (other.runtimeType == runtimeType &&
             other is _$SettingViewStateImpl &&
             (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.signingOut, signingOut) ||
+                other.signingOut == signingOut) &&
+            (identical(other.logOut, logOut) || other.logOut == logOut) &&
             (identical(other.selectedSpaceName, selectedSpaceName) ||
                 other.selectedSpaceName == selectedSpaceName) &&
             const DeepCollectionEquality().equals(other._spaces, _spaces) &&
@@ -194,8 +231,14 @@ class _$SettingViewStateImpl implements _SettingViewState {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, loading, selectedSpaceName,
-      const DeepCollectionEquality().hash(_spaces), currentUser);
+  int get hashCode => Object.hash(
+      runtimeType,
+      loading,
+      signingOut,
+      logOut,
+      selectedSpaceName,
+      const DeepCollectionEquality().hash(_spaces),
+      currentUser);
 
   @JsonKey(ignore: true)
   @override
@@ -208,12 +251,18 @@ class _$SettingViewStateImpl implements _SettingViewState {
 abstract class _SettingViewState implements SettingViewState {
   const factory _SettingViewState(
       {final bool loading,
+      final bool signingOut,
+      final bool logOut,
       final String selectedSpaceName,
       final List<ApiSpace> spaces,
       final ApiUser? currentUser}) = _$SettingViewStateImpl;
 
   @override
   bool get loading;
+  @override
+  bool get signingOut;
+  @override
+  bool get logOut;
   @override
   String get selectedSpaceName;
   @override

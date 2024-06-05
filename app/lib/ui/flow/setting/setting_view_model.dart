@@ -1,3 +1,4 @@
+import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
@@ -14,6 +15,7 @@ final settingViewStateProvider =
   (ref) => SettingViewNotifier(
     ref.read(spaceServiceProvider),
     ref.read(authServiceProvider),
+    ref.read(apiUserServiceProvider),
     ref.read(currentUserPod),
   ),
 );
@@ -21,9 +23,10 @@ final settingViewStateProvider =
 class SettingViewNotifier extends StateNotifier<SettingViewState> {
   final SpaceService spaceService;
   final AuthService authService;
+  final ApiUserService userService;
   final ApiUser? user;
 
-  SettingViewNotifier(this.spaceService, this.authService, this.user)
+  SettingViewNotifier(this.spaceService, this.authService, this.userService, this.user)
       : super(const SettingViewState()) {
     getUser();
   }
@@ -49,12 +52,28 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
       );
     }
   }
+
+  void signOut() async {
+    try {
+      state = state.copyWith(signingOut: true);
+      await userService.signOut();
+      state = state.copyWith(signingOut: false, logOut: true);
+    } catch (error, stack) {
+      logger.e(
+        'SettingViewNotifier: error while sign out',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
 }
 
 @freezed
 class SettingViewState with _$SettingViewState {
   const factory SettingViewState({
     @Default(false) bool loading,
+    @Default(false) bool signingOut,
+    @Default(false) bool logOut,
     @Default('') String selectedSpaceName,
     @Default([]) List<ApiSpace> spaces,
     ApiUser? currentUser,
