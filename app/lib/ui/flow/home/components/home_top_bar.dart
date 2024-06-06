@@ -12,17 +12,21 @@ import 'package:yourspace_flutter/ui/app_route.dart';
 import '../../../../gen/assets.gen.dart';
 
 class HomeTopBar extends StatefulWidget {
-  final void Function(String) onSpaceItemTap;
+  final void Function(SpaceInfo) onSpaceItemTap;
+  final void Function() onAddMemberTap;
   final List<SpaceInfo> spaces;
-  final String title;
+  final SpaceInfo? selectedSpace;
   final bool loading;
+  final bool fetchingInviteCode;
 
   const HomeTopBar({
     super.key,
     required this.spaces,
     required this.onSpaceItemTap,
-    required this.title,
+    required this.onAddMemberTap,
+    required this.selectedSpace,
     this.loading = false,
+    this.fetchingInviteCode = false,
   });
 
   @override
@@ -64,7 +68,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return _body(context);
@@ -81,40 +84,49 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     return IntrinsicHeight(
       child: Container(
         color: expand ? context.colorScheme.surface : null,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                _iconButton(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  _iconButton(
                     context: context,
                     icon: Assets.images.icSetting,
-                    visibility: !expand, onTap: () {
-                      AppRoute.setting.push(context);
-                }),
-                const SizedBox(width: 8),
-                _spaceSelection(
-                  context: context,
-                  spaceName: widget.title,
-                ),
-                const SizedBox(width: 8),
-                _iconButton(
+                    visibility: !expand,
+                      onTap: () {
+                        AppRoute.setting.push(context);
+                      }),
+                  const SizedBox(width: 8),
+                  _spaceSelection(
+                    context: context,
+                    spaceName: widget.selectedSpace?.space.name ?? context.l10n.home_select_space_text,
+                  ),
+                  const SizedBox(width: 8),
+                  _iconButton(
                     context: context,
                     icon: Assets.images.icMessage,
-                    visibility: !expand, onTap: () {}),
-                SizedBox(width: expand ? 0 : 8),
-                _iconButton(
+                    visibility: !expand,
+                    onTap: () {},
+                  ),
+                  SizedBox(width: expand ? 0 : 8),
+                  _iconButton(
                     context: context,
                     icon: Assets.images.icLocation,
-                    visibility: !expand, onTap: () {}),
-                _iconButton(
+                    visibility: !expand,
+                    onTap: () {},
+                  ),
+                  _iconButton(
                     context: context,
                     icon: Assets.images.icAddMember,
                     visibility: expand,
-                    color: context.colorScheme.textPrimary, onTap: () {}),
-              ],
-            ),
-            _dropDown(context),
-          ],
+                    color: context.colorScheme.textPrimary,
+                    onTap: () => widget.onAddMemberTap(),
+                  ),
+                ],
+              ),
+              _dropDown(context),
+            ],
+          ),
         ),
       ),
     );
@@ -144,24 +156,26 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: Row(
               children: [
-                if (widget.loading) ...[
-                  const AppProgressIndicator(size: AppProgressIndicatorSize.small),
+                Expanded(
+                  child: Text(
+                    widget.loading
+                        ? context.l10n.home_select_space_text
+                        : spaceName,
+                    style: AppTextStyle.subtitle2
+                        .copyWith(color: context.colorScheme.textPrimary),
+                  ),
+                ),
+                const Spacer(),
+                if (widget.fetchingInviteCode || widget.selectedSpace == null) ...[
+                  const AppProgressIndicator(size: AppProgressIndicatorSize.small)
                 ] else ...[
-                  Expanded(
-                    child: Text(
-                      spaceName,
-                      style: AppTextStyle.subtitle2
-                          .copyWith(color: context.colorScheme.textPrimary),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  Icon(
+                    expand
+                        ? Icons.keyboard_arrow_down_rounded
+                        : Icons.keyboard_arrow_up_rounded,
+                    color: context.colorScheme.textPrimary,
                   ),
                 ],
-                Icon(
-                  expand
-                      ? Icons.keyboard_arrow_down_rounded
-                      : Icons.keyboard_arrow_up_rounded,
-                  color: context.colorScheme.textPrimary,
-                )
               ],
             ),
           ),
@@ -175,7 +189,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     required String icon,
     Color? color,
     required bool visibility,
-    required Function onTap,
+    required Function() onTap,
   }) {
     return Visibility(
       visible: visibility,
@@ -195,7 +209,8 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     );
   }
 
-  Widget _spaceList(BuildContext context, List<SpaceInfo> spaces, Function(String) onSpaceSelected) {
+  Widget _spaceList(BuildContext context, List<SpaceInfo> spaces,
+      Function(SpaceInfo) onSpaceSelected) {
     if (widget.loading) {
       return const AppProgressIndicator(size: AppProgressIndicatorSize.small);
     }
@@ -212,26 +227,29 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
               setState(() {
                 selectedIndex = index;
               });
-              onSpaceSelected(space.space.name);
+              onSpaceSelected(space);
             },
-            child: _spaceListItem(context, space, index, widget.title == space.space.name),
+            child: _spaceListItem(
+                context, space, index, widget.selectedSpace?.space.id == space.space.id),
           ),
         );
       }).toList(),
     );
   }
 
-
-  Widget _spaceListItem(BuildContext context, SpaceInfo space, int index, bool isSelected) {
-    final admin = space.members.firstWhere(
+  Widget _spaceListItem(
+      BuildContext context, SpaceInfo space, int index, bool isSelected) {
+    final admin = space.members
+        .firstWhere(
           (member) => member.user.id == space.space.admin_id,
-    ).user;
+        )
+        .user;
 
     return GestureDetector(
       onTap: () {
         setState(() {
           selectedIndex = index;
-          widget.onSpaceItemTap(space.space.name);
+          widget.onSpaceItemTap(space);
         });
       },
       child: Container(
@@ -239,7 +257,8 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(8),
           color: context.colorScheme.containerLow,
           border: Border.all(
-            color: isSelected ? context.colorScheme.primary : Colors.transparent,
+            color:
+                isSelected ? context.colorScheme.primary : Colors.transparent,
           ),
         ),
         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -252,7 +271,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
               onChanged: (val) {
                 setState(() {
                   selectedIndex = index;
-                  widget.onSpaceItemTap(space.space.name);
+                  widget.onSpaceItemTap(space);
                 });
               },
               activeColor: context.colorScheme.primary,
@@ -317,14 +336,16 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
           Row(
             children: [
               Expanded(
-                child: PrimaryButton(context.l10n.home_create_space_title, onPressed: () {
+                child: PrimaryButton(context.l10n.home_create_space_title,
+                    onPressed: () {
                   AppRoute.createSpace.push(context);
                 }),
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: PrimaryButton(context.l10n.home_join_space_title, onPressed: () {
-                  // AppRoute.joinSpace.push(context);
+                child: PrimaryButton(context.l10n.home_join_space_title,
+                    onPressed: () {
+                  AppRoute.joinSpace.push(context);
                 }),
               ),
             ],

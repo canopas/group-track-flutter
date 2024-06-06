@@ -50,6 +50,36 @@ Future<void> showConfirmation(
   );
 }
 
+Future<void> showOkayConfirmation(
+    BuildContext context, {
+      required String title,
+      required String message,
+      bool isDestructiveAction = true,
+      VoidCallback? onOkay,
+    }) {
+  HapticFeedback.mediumImpact();
+  return showAdaptiveDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog.adaptive(
+        surfaceTintColor: context.colorScheme.containerNormalOnSurface,
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          adaptiveAction(
+            context: context,
+            onPressed: () async {
+              context.pop();
+              onOkay?.call();
+            },
+            child: Text(context.l10n.common_okay),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 Widget adaptiveAction({
   required BuildContext context,
   required VoidCallback onPressed,

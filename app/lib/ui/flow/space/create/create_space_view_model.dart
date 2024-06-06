@@ -27,6 +27,7 @@ class CreateSpaceViewNotifier extends StateNotifier<CreateSpaceViewState> {
       final invitationCode = await spaceService.createSpaceAndGetInviteCode(state.spaceName.text);
       state = state.copyWith(isCreating: false, invitationCode: invitationCode);
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e(
         'CreateSpaceViewNotifier: $error - error while creating new space',
         error: error,
@@ -62,5 +63,6 @@ class CreateSpaceViewState with _$CreateSpaceViewState {
     @Default('') String selectedSpaceName,
     @Default('') String invitationCode,
     required TextEditingController spaceName,
+    Object? error,
   }) = _CreateSpaceViewState;
 }

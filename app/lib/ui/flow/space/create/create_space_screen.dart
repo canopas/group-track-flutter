@@ -7,6 +7,7 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/space/create/create_space_view_model.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
 
@@ -20,21 +21,12 @@ class CreateSpace extends ConsumerStatefulWidget {
 class _CreateSpaceState extends ConsumerState<CreateSpace> {
   late CreateSpaceViewNotifier notifier;
 
-  void _observeNavigation(CreateSpaceViewState state) {
-    ref.listen(createSpaceViewStateProvider.select((state) => state.invitationCode),
-        (_, next) {
-      if (next.isNotEmpty) {
-        AppRoute.inviteCode(
-            code: next, spaceName: state.spaceName.text).pushReplacement(context);
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     notifier = ref.read(createSpaceViewStateProvider.notifier);
     final state = ref.watch(createSpaceViewStateProvider);
     _observeNavigation(state);
+    _observeError();
 
     return AppPage(
       title: '',
@@ -184,5 +176,23 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
         progress: state.isCreating,
       ),
     );
+  }
+
+  void _observeNavigation(CreateSpaceViewState state) {
+    ref.listen(createSpaceViewStateProvider.select((state) => state.invitationCode),
+            (_, next) {
+          if (next.isNotEmpty) {
+            AppRoute.inviteCode(
+                code: next, spaceName: state.spaceName.text).pushReplacement(context);
+          }
+        });
+  }
+
+  void _observeError() {
+    ref.listen(createSpaceViewStateProvider.select((state) => state.error), (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
+    });
   }
 }

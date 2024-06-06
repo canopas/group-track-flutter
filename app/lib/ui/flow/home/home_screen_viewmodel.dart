@@ -1,5 +1,6 @@
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:data/service/space_service.dart';
@@ -10,40 +11,71 @@ final homeViewStateProvider = StateNotifierProvider.autoDispose<
     HomeViewNotifier, HomeViewState>(
       (ref) => HomeViewNotifier(
         ref.read(spaceServiceProvider),
+        ref.read(currentUserSessionJsonPod.notifier),
   ),
 );
 
 class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final SpaceService spaceService;
+  final StateController<String?> _currentSpaceIdController;
 
-  HomeViewNotifier(this.spaceService) : super(const HomeViewState());
+  HomeViewNotifier(this.spaceService, this._currentSpaceIdController) : super(const HomeViewState());
+
+  String? get currentSpaceId => _currentSpaceIdController.state;
+
+  set currentSpaceId(String? value) {
+    _currentSpaceIdController.state = value;
+  }
 
   void getAllSpace() async {
     try {
       state = state.copyWith(loading: state.spaceList.isEmpty);
       final spaces = await spaceService.getAllSpaceInfo();
-      state = state.copyWith(loading: false, spaceList: spaces);
-      if (state.selectedSpaceName.isEmpty) {
-        updateSelectedSpaceName(state.spaceList.first.space.name);
+
+      final sortedSpaces = spaces.toList();
+      if (currentSpaceId != null) {
+        final selectedSpaceIndex = sortedSpaces.indexWhere((space) => space.space.id == currentSpaceId);
+        if (selectedSpaceIndex > -1) {
+          final selectedSpace = sortedSpaces.removeAt(selectedSpaceIndex);
+          sortedSpaces.insert(0, selectedSpace);
+        }
+      }
+
+      state = state.copyWith(loading: false, spaceList: sortedSpaces);
+
+      if (currentSpaceId != null && sortedSpaces.isNotEmpty) {
+        final selectedSpace = sortedSpaces.first;
+        updateSelectedSpace(selectedSpace);
       }
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e(
-        'HomeViewNotifier: error while get all place',
+        'HomeViewNotifier: error while getting all spaces',
         error: error,
         stackTrace: stack,
       );
     }
   }
 
-  void updateSelectedSpaceName(String name) {
-    if (name != state.selectedSpaceName) {
-      state = state.copyWith(
-        selectedSpaceName: name,
+  void onAddMemberTap() async {
+    try {
+      state = state.copyWith(fetchingInviteCode: true);
+      final code = await spaceService.getInviteCode(state.selectedSpace?.space.id ?? '');
+      state = state.copyWith(spaceInvitationCode: code ?? '', fetchingInviteCode: false);
+    } catch (error, stack) {
+      state = state.copyWith(error: error);
+      logger.e(
+        'HomeViewNotifier: Error while getting invitation code',
+        error: error,
+        stackTrace: stack,
       );
-    } else {
-      state = state.copyWith(
-        selectedSpaceName: state.spaceList.first.space.name,
-      );
+    }
+  }
+
+  void updateSelectedSpace(SpaceInfo space) {
+    if (space != state.selectedSpace) {
+      state = state.copyWith(selectedSpace: space);
+      currentSpaceId = space.space.id;
     }
   }
 }
@@ -54,8 +86,10 @@ class HomeViewState with _$HomeViewState {
     @Default(false) bool allowSave,
     @Default(false) bool isCreating,
     @Default(false) bool loading,
-    @Default('') String selectedSpaceName,
-    @Default('') String invitationCode,
+    @Default(false) bool fetchingInviteCode,
+    SpaceInfo? selectedSpace,
+    @Default('') String spaceInvitationCode,
     @Default([]) List<SpaceInfo> spaceList,
+    Object? error,
   }) = _HomeViewState;
 }
