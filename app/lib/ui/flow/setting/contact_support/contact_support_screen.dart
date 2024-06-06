@@ -194,6 +194,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
         context.l10n.contact_support_submit_title,
         onPressed: () {
           notifier.submitSupportRequest();
+          showErrorSnackBar(context, state.error.toString());
         },
       ),
     );

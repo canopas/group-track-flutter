@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void showErrorSnackBar(BuildContext context, Object error) {
   HapticFeedback.mediumImpact();
@@ -11,13 +14,21 @@ void showSnackBar(
   String text, {
   SnackBarLength length = SnackBarLength.short,
 }) {
-  final snackBar = SnackBar(
-    content: Text(text),
-    behavior: SnackBarBehavior.floating,
-    duration: Duration(seconds: length.seconds),
-  );
-  ScaffoldMessenger.of(context).removeCurrentSnackBar();
-  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  if (Platform.isIOS) {
+    Fluttertoast.showToast(
+      msg: text,
+      timeInSecForIosWeb: length.seconds,
+      gravity: ToastGravity.BOTTOM,
+    );
+  } else {
+    final snackBar = SnackBar(
+      content: Text(text),
+      behavior: SnackBarBehavior.floating,
+      duration: Duration(seconds: length.seconds),
+    );
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 }
 
 enum SnackBarLength {
