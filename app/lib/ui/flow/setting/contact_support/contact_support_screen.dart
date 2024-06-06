@@ -41,37 +41,34 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
   }
 
   Widget _body(BuildContext context, ContactSupportViewState state) {
-    return Builder(
-      builder: (context) => Stack(
-        children: [
-          ListView(
-            padding: MediaQuery.of(context).padding +
-                const EdgeInsets.all(16) +
-                BottomStickyOverlay.padding,
-            children: [
-              AppTextField(
-                controller: state.title,
-                label: context.l10n.contact_support_title_field,
-              ),
-              const SizedBox(height: 40),
-              AppTextField(
-                label: context.l10n.contact_support_description_title,
-                borderType: AppTextFieldBorderType.outline,
-                controller: state.description,
-                maxLines: 8,
-              ),
-              const SizedBox(height: 40),
-              _attachmentButton(
-                context: context,
-                onAttachmentTap: () => notifier.pickAttachments(),
-              ),
-              const SizedBox(height: 16),
-              _attachmentList(context, state),
-            ],
-          ),
-          _submitButton(context, state),
-        ],
-      ),
+    return Stack(
+      children: [
+        ListView(
+          padding: const EdgeInsets.all(16) +
+              BottomStickyOverlay.padding,
+          children: [
+            AppTextField(
+              controller: state.title,
+              label: context.l10n.contact_support_title_field,
+            ),
+            const SizedBox(height: 40),
+            AppTextField(
+              label: context.l10n.contact_support_description_title,
+              borderType: AppTextFieldBorderType.outline,
+              controller: state.description,
+              maxLines: 8,
+            ),
+            const SizedBox(height: 40),
+            _attachmentButton(
+              context: context,
+              onAttachmentTap: () => notifier.pickAttachments(),
+            ),
+            const SizedBox(height: 16),
+            _attachmentList(context, state),
+          ],
+        ),
+        _submitButton(context, state),
+      ],
     );
   }
 

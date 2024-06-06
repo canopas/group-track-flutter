@@ -50,6 +50,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         error: error,
         stackTrace: stack
       );
+      state = state.copyWith(error: error);
     }
   }
 
@@ -69,6 +70,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         error: error,
         stackTrace: stack
       );
+      state = state.copyWith(error: error);
     }
   }
 
@@ -83,6 +85,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         error: error,
         stackTrace: stack,
       );
+      state = state.copyWith(error: error);
     }
   }
 
@@ -97,6 +100,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         error: error,
         stackTrace: stack,
       );
+      state = state.copyWith(error: error);
     }
   }
 
@@ -127,5 +131,6 @@ class EditSpaceViewState with _$EditSpaceViewState {
     @Default([]) List<ApiUserInfo> userInfo,
     required TextEditingController spaceName,
     SpaceInfo? space,
+    Object? error,
   }) = _EditSpaceViewState;
 }

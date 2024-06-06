@@ -34,17 +34,17 @@ class ApiSupportService {
   }
 
   Future<void> submitSupportRequest(String title, String description, List<String> attachments) async {
-    final report = {
+    final data = {
       "title": title,
       "description": description,
-      "device_name": _device.deviceName,
-      "app_version": _device.appVersion,
+      "device_name": await _device.deviceName,
+      "app_version": await _device.appVersion,
       "device_os": Platform.operatingSystemVersion,
       "user_id": _currentUser?.id,
       "attachments": attachments,
     };
 
     final callable = FirebaseFunctions.instance.httpsCallable('sendSupportRequest');
-    await callable.call(report);
+    await callable.call({'data' : data});
   }
 }

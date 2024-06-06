@@ -56,6 +56,7 @@ class ContactSupportViewNotifier
         error: error,
         stackTrace: stackTrace,
       );
+      state = state.copyWith(error: error);
     }
   }
 

@@ -29,6 +29,7 @@ mixin _$EditSpaceViewState {
   List<ApiUserInfo> get userInfo => throw _privateConstructorUsedError;
   TextEditingController get spaceName => throw _privateConstructorUsedError;
   SpaceInfo? get space => throw _privateConstructorUsedError;
+  Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $EditSpaceViewStateCopyWith<EditSpaceViewState> get copyWith =>
@@ -54,7 +55,8 @@ abstract class $EditSpaceViewStateCopyWith<$Res> {
       ApiUserInfo? currentUserInfo,
       List<ApiUserInfo> userInfo,
       TextEditingController spaceName,
-      SpaceInfo? space});
+      SpaceInfo? space,
+      Object? error});
 
   $ApiUserInfoCopyWith<$Res>? get currentUserInfo;
   $SpaceInfoCopyWith<$Res>? get space;
@@ -86,6 +88,7 @@ class _$EditSpaceViewStateCopyWithImpl<$Res, $Val extends EditSpaceViewState>
     Object? userInfo = null,
     Object? spaceName = null,
     Object? space = freezed,
+    Object? error = freezed,
   }) {
     return _then(_value.copyWith(
       loading: null == loading
@@ -140,6 +143,7 @@ class _$EditSpaceViewStateCopyWithImpl<$Res, $Val extends EditSpaceViewState>
           ? _value.space
           : space // ignore: cast_nullable_to_non_nullable
               as SpaceInfo?,
+      error: freezed == error ? _value.error : error,
     ) as $Val);
   }
 
@@ -189,7 +193,8 @@ abstract class _$$EditSpaceViewStateImplCopyWith<$Res>
       ApiUserInfo? currentUserInfo,
       List<ApiUserInfo> userInfo,
       TextEditingController spaceName,
-      SpaceInfo? space});
+      SpaceInfo? space,
+      Object? error});
 
   @override
   $ApiUserInfoCopyWith<$Res>? get currentUserInfo;
@@ -221,6 +226,7 @@ class __$$EditSpaceViewStateImplCopyWithImpl<$Res>
     Object? userInfo = null,
     Object? spaceName = null,
     Object? space = freezed,
+    Object? error = freezed,
   }) {
     return _then(_$EditSpaceViewStateImpl(
       loading: null == loading
@@ -275,6 +281,7 @@ class __$$EditSpaceViewStateImplCopyWithImpl<$Res>
           ? _value.space
           : space // ignore: cast_nullable_to_non_nullable
               as SpaceInfo?,
+      error: freezed == error ? _value.error : error,
     ));
   }
 }
@@ -295,7 +302,8 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
       this.currentUserInfo,
       final List<ApiUserInfo> userInfo = const [],
       required this.spaceName,
-      this.space})
+      this.space,
+      this.error})
       : _userInfo = userInfo;
 
   @override
@@ -340,10 +348,12 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
   final TextEditingController spaceName;
   @override
   final SpaceInfo? space;
+  @override
+  final Object? error;
 
   @override
   String toString() {
-    return 'EditSpaceViewState(loading: $loading, allowSave: $allowSave, saving: $saving, isAdmin: $isAdmin, deleting: $deleting, deleted: $deleted, locationEnabled: $locationEnabled, selectedSpaceName: $selectedSpaceName, currentUserId: $currentUserId, currentUserInfo: $currentUserInfo, userInfo: $userInfo, spaceName: $spaceName, space: $space)';
+    return 'EditSpaceViewState(loading: $loading, allowSave: $allowSave, saving: $saving, isAdmin: $isAdmin, deleting: $deleting, deleted: $deleted, locationEnabled: $locationEnabled, selectedSpaceName: $selectedSpaceName, currentUserId: $currentUserId, currentUserInfo: $currentUserInfo, userInfo: $userInfo, spaceName: $spaceName, space: $space, error: $error)';
   }
 
   @override
@@ -370,7 +380,8 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
             const DeepCollectionEquality().equals(other._userInfo, _userInfo) &&
             (identical(other.spaceName, spaceName) ||
                 other.spaceName == spaceName) &&
-            (identical(other.space, space) || other.space == space));
+            (identical(other.space, space) || other.space == space) &&
+            const DeepCollectionEquality().equals(other.error, error));
   }
 
   @override
@@ -388,7 +399,8 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
       currentUserInfo,
       const DeepCollectionEquality().hash(_userInfo),
       spaceName,
-      space);
+      space,
+      const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
   @override
@@ -412,7 +424,8 @@ abstract class _EditSpaceViewState implements EditSpaceViewState {
       final ApiUserInfo? currentUserInfo,
       final List<ApiUserInfo> userInfo,
       required final TextEditingController spaceName,
-      final SpaceInfo? space}) = _$EditSpaceViewStateImpl;
+      final SpaceInfo? space,
+      final Object? error}) = _$EditSpaceViewStateImpl;
 
   @override
   bool get loading;
@@ -440,6 +453,8 @@ abstract class _EditSpaceViewState implements EditSpaceViewState {
   TextEditingController get spaceName;
   @override
   SpaceInfo? get space;
+  @override
+  Object? get error;
   @override
   @JsonKey(ignore: true)
   _$$EditSpaceViewStateImplCopyWith<_$EditSpaceViewStateImpl> get copyWith =>

@@ -13,6 +13,7 @@ import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/setting/space/edit_space_view_model.dart';
 
 import '../../../components/alert.dart';
@@ -43,6 +44,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
     notifier = ref.watch(editSpaceViewStateProvider.notifier);
     final state = ref.watch(editSpaceViewStateProvider);
     _observePop();
+    _observeError();
 
     return AppPage(
       title: state.space?.space.name,
@@ -280,6 +282,14 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         (previous, next) {
       if (next) {
         context.pop();
+      }
+    });
+  }
+
+  void _observeError() {
+    ref.listen(editSpaceViewStateProvider.select((state) => state.error), (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
       }
     });
   }

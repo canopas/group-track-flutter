@@ -1,13 +1,13 @@
 # This is a generated file; do not edit or check into version control.
-cloud_firestore=/Users/ishita/.pub-cache/hosted/pub.dev/cloud_firestore-4.15.8/
-cloud_firestore_web=/Users/ishita/.pub-cache/hosted/pub.dev/cloud_firestore_web-3.10.8/
+cloud_firestore=/Users/ishita/.pub-cache/hosted/pub.dev/cloud_firestore-4.17.5/
+cloud_firestore_web=/Users/ishita/.pub-cache/hosted/pub.dev/cloud_firestore_web-3.12.5/
 cloud_functions=/Users/ishita/.pub-cache/hosted/pub.dev/cloud_functions-4.7.6/
 cloud_functions_web=/Users/ishita/.pub-cache/hosted/pub.dev/cloud_functions_web-4.9.6/
 device_info_plus=/Users/ishita/.pub-cache/hosted/pub.dev/device_info_plus-9.1.2/
-firebase_auth=/Users/ishita/.pub-cache/hosted/pub.dev/firebase_auth-4.16.0/
-firebase_auth_web=/Users/ishita/.pub-cache/hosted/pub.dev/firebase_auth_web-5.8.13/
+firebase_auth=/Users/ishita/.pub-cache/hosted/pub.dev/firebase_auth-4.20.0/
+firebase_auth_web=/Users/ishita/.pub-cache/hosted/pub.dev/firebase_auth_web-5.12.0/
 firebase_core=/Users/ishita/.pub-cache/hosted/pub.dev/firebase_core-2.32.0/
-firebase_core_web=/Users/ishita/.pub-cache/hosted/pub.dev/firebase_core_web-2.17.0/
+firebase_core_web=/Users/ishita/.pub-cache/hosted/pub.dev/firebase_core_web-2.17.1/
 firebase_storage=/Users/ishita/.pub-cache/hosted/pub.dev/firebase_storage-11.7.7/
 firebase_storage_web=/Users/ishita/.pub-cache/hosted/pub.dev/firebase_storage_web-3.9.7/
 flutter_timezone=/Users/ishita/.pub-cache/hosted/pub.dev/flutter_timezone-1.0.8/

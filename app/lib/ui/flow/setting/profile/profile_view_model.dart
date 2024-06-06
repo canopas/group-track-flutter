@@ -49,6 +49,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
         error: error,
         stackTrace: stack,
       );
+      state = state.copyWith(error: error);
     }
   }
 
@@ -70,6 +71,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
         error: error,
         stackTrace: stack
       );
+      state = state.copyWith(error: error);
     }
   }
 
@@ -112,7 +114,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
         error: error,
         stackTrace: stack,
       );
-      state = state.copyWith(profileUrl: '', uploadingImage: false);
+      state = state.copyWith(profileUrl: '', uploadingImage: false, error: error);
       onChange();
     }
   }
@@ -139,5 +141,6 @@ class EditProfileViewState with _$EditProfileViewState {
     required TextEditingController email,
     required TextEditingController phone,
     required String profileUrl,
+    Object? error,
   }) = _EditProfileViewState;
 }
