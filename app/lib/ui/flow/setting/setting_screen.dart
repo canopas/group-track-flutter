@@ -8,9 +8,9 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/setting/setting_view_model.dart';
 
@@ -27,18 +27,11 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
   late SettingViewNotifier notifier;
 
   @override
-  void initState() {
-    super.initState();
-    runPostFrame(() {
-      notifier = ref.watch(settingViewStateProvider.notifier);
-      notifier.getUserSpace();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    notifier = ref.watch(settingViewStateProvider.notifier);
     final state = ref.watch(settingViewStateProvider);
     _observeLogOut();
+    _observeError();
 
     return AppPage(
       title: context.l10n.settings_title,
@@ -307,6 +300,14 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     ref.listen(settingViewStateProvider.select((state) => state.logOut), (previous, next) {
       if (next) {
         AppRoute.signInMethod.push(context);
+      }
+    });
+  }
+
+  void _observeError() {
+    ref.listen(settingViewStateProvider.select((state) => state.error), (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
       }
     });
   }

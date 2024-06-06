@@ -29,6 +29,7 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
   SettingViewNotifier(this.spaceService, this.authService, this.userService, this.user)
       : super(const SettingViewState()) {
     getUser();
+    getUserSpace();
   }
 
   void getUser() {
@@ -42,8 +43,8 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
     try {
       state = state.copyWith(loading: state.spaces.isEmpty);
       final spaces = await spaceService.getUserSpaces(state.currentUser?.id ?? '');
-     final nonNullSpaces = spaces.where((space) => space != null).cast<ApiSpace>().toList();
-     state = state.copyWith(spaces: nonNullSpaces, loading: false);
+      final nonNullSpaces = spaces.where((space) => space != null).cast<ApiSpace>().toList();
+      state = state.copyWith(spaces: nonNullSpaces, loading: false);
     } catch (error, stack) {
       logger.e(
         'SettingViewNotifier: error while fetching user space',
@@ -59,6 +60,7 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
       await userService.signOut();
       state = state.copyWith(signingOut: false, logOut: true);
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e(
         'SettingViewNotifier: error while sign out',
         error: error,
@@ -77,5 +79,6 @@ class SettingViewState with _$SettingViewState {
     @Default('') String selectedSpaceName,
     @Default([]) List<ApiSpace> spaces,
     ApiUser? currentUser,
+    Object? error,
   }) = _SettingViewState;
 }

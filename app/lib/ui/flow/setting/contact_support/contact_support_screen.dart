@@ -13,6 +13,7 @@ import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_support_view_model.dart';
 
 import '../../../components/app_page.dart';
@@ -33,6 +34,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
     notifier = ref.watch(contactSupportViewStateProvider.notifier);
     final state = ref.watch(contactSupportViewStateProvider);
     _observePop();
+    _observeError();
 
     return AppPage(
       title: context.l10n.contact_support_title,
@@ -203,6 +205,14 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
         (previous, next) {
       if (next) {
         context.pop();
+      }
+    });
+  }
+
+  void _observeError() {
+    ref.listen(contactSupportViewStateProvider.select((state) => state.error), (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
       }
     });
   }

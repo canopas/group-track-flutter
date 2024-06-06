@@ -22,6 +22,7 @@ import 'package:yourspace_flutter/ui/flow/setting/profile/profile_view_model.dar
 import '../../../../gen/assets.gen.dart';
 import '../../../components/action_bottom_sheet.dart';
 import '../../../components/alert.dart';
+import '../../../components/error_snakebar.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -40,6 +41,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final state = ref.watch(editProfileViewStateProvider);
     _observePop();
     _observeAccountDeleted();
+    _observeError();
 
     return AppPage(
       title: context.l10n.edit_profile_title,
@@ -298,6 +300,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         previous, next) {
       if (next) {
         AppRoute.signInMethod.push(context);
+      }
+    });
+  }
+
+  void _observeError() {
+    ref.listen(editProfileViewStateProvider.select((state) => state.error), (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
       }
     });
   }

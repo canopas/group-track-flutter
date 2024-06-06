@@ -22,6 +22,7 @@ mixin _$SettingViewState {
   String get selectedSpaceName => throw _privateConstructorUsedError;
   List<ApiSpace> get spaces => throw _privateConstructorUsedError;
   ApiUser? get currentUser => throw _privateConstructorUsedError;
+  Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $SettingViewStateCopyWith<SettingViewState> get copyWith =>
@@ -40,7 +41,8 @@ abstract class $SettingViewStateCopyWith<$Res> {
       bool logOut,
       String selectedSpaceName,
       List<ApiSpace> spaces,
-      ApiUser? currentUser});
+      ApiUser? currentUser,
+      Object? error});
 
   $ApiUserCopyWith<$Res>? get currentUser;
 }
@@ -64,6 +66,7 @@ class _$SettingViewStateCopyWithImpl<$Res, $Val extends SettingViewState>
     Object? selectedSpaceName = null,
     Object? spaces = null,
     Object? currentUser = freezed,
+    Object? error = freezed,
   }) {
     return _then(_value.copyWith(
       loading: null == loading
@@ -90,6 +93,7 @@ class _$SettingViewStateCopyWithImpl<$Res, $Val extends SettingViewState>
           ? _value.currentUser
           : currentUser // ignore: cast_nullable_to_non_nullable
               as ApiUser?,
+      error: freezed == error ? _value.error : error,
     ) as $Val);
   }
 
@@ -120,7 +124,8 @@ abstract class _$$SettingViewStateImplCopyWith<$Res>
       bool logOut,
       String selectedSpaceName,
       List<ApiSpace> spaces,
-      ApiUser? currentUser});
+      ApiUser? currentUser,
+      Object? error});
 
   @override
   $ApiUserCopyWith<$Res>? get currentUser;
@@ -143,6 +148,7 @@ class __$$SettingViewStateImplCopyWithImpl<$Res>
     Object? selectedSpaceName = null,
     Object? spaces = null,
     Object? currentUser = freezed,
+    Object? error = freezed,
   }) {
     return _then(_$SettingViewStateImpl(
       loading: null == loading
@@ -169,6 +175,7 @@ class __$$SettingViewStateImplCopyWithImpl<$Res>
           ? _value.currentUser
           : currentUser // ignore: cast_nullable_to_non_nullable
               as ApiUser?,
+      error: freezed == error ? _value.error : error,
     ));
   }
 }
@@ -182,7 +189,8 @@ class _$SettingViewStateImpl implements _SettingViewState {
       this.logOut = false,
       this.selectedSpaceName = '',
       final List<ApiSpace> spaces = const [],
-      this.currentUser})
+      this.currentUser,
+      this.error})
       : _spaces = spaces;
 
   @override
@@ -208,10 +216,12 @@ class _$SettingViewStateImpl implements _SettingViewState {
 
   @override
   final ApiUser? currentUser;
+  @override
+  final Object? error;
 
   @override
   String toString() {
-    return 'SettingViewState(loading: $loading, signingOut: $signingOut, logOut: $logOut, selectedSpaceName: $selectedSpaceName, spaces: $spaces, currentUser: $currentUser)';
+    return 'SettingViewState(loading: $loading, signingOut: $signingOut, logOut: $logOut, selectedSpaceName: $selectedSpaceName, spaces: $spaces, currentUser: $currentUser, error: $error)';
   }
 
   @override
@@ -227,7 +237,8 @@ class _$SettingViewStateImpl implements _SettingViewState {
                 other.selectedSpaceName == selectedSpaceName) &&
             const DeepCollectionEquality().equals(other._spaces, _spaces) &&
             (identical(other.currentUser, currentUser) ||
-                other.currentUser == currentUser));
+                other.currentUser == currentUser) &&
+            const DeepCollectionEquality().equals(other.error, error));
   }
 
   @override
@@ -238,7 +249,8 @@ class _$SettingViewStateImpl implements _SettingViewState {
       logOut,
       selectedSpaceName,
       const DeepCollectionEquality().hash(_spaces),
-      currentUser);
+      currentUser,
+      const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
   @override
@@ -255,7 +267,8 @@ abstract class _SettingViewState implements SettingViewState {
       final bool logOut,
       final String selectedSpaceName,
       final List<ApiSpace> spaces,
-      final ApiUser? currentUser}) = _$SettingViewStateImpl;
+      final ApiUser? currentUser,
+      final Object? error}) = _$SettingViewStateImpl;
 
   @override
   bool get loading;
@@ -269,6 +282,8 @@ abstract class _SettingViewState implements SettingViewState {
   List<ApiSpace> get spaces;
   @override
   ApiUser? get currentUser;
+  @override
+  Object? get error;
   @override
   @JsonKey(ignore: true)
   _$$SettingViewStateImplCopyWith<_$SettingViewStateImpl> get copyWith =>
