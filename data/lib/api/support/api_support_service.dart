@@ -45,6 +45,6 @@ class ApiSupportService {
     };
 
     final callable = FirebaseFunctions.instance.httpsCallable('sendSupportRequest');
-    await callable.call({'data' : data});
+    await callable.call(data);
   }
 }
