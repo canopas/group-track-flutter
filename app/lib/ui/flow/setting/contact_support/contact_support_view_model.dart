@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:data/api/support/api_support_service.dart';
 import 'package:data/log/logger.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,22 +25,21 @@ class ContactSupportViewNotifier
 
   ContactSupportViewNotifier(this.supportService, this.picker)
       : super(
-          ContactSupportViewState(
-            title: TextEditingController(),
-            description: TextEditingController(),
-          ),
-        );
+    ContactSupportViewState(
+      title: TextEditingController(),
+      description: TextEditingController(),
+    ),
+  ) {
+    state.title.addListener(verifySubmitButton);
+  }
 
   final List<File> attachmentsToUpload = [];
   final Map<File, String?> uploadedAttachments = {};
 
-  void onTitleChanged(String title) {
-    state = state.copyWith(title: TextEditingController(text: title));
-  }
-
-  void onDescriptionChanged(String description) {
-    state =
-        state.copyWith(description: TextEditingController(text: description));
+  void verifySubmitButton() {
+    state = state.copyWith(
+      enableSubmit: state.title.text.trim().isNotEmpty && state.attachmentUploading.isEmpty,
+    );
   }
 
   void pickAttachments() async {
@@ -52,7 +52,7 @@ class ContactSupportViewNotifier
       onAttachmentAdded(files);
     } catch (error, stackTrace) {
       logger.e(
-        "ContactSupportViewStateNotifier: Error while pick image!",
+        "ContactSupportViewNotifier: Error while picking image!",
         error: error,
         stackTrace: stackTrace,
       );
@@ -72,6 +72,7 @@ class ContactSupportViewNotifier
     state = state.copyWith(
         attachments: attachments, attachmentSizeLimitExceed: false);
     uploadPendingAttachments();
+    verifySubmitButton();
   }
 
   void uploadPendingAttachments() async {
@@ -84,20 +85,22 @@ class ContactSupportViewNotifier
         _uploadedAttachment(file, uri);
       } catch (error, stack) {
         logger.e(
-          'ContactSupportViewNotifier: error while upload attachments',
-           error: error,
+          'ContactSupportViewNotifier: error while uploading attachments',
+          error: error,
           stackTrace: stack,
         );
         _uploadedAttachment(file, null);
         state = state.copyWith(error: error);
       }
     }
+    verifySubmitButton();
   }
 
   void _uploadingAttachment(File file) {
     final uploading = state.attachmentUploading.toList();
     uploading.add(file);
     state = state.copyWith(attachmentUploading: uploading);
+    verifySubmitButton();
   }
 
   void _uploadedAttachment(File file, String? uri) {
@@ -105,17 +108,22 @@ class ContactSupportViewNotifier
     uploading.remove(file);
     uploadedAttachments[file] = uri;
     state = state.copyWith(attachmentUploading: uploading);
+    verifySubmitButton();
   }
 
   void onAttachmentRemoved(int index) {
-    state = state.copyWith(attachments: state.attachments.toList()..removeAt(index));
+    final attachments = state.attachments.toList();
+    final removedFile = attachments.removeAt(index);
+    uploadedAttachments.remove(removedFile);
+    state = state.copyWith(attachments: attachments);
+    verifySubmitButton();
   }
 
   void submitSupportRequest() async {
     try {
       state = state.copyWith(submitting: true, error: null, attachmentSizeLimitExceed: false);
       final attachments =
-          uploadedAttachments.values.whereType<String>().toList();
+      uploadedAttachments.values.whereType<String>().toList();
       await supportService.submitSupportRequest(
         state.title.text,
         state.description.text,
@@ -124,7 +132,7 @@ class ContactSupportViewNotifier
       state = state.copyWith(requestSent: true, submitting: false);
     } catch (error, stack) {
       logger.e(
-        'ContactSupportViewNotifier: error while submit response',
+        'ContactSupportViewNotifier: error while submitting response',
         error: error,
         stackTrace: stack,
       );
@@ -139,9 +147,10 @@ class ContactSupportViewState with _$ContactSupportViewState {
     @Default(false) bool submitting,
     @Default(false) bool requestSent,
     @Default(false) bool attachmentSizeLimitExceed,
+    @Default(false) bool enableSubmit,
     Object? error,
-    required TextEditingController title,
     required TextEditingController description,
+    required TextEditingController title,
     @Default([]) List<File> attachments,
     @Default([]) List<File> attachmentUploading,
   }) = _ContactSupportViewState;

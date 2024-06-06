@@ -165,8 +165,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                         .copyWith(color: context.colorScheme.textPrimary),
                   ),
                 ),
-                const Spacer(),
-                if (widget.fetchingInviteCode || widget.selectedSpace == null) ...[
+                if (widget.fetchingInviteCode || (widget.selectedSpace == null && widget.spaces.isNotEmpty)) ...[
                   const AppProgressIndicator(size: AppProgressIndicatorSize.small)
                 ] else ...[
                   Icon(

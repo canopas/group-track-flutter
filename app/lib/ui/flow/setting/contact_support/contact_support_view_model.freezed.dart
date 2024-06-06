@@ -19,9 +19,10 @@ mixin _$ContactSupportViewState {
   bool get submitting => throw _privateConstructorUsedError;
   bool get requestSent => throw _privateConstructorUsedError;
   bool get attachmentSizeLimitExceed => throw _privateConstructorUsedError;
+  bool get enableSubmit => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
-  TextEditingController get title => throw _privateConstructorUsedError;
   TextEditingController get description => throw _privateConstructorUsedError;
+  TextEditingController get title => throw _privateConstructorUsedError;
   List<File> get attachments => throw _privateConstructorUsedError;
   List<File> get attachmentUploading => throw _privateConstructorUsedError;
 
@@ -40,9 +41,10 @@ abstract class $ContactSupportViewStateCopyWith<$Res> {
       {bool submitting,
       bool requestSent,
       bool attachmentSizeLimitExceed,
+      bool enableSubmit,
       Object? error,
-      TextEditingController title,
       TextEditingController description,
+      TextEditingController title,
       List<File> attachments,
       List<File> attachmentUploading});
 }
@@ -64,9 +66,10 @@ class _$ContactSupportViewStateCopyWithImpl<$Res,
     Object? submitting = null,
     Object? requestSent = null,
     Object? attachmentSizeLimitExceed = null,
+    Object? enableSubmit = null,
     Object? error = freezed,
-    Object? title = null,
     Object? description = null,
+    Object? title = null,
     Object? attachments = null,
     Object? attachmentUploading = null,
   }) {
@@ -83,14 +86,18 @@ class _$ContactSupportViewStateCopyWithImpl<$Res,
           ? _value.attachmentSizeLimitExceed
           : attachmentSizeLimitExceed // ignore: cast_nullable_to_non_nullable
               as bool,
+      enableSubmit: null == enableSubmit
+          ? _value.enableSubmit
+          : enableSubmit // ignore: cast_nullable_to_non_nullable
+              as bool,
       error: freezed == error ? _value.error : error,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as TextEditingController,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
               as TextEditingController,
       attachments: null == attachments
           ? _value.attachments
@@ -117,9 +124,10 @@ abstract class _$$ContactSupportViewStateImplCopyWith<$Res>
       {bool submitting,
       bool requestSent,
       bool attachmentSizeLimitExceed,
+      bool enableSubmit,
       Object? error,
-      TextEditingController title,
       TextEditingController description,
+      TextEditingController title,
       List<File> attachments,
       List<File> attachmentUploading});
 }
@@ -140,9 +148,10 @@ class __$$ContactSupportViewStateImplCopyWithImpl<$Res>
     Object? submitting = null,
     Object? requestSent = null,
     Object? attachmentSizeLimitExceed = null,
+    Object? enableSubmit = null,
     Object? error = freezed,
-    Object? title = null,
     Object? description = null,
+    Object? title = null,
     Object? attachments = null,
     Object? attachmentUploading = null,
   }) {
@@ -159,14 +168,18 @@ class __$$ContactSupportViewStateImplCopyWithImpl<$Res>
           ? _value.attachmentSizeLimitExceed
           : attachmentSizeLimitExceed // ignore: cast_nullable_to_non_nullable
               as bool,
+      enableSubmit: null == enableSubmit
+          ? _value.enableSubmit
+          : enableSubmit // ignore: cast_nullable_to_non_nullable
+              as bool,
       error: freezed == error ? _value.error : error,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as TextEditingController,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
               as TextEditingController,
       attachments: null == attachments
           ? _value._attachments
@@ -187,9 +200,10 @@ class _$ContactSupportViewStateImpl implements _ContactSupportViewState {
       {this.submitting = false,
       this.requestSent = false,
       this.attachmentSizeLimitExceed = false,
+      this.enableSubmit = false,
       this.error,
-      required this.title,
       required this.description,
+      required this.title,
       final List<File> attachments = const [],
       final List<File> attachmentUploading = const []})
       : _attachments = attachments,
@@ -205,11 +219,14 @@ class _$ContactSupportViewStateImpl implements _ContactSupportViewState {
   @JsonKey()
   final bool attachmentSizeLimitExceed;
   @override
+  @JsonKey()
+  final bool enableSubmit;
+  @override
   final Object? error;
   @override
-  final TextEditingController title;
-  @override
   final TextEditingController description;
+  @override
+  final TextEditingController title;
   final List<File> _attachments;
   @override
   @JsonKey()
@@ -231,7 +248,7 @@ class _$ContactSupportViewStateImpl implements _ContactSupportViewState {
 
   @override
   String toString() {
-    return 'ContactSupportViewState(submitting: $submitting, requestSent: $requestSent, attachmentSizeLimitExceed: $attachmentSizeLimitExceed, error: $error, title: $title, description: $description, attachments: $attachments, attachmentUploading: $attachmentUploading)';
+    return 'ContactSupportViewState(submitting: $submitting, requestSent: $requestSent, attachmentSizeLimitExceed: $attachmentSizeLimitExceed, enableSubmit: $enableSubmit, error: $error, description: $description, title: $title, attachments: $attachments, attachmentUploading: $attachmentUploading)';
   }
 
   @override
@@ -246,10 +263,12 @@ class _$ContactSupportViewStateImpl implements _ContactSupportViewState {
             (identical(other.attachmentSizeLimitExceed,
                     attachmentSizeLimitExceed) ||
                 other.attachmentSizeLimitExceed == attachmentSizeLimitExceed) &&
+            (identical(other.enableSubmit, enableSubmit) ||
+                other.enableSubmit == enableSubmit) &&
             const DeepCollectionEquality().equals(other.error, error) &&
-            (identical(other.title, title) || other.title == title) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.title, title) || other.title == title) &&
             const DeepCollectionEquality()
                 .equals(other._attachments, _attachments) &&
             const DeepCollectionEquality()
@@ -262,9 +281,10 @@ class _$ContactSupportViewStateImpl implements _ContactSupportViewState {
       submitting,
       requestSent,
       attachmentSizeLimitExceed,
+      enableSubmit,
       const DeepCollectionEquality().hash(error),
-      title,
       description,
+      title,
       const DeepCollectionEquality().hash(_attachments),
       const DeepCollectionEquality().hash(_attachmentUploading));
 
@@ -281,9 +301,10 @@ abstract class _ContactSupportViewState implements ContactSupportViewState {
       {final bool submitting,
       final bool requestSent,
       final bool attachmentSizeLimitExceed,
+      final bool enableSubmit,
       final Object? error,
-      required final TextEditingController title,
       required final TextEditingController description,
+      required final TextEditingController title,
       final List<File> attachments,
       final List<File> attachmentUploading}) = _$ContactSupportViewStateImpl;
 
@@ -294,11 +315,13 @@ abstract class _ContactSupportViewState implements ContactSupportViewState {
   @override
   bool get attachmentSizeLimitExceed;
   @override
+  bool get enableSubmit;
+  @override
   Object? get error;
   @override
-  TextEditingController get title;
-  @override
   TextEditingController get description;
+  @override
+  TextEditingController get title;
   @override
   List<File> get attachments;
   @override

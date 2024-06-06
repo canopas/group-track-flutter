@@ -37,6 +37,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(settingViewStateProvider);
     _observeLogOut();
 
     return AppPage(
@@ -45,12 +46,11 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
           onResume: () {
             notifier.getUser();
             notifier.getUserSpace();
-          }, child: _body(context)),
+          }, child: _body(context, state)),
     );
   }
 
-  Widget _body(BuildContext context) {
-    final state = ref.watch(settingViewStateProvider);
+  Widget _body(BuildContext context, SettingViewState state) {
     if (state.loading) {
       return const Center(child: AppProgressIndicator());
     }

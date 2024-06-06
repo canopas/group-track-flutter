@@ -31,17 +31,16 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
   @override
   Widget build(BuildContext context) {
     notifier = ref.watch(contactSupportViewStateProvider.notifier);
+    final state = ref.watch(contactSupportViewStateProvider);
     _observePop();
 
     return AppPage(
       title: context.l10n.contact_support_title,
-      body: _body(context),
+      body: _body(context, state),
     );
   }
 
-  Widget _body(BuildContext context) {
-    final state = ref.watch(contactSupportViewStateProvider);
-
+  Widget _body(BuildContext context, ContactSupportViewState state) {
     return Builder(
       builder: (context) => Stack(
         children: [
@@ -50,14 +49,16 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                 const EdgeInsets.all(16) +
                 BottomStickyOverlay.padding,
             children: [
-              _titleView(
-                context: context,
+              AppTextField(
                 controller: state.title,
+                label: context.l10n.contact_support_title_field,
               ),
               const SizedBox(height: 40),
-              _descriptionView(
-                context: context,
+              AppTextField(
+                label: context.l10n.contact_support_description_title,
+                borderType: AppTextFieldBorderType.outline,
                 controller: state.description,
+                maxLines: 8,
               ),
               const SizedBox(height: 40),
               _attachmentButton(
@@ -80,14 +81,19 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: state.attachments.length,
-      itemBuilder: (context, index) => _attachmentItem(
+      itemBuilder: (context, index) {
+        final file = state.attachments[index];
+        final isLoading = state.attachmentUploading.contains(file);
+        return _attachmentItem(
           context: context,
-          path: state.attachments[index].path,
-          name: state.attachments[index].path.split('/').last,
-          loading: false,
+          path: file.path,
+          name: file.path.split('/').last,
+          loading: isLoading,
           onCancelTap: () {
             notifier.onAttachmentRemoved(index);
-          }),
+          },
+        );
+      },
       separatorBuilder: (context, index) => const SizedBox(height: 8),
     );
   }
@@ -158,29 +164,6 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
     );
   }
 
-  Widget _titleView({
-    required BuildContext context,
-    required TextEditingController controller,
-  }) {
-    return AppTextField(
-      label: context.l10n.contact_support_title_field,
-      controller: controller,
-      onChanged: (value) => notifier.onTitleChanged(value),
-    );
-  }
-
-  Widget _descriptionView({
-    required BuildContext context,
-    required TextEditingController controller,
-  }) {
-    return AppTextField(
-      label: context.l10n.contact_support_description_title,
-      borderType: AppTextFieldBorderType.outline,
-      controller: controller,
-      maxLines: 8,
-    );
-  }
-
   Widget _attachmentButton({
     required BuildContext context,
     required VoidCallback onAttachmentTap,
@@ -207,7 +190,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
   Widget _submitButton(BuildContext context, ContactSupportViewState state) {
     return BottomStickyOverlay(
       child: PrimaryButton(
-        enabled: !state.submitting && state.title.text.length >= 3,
+        enabled: !state.submitting && state.enableSubmit,
         progress: state.submitting,
         context.l10n.contact_support_submit_title,
         onPressed: () {
@@ -218,7 +201,9 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
   }
 
   void _observePop() {
-    ref.listen(contactSupportViewStateProvider.select((state) => state.requestSent), (previous, next) {
+    ref.listen(
+        contactSupportViewStateProvider.select((state) => state.requestSent),
+        (previous, next) {
       if (next) {
         context.pop();
       }

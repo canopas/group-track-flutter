@@ -28,7 +28,7 @@ mixin _$EditProfileViewState {
   TextEditingController get lastName => throw _privateConstructorUsedError;
   TextEditingController get email => throw _privateConstructorUsedError;
   TextEditingController get phone => throw _privateConstructorUsedError;
-  String? get profileUrl => throw _privateConstructorUsedError;
+  String get profileUrl => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $EditProfileViewStateCopyWith<EditProfileViewState> get copyWith =>
@@ -54,7 +54,7 @@ abstract class $EditProfileViewStateCopyWith<$Res> {
       TextEditingController lastName,
       TextEditingController email,
       TextEditingController phone,
-      String? profileUrl});
+      String profileUrl});
 }
 
 /// @nodoc
@@ -83,7 +83,7 @@ class _$EditProfileViewStateCopyWithImpl<$Res,
     Object? lastName = null,
     Object? email = null,
     Object? phone = null,
-    Object? profileUrl = freezed,
+    Object? profileUrl = null,
   }) {
     return _then(_value.copyWith(
       saving: null == saving
@@ -134,10 +134,10 @@ class _$EditProfileViewStateCopyWithImpl<$Res,
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as TextEditingController,
-      profileUrl: freezed == profileUrl
+      profileUrl: null == profileUrl
           ? _value.profileUrl
           : profileUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
     ) as $Val);
   }
 }
@@ -163,7 +163,7 @@ abstract class _$$EditProfileViewStateImplCopyWith<$Res>
       TextEditingController lastName,
       TextEditingController email,
       TextEditingController phone,
-      String? profileUrl});
+      String profileUrl});
 }
 
 /// @nodoc
@@ -189,7 +189,7 @@ class __$$EditProfileViewStateImplCopyWithImpl<$Res>
     Object? lastName = null,
     Object? email = null,
     Object? phone = null,
-    Object? profileUrl = freezed,
+    Object? profileUrl = null,
   }) {
     return _then(_$EditProfileViewStateImpl(
       saving: null == saving
@@ -240,10 +240,10 @@ class __$$EditProfileViewStateImplCopyWithImpl<$Res>
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as TextEditingController,
-      profileUrl: freezed == profileUrl
+      profileUrl: null == profileUrl
           ? _value.profileUrl
           : profileUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as String,
     ));
   }
 }
@@ -264,7 +264,7 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
       required this.lastName,
       required this.email,
       required this.phone,
-      this.profileUrl});
+      required this.profileUrl});
 
   @override
   @JsonKey()
@@ -299,7 +299,7 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
   @override
   final TextEditingController phone;
   @override
-  final String? profileUrl;
+  final String profileUrl;
 
   @override
   String toString() {
@@ -375,7 +375,7 @@ abstract class _EditProfileViewState implements EditProfileViewState {
       required final TextEditingController lastName,
       required final TextEditingController email,
       required final TextEditingController phone,
-      final String? profileUrl}) = _$EditProfileViewStateImpl;
+      required final String profileUrl}) = _$EditProfileViewStateImpl;
 
   @override
   bool get saving;
@@ -402,7 +402,7 @@ abstract class _EditProfileViewState implements EditProfileViewState {
   @override
   TextEditingController get phone;
   @override
-  String? get profileUrl;
+  String get profileUrl;
   @override
   @JsonKey(ignore: true)
   _$$EditProfileViewStateImplCopyWith<_$EditProfileViewStateImpl>

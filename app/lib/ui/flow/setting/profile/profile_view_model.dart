@@ -34,7 +34,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
           phone: TextEditingController(text: user?.phone),
           enableEmail: user?.auth_type == LOGIN_TYPE_GOOGLE,
           enablePhone: user?.auth_type == LOGIN_TYPE_PHONE,
-          profileUrl: user?.profile_image,
+          profileUrl: user?.profile_image ?? '',
         ));
 
   void deleteAccount() {
@@ -112,13 +112,13 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
         error: error,
         stackTrace: stack,
       );
-      state = state.copyWith(profileUrl: null, uploadingImage: false);
+      state = state.copyWith(profileUrl: '', uploadingImage: false);
       onChange();
     }
   }
 
   void onRemoveImage() {
-    state = state.copyWith(profileUrl: null);
+    state = state.copyWith(profileUrl: '', allowSave: true);
     onChange();
   }
 }
@@ -138,6 +138,6 @@ class EditProfileViewState with _$EditProfileViewState {
     required TextEditingController lastName,
     required TextEditingController email,
     required TextEditingController phone,
-    String? profileUrl,
+    required String profileUrl,
   }) = _EditProfileViewState;
 }

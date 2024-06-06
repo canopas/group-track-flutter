@@ -113,7 +113,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   color: context.colorScheme.primary,
                   borderRadius: BorderRadius.circular(64),
                 ),
-                child: (state.profileUrl!.isEmpty)
+                child: (state.profileUrl.isEmpty)
                     ? Center(child: Text(
                     notifier.user?.userNameFirstLetter ?? '',
                     style: TextStyle(
@@ -123,7 +123,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     )
                 ))
                     : CachedNetworkImage(
-                  imageUrl: state.profileUrl ?? '',
+                  imageUrl: state.profileUrl,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -203,7 +203,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             }
           },
         ),
-        if (state.profileUrl!.isNotEmpty)
+        if (state.profileUrl.isNotEmpty)
           BottomSheetAction(
             title: context.l10n.edit_profile_remove_photo_option_text,
             icon: SvgPicture.asset(

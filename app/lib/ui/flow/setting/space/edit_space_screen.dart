@@ -255,7 +255,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         edgeInsets: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
         showIcon: state.isAdmin ? true : false,
         foreground: context.colorScheme.alert,
-        background: context.colorScheme.containerLow,
+        background: context.colorScheme.containerLowOnSurface,
         onPressed: () {
           showConfirmation(
             context,
@@ -268,7 +268,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
             message: state.isAdmin
                 ? context.l10n.edit_space_delete_space_alert_message
                 : context.l10n.edit_space_leave_space_alert_message,
-            onConfirm: () => notifier.deleteSpace(),
+            onConfirm: () => state.isAdmin ? notifier.deleteSpace() : notifier.leaveSpace(),
           );
         },
       ),
