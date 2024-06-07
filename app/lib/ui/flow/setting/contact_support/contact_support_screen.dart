@@ -16,6 +16,7 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_support_view_model.dart';
 
+import '../../../components/alert.dart';
 import '../../../components/app_page.dart';
 
 class ContactSupportScreen extends ConsumerStatefulWidget {
@@ -33,7 +34,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
   Widget build(BuildContext context) {
     notifier = ref.watch(contactSupportViewStateProvider.notifier);
     final state = ref.watch(contactSupportViewStateProvider);
-    _observePop();
+    _showReportSentPrompt();
     _observeError();
 
     return AppPage(
@@ -199,20 +200,26 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
     );
   }
 
-  void _observePop() {
-    ref.listen(
-        contactSupportViewStateProvider.select((state) => state.requestSent),
-        (previous, next) {
-      if (next) {
-        context.pop();
-      }
-    });
-  }
-
   void _observeError() {
     ref.listen(contactSupportViewStateProvider.select((state) => state.error), (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
+      }
+    });
+  }
+
+  void _showReportSentPrompt() {
+    ref.listen(
+        contactSupportViewStateProvider.select((state) => state.requestSent),
+        (previous, next) {
+      if (next) {
+        showOkayConfirmation(
+          context,
+          message: context.l10n.contact_support_feedback_alert_message,
+          onOkay: () {
+            context.pop();
+          },
+        );
       }
     });
   }

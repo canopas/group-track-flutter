@@ -50,7 +50,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         error: error,
         stackTrace: stack
       );
-      state = state.copyWith(error: error);
+      state = state.copyWith(error: error, loading: false);
     }
   }
 
@@ -70,7 +70,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         error: error,
         stackTrace: stack
       );
-      state = state.copyWith(error: error);
+      state = state.copyWith(error: error, saving: false);
     }
   }
 
@@ -85,7 +85,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         error: error,
         stackTrace: stack,
       );
-      state = state.copyWith(error: error);
+      state = state.copyWith(error: error, deleting: false);
     }
   }
 
@@ -100,7 +100,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         error: error,
         stackTrace: stack,
       );
-      state = state.copyWith(error: error);
+      state = state.copyWith(error: error, deleted: false);
     }
   }
 

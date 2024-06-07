@@ -142,5 +142,6 @@
   "contact_support_title_field": "Title",
   "contact_support_description_title": "Description",
   "contact_support_attachment": "Attachment (if any)",
-  "contact_support_submit_title": "Submit"
+  "contact_support_submit_title": "Submit",
+  "contact_support_feedback_alert_message": "Thanks! Your feedback has been recorded."
 }

@@ -51,6 +51,7 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
         error: error,
         stackTrace: stack,
       );
+      state = state.copyWith(error: error, loading: false);
     }
   }
 
@@ -60,7 +61,7 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
       await userService.signOut();
       state = state.copyWith(signingOut: false, logOut: true);
     } catch (error, stack) {
-      state = state.copyWith(error: error);
+      state = state.copyWith(error: error, signingOut: false);
       logger.e(
         'SettingViewNotifier: error while sign out',
         error: error,
