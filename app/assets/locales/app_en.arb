@@ -97,6 +97,13 @@
   },
   "invite_code_invite_member_subtitle": "Share this invite code with your trusted ones in your own style. Connecting is as flexible as you are.",
   "invite_code_active_code_text": "This code will be active for 2 days.",
-  "invite_code_share_code_title": "Share code"
+  "invite_code_share_code_title": "Share code",
+
+  "message_add_member_to_send_message_title": "Add members to send messages",
+  "message_add_member_to_send_message_subtitle": "At least one member needs to join your space to be able to chat.",
+  "message_add_new_member_title": "Add a new member",
+  "message_tap_to_send_new_message_text": "Tap on ‘+’ to send new message to anyone in your space",
+
+  "chat_start_new_chat_title": "Start new chat"
 
 }

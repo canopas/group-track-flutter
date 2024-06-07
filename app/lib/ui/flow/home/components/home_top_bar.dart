@@ -105,7 +105,11 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                     context: context,
                     icon: Assets.images.icMessage,
                     visibility: !expand,
-                    onTap: () {},
+                    onTap: () {
+                      if (widget.selectedSpace != null) {
+                        AppRoute.message(widget.selectedSpace!).push(context);
+                      }
+                    },
                   ),
                   SizedBox(width: expand ? 0 : 8),
                   _iconButton(

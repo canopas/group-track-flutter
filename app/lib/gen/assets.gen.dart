@@ -28,6 +28,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_message.svg
   String get icMessage => 'assets/images/ic_message.svg';
 
+  /// File path: assets/images/ic_send_message.svg
+  String get icSendMessage => 'assets/images/ic_send_message.svg';
+
   /// File path: assets/images/ic_setting.svg
   String get icSetting => 'assets/images/ic_setting.svg';
 
@@ -51,6 +54,7 @@ class $AssetsImagesGen {
         icGoogleLogo,
         icLocation,
         icMessage,
+        icSendMessage,
         icSetting,
         intro1,
         intro2,
