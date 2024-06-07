@@ -93,8 +93,9 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                     context: context,
                     icon: Assets.images.icSetting,
                     visibility: !expand,
-                    onTap: () {},
-                  ),
+                      onTap: () {
+                        AppRoute.setting.push(context);
+                      }),
                   const SizedBox(width: 8),
                   _spaceSelection(
                     context: context,
@@ -159,15 +160,16 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: Row(
               children: [
-                Text(
-                  widget.loading
-                      ? context.l10n.home_select_space_text
-                      : spaceName,
-                  style: AppTextStyle.subtitle2
-                      .copyWith(color: context.colorScheme.textPrimary),
+                Expanded(
+                  child: Text(
+                    widget.loading
+                        ? context.l10n.home_select_space_text
+                        : spaceName,
+                    style: AppTextStyle.subtitle2
+                        .copyWith(color: context.colorScheme.textPrimary),
+                  ),
                 ),
-                const Spacer(),
-                if (widget.fetchingInviteCode || widget.selectedSpace == null) ...[
+                if (widget.fetchingInviteCode || (widget.selectedSpace == null && widget.spaces.isNotEmpty)) ...[
                   const AppProgressIndicator(size: AppProgressIndicatorSize.small)
                 ] else ...[
                   Icon(
@@ -196,6 +198,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
       visible: visibility,
       child: IconPrimaryButton(
         onTap: () => onTap(),
+        radius: 20,
         icon: SvgPicture.asset(
           height: 16,
           width: 14,
@@ -285,6 +288,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   style: AppTextStyle.subtitle2.copyWith(
                     color: context.colorScheme.textPrimary,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Row(

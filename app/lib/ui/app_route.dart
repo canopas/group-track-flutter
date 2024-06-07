@@ -8,6 +8,10 @@ import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/message_screen.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
+import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_support_screen.dart';
+import 'package:yourspace_flutter/ui/flow/setting/profile/profile_screen.dart';
+import 'package:yourspace_flutter/ui/flow/setting/setting_screen.dart';
+import 'package:yourspace_flutter/ui/flow/setting/space/edit_space_screen.dart';
 import 'package:yourspace_flutter/ui/flow/space/create/create_space_screen.dart';
 import 'package:yourspace_flutter/ui/flow/space/invite/invite_code_screen.dart';
 import 'package:yourspace_flutter/ui/flow/space/join/join_space_screen.dart';
@@ -22,6 +26,10 @@ class AppRoute {
   static const pathCreateSpace = '/create';
   static const pathJoinSpace = '/join';
   static const pathInviteCode = '/invite';
+  static const pathSetting = '/setting';
+  static const pathProfile = '/profile';
+  static const pathEditSpace = '/space';
+  static const pathContactSupport = '/contact-support';
   static const pathMessage = '/message';
   static const pathChat = '/chat';
 
@@ -136,6 +144,22 @@ class AppRoute {
     );
   }
 
+  static AppRoute get setting =>
+      AppRoute(pathCreateSpace, builder: (_) => const SettingScreen());
+
+  static AppRoute get profile =>
+      AppRoute(pathProfile, builder: (_) => const ProfileScreen());
+
+  static AppRoute editSpace(String spaceId) {
+    return AppRoute(
+      pathEditSpace,
+      builder: (_) => EditSpaceScreen(spaceId: spaceId),
+    );
+  }
+
+  static AppRoute get contactSupport =>
+      AppRoute(pathContactSupport, builder: (_) => const ContactSupportScreen());
+
   static AppRoute message(SpaceInfo space) {
     return AppRoute(
       pathMessage,
@@ -199,6 +223,22 @@ class AppRoute {
     ),
     GoRoute(
       path: pathInviteCode,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathSetting,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathProfile,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathEditSpace,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathContactSupport,
       builder: (context, state) => state.widget(context),
     ),
     GoRoute(

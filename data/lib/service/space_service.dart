@@ -13,7 +13,7 @@ final spaceServiceProvider = Provider((ref) => SpaceService(
   ref.read(currentUserPod),
   ref.read(apiSpaceServiceProvider),
   ref.read(apiSpaceInvitationServiceProvider),
-  ref.read(currentUserSessionJsonPod.notifier),
+  ref.read(currentSpaceId.notifier),
   ref.read(apiUserServiceProvider),
 ));
 
@@ -172,6 +172,7 @@ class SpaceService {
     for (final space in joinedSpace) {
       await spaceService.removeUserFromSpace(space!.id, userId);
     }
+    _currentSpaceIdController.state = null;
   }
 
   Future<void> deleteSpace(String spaceId) async {

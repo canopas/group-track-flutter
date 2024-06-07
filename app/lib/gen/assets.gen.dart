@@ -16,8 +16,26 @@ class $AssetsImagesGen {
   AssetGenImage get appLogo =>
       const AssetGenImage('assets/images/app_logo.png');
 
+  /// File path: assets/images/ic_about_us.svg
+  String get icAboutUs => 'assets/images/ic_about_us.svg';
+
+  /// File path: assets/images/ic_about_us.svg
+  String get icAboutUs => 'assets/images/ic_about_us.svg';
+
   /// File path: assets/images/ic_add_member.svg
   String get icAddMember => 'assets/images/ic_add_member.svg';
+
+  /// File path: assets/images/ic_contact_support.svg
+  String get icContactSupport => 'assets/images/ic_contact_support.svg';
+
+  /// File path: assets/images/ic_edit_profile.svg
+  String get icEditProfile => 'assets/images/ic_edit_profile.svg';
+
+  /// File path: assets/images/ic_contact_support.svg
+  String get icContactSupport => 'assets/images/ic_contact_support.svg';
+
+  /// File path: assets/images/ic_edit_profile.svg
+  String get icEditProfile => 'assets/images/ic_edit_profile.svg';
 
   /// File path: assets/images/ic_google_logo.svg
   String get icGoogleLogo => 'assets/images/ic_google_logo.svg';
@@ -28,11 +46,32 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_message.svg
   String get icMessage => 'assets/images/ic_message.svg';
 
+  /// File path: assets/images/ic_privacy_policy.svg
+  String get icPrivacyPolicy => 'assets/images/ic_privacy_policy.svg';
+
+  /// File path: assets/images/ic_remove.svg
+  String get icRemove => 'assets/images/ic_remove.svg';
+
+  /// File path: assets/images/ic_send_message.svg
+  String get icSendMessage => 'assets/images/ic_send_message.svg';
+
+  /// File path: assets/images/ic_privacy_policy.svg
+  String get icPrivacyPolicy => 'assets/images/ic_privacy_policy.svg';
+
+  /// File path: assets/images/ic_remove.svg
+  String get icRemove => 'assets/images/ic_remove.svg';
+
   /// File path: assets/images/ic_send_message.svg
   String get icSendMessage => 'assets/images/ic_send_message.svg';
 
   /// File path: assets/images/ic_setting.svg
   String get icSetting => 'assets/images/ic_setting.svg';
+
+  /// File path: assets/images/ic_sign_out.svg
+  String get icSignOut => 'assets/images/ic_sign_out.svg';
+
+  /// File path: assets/images/ic_sign_out.svg
+  String get icSignOut => 'assets/images/ic_sign_out.svg';
 
   /// File path: assets/images/intro_1.svg
   String get intro1 => 'assets/images/intro_1.svg';
@@ -50,12 +89,25 @@ class $AssetsImagesGen {
   /// List of all assets
   List<dynamic> get values => [
         appLogo,
+        icAboutUs,
+        icAboutUs,
         icAddMember,
+        icContactSupport,
+        icEditProfile,
+        icContactSupport,
+        icEditProfile,
         icGoogleLogo,
         icLocation,
         icMessage,
+        icPrivacyPolicy,
+        icRemove,
+        icSendMessage,
+        icPrivacyPolicy,
+        icRemove,
         icSendMessage,
         icSetting,
+        icSignOut,
+        icSignOut,
         intro1,
         intro2,
         intro3,
