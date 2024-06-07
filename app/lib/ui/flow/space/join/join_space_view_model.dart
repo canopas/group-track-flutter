@@ -49,7 +49,7 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
       final space = await spaceService.getSpace(spaceId);
       state = state.copyWith(verifying: false, space: space, spaceJoined: true);
     } catch (error, stack) {
-      state = state.copyWith(error: error);
+      state = state.copyWith(error: error, verifying: false);
       logger.e(
         'JoinSpaceViewNotifier: Error while join space with invitation code',
         error: error,

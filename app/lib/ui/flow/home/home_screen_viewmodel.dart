@@ -63,7 +63,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       final code = await spaceService.getInviteCode(state.selectedSpace?.space.id ?? '');
       state = state.copyWith(spaceInvitationCode: code ?? '', fetchingInviteCode: false);
     } catch (error, stack) {
-      state = state.copyWith(error: error);
+      state = state.copyWith(error: error, fetchingInviteCode: false);
       logger.e(
         'HomeViewNotifier: Error while getting invitation code',
         error: error,

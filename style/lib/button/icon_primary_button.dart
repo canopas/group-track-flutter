@@ -7,6 +7,8 @@ class IconPrimaryButton extends StatelessWidget {
   final bool enabled;
   final Widget icon;
   final Color? iconColor;
+  final double size;
+  final double radius;
 
   const IconPrimaryButton({
     super.key,
@@ -15,6 +17,8 @@ class IconPrimaryButton extends StatelessWidget {
     this.enabled = true,
     required this.icon,
     this.iconColor,
+    this.size = 40.0,
+    this.radius = 8,
   });
 
   @override
@@ -26,7 +30,7 @@ class IconPrimaryButton extends StatelessWidget {
         height: 40,
         decoration: BoxDecoration(
           color: context.colorScheme.containerLowOnSurface,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(radius),
         ),
         padding: const EdgeInsets.all(8),
         child: icon,

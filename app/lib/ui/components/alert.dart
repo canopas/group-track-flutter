@@ -52,8 +52,8 @@ Future<void> showConfirmation(
 
 Future<void> showOkayConfirmation(
     BuildContext context, {
-      required String title,
-      required String message,
+      String? title,
+      String? message,
       bool isDestructiveAction = true,
       VoidCallback? onOkay,
     }) {
@@ -63,8 +63,8 @@ Future<void> showOkayConfirmation(
     builder: (context) {
       return AlertDialog.adaptive(
         surfaceTintColor: context.colorScheme.containerNormalOnSurface,
-        title: Text(title),
-        content: Text(message),
+        title: (title != null) ? Text(title) : null,
+        content: (message != null) ? Text(message) : null,
         actions: [
           adaptiveAction(
             context: context,
@@ -120,3 +120,4 @@ Widget adaptiveAction({
       );
   }
 }
+

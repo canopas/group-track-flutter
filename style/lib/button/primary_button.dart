@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/theme/theme.dart';
 
 import '../animation/on_tap_scale.dart';
@@ -15,16 +16,17 @@ class PrimaryButton extends StatelessWidget {
   final Color? foreground;
   final Color? background;
   final Function()? onPressed;
+  final bool showIcon;
 
-  const PrimaryButton(
-    this.text, {
+  const PrimaryButton(this.text, {
     super.key,
     this.onPressed,
     this.edgeInsets =
-        const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
     this.expanded = true,
     this.enabled = true,
     this.progress = false,
+    this.showIcon = false,
     this.background,
     this.foreground,
   });
@@ -64,6 +66,14 @@ class PrimaryButton extends StatelessWidget {
           mainAxisSize: expanded ? MainAxisSize.max : MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Visibility(
+              visible: showIcon,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Icon(
+                  Icons.delete_outline_rounded, color: context.colorScheme.alert, size: 20,),
+              ),
+            ),
             Visibility(
               visible: progress,
               child: Padding(
