@@ -75,7 +75,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.2
-  build_runner: ^2.4.8
+  build_runner: ^2.4.11
   riverpod_lint: ^2.3.9
   flutter_gen_runner:
   freezed: ^2.4.7
