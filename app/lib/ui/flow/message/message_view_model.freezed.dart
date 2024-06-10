@@ -22,7 +22,9 @@ mixin _$MessageViewState {
   bool get fetchingInviteCode => throw _privateConstructorUsedError;
   SpaceInfo? get space => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
+  String get message => throw _privateConstructorUsedError;
   List<SpaceInfo> get spaceList => throw _privateConstructorUsedError;
+  List<ThreadInfo> get threadInfo => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -43,7 +45,9 @@ abstract class $MessageViewStateCopyWith<$Res> {
       bool fetchingInviteCode,
       SpaceInfo? space,
       String spaceInvitationCode,
+      String message,
       List<SpaceInfo> spaceList,
+      List<ThreadInfo> threadInfo,
       Object? error});
 
   $SpaceInfoCopyWith<$Res>? get space;
@@ -68,7 +72,9 @@ class _$MessageViewStateCopyWithImpl<$Res, $Val extends MessageViewState>
     Object? fetchingInviteCode = null,
     Object? space = freezed,
     Object? spaceInvitationCode = null,
+    Object? message = null,
     Object? spaceList = null,
+    Object? threadInfo = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -96,10 +102,18 @@ class _$MessageViewStateCopyWithImpl<$Res, $Val extends MessageViewState>
           ? _value.spaceInvitationCode
           : spaceInvitationCode // ignore: cast_nullable_to_non_nullable
               as String,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
       spaceList: null == spaceList
           ? _value.spaceList
           : spaceList // ignore: cast_nullable_to_non_nullable
               as List<SpaceInfo>,
+      threadInfo: null == threadInfo
+          ? _value.threadInfo
+          : threadInfo // ignore: cast_nullable_to_non_nullable
+              as List<ThreadInfo>,
       error: freezed == error ? _value.error : error,
     ) as $Val);
   }
@@ -132,7 +146,9 @@ abstract class _$$MessageViewStateImplCopyWith<$Res>
       bool fetchingInviteCode,
       SpaceInfo? space,
       String spaceInvitationCode,
+      String message,
       List<SpaceInfo> spaceList,
+      List<ThreadInfo> threadInfo,
       Object? error});
 
   @override
@@ -156,7 +172,9 @@ class __$$MessageViewStateImplCopyWithImpl<$Res>
     Object? fetchingInviteCode = null,
     Object? space = freezed,
     Object? spaceInvitationCode = null,
+    Object? message = null,
     Object? spaceList = null,
+    Object? threadInfo = null,
     Object? error = freezed,
   }) {
     return _then(_$MessageViewStateImpl(
@@ -184,10 +202,18 @@ class __$$MessageViewStateImplCopyWithImpl<$Res>
           ? _value.spaceInvitationCode
           : spaceInvitationCode // ignore: cast_nullable_to_non_nullable
               as String,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
       spaceList: null == spaceList
           ? _value._spaceList
           : spaceList // ignore: cast_nullable_to_non_nullable
               as List<SpaceInfo>,
+      threadInfo: null == threadInfo
+          ? _value._threadInfo
+          : threadInfo // ignore: cast_nullable_to_non_nullable
+              as List<ThreadInfo>,
       error: freezed == error ? _value.error : error,
     ));
   }
@@ -203,9 +229,12 @@ class _$MessageViewStateImpl implements _MessageViewState {
       this.fetchingInviteCode = false,
       this.space,
       this.spaceInvitationCode = '',
+      this.message = '',
       final List<SpaceInfo> spaceList = const [],
+      final List<ThreadInfo> threadInfo = const [],
       this.error})
-      : _spaceList = spaceList;
+      : _spaceList = spaceList,
+        _threadInfo = threadInfo;
 
   @override
   @JsonKey()
@@ -224,6 +253,9 @@ class _$MessageViewStateImpl implements _MessageViewState {
   @override
   @JsonKey()
   final String spaceInvitationCode;
+  @override
+  @JsonKey()
+  final String message;
   final List<SpaceInfo> _spaceList;
   @override
   @JsonKey()
@@ -233,12 +265,21 @@ class _$MessageViewStateImpl implements _MessageViewState {
     return EqualUnmodifiableListView(_spaceList);
   }
 
+  final List<ThreadInfo> _threadInfo;
+  @override
+  @JsonKey()
+  List<ThreadInfo> get threadInfo {
+    if (_threadInfo is EqualUnmodifiableListView) return _threadInfo;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_threadInfo);
+  }
+
   @override
   final Object? error;
 
   @override
   String toString() {
-    return 'MessageViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, space: $space, spaceInvitationCode: $spaceInvitationCode, spaceList: $spaceList, error: $error)';
+    return 'MessageViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, spaceList: $spaceList, threadInfo: $threadInfo, error: $error)';
   }
 
   @override
@@ -256,8 +297,11 @@ class _$MessageViewStateImpl implements _MessageViewState {
             (identical(other.space, space) || other.space == space) &&
             (identical(other.spaceInvitationCode, spaceInvitationCode) ||
                 other.spaceInvitationCode == spaceInvitationCode) &&
+            (identical(other.message, message) || other.message == message) &&
             const DeepCollectionEquality()
                 .equals(other._spaceList, _spaceList) &&
+            const DeepCollectionEquality()
+                .equals(other._threadInfo, _threadInfo) &&
             const DeepCollectionEquality().equals(other.error, error));
   }
 
@@ -270,7 +314,9 @@ class _$MessageViewStateImpl implements _MessageViewState {
       fetchingInviteCode,
       space,
       spaceInvitationCode,
+      message,
       const DeepCollectionEquality().hash(_spaceList),
+      const DeepCollectionEquality().hash(_threadInfo),
       const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
@@ -289,7 +335,9 @@ abstract class _MessageViewState implements MessageViewState {
       final bool fetchingInviteCode,
       final SpaceInfo? space,
       final String spaceInvitationCode,
+      final String message,
       final List<SpaceInfo> spaceList,
+      final List<ThreadInfo> threadInfo,
       final Object? error}) = _$MessageViewStateImpl;
 
   @override
@@ -305,7 +353,11 @@ abstract class _MessageViewState implements MessageViewState {
   @override
   String get spaceInvitationCode;
   @override
+  String get message;
+  @override
   List<SpaceInfo> get spaceList;
+  @override
+  List<ThreadInfo> get threadInfo;
   @override
   Object? get error;
   @override

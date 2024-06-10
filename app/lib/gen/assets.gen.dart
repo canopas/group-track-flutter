@@ -72,8 +72,6 @@ class $AssetsImagesGen {
         icAddMember,
         icContactSupport,
         icEditProfile,
-        icContactSupport,
-        icEditProfile,
         icGoogleLogo,
         icLocation,
         icMessage,

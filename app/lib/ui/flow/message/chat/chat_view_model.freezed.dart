@@ -17,8 +17,10 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$ChatViewState {
   bool get loading => throw _privateConstructorUsedError;
-  bool get isCurrentUser => throw _privateConstructorUsedError;
+  bool get allowSend => throw _privateConstructorUsedError;
   List<ApiUserInfo> get users => throw _privateConstructorUsedError;
+  TextEditingController get message => throw _privateConstructorUsedError;
+  List<ThreadInfo> get threadInfo => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -34,8 +36,10 @@ abstract class $ChatViewStateCopyWith<$Res> {
   @useResult
   $Res call(
       {bool loading,
-      bool isCurrentUser,
+      bool allowSend,
       List<ApiUserInfo> users,
+      TextEditingController message,
+      List<ThreadInfo> threadInfo,
       Object? error});
 }
 
@@ -53,8 +57,10 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
   @override
   $Res call({
     Object? loading = null,
-    Object? isCurrentUser = null,
+    Object? allowSend = null,
     Object? users = null,
+    Object? message = null,
+    Object? threadInfo = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -62,14 +68,22 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
-      isCurrentUser: null == isCurrentUser
-          ? _value.isCurrentUser
-          : isCurrentUser // ignore: cast_nullable_to_non_nullable
+      allowSend: null == allowSend
+          ? _value.allowSend
+          : allowSend // ignore: cast_nullable_to_non_nullable
               as bool,
       users: null == users
           ? _value.users
           : users // ignore: cast_nullable_to_non_nullable
               as List<ApiUserInfo>,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
+      threadInfo: null == threadInfo
+          ? _value.threadInfo
+          : threadInfo // ignore: cast_nullable_to_non_nullable
+              as List<ThreadInfo>,
       error: freezed == error ? _value.error : error,
     ) as $Val);
   }
@@ -85,8 +99,10 @@ abstract class _$$ChatViewStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {bool loading,
-      bool isCurrentUser,
+      bool allowSend,
       List<ApiUserInfo> users,
+      TextEditingController message,
+      List<ThreadInfo> threadInfo,
       Object? error});
 }
 
@@ -102,8 +118,10 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? loading = null,
-    Object? isCurrentUser = null,
+    Object? allowSend = null,
     Object? users = null,
+    Object? message = null,
+    Object? threadInfo = null,
     Object? error = freezed,
   }) {
     return _then(_$ChatViewStateImpl(
@@ -111,14 +129,22 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
               as bool,
-      isCurrentUser: null == isCurrentUser
-          ? _value.isCurrentUser
-          : isCurrentUser // ignore: cast_nullable_to_non_nullable
+      allowSend: null == allowSend
+          ? _value.allowSend
+          : allowSend // ignore: cast_nullable_to_non_nullable
               as bool,
       users: null == users
           ? _value._users
           : users // ignore: cast_nullable_to_non_nullable
               as List<ApiUserInfo>,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
+      threadInfo: null == threadInfo
+          ? _value._threadInfo
+          : threadInfo // ignore: cast_nullable_to_non_nullable
+              as List<ThreadInfo>,
       error: freezed == error ? _value.error : error,
     ));
   }
@@ -129,17 +155,20 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
 class _$ChatViewStateImpl implements _ChatViewState {
   const _$ChatViewStateImpl(
       {this.loading = false,
-      this.isCurrentUser = false,
+      this.allowSend = false,
       final List<ApiUserInfo> users = const [],
+      required this.message,
+      final List<ThreadInfo> threadInfo = const [],
       this.error})
-      : _users = users;
+      : _users = users,
+        _threadInfo = threadInfo;
 
   @override
   @JsonKey()
   final bool loading;
   @override
   @JsonKey()
-  final bool isCurrentUser;
+  final bool allowSend;
   final List<ApiUserInfo> _users;
   @override
   @JsonKey()
@@ -150,11 +179,22 @@ class _$ChatViewStateImpl implements _ChatViewState {
   }
 
   @override
+  final TextEditingController message;
+  final List<ThreadInfo> _threadInfo;
+  @override
+  @JsonKey()
+  List<ThreadInfo> get threadInfo {
+    if (_threadInfo is EqualUnmodifiableListView) return _threadInfo;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_threadInfo);
+  }
+
+  @override
   final Object? error;
 
   @override
   String toString() {
-    return 'ChatViewState(loading: $loading, isCurrentUser: $isCurrentUser, users: $users, error: $error)';
+    return 'ChatViewState(loading: $loading, allowSend: $allowSend, users: $users, message: $message, threadInfo: $threadInfo, error: $error)';
   }
 
   @override
@@ -163,9 +203,12 @@ class _$ChatViewStateImpl implements _ChatViewState {
         (other.runtimeType == runtimeType &&
             other is _$ChatViewStateImpl &&
             (identical(other.loading, loading) || other.loading == loading) &&
-            (identical(other.isCurrentUser, isCurrentUser) ||
-                other.isCurrentUser == isCurrentUser) &&
+            (identical(other.allowSend, allowSend) ||
+                other.allowSend == allowSend) &&
             const DeepCollectionEquality().equals(other._users, _users) &&
+            (identical(other.message, message) || other.message == message) &&
+            const DeepCollectionEquality()
+                .equals(other._threadInfo, _threadInfo) &&
             const DeepCollectionEquality().equals(other.error, error));
   }
 
@@ -173,8 +216,10 @@ class _$ChatViewStateImpl implements _ChatViewState {
   int get hashCode => Object.hash(
       runtimeType,
       loading,
-      isCurrentUser,
+      allowSend,
       const DeepCollectionEquality().hash(_users),
+      message,
+      const DeepCollectionEquality().hash(_threadInfo),
       const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
@@ -187,16 +232,22 @@ class _$ChatViewStateImpl implements _ChatViewState {
 abstract class _ChatViewState implements ChatViewState {
   const factory _ChatViewState(
       {final bool loading,
-      final bool isCurrentUser,
+      final bool allowSend,
       final List<ApiUserInfo> users,
+      required final TextEditingController message,
+      final List<ThreadInfo> threadInfo,
       final Object? error}) = _$ChatViewStateImpl;
 
   @override
   bool get loading;
   @override
-  bool get isCurrentUser;
+  bool get allowSend;
   @override
   List<ApiUserInfo> get users;
+  @override
+  TextEditingController get message;
+  @override
+  List<ThreadInfo> get threadInfo;
   @override
   Object? get error;
   @override

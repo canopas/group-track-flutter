@@ -1,3 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/message/message_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,14 +8,18 @@ import 'package:flutter_svg/svg.dart';
 import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/button/large_icon_button.dart';
+import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/message/message_view_model.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../gen/assets.gen.dart';
+import '../../components/alert.dart';
 
 class MessageScreen extends ConsumerStatefulWidget {
   final SpaceInfo spaceInfo;
@@ -35,16 +42,19 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     runPostFrame(() {
       notifier = ref.watch(messageViewStateProvider.notifier);
       notifier.setSpace(widget.spaceInfo);
+      notifier.listenThreads(widget.spaceInfo.space.id);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(messageViewStateProvider);
     _observeInviteScreenNavigation();
+    _observeError();
 
     return AppPage(
       title: widget.spaceInfo.space.name,
-      body: _body(context),
+      body: _body(context, state),
       floatingActionButton: widget.spaceInfo.members.length >= 2
       ? LargeIconButton(
         onTap: () {
@@ -62,13 +72,181 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     );
   }
 
-  Widget _body(BuildContext context) {
+  Widget _body(BuildContext context, MessageViewState state) {
+    if (state.loading) {
+      return const Center(child: AppProgressIndicator());
+    }
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: _emptyView(context),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: state.threadInfo.isEmpty
+          ? _emptyView(context)
+          : _list(context, state.threadInfo),
     );
   }
-  
+
+  Widget _list(BuildContext context, List<ThreadInfo> threads) {
+    return ListView.builder(
+      itemCount: threads.length,
+      itemBuilder: (context, index) {
+        final thread = threads[index];
+        final members = thread.members.where((member) => member.user.id != notifier.currentUser?.id).toList();
+        final displayedMembers = members.take(2).toList();
+        final isLastItem = index == threads.length - 1;
+
+        return Slidable(
+          endActionPane: ActionPane(
+            motion: const ScrollMotion(),
+            children: [
+              SlidableAction(
+                onPressed: (context) {
+                  showConfirmation(
+                    context,
+                    confirmBtnText: context.l10n.common_delete,
+                    title: context.l10n.message_delete_thread_title,
+                    message: context.l10n.message_delete_thread_subtitle,
+                    onConfirm: () {
+                      notifier.deleteThread(thread.thread);
+                      threads.removeAt(index);
+                    }
+                  );
+                },
+                backgroundColor: context.colorScheme.alert,
+                foregroundColor: context.colorScheme.textPrimaryDark,
+                icon: Icons.delete_outline_rounded,
+                label: 'Delete',
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              _threadItem(context, members, displayedMembers, thread.threadMessage.isNotEmpty ? thread.threadMessage.last.message ?? '' : ''),
+              if (!isLastItem) ...[
+                const SizedBox(height: 4),
+                Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                    color: context.colorScheme.outline,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _threadItem(BuildContext context, List<ApiUserInfo> members, List<ApiUserInfo> displayedMembers, String message) {
+    final remainingCount = members.length - displayedMembers.length;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _threadProfile(context, members),
+        const SizedBox(width: 16),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                for (var i = 0; i < displayedMembers.length; i++)
+                  Row(
+                    children: [
+                      Text(
+                        displayedMembers[i].user.first_name ?? '',
+                        style: AppTextStyle.subtitle2.copyWith(
+                          color: context.colorScheme.textPrimary,
+                        ),
+                      ),
+                      if (i != displayedMembers.length - 1)
+                        Text(', ', style: AppTextStyle.subtitle2.copyWith(color: context.colorScheme.textPrimary)),
+                    ],
+                  ),
+                if (remainingCount > 0)
+                  Text(
+                    ' + $remainingCount',
+                    style: AppTextStyle.subtitle2.copyWith(
+                      color: context.colorScheme.textPrimary,
+                    ),
+                  ),
+              ],
+            ),
+            Text(
+              message,
+              style: AppTextStyle.caption.copyWith(
+                color: context.colorScheme.textDisabled,
+              ),
+            )
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _threadProfile(BuildContext context, List<ApiUserInfo> members) {
+    if (members.length == 1) {
+      return _profileImageView(context, members[0], size: 50);
+    } else {
+      return SizedBox(
+        width: 56,
+        height: 56,
+        child: Stack(
+          children: [
+            for (var i = 0; i < (members.length > 2 ? 2 : members.length); i++)
+              Positioned(
+                left: i * 16.0,
+                child: _profileImageView(
+                    context,
+                    members[i],
+                    size: 40,
+                    isMoreMember: members.length > 2 && i == 1,
+                    count: members.length - 2),
+              ),
+          ],
+        ),
+      );
+    }
+  }
+
+  Widget _profileImageView(BuildContext context, ApiUserInfo member,
+      {required double size, bool isMoreMember = false, int count = 0}) {
+    final profileImageUrl = member.user.profile_image ?? '';
+    final firstLetter = member.user.userNameFirstLetter;
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size / 2),
+        child: isMoreMember
+            ? Container(
+                color: context.colorScheme.primary,
+                child: Center(
+                  child: Text(count > 0 ? '+$count' : '',
+                      style: AppTextStyle.subtitle2
+                          .copyWith(color: context.colorScheme.textPrimary)),
+                ),
+              )
+            : profileImageUrl.isNotEmpty
+                ? CachedNetworkImage(
+                    imageUrl: profileImageUrl,
+                    placeholder: (context, url) => const AppProgressIndicator(
+                        size: AppProgressIndicatorSize.small),
+                    fit: BoxFit.cover,
+                  )
+                : Container(
+                    color: context.colorScheme.primary,
+                    child: Center(
+                      child: Text(firstLetter,
+                          style: AppTextStyle.subtitle2.copyWith(
+                              color: context.colorScheme.textPrimary)),
+                    ),
+                  ),
+      ),
+    );
+  }
+
   Widget _emptyView(BuildContext context) {
     if (widget.spaceInfo.members.length >= 2) {
       return _emptyMessageView(context);
@@ -76,7 +254,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
       return _emptyMessageViewWith0Member(context);
     }
   }
- 
+
   Widget _emptyMessageView(BuildContext context) {
     return Center(
       child: Text(
@@ -118,7 +296,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
           ),
           const SizedBox(height: 24),
           PrimaryButton(
-              context.l10n.message_add_new_member_title,
+            context.l10n.message_add_new_member_title,
             onPressed: () => notifier.onAddNewMemberTap(),
           ),
         ],
@@ -130,6 +308,14 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     ref.listen(messageViewStateProvider.select((state) => state.spaceInvitationCode), (previous, next) {
       if (next.isNotEmpty) {
         AppRoute.inviteCode(code: next, spaceName: widget.spaceInfo.space.name).push(context);
+      }
+    });
+  }
+
+  void _observeError() {
+    ref.listen(messageViewStateProvider.select((state) => state.error), (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
       }
     });
   }
