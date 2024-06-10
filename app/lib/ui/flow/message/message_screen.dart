@@ -129,10 +129,8 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                 hasUnreadMessage: hasUnreadMessage,
               ),
               if (!isLastItem) ...[
-                const SizedBox(height: 4),
-                _divider(context)
+                _divider(context),
               ],
-              const SizedBox(height: 16),
             ],
           ),
         );
@@ -148,35 +146,38 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     required DateTime date,
     required bool hasUnreadMessage,
   }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _threadProfile(context, members),
-        const SizedBox(width: 16),
-        Expanded(child: _threadNamesAndMessage(context: context, members: members, displayedMembers: displayedMembers, message: message)),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              date.format(context, DateFormatType.pastTime),
-              style: AppTextStyle.caption.copyWith(
-                color: context.colorScheme.textDisabled,
-              ),
-            ),
-            const SizedBox(height: 12),
-            if (!hasUnreadMessage) ...[
-              Container(
-                height: 8,
-                width: 8,
-                decoration: BoxDecoration(
-                  color: context.colorScheme.positive,
-                  borderRadius: BorderRadius.circular(4),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _threadProfile(context, members),
+          const SizedBox(width: 16),
+          Expanded(child: _threadNamesAndMessage(context: context, members: members, displayedMembers: displayedMembers, message: message)),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                date.format(context, DateFormatType.pastTime),
+                style: AppTextStyle.caption.copyWith(
+                  color: context.colorScheme.textDisabled,
                 ),
-              )
+              ),
+              const SizedBox(height: 12),
+              if (!hasUnreadMessage) ...[
+                Container(
+                  height: 8,
+                  width: 8,
+                  decoration: BoxDecoration(
+                    color: context.colorScheme.positive,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                )
+              ],
             ],
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -239,7 +240,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     } else {
       return SizedBox(
         width: 56,
-        height: 56,
+        height: 40,
         child: Stack(
           children: [
             for (var i = 0; i < (members.length > 2 ? 2 : members.length); i++)
