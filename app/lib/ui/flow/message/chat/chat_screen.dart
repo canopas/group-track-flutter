@@ -12,6 +12,8 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_view_model.dart';
 
+import '../../../../domain/extenstions/widget_extensions.dart';
+
 class ChatScreen extends ConsumerStatefulWidget {
   final List<ApiUserInfo> users;
   final String spaceName;
@@ -29,6 +31,15 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   late ChatViewNotifier notifier;
   final Set<String> _selectedUsers = {};
+
+  @override
+  void initState() {
+    super.initState();
+    runPostFrame(() {
+      notifier = ref.watch(chatViewStateProvider.notifier);
+      notifier.setData(widget.users);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

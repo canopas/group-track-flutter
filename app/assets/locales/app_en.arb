@@ -12,13 +12,13 @@
   "common_cancel": "Cancel",
   "common_delete": "Delete",
   "common_okay": "Okay",
-  "commonToday": "Today",
-  "commonYesterday": "Yesterday",
-  "commonNow": "Now",
-  "commonJustNow": "Just now",
-  "commonMinAgo": "min ago",
-  "commonHourAgo": "hour ago",
-  "commonHoursAgo": "hours ago",
+  "common_today": "Today",
+  "common_yesterday": "Yesterday",
+  "common_now": "Now",
+  "common_just_now": "Just now",
+  "common_min_ago": "min ago",
+  "common_hour_ago": "hour ago",
+  "common_hours_ago": "hours ago",
   "common_verify": "Verify","commonMembers": "{memberCount} {memberCount, plural, =1{Member} other{Members}}",
   "@commonMembers": {
     "placeholders": {
@@ -121,6 +121,14 @@
   "message_tap_to_send_new_message_text": "Tap on ‘+’ to send new message to anyone in your space",
   "message_delete_thread_title": "Delete thread?",
   "message_delete_thread_subtitle": "Are you sure you want to delete this thread? This action cannot be undone",
+  "message_member_count_text": " +{memberCount}",
+  "@message_member_count_text": {
+    "placeholders": {
+      "memberCount": {
+        "type": "int"
+      }
+    }
+  },
 
   "chat_start_new_chat_title": "Start new chat",
 

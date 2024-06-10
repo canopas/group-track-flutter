@@ -27,6 +27,13 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   void onChange(String text) {
     state = state.copyWith(allowSend: text.trim().isNotEmpty);
   }
+
+  void setData(List<ApiUserInfo> users) {
+    final userList = users.where(
+          (user) => user.user.id != currentUser?.id,
+    ).toList();
+    state = state.copyWith(users: userList);
+  }
 }
 
 @freezed

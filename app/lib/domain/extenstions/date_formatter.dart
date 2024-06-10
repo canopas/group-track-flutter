@@ -108,9 +108,9 @@ extension DateFormatter on DateTime {
     final yesterday = today.add(const Duration(days: -1));
 
     if (isSameDay(today)) {
-      return context.l10n.commonToday;
+      return context.l10n.common_today;
     } else if (isSameDay(yesterday)) {
-      return context.l10n.commonYesterday;
+      return context.l10n.common_yesterday;
     } else if (year == today.year) {
       return DateFormat('${includeWeekday ? 'EEEE, ' : ''}d MMMM').format(this);
     } else {
@@ -127,22 +127,22 @@ extension DateFormatter on DateTime {
       final int currentTimeSeconds = currentTime.millisecondsSinceEpoch ~/ 1000;
 
       if ((currentTimeSeconds - dateSeconds) < 60) {
-        return context.l10n.commonJustNow;
+        return context.l10n.common_just_now;
       } else if ((currentTimeSeconds - dateSeconds) < (60 * 60)) {
         final int minutesAgo = (currentTimeSeconds - dateSeconds) ~/ 60;
-        return '$minutesAgo ${context.l10n.commonMinAgo}';
+        return '$minutesAgo ${context.l10n.common_min_ago}';
       } else {
         final int hoursAgo = (currentTimeSeconds - dateSeconds) ~/ (60 * 60);
 
         if (hoursAgo < 2) {
-          return '$hoursAgo ${context.l10n.commonHourAgo}';
+          return '$hoursAgo ${context.l10n.common_hour_ago}';
         } else {
-          return '$hoursAgo ${context.l10n.commonHoursAgo}';
+          return '$hoursAgo ${context.l10n.common_hours_ago}';
         }
       }
     } else if (isYesterday) {
       final String time = DateFormat('jm').format(this);
-      return '${context.l10n.commonYesterday} $time';
+      return '${context.l10n.common_yesterday} $time';
     } else {
       final bool isSameYear = year == currentTime.year;
 

@@ -81,7 +81,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: state.threadInfo.isEmpty
-          ? _emptyView(context)
+          ? _emptyView(context, state)
           : _list(context, state.threadInfo),
     );
   }
@@ -104,7 +104,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
             children: [
               SlidableAction(
                 onPressed: (context) {
-                  _onDeleteTap(() {
+                  _showDeleteConfirmation(() {
                     notifier.deleteThread(thread.thread);
                     threads.removeAt(index);
                   });
@@ -112,7 +112,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                 backgroundColor: context.colorScheme.alert,
                 foregroundColor: context.colorScheme.textPrimaryDark,
                 icon: Icons.delete_outline_rounded,
-                label: 'Delete',
+                label: context.l10n.common_delete,
               ),
             ],
           ),
@@ -216,7 +216,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
               ),
             if (remainingCount > 0)
               Text(
-                ' + $remainingCount',
+                context.l10n.message_member_count_text(remainingCount),
                 style: AppTextStyle.subtitle2.copyWith(
                   color: context.colorScheme.textPrimary,
                 ),
@@ -272,7 +272,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
             ? Container(
                 color: context.colorScheme.primary,
                 child: Center(
-                  child: Text(count > 0 ? '+$count' : '',
+                  child: Text(count > 0 ? context.l10n.message_member_count_text(count) : '',
                       style: AppTextStyle.subtitle2
                           .copyWith(color: context.colorScheme.textPrimary)),
                 ),
@@ -296,11 +296,11 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     );
   }
 
-  Widget _emptyView(BuildContext context) {
+  Widget _emptyView(BuildContext context, MessageViewState state) {
     if (widget.spaceInfo.members.length >= 2) {
       return _emptyMessageView(context);
     } else {
-      return _emptyMessageViewWith0Member(context);
+      return _emptyMessageViewWith0Member(context, state);
     }
   }
 
@@ -316,7 +316,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     );
   }
 
-  Widget _emptyMessageViewWith0Member(BuildContext context) {
+  Widget _emptyMessageViewWith0Member(BuildContext context, MessageViewState state) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -346,6 +346,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
           const SizedBox(height: 24),
           PrimaryButton(
             context.l10n.message_add_new_member_title,
+            progress: state.fetchingInviteCode,
             onPressed: () => notifier.onAddNewMemberTap(),
           ),
         ],
@@ -369,13 +370,13 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     });
   }
 
-  void _onDeleteTap(Function() onTap) {
+  void _showDeleteConfirmation(Function() onConfirm) {
     showConfirmation(
         context,
         confirmBtnText: context.l10n.common_delete,
         title: context.l10n.message_delete_thread_title,
         message: context.l10n.message_delete_thread_subtitle,
-        onConfirm: () => onTap(),
+        onConfirm: () => onConfirm(),
     );
   }
 }
