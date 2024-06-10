@@ -11,6 +11,7 @@ import 'package:style/button/large_icon_button.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
@@ -93,6 +94,9 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
         final members = thread.members.where((member) => member.user.id != notifier.currentUser?.id).toList();
         final displayedMembers = members.take(2).toList();
         final isLastItem = index == threads.length - 1;
+        final date = thread.threadMessage.isNotEmpty ? thread.threadMessage.last.created_at : null;
+        final hasUnreadMessage = thread.threadMessage
+            .any((message) => message.seen_by.contains(notifier.currentUser?.id));
 
         return Slidable(
           endActionPane: ActionPane(
@@ -100,16 +104,10 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
             children: [
               SlidableAction(
                 onPressed: (context) {
-                  showConfirmation(
-                    context,
-                    confirmBtnText: context.l10n.common_delete,
-                    title: context.l10n.message_delete_thread_title,
-                    message: context.l10n.message_delete_thread_subtitle,
-                    onConfirm: () {
-                      notifier.deleteThread(thread.thread);
-                      threads.removeAt(index);
-                    }
-                  );
+                  _onDeleteTap(() {
+                    notifier.deleteThread(thread.thread);
+                    threads.removeAt(index);
+                  });
                 },
                 backgroundColor: context.colorScheme.alert,
                 foregroundColor: context.colorScheme.textPrimaryDark,
@@ -120,15 +118,19 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
           ),
           child: Column(
             children: [
-              _threadItem(context, members, displayedMembers, thread.threadMessage.isNotEmpty ? thread.threadMessage.last.message ?? '' : ''),
+              _threadItem(
+                context: context,
+                members: members,
+                displayedMembers: displayedMembers,
+                message: thread.threadMessage.isNotEmpty
+                    ? thread.threadMessage.last.message ?? ''
+                    : '',
+                date: date ?? DateTime.now(),
+                hasUnreadMessage: hasUnreadMessage,
+              ),
               if (!isLastItem) ...[
                 const SizedBox(height: 4),
-                Container(
-                  height: 1,
-                  decoration: BoxDecoration(
-                    color: context.colorScheme.outline,
-                  ),
-                ),
+                _divider(context)
               ],
               const SizedBox(height: 16),
             ],
@@ -138,48 +140,95 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     );
   }
 
-  Widget _threadItem(BuildContext context, List<ApiUserInfo> members, List<ApiUserInfo> displayedMembers, String message) {
-    final remainingCount = members.length - displayedMembers.length;
+  Widget _threadItem({
+    required BuildContext context,
+    required List<ApiUserInfo> members,
+    required List<ApiUserInfo> displayedMembers,
+    required String message,
+    required DateTime date,
+    required bool hasUnreadMessage,
+  }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _threadProfile(context, members),
         const SizedBox(width: 16),
+        Expanded(child: _threadNamesAndMessage(context: context, members: members, displayedMembers: displayedMembers, message: message)),
         Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Row(
-              children: [
-                for (var i = 0; i < displayedMembers.length; i++)
-                  Row(
-                    children: [
-                      Text(
-                        displayedMembers[i].user.first_name ?? '',
-                        style: AppTextStyle.subtitle2.copyWith(
-                          color: context.colorScheme.textPrimary,
-                        ),
-                      ),
-                      if (i != displayedMembers.length - 1)
-                        Text(', ', style: AppTextStyle.subtitle2.copyWith(color: context.colorScheme.textPrimary)),
-                    ],
-                  ),
-                if (remainingCount > 0)
+            Text(
+              date.format(context, DateFormatType.pastTime),
+              style: AppTextStyle.caption.copyWith(
+                color: context.colorScheme.textDisabled,
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (!hasUnreadMessage) ...[
+              Container(
+                height: 8,
+                width: 8,
+                decoration: BoxDecoration(
+                  color: context.colorScheme.positive,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              )
+            ],
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _divider(BuildContext context) {
+    return Container(
+      height: 1,
+      decoration: BoxDecoration(
+        color: context.colorScheme.outline,
+      ),
+    );
+  }
+
+  Widget _threadNamesAndMessage({
+    required BuildContext context,
+    required List<ApiUserInfo> members,
+    required List<ApiUserInfo> displayedMembers,
+    required String message,
+  }) {
+    final remainingCount = members.length - displayedMembers.length;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            for (var i = 0; i < displayedMembers.length; i++)
+              Row(
+                children: [
                   Text(
-                    ' + $remainingCount',
+                    displayedMembers[i].user.first_name ?? '',
                     style: AppTextStyle.subtitle2.copyWith(
                       color: context.colorScheme.textPrimary,
                     ),
                   ),
-              ],
-            ),
-            Text(
-              message,
-              style: AppTextStyle.caption.copyWith(
-                color: context.colorScheme.textDisabled,
+                  if (i != displayedMembers.length - 1)
+                    Text(', ', style: AppTextStyle.subtitle2.copyWith(color: context.colorScheme.textPrimary)),
+                ],
               ),
-            )
+            if (remainingCount > 0)
+              Text(
+                ' + $remainingCount',
+                style: AppTextStyle.subtitle2.copyWith(
+                  color: context.colorScheme.textPrimary,
+                ),
+              ),
           ],
         ),
+        Text(
+          message,
+          style: AppTextStyle.caption.copyWith(
+            color: context.colorScheme.textDisabled,
+          ),
+        )
       ],
     );
   }
@@ -318,5 +367,15 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
         showErrorSnackBar(context, next.toString());
       }
     });
+  }
+
+  void _onDeleteTap(Function() onTap) {
+    showConfirmation(
+        context,
+        confirmBtnText: context.l10n.common_delete,
+        title: context.l10n.message_delete_thread_title,
+        message: context.l10n.message_delete_thread_subtitle,
+        onConfirm: () => onTap(),
+    );
   }
 }

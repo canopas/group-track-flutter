@@ -12,6 +12,13 @@
   "common_cancel": "Cancel",
   "common_delete": "Delete",
   "common_okay": "Okay",
+  "commonToday": "Today",
+  "commonYesterday": "Yesterday",
+  "commonNow": "Now",
+  "commonJustNow": "Just now",
+  "commonMinAgo": "min ago",
+  "commonHourAgo": "hour ago",
+  "commonHoursAgo": "hours ago",
   "common_verify": "Verify","commonMembers": "{memberCount} {memberCount, plural, =1{Member} other{Members}}",
   "@commonMembers": {
     "placeholders": {
