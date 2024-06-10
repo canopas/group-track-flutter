@@ -620,6 +620,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  geocoding:
+    dependency: "direct main"
+    description:
+      name: geocoding
+      sha256: d580c801cba9386b4fac5047c4c785a4e19554f46be42f4f5e5b7deacd088a66
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
+  geocoding_android:
+    dependency: transitive
+    description:
+      name: geocoding_android
+      sha256: "1b13eca79b11c497c434678fed109c2be020b158cec7512c848c102bc7232603"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.3.1"
+  geocoding_ios:
+    dependency: transitive
+    description:
+      name: geocoding_ios
+      sha256: "94ddba60387501bd1c11e18dca7c5a9e8c645d6e3da9c38b9762434941870c24"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
+  geocoding_platform_interface:
+    dependency: transitive
+    description:
+      name: geocoding_platform_interface
+      sha256: "8c2c8226e5c276594c2e18bfe88b19110ed770aeb7c1ab50ede570be8b92229b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.0"
   glob:
     dependency: transitive
     description:
@@ -644,6 +676,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1+1"
+  google_maps_flutter:
+    dependency: "direct main"
+    description:
+      name: google_maps_flutter
+      sha256: abefcb1e5e5c96bdd8084939dda555257af272c7972902ca46d5631092c1df68
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.8"
+  google_maps_flutter_android:
+    dependency: transitive
+    description:
+      name: google_maps_flutter_android
+      sha256: b9ddc35f8b55fd70a196e43a61594abce5c41bc0843ea078a97679a9791749fe
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.9.0"
+  google_maps_flutter_ios:
+    dependency: transitive
+    description:
+      name: google_maps_flutter_ios
+      sha256: d2d63ae17297a5b045ec115572c5a86fa4e53bb6eceaa0c6d200ac5ca69bfca4
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.7.0"
+  google_maps_flutter_platform_interface:
+    dependency: transitive
+    description:
+      name: google_maps_flutter_platform_interface
+      sha256: "2bf21aa97edba4461282af5de693b354e589d09f695f7a6f80437d084a29687e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.7.1"
   google_sign_in:
     dependency: "direct main"
     description:

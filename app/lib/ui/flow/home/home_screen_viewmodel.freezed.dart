@@ -21,6 +21,7 @@ mixin _$HomeViewState {
   bool get loading => throw _privateConstructorUsedError;
   bool get fetchingInviteCode => throw _privateConstructorUsedError;
   SpaceInfo? get selectedSpace => throw _privateConstructorUsedError;
+  ApiUserInfo? get selectedMember => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
   List<SpaceInfo> get spaceList => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
@@ -42,11 +43,13 @@ abstract class $HomeViewStateCopyWith<$Res> {
       bool loading,
       bool fetchingInviteCode,
       SpaceInfo? selectedSpace,
+      ApiUserInfo? selectedMember,
       String spaceInvitationCode,
       List<SpaceInfo> spaceList,
       Object? error});
 
   $SpaceInfoCopyWith<$Res>? get selectedSpace;
+  $ApiUserInfoCopyWith<$Res>? get selectedMember;
 }
 
 /// @nodoc
@@ -67,6 +70,7 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
     Object? loading = null,
     Object? fetchingInviteCode = null,
     Object? selectedSpace = freezed,
+    Object? selectedMember = freezed,
     Object? spaceInvitationCode = null,
     Object? spaceList = null,
     Object? error = freezed,
@@ -92,6 +96,10 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
           ? _value.selectedSpace
           : selectedSpace // ignore: cast_nullable_to_non_nullable
               as SpaceInfo?,
+      selectedMember: freezed == selectedMember
+          ? _value.selectedMember
+          : selectedMember // ignore: cast_nullable_to_non_nullable
+              as ApiUserInfo?,
       spaceInvitationCode: null == spaceInvitationCode
           ? _value.spaceInvitationCode
           : spaceInvitationCode // ignore: cast_nullable_to_non_nullable
@@ -115,6 +123,18 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
       return _then(_value.copyWith(selectedSpace: value) as $Val);
     });
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $ApiUserInfoCopyWith<$Res>? get selectedMember {
+    if (_value.selectedMember == null) {
+      return null;
+    }
+
+    return $ApiUserInfoCopyWith<$Res>(_value.selectedMember!, (value) {
+      return _then(_value.copyWith(selectedMember: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -131,12 +151,15 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
       bool loading,
       bool fetchingInviteCode,
       SpaceInfo? selectedSpace,
+      ApiUserInfo? selectedMember,
       String spaceInvitationCode,
       List<SpaceInfo> spaceList,
       Object? error});
 
   @override
   $SpaceInfoCopyWith<$Res>? get selectedSpace;
+  @override
+  $ApiUserInfoCopyWith<$Res>? get selectedMember;
 }
 
 /// @nodoc
@@ -155,6 +178,7 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
     Object? loading = null,
     Object? fetchingInviteCode = null,
     Object? selectedSpace = freezed,
+    Object? selectedMember = freezed,
     Object? spaceInvitationCode = null,
     Object? spaceList = null,
     Object? error = freezed,
@@ -180,6 +204,10 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
           ? _value.selectedSpace
           : selectedSpace // ignore: cast_nullable_to_non_nullable
               as SpaceInfo?,
+      selectedMember: freezed == selectedMember
+          ? _value.selectedMember
+          : selectedMember // ignore: cast_nullable_to_non_nullable
+              as ApiUserInfo?,
       spaceInvitationCode: null == spaceInvitationCode
           ? _value.spaceInvitationCode
           : spaceInvitationCode // ignore: cast_nullable_to_non_nullable
@@ -202,6 +230,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
       this.loading = false,
       this.fetchingInviteCode = false,
       this.selectedSpace,
+      this.selectedMember,
       this.spaceInvitationCode = '',
       final List<SpaceInfo> spaceList = const [],
       this.error})
@@ -222,6 +251,8 @@ class _$HomeViewStateImpl implements _HomeViewState {
   @override
   final SpaceInfo? selectedSpace;
   @override
+  final ApiUserInfo? selectedMember;
+  @override
   @JsonKey()
   final String spaceInvitationCode;
   final List<SpaceInfo> _spaceList;
@@ -238,7 +269,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
 
   @override
   String toString() {
-    return 'HomeViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, selectedSpace: $selectedSpace, spaceInvitationCode: $spaceInvitationCode, spaceList: $spaceList, error: $error)';
+    return 'HomeViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, selectedSpace: $selectedSpace, selectedMember: $selectedMember, spaceInvitationCode: $spaceInvitationCode, spaceList: $spaceList, error: $error)';
   }
 
   @override
@@ -255,6 +286,8 @@ class _$HomeViewStateImpl implements _HomeViewState {
                 other.fetchingInviteCode == fetchingInviteCode) &&
             (identical(other.selectedSpace, selectedSpace) ||
                 other.selectedSpace == selectedSpace) &&
+            (identical(other.selectedMember, selectedMember) ||
+                other.selectedMember == selectedMember) &&
             (identical(other.spaceInvitationCode, spaceInvitationCode) ||
                 other.spaceInvitationCode == spaceInvitationCode) &&
             const DeepCollectionEquality()
@@ -270,6 +303,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
       loading,
       fetchingInviteCode,
       selectedSpace,
+      selectedMember,
       spaceInvitationCode,
       const DeepCollectionEquality().hash(_spaceList),
       const DeepCollectionEquality().hash(error));
@@ -288,6 +322,7 @@ abstract class _HomeViewState implements HomeViewState {
       final bool loading,
       final bool fetchingInviteCode,
       final SpaceInfo? selectedSpace,
+      final ApiUserInfo? selectedMember,
       final String spaceInvitationCode,
       final List<SpaceInfo> spaceList,
       final Object? error}) = _$HomeViewStateImpl;
@@ -302,6 +337,8 @@ abstract class _HomeViewState implements HomeViewState {
   bool get fetchingInviteCode;
   @override
   SpaceInfo? get selectedSpace;
+  @override
+  ApiUserInfo? get selectedMember;
   @override
   String get spaceInvitationCode;
   @override

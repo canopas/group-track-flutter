@@ -9,7 +9,8 @@ import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/home/home_screen_viewmodel.dart';
 
 import 'components/home_top_bar.dart';
-import 'components/map_view.dart';
+import 'components/space_user_footer.dart';
+import 'map/map_view.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -60,23 +61,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             loading: state.loading,
             fetchingInviteCode: state.fetchingInviteCode,
           ),
-          // SpaceUserFooter()
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: SpaceUserFooter(
+              members: state.selectedSpace?.members,
+              selectedMember: state.selectedMember,
+              onAddMemberTap: () => notifier.onAddMemberTap(),
+              onMemberTap: (member) {
+                notifier.onSelectMember(member);
+              },
+              onRelocateTap: () {},
+              onPlacesTap: () {},
+              onDismiss: () => notifier.onDismissMemberDetail(),
+              onTapTimeline: () {},
+            ),
+          ),
         ],
       ),
     );
   }
 
   void _observeNavigation(HomeViewState state) {
-    ref.listen(homeViewStateProvider.select((state) => state.spaceInvitationCode),
-            (_, next) {
-          if (next.isNotEmpty) {
-            AppRoute.inviteCode(code: next, spaceName: state.selectedSpace?.space.name ?? '').push(context);
-          }
-        });
+    ref.listen(
+        homeViewStateProvider.select((state) => state.spaceInvitationCode),
+        (_, next) {
+      if (next.isNotEmpty) {
+        AppRoute.inviteCode(
+                code: next, spaceName: state.selectedSpace?.space.name ?? '')
+            .push(context);
+      }
+    });
   }
 
   void _observeError() {
-    ref.listen(homeViewStateProvider.select((state) => state.error), (previous, next) {
+    ref.listen(homeViewStateProvider.select((state) => state.error),
+        (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
       }
