@@ -30,7 +30,6 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   late ChatViewNotifier notifier;
-  final Set<String> _selectedUsers = {};
 
   @override
   void initState() {
@@ -79,14 +78,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
                 final isSelected =
-                    _selectedUsers.contains(state.users[index].user.id);
+                    notifier.selectedUsers.contains(state.users[index].user.id);
                 return GestureDetector(
                   onTap: () {
                     setState(() {
                       if (isSelected) {
-                        _selectedUsers.remove(state.users[index].user.id);
+                        notifier.selectedUsers.remove(state.users[index].user.id);
                       } else {
-                        _selectedUsers.add(state.users[index].user.id);
+                        notifier.selectedUsers.add(state.users[index].user.id);
                       }
                     });
                   },
@@ -124,12 +123,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       child: GestureDetector(
         onTap: () {
           setState(() {
-            _selectedUsers.clear();
+            notifier.selectedUsers.clear();
           });
         },
         child: Column(
           children: [
-            if (_selectedUsers.isEmpty) ...[
+            if (notifier.selectedUsers.isEmpty) ...[
               _selectedView(context),
             ] else ...[
               Container(

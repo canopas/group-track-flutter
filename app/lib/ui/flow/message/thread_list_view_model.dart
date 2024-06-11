@@ -8,26 +8,27 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/service/message_service.dart';
 
-part 'message_view_model.freezed.dart';
+part 'thread_list_view_model.freezed.dart';
 
-final messageViewStateProvider = StateNotifierProvider.autoDispose<
-    MessageViewNotifier, MessageViewState>(
-      (ref) => MessageViewNotifier(
+final threadListViewStateProvider = StateNotifierProvider.autoDispose<
+    ThreadListViewNotifier, ThreadListViewState>(
+      (ref) => ThreadListViewNotifier(
         ref.read(spaceServiceProvider),
         ref.read(messageServiceProvider),
         ref.read(currentUserPod),
   ),
 );
 
-class MessageViewNotifier extends StateNotifier<MessageViewState> {
+class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   final SpaceService spaceService;
   final MessageService messageService;
   final ApiUser? currentUser;
 
-  MessageViewNotifier(this.spaceService, this.messageService, this.currentUser) : super(const MessageViewState());
+  ThreadListViewNotifier(this.spaceService, this.messageService, this.currentUser) : super(const ThreadListViewState());
 
   void setSpace(SpaceInfo space) {
     state = state.copyWith(space: space);
+    listenThreads(space.space.id);
   }
 
   void listenThreads(String spaceId) async {
@@ -77,8 +78,8 @@ class MessageViewNotifier extends StateNotifier<MessageViewState> {
 }
 
 @freezed
-class MessageViewState with _$MessageViewState {
-  const factory MessageViewState({
+class ThreadListViewState with _$ThreadListViewState {
+  const factory ThreadListViewState({
     @Default(false) bool allowSave,
     @Default(false) bool isCreating,
     @Default(false) bool loading,
@@ -89,5 +90,5 @@ class MessageViewState with _$MessageViewState {
     @Default([]) List<SpaceInfo> spaceList,
     @Default([]) List<ThreadInfo> threadInfo,
     Object? error,
-  }) = _MessageViewState;
+  }) = _ThreadListViewState;
 }

@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_screen.dart';
-import 'package:yourspace_flutter/ui/flow/message/message_screen.dart';
+import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_support_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/profile/profile_screen.dart';
@@ -163,7 +163,7 @@ class AppRoute {
   static AppRoute message(SpaceInfo space) {
     return AppRoute(
       pathMessage,
-      builder: (_) => MessageScreen(spaceInfo: space),
+      builder: (_) => ThreadListScreen(spaceInfo: space),
     );
   }
   static AppRoute chat({required List<ApiUserInfo> users, required String spaceName}) {

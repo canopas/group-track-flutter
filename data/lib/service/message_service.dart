@@ -133,7 +133,7 @@ class MessageService {
       final futures = threads.map((thread) async {
         final latestMessageSnapshot = await threadMessageRef(thread.id)
             .orderBy("created_at", descending: true)
-            .limit(1)
+            .limit(20)
             .get();
 
         final latestMessages = latestMessageSnapshot.docs

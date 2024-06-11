@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'message_view_model.dart';
+part of 'thread_list_view_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,7 +15,7 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$MessageViewState {
+mixin _$ThreadListViewState {
   bool get allowSave => throw _privateConstructorUsedError;
   bool get isCreating => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
@@ -28,15 +28,15 @@ mixin _$MessageViewState {
   Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $MessageViewStateCopyWith<MessageViewState> get copyWith =>
+  $ThreadListViewStateCopyWith<ThreadListViewState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $MessageViewStateCopyWith<$Res> {
-  factory $MessageViewStateCopyWith(
-          MessageViewState value, $Res Function(MessageViewState) then) =
-      _$MessageViewStateCopyWithImpl<$Res, MessageViewState>;
+abstract class $ThreadListViewStateCopyWith<$Res> {
+  factory $ThreadListViewStateCopyWith(
+          ThreadListViewState value, $Res Function(ThreadListViewState) then) =
+      _$ThreadListViewStateCopyWithImpl<$Res, ThreadListViewState>;
   @useResult
   $Res call(
       {bool allowSave,
@@ -54,9 +54,9 @@ abstract class $MessageViewStateCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$MessageViewStateCopyWithImpl<$Res, $Val extends MessageViewState>
-    implements $MessageViewStateCopyWith<$Res> {
-  _$MessageViewStateCopyWithImpl(this._value, this._then);
+class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
+    implements $ThreadListViewStateCopyWith<$Res> {
+  _$ThreadListViewStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -132,11 +132,11 @@ class _$MessageViewStateCopyWithImpl<$Res, $Val extends MessageViewState>
 }
 
 /// @nodoc
-abstract class _$$MessageViewStateImplCopyWith<$Res>
-    implements $MessageViewStateCopyWith<$Res> {
-  factory _$$MessageViewStateImplCopyWith(_$MessageViewStateImpl value,
-          $Res Function(_$MessageViewStateImpl) then) =
-      __$$MessageViewStateImplCopyWithImpl<$Res>;
+abstract class _$$ThreadListViewStateImplCopyWith<$Res>
+    implements $ThreadListViewStateCopyWith<$Res> {
+  factory _$$ThreadListViewStateImplCopyWith(_$ThreadListViewStateImpl value,
+          $Res Function(_$ThreadListViewStateImpl) then) =
+      __$$ThreadListViewStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -156,11 +156,11 @@ abstract class _$$MessageViewStateImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$MessageViewStateImplCopyWithImpl<$Res>
-    extends _$MessageViewStateCopyWithImpl<$Res, _$MessageViewStateImpl>
-    implements _$$MessageViewStateImplCopyWith<$Res> {
-  __$$MessageViewStateImplCopyWithImpl(_$MessageViewStateImpl _value,
-      $Res Function(_$MessageViewStateImpl) _then)
+class __$$ThreadListViewStateImplCopyWithImpl<$Res>
+    extends _$ThreadListViewStateCopyWithImpl<$Res, _$ThreadListViewStateImpl>
+    implements _$$ThreadListViewStateImplCopyWith<$Res> {
+  __$$ThreadListViewStateImplCopyWithImpl(_$ThreadListViewStateImpl _value,
+      $Res Function(_$ThreadListViewStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -177,7 +177,7 @@ class __$$MessageViewStateImplCopyWithImpl<$Res>
     Object? threadInfo = null,
     Object? error = freezed,
   }) {
-    return _then(_$MessageViewStateImpl(
+    return _then(_$ThreadListViewStateImpl(
       allowSave: null == allowSave
           ? _value.allowSave
           : allowSave // ignore: cast_nullable_to_non_nullable
@@ -221,8 +221,8 @@ class __$$MessageViewStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$MessageViewStateImpl implements _MessageViewState {
-  const _$MessageViewStateImpl(
+class _$ThreadListViewStateImpl implements _ThreadListViewState {
+  const _$ThreadListViewStateImpl(
       {this.allowSave = false,
       this.isCreating = false,
       this.loading = false,
@@ -279,14 +279,14 @@ class _$MessageViewStateImpl implements _MessageViewState {
 
   @override
   String toString() {
-    return 'MessageViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, spaceList: $spaceList, threadInfo: $threadInfo, error: $error)';
+    return 'ThreadListViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, spaceList: $spaceList, threadInfo: $threadInfo, error: $error)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$MessageViewStateImpl &&
+            other is _$ThreadListViewStateImpl &&
             (identical(other.allowSave, allowSave) ||
                 other.allowSave == allowSave) &&
             (identical(other.isCreating, isCreating) ||
@@ -322,13 +322,13 @@ class _$MessageViewStateImpl implements _MessageViewState {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$MessageViewStateImplCopyWith<_$MessageViewStateImpl> get copyWith =>
-      __$$MessageViewStateImplCopyWithImpl<_$MessageViewStateImpl>(
+  _$$ThreadListViewStateImplCopyWith<_$ThreadListViewStateImpl> get copyWith =>
+      __$$ThreadListViewStateImplCopyWithImpl<_$ThreadListViewStateImpl>(
           this, _$identity);
 }
 
-abstract class _MessageViewState implements MessageViewState {
-  const factory _MessageViewState(
+abstract class _ThreadListViewState implements ThreadListViewState {
+  const factory _ThreadListViewState(
       {final bool allowSave,
       final bool isCreating,
       final bool loading,
@@ -338,7 +338,7 @@ abstract class _MessageViewState implements MessageViewState {
       final String message,
       final List<SpaceInfo> spaceList,
       final List<ThreadInfo> threadInfo,
-      final Object? error}) = _$MessageViewStateImpl;
+      final Object? error}) = _$ThreadListViewStateImpl;
 
   @override
   bool get allowSave;
@@ -362,6 +362,6 @@ abstract class _MessageViewState implements MessageViewState {
   Object? get error;
   @override
   @JsonKey(ignore: true)
-  _$$MessageViewStateImplCopyWith<_$MessageViewStateImpl> get copyWith =>
+  _$$ThreadListViewStateImplCopyWith<_$ThreadListViewStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

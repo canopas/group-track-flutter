@@ -20,6 +20,7 @@ final chatViewStateProvider =
 class ChatViewNotifier extends StateNotifier<ChatViewState> {
   final MessageService messageService;
   final ApiUser? currentUser;
+  final Set<String> selectedUsers = {};
 
   ChatViewNotifier(this.messageService, this.currentUser)
       : super(ChatViewState(message: TextEditingController()));

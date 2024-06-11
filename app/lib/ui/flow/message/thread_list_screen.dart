@@ -16,40 +16,39 @@ import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
-import 'package:yourspace_flutter/ui/flow/message/message_view_model.dart';
+import 'package:yourspace_flutter/ui/flow/message/thread_list_view_model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../gen/assets.gen.dart';
 import '../../components/alert.dart';
 
-class MessageScreen extends ConsumerStatefulWidget {
+class ThreadListScreen extends ConsumerStatefulWidget {
   final SpaceInfo spaceInfo;
 
-  const MessageScreen({
+  const ThreadListScreen({
     super.key,
     required this.spaceInfo,
   });
 
   @override
-  ConsumerState createState() => _MessageScreenState();
+  ConsumerState createState() => _ThreadListScreenState();
 }
 
-class _MessageScreenState extends ConsumerState<MessageScreen> {
-  late MessageViewNotifier notifier;
+class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
+  late ThreadListViewNotifier notifier;
 
   @override
   void initState() {
     super.initState();
     runPostFrame(() {
-      notifier = ref.watch(messageViewStateProvider.notifier);
+      notifier = ref.watch(threadListViewStateProvider.notifier);
       notifier.setSpace(widget.spaceInfo);
-      notifier.listenThreads(widget.spaceInfo.space.id);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(messageViewStateProvider);
+    final state = ref.watch(threadListViewStateProvider);
     _observeInviteScreenNavigation();
     _observeError();
 
@@ -73,7 +72,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     );
   }
 
-  Widget _body(BuildContext context, MessageViewState state) {
+  Widget _body(BuildContext context, ThreadListViewState state) {
     if (state.loading) {
       return const Center(child: AppProgressIndicator());
     }
@@ -82,11 +81,11 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: state.threadInfo.isEmpty
           ? _emptyView(context, state)
-          : _list(context, state.threadInfo),
+          : _threadList(context, state.threadInfo),
     );
   }
 
-  Widget _list(BuildContext context, List<ThreadInfo> threads) {
+  Widget _threadList(BuildContext context, List<ThreadInfo> threads) {
     return ListView.builder(
       itemCount: threads.length,
       itemBuilder: (context, index) {
@@ -149,7 +148,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _threadProfile(context, members),
           const SizedBox(width: 16),
@@ -281,8 +280,10 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
             : profileImageUrl.isNotEmpty
                 ? CachedNetworkImage(
                     imageUrl: profileImageUrl,
-                    placeholder: (context, url) => const AppProgressIndicator(
-                        size: AppProgressIndicatorSize.small),
+                    placeholder: (context, url) => ClipRRect(
+                      borderRadius: BorderRadius.circular(size / 2),
+                      child: Icon(Icons.perm_identity_rounded, color: context.colorScheme.textPrimaryDark),
+                    ),
                     fit: BoxFit.cover,
                   )
                 : Container(
@@ -290,14 +291,14 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                     child: Center(
                       child: Text(firstLetter,
                           style: AppTextStyle.subtitle2.copyWith(
-                              color: context.colorScheme.textPrimary)),
+                              color: context.colorScheme.textPrimaryDark)),
                     ),
                   ),
       ),
     );
   }
 
-  Widget _emptyView(BuildContext context, MessageViewState state) {
+  Widget _emptyView(BuildContext context, ThreadListViewState state) {
     if (widget.spaceInfo.members.length >= 2) {
       return _emptyMessageView(context);
     } else {
@@ -317,7 +318,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     );
   }
 
-  Widget _emptyMessageViewWith0Member(BuildContext context, MessageViewState state) {
+  Widget _emptyMessageViewWith0Member(BuildContext context, ThreadListViewState state) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -356,7 +357,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
   }
 
   void _observeInviteScreenNavigation() {
-    ref.listen(messageViewStateProvider.select((state) => state.spaceInvitationCode), (previous, next) {
+    ref.listen(threadListViewStateProvider.select((state) => state.spaceInvitationCode), (previous, next) {
       if (next.isNotEmpty) {
         AppRoute.inviteCode(code: next, spaceName: widget.spaceInfo.space.name).push(context);
       }
@@ -364,7 +365,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
   }
 
   void _observeError() {
-    ref.listen(messageViewStateProvider.select((state) => state.error), (previous, next) {
+    ref.listen(threadListViewStateProvider.select((state) => state.error), (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
       }
