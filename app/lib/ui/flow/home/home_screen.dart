@@ -7,9 +7,9 @@ import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/home/home_screen_viewmodel.dart';
+import 'package:yourspace_flutter/ui/flow/home/map/map_view_model.dart';
 
 import 'components/home_top_bar.dart';
-import 'components/space_user_footer.dart';
 import 'map/map_view.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -21,6 +21,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late HomeViewNotifier notifier;
+  late MapViewNotifier mapNotifier;
 
   @override
   void initState() {
@@ -36,6 +37,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final state = ref.watch(homeViewStateProvider);
     _observeNavigation(state);
     _observeError();
+    _observeSelectedSpace();
+
+    mapNotifier = ref.watch(mapViewStateProvider.notifier);
 
     return AppPage(
       body: ResumeDetector(
@@ -52,7 +56,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       padding: context.mediaQueryPadding,
       child: Stack(
         children: [
-          const MapView(),
+          MapView(space: state.selectedSpace),
           HomeTopBar(
             spaces: state.spaceList,
             onSpaceItemTap: (name) => notifier.updateSelectedSpace(name),
@@ -60,23 +64,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             selectedSpace: state.selectedSpace,
             loading: state.loading,
             fetchingInviteCode: state.fetchingInviteCode,
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: SpaceUserFooter(
-              members: state.selectedSpace?.members,
-              selectedMember: state.selectedMember,
-              onAddMemberTap: () => notifier.onAddMemberTap(),
-              onMemberTap: (member) {
-                notifier.onSelectMember(member);
-              },
-              onRelocateTap: () {},
-              onPlacesTap: () {},
-              onDismiss: () => notifier.onDismissMemberDetail(),
-              onTapTimeline: () {},
-            ),
           ),
         ],
       ),
@@ -100,6 +87,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
+      }
+    });
+  }
+
+  void _observeSelectedSpace() {
+    ref.listen(homeViewStateProvider.select((state) => state.selectedSpace),
+        (previous, next) {
+      if (previous?.space.id != next?.space.id) {
+        mapNotifier.onSelectedSpaceChange(next?.space.id);
       }
     });
   }

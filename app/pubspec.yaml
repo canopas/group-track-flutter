@@ -54,6 +54,8 @@ dependencies:
   image_picker: ^1.1.1
   image_cropper: ^6.0.0
   fluttertoast: ^8.2.6
+  http: ^1.2.1
+  image: ^3.0.1
 
   # map
   google_maps_flutter: ^2.2.8
@@ -68,6 +70,7 @@ dependencies:
   flutter_svg: ^2.0.9
   # picker
   canopas_country_picker: ^0.0.4
+
 
 dev_dependencies:
   flutter_test:

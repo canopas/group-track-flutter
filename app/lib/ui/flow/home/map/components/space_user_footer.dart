@@ -7,13 +7,14 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 
-import '../../../../gen/assets.gen.dart';
-import '../../../components/user_profile_image.dart';
-import '../map/components/selected_member_detail_view.dart';
+import '../../../../../gen/assets.gen.dart';
+import '../../../../components/user_profile_image.dart';
+import 'selected_member_detail_view.dart';
 
 class SpaceUserFooter extends StatelessWidget {
   final List<ApiUserInfo>? members;
-  final ApiUserInfo? selectedMember;
+  final ApiUserInfo? selectedUser;
+  final bool isEnabled;
   final void Function() onAddMemberTap;
   final void Function(ApiUserInfo) onMemberTap;
   final void Function() onRelocateTap;
@@ -24,7 +25,8 @@ class SpaceUserFooter extends StatelessWidget {
   const SpaceUserFooter({
     super.key,
     required this.members,
-    this.selectedMember,
+    this.selectedUser,
+    required this.isEnabled,
     required this.onAddMemberTap,
     required this.onMemberTap,
     required this.onRelocateTap,
@@ -41,12 +43,12 @@ class SpaceUserFooter extends StatelessWidget {
         children: [
           _mapControlBtn(context),
           SelectedMemberDetailView(
-            userInfo: selectedMember,
+            userInfo: selectedUser,
             onDismiss: () => onDismiss(),
             onTapTimeline: () => onTapTimeline(),
           ),
           Visibility(
-              visible: members != null && members!.isNotEmpty,
+              visible: isEnabled && members != null && members!.isNotEmpty,
               child:
                   selectedSpaceMemberView(context: context, members: members)),
         ],

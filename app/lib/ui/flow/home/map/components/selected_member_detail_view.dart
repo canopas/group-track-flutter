@@ -57,7 +57,6 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
             ),
           ),
         ),
-
         Container(
           width: context.mediaQuerySize.width,
           padding: const EdgeInsets.only(top: 24, right: 16),
@@ -66,7 +65,6 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
             children: [_timeLineButtonView()],
           ),
         ),
-
         OnTapScale(
           onTap: () => widget.onDismiss(),
           child: Container(
@@ -211,10 +209,8 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   }
 
   Future<String> getAddress(ApiLocation? location) async {
-    // if (location == null) return '';
-    // test LatLng(21.231981, 72.8364215)
-    // LatLng(37.4219999, -122.0840575)
-    final latLng = LatLng(21.231981, 72.8364215);
+    if (location == null) return '';
+    final latLng = LatLng(location.latitude, location.longitude);
     final address = await latLng.getAddressFromLocation();
     return address;
   }

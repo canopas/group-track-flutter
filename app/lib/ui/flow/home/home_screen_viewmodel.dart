@@ -1,4 +1,3 @@
-import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/space_service.dart';
@@ -84,16 +83,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       currentSpaceId = space.space.id;
     }
   }
-
-  void onDismissMemberDetail() {
-    state = state.copyWith(selectedMember: null);
-  }
-
-  void onSelectMember(ApiUserInfo member) {
-    final selectedMember =
-        (state.selectedMember?.user.id == member.user.id) ? null : member;
-    state = state.copyWith(selectedMember: selectedMember);
-  }
 }
 
 @freezed
@@ -104,7 +93,6 @@ class HomeViewState with _$HomeViewState {
     @Default(false) bool loading,
     @Default(false) bool fetchingInviteCode,
     SpaceInfo? selectedSpace,
-    ApiUserInfo? selectedMember,
     @Default('') String spaceInvitationCode,
     @Default([]) List<SpaceInfo> spaceList,
     Object? error,
