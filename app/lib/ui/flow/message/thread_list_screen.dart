@@ -115,22 +115,28 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
               ),
             ],
           ),
-          child: Column(
-            children: [
-              _threadItem(
-                context: context,
-                members: members,
-                displayedMembers: displayedMembers,
-                message: thread.threadMessage.isNotEmpty
-                    ? thread.threadMessage.last.message ?? ''
-                    : '',
-                date: date ?? DateTime.now(),
-                hasUnreadMessage: hasUnreadMessage,
-              ),
-              if (!isLastItem) ...[
-                _divider(context),
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              AppRoute.chat(users: members, spaceName: widget.spaceInfo.space.name, thread: thread).push(context);
+            },
+            child: Column(
+              children: [
+                _threadItem(
+                  context: context,
+                  members: members,
+                  displayedMembers: displayedMembers,
+                  message: thread.threadMessage.isNotEmpty
+                      ? thread.threadMessage.last.message ?? ''
+                      : '',
+                  date: date ?? DateTime.now(),
+                  hasUnreadMessage: hasUnreadMessage,
+                ),
+                if (!isLastItem) ...[
+                  _divider(context),
+                ],
               ],
-            ],
+            ),
           ),
         );
       },

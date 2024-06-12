@@ -64,12 +64,29 @@ class MessageService {
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 
-  Stream<List<ApiThreadMessage>> getLatestMessages(String threadId, int limit) {
-    return threadMessageRef(threadId)
+  Stream<List<ApiThreadMessage>> getLatestMessages(String threadId, int limit) async* {
+    final latestMessageSnapshot = await threadMessageRef(threadId)
         .orderBy("created_at", descending: true)
-        .limit(limit)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => ApiThreadMessage.fromJson(doc.data() as Map<String, dynamic>)).toList());
+        .limit(20)
+        .get();
+
+    final messages = latestMessageSnapshot.docs
+        .map((doc) => ApiThreadMessage.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
+
+    yield messages;
+  }
+
+  Stream<List<ApiUserInfo>> getLatestMessagesUsers(ApiThread thread) async* {
+    final List<ApiUserInfo?> memberInfoList = [];
+    for (String memberId in thread.member_ids) {
+      final user = await userService.getUser(memberId);
+      final memberInfo = user != null ? ApiUserInfo(user: user, isLocationEnabled: user.location_enabled ?? false) : null;
+      memberInfoList.add(memberInfo);
+    }
+    final List<ApiUserInfo> filteredMemberInfoList = memberInfoList.where((info) => info != null).cast<ApiUserInfo>().toList();
+
+    yield filteredMemberInfoList;
   }
 
   // Future<List<ApiThreadMessage>> getMessages(String threadId, DateTime? from, {int limit = 20}) async {
@@ -95,7 +112,7 @@ class MessageService {
       seen_by: [senderId],
       created_at: DateTime.now(),
     );
-    await doc.set(threadMessage);
+    await doc.set(threadMessage.toJson());
   }
 
   ApiThreadMessage generateMessage(String threadId, String senderId, String message) {
@@ -110,9 +127,9 @@ class MessageService {
     );
   }
 
-  Future<void> sendMessageWithMessage(ApiThreadMessage message) async {
+  Future<void> sendMessageWith(ApiThreadMessage message) async {
     final doc = threadMessageRef(message.thread_id).doc(message.id);
-    await doc.set(message);
+    await doc.set(message.toJson());
   }
 
   Future<void> markMessagesAsSeen(String threadId, List<String> messageIds, String userId) async {

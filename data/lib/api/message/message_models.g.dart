@@ -42,9 +42,8 @@ _$ApiThreadMessageImpl _$$ApiThreadMessageImplFromJson(
       archived_for: (json['archived_for'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, (e as num).toDouble()),
       ),
-      created_at: json['created_at'] == null
-          ? null
-          : DateTime.parse(json['created_at'] as String),
+      created_at: const ServerTimestampConverter()
+          .fromJson(json['created_at'] as Timestamp?),
     );
 
 Map<String, dynamic> _$$ApiThreadMessageImplToJson(
@@ -56,7 +55,26 @@ Map<String, dynamic> _$$ApiThreadMessageImplToJson(
       'message': instance.message,
       'seen_by': instance.seen_by,
       'archived_for': instance.archived_for,
-      'created_at': instance.created_at?.toIso8601String(),
+      'created_at':
+          const ServerTimestampConverter().toJson(instance.created_at),
+    };
+
+_$ApiThreadMessageInfoImpl _$$ApiThreadMessageInfoImplFromJson(
+        Map<String, dynamic> json) =>
+    _$ApiThreadMessageInfoImpl(
+      message: (json['message'] as List<dynamic>)
+          .map((e) => ApiThreadMessage.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      user: (json['user'] as List<dynamic>)
+          .map((e) => ApiUserInfo.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$ApiThreadMessageInfoImplToJson(
+        _$ApiThreadMessageInfoImpl instance) =>
+    <String, dynamic>{
+      'message': instance.message,
+      'user': instance.user,
     };
 
 _$ThreadInfoImpl _$$ThreadInfoImplFromJson(Map<String, dynamic> json) =>

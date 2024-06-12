@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/message/server_timestamp_converter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'message_models.freezed.dart';
 part 'message_models.g.dart';
@@ -45,11 +46,11 @@ class ApiThreadMessage with _$ApiThreadMessage {
     String? message,
     required List<String> seen_by,
     Map<String, double>? archived_for,
-    DateTime? created_at,
+    @ServerTimestampConverter() DateTime? created_at,
   }) = _ApiThreadMessage;
 
   factory ApiThreadMessage.fromJson(Map<String, dynamic> json) =>
-      _$ApiThreadMessageFromJson(_convertTimestamps(json));
+      _$ApiThreadMessageFromJson(json);
 
   factory ApiThreadMessage.fromFireStore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -60,16 +61,29 @@ class ApiThreadMessage with _$ApiThreadMessage {
 
   Map<String, dynamic> toFireStore(ApiThreadMessage message) =>
       message.toJson();
-
-  bool isSent() {
-    return created_at != null;
-  }
 }
 
-Map<String, dynamic> _convertTimestamps(Map<String, dynamic> json) {
-  json.update('created_at', (value) => (value as Timestamp).toDate().toString(),
-      ifAbsent: () => null);
-  return json;
+@freezed
+class ApiThreadMessageInfo with _$ApiThreadMessageInfo {
+  const ApiThreadMessageInfo._();
+
+  const factory ApiThreadMessageInfo({
+    required List<ApiThreadMessage> message,
+    required List<ApiUserInfo> user,
+  }) = _ApiThreadMessageInfo;
+
+  factory ApiThreadMessageInfo.fromJson(Map<String, dynamic> json) =>
+      _$ApiThreadMessageInfoFromJson(json);
+
+  factory ApiThreadMessageInfo.fromFireStore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    Map<String, dynamic>? data = snapshot.data();
+    return ApiThreadMessageInfo.fromJson(data!);
+  }
+
+  Map<String, dynamic> toFireStore(ApiThreadMessageInfo message) =>
+      message.toJson();
 }
 
 @freezed

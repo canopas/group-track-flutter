@@ -295,6 +295,7 @@ mixin _$ApiThreadMessage {
   String? get message => throw _privateConstructorUsedError;
   List<String> get seen_by => throw _privateConstructorUsedError;
   Map<String, double>? get archived_for => throw _privateConstructorUsedError;
+  @ServerTimestampConverter()
   DateTime? get created_at => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -316,7 +317,7 @@ abstract class $ApiThreadMessageCopyWith<$Res> {
       String? message,
       List<String> seen_by,
       Map<String, double>? archived_for,
-      DateTime? created_at});
+      @ServerTimestampConverter() DateTime? created_at});
 }
 
 /// @nodoc
@@ -388,7 +389,7 @@ abstract class _$$ApiThreadMessageImplCopyWith<$Res>
       String? message,
       List<String> seen_by,
       Map<String, double>? archived_for,
-      DateTime? created_at});
+      @ServerTimestampConverter() DateTime? created_at});
 }
 
 /// @nodoc
@@ -453,7 +454,7 @@ class _$ApiThreadMessageImpl extends _ApiThreadMessage {
       this.message,
       required final List<String> seen_by,
       final Map<String, double>? archived_for,
-      this.created_at})
+      @ServerTimestampConverter() this.created_at})
       : _seen_by = seen_by,
         _archived_for = archived_for,
         super._();
@@ -488,6 +489,7 @@ class _$ApiThreadMessageImpl extends _ApiThreadMessage {
   }
 
   @override
+  @ServerTimestampConverter()
   final DateTime? created_at;
 
   @override
@@ -542,13 +544,14 @@ class _$ApiThreadMessageImpl extends _ApiThreadMessage {
 
 abstract class _ApiThreadMessage extends ApiThreadMessage {
   const factory _ApiThreadMessage(
-      {required final String id,
-      required final String thread_id,
-      required final String sender_id,
-      final String? message,
-      required final List<String> seen_by,
-      final Map<String, double>? archived_for,
-      final DateTime? created_at}) = _$ApiThreadMessageImpl;
+          {required final String id,
+          required final String thread_id,
+          required final String sender_id,
+          final String? message,
+          required final List<String> seen_by,
+          final Map<String, double>? archived_for,
+          @ServerTimestampConverter() final DateTime? created_at}) =
+      _$ApiThreadMessageImpl;
   const _ApiThreadMessage._() : super._();
 
   factory _ApiThreadMessage.fromJson(Map<String, dynamic> json) =
@@ -567,11 +570,189 @@ abstract class _ApiThreadMessage extends ApiThreadMessage {
   @override
   Map<String, double>? get archived_for;
   @override
+  @ServerTimestampConverter()
   DateTime? get created_at;
   @override
   @JsonKey(ignore: true)
   _$$ApiThreadMessageImplCopyWith<_$ApiThreadMessageImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+ApiThreadMessageInfo _$ApiThreadMessageInfoFromJson(Map<String, dynamic> json) {
+  return _ApiThreadMessageInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ApiThreadMessageInfo {
+  List<ApiThreadMessage> get message => throw _privateConstructorUsedError;
+  List<ApiUserInfo> get user => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ApiThreadMessageInfoCopyWith<ApiThreadMessageInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ApiThreadMessageInfoCopyWith<$Res> {
+  factory $ApiThreadMessageInfoCopyWith(ApiThreadMessageInfo value,
+          $Res Function(ApiThreadMessageInfo) then) =
+      _$ApiThreadMessageInfoCopyWithImpl<$Res, ApiThreadMessageInfo>;
+  @useResult
+  $Res call({List<ApiThreadMessage> message, List<ApiUserInfo> user});
+}
+
+/// @nodoc
+class _$ApiThreadMessageInfoCopyWithImpl<$Res,
+        $Val extends ApiThreadMessageInfo>
+    implements $ApiThreadMessageInfoCopyWith<$Res> {
+  _$ApiThreadMessageInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? message = null,
+    Object? user = null,
+  }) {
+    return _then(_value.copyWith(
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as List<ApiThreadMessage>,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as List<ApiUserInfo>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ApiThreadMessageInfoImplCopyWith<$Res>
+    implements $ApiThreadMessageInfoCopyWith<$Res> {
+  factory _$$ApiThreadMessageInfoImplCopyWith(_$ApiThreadMessageInfoImpl value,
+          $Res Function(_$ApiThreadMessageInfoImpl) then) =
+      __$$ApiThreadMessageInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({List<ApiThreadMessage> message, List<ApiUserInfo> user});
+}
+
+/// @nodoc
+class __$$ApiThreadMessageInfoImplCopyWithImpl<$Res>
+    extends _$ApiThreadMessageInfoCopyWithImpl<$Res, _$ApiThreadMessageInfoImpl>
+    implements _$$ApiThreadMessageInfoImplCopyWith<$Res> {
+  __$$ApiThreadMessageInfoImplCopyWithImpl(_$ApiThreadMessageInfoImpl _value,
+      $Res Function(_$ApiThreadMessageInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? message = null,
+    Object? user = null,
+  }) {
+    return _then(_$ApiThreadMessageInfoImpl(
+      message: null == message
+          ? _value._message
+          : message // ignore: cast_nullable_to_non_nullable
+              as List<ApiThreadMessage>,
+      user: null == user
+          ? _value._user
+          : user // ignore: cast_nullable_to_non_nullable
+              as List<ApiUserInfo>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ApiThreadMessageInfoImpl extends _ApiThreadMessageInfo {
+  const _$ApiThreadMessageInfoImpl(
+      {required final List<ApiThreadMessage> message,
+      required final List<ApiUserInfo> user})
+      : _message = message,
+        _user = user,
+        super._();
+
+  factory _$ApiThreadMessageInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ApiThreadMessageInfoImplFromJson(json);
+
+  final List<ApiThreadMessage> _message;
+  @override
+  List<ApiThreadMessage> get message {
+    if (_message is EqualUnmodifiableListView) return _message;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_message);
+  }
+
+  final List<ApiUserInfo> _user;
+  @override
+  List<ApiUserInfo> get user {
+    if (_user is EqualUnmodifiableListView) return _user;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_user);
+  }
+
+  @override
+  String toString() {
+    return 'ApiThreadMessageInfo(message: $message, user: $user)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ApiThreadMessageInfoImpl &&
+            const DeepCollectionEquality().equals(other._message, _message) &&
+            const DeepCollectionEquality().equals(other._user, _user));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_message),
+      const DeepCollectionEquality().hash(_user));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ApiThreadMessageInfoImplCopyWith<_$ApiThreadMessageInfoImpl>
+      get copyWith =>
+          __$$ApiThreadMessageInfoImplCopyWithImpl<_$ApiThreadMessageInfoImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ApiThreadMessageInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ApiThreadMessageInfo extends ApiThreadMessageInfo {
+  const factory _ApiThreadMessageInfo(
+      {required final List<ApiThreadMessage> message,
+      required final List<ApiUserInfo> user}) = _$ApiThreadMessageInfoImpl;
+  const _ApiThreadMessageInfo._() : super._();
+
+  factory _ApiThreadMessageInfo.fromJson(Map<String, dynamic> json) =
+      _$ApiThreadMessageInfoImpl.fromJson;
+
+  @override
+  List<ApiThreadMessage> get message;
+  @override
+  List<ApiUserInfo> get user;
+  @override
+  @JsonKey(ignore: true)
+  _$$ApiThreadMessageInfoImplCopyWith<_$ApiThreadMessageInfoImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 ThreadInfo _$ThreadInfoFromJson(Map<String, dynamic> json) {
