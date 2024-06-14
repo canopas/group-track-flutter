@@ -130,7 +130,6 @@ class _MapScreenState extends ConsumerState<MapView> {
   void _observeMarkerChange() {
     ref.listen(mapViewStateProvider.select((state) => state.markers),
         (_, next) {
-      print("XXX marker:${_markers}");
       if (next.isNotEmpty) {
         for (final item in next) {
           _buildMarker(item);
@@ -142,7 +141,6 @@ class _MapScreenState extends ConsumerState<MapView> {
   void _observeMemberPlace(BuildContext context) {
     ref.listen(mapViewStateProvider.select((state) => state.places), (_, next) {
       if (next.isNotEmpty) {
-        print('XXX place:$_places');
         for (final place in next) {
           final latLng = LatLng(place.latitude, place.longitude);
           _placeMarker(place.id, latLng);
@@ -329,12 +327,6 @@ class _MapScreenState extends ConsumerState<MapView> {
     }
     return _userCharMarker(
         isSelected, userName, imageUrl, markerBgColor, iconBgColor, textStyle);
-  }
-
-  Future<BitmapDescriptor> getImage(String assetPath) async {
-    final asset = await rootBundle.load(assetPath);
-    final icon = BitmapDescriptor.fromBytes(asset.buffer.asUint8List());
-    return icon;
   }
 
   void _placeMarker(String placeId, LatLng latLng) async {

@@ -84,7 +84,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     final List<UserMarker> markers = [];
     for (final info in userInfo) {
       if (info.user.id == _currentUser?.id) {
-        mapDefaultPosition(info);
+        mapCameraPosition(info);
       }
 
       if (info.location != null) {
@@ -102,7 +102,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     state = state.copyWith(markers: markers);
   }
 
-  void mapDefaultPosition(ApiUserInfo userInfo) {
+  void mapCameraPosition(ApiUserInfo userInfo) {
     final position = CameraPosition(
       target: LatLng(userInfo.location?.latitude ?? 0.0,
           userInfo.location?.longitude ?? 0.0),

@@ -58,7 +58,5 @@
    	<string>App requires permission to access photos</string>
    	<key>NSCameraUsageDescription</key>
    	<string>App requires permission to access camera</string>
-   	<key>MapApiKey</key>
-   	<string>AIzaSyDbaJSVGU4Jkhd_V_e9esorzh_8yykh160</string>
 </dict>
 </plist>

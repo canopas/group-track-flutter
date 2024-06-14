@@ -7,13 +7,13 @@ import Flutter
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GMSServices.provideAPIKey(getMapKey())
+//     GMSServices.provideAPIKey(getMapKey())
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-  func getMapKey() -> String {
-  let mapApiKey = Bundle.main.object(forInfoDictionaryKey: "MapApiKey") as? String
-  return mapApiKey ?? ""
-  }
+//   func getMapKey() -> String {
+//   let mapApiKey = Bundle.main.object(forInfoDictionaryKey: "MapApiKey") as? String
+//   return mapApiKey ?? ""
+//   }
 }
