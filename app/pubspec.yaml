@@ -70,6 +70,7 @@ dependencies:
   flutter_svg: ^2.0.9
   # picker
   canopas_country_picker: ^0.0.4
+  flutter_cache_manager: ^3.3.2
 
 
 dev_dependencies:

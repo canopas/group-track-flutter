@@ -58,6 +58,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_message.svg
   String get icMessage => 'assets/images/ic_message.svg';
 
+  /// File path: assets/images/ic_place_marker_icon.png
+  AssetGenImage get icPlaceMarkerIcon =>
+      const AssetGenImage('assets/images/ic_place_marker_icon.png');
+
   /// File path: assets/images/ic_privacy_policy.svg
   String get icPrivacyPolicy => 'assets/images/ic_privacy_policy.svg';
 
@@ -107,6 +111,7 @@ class $AssetsImagesGen {
         icGoogleLogo,
         icLocation,
         icMessage,
+        icPlaceMarkerIcon,
         icPrivacyPolicy,
         icRelocateIcon,
         icRemove,

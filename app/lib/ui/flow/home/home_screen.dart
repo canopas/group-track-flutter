@@ -95,7 +95,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ref.listen(homeViewStateProvider.select((state) => state.selectedSpace),
         (previous, next) {
       if (previous?.space.id != next?.space.id) {
-        mapNotifier.onSelectedSpaceChange(next?.space.id);
+        mapNotifier.loadData(next?.space.id);
       }
     });
   }

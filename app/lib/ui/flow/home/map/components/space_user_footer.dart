@@ -11,7 +11,7 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../components/user_profile_image.dart';
 import 'selected_member_detail_view.dart';
 
-class SpaceUserFooter extends StatelessWidget {
+class SpaceUserFooter extends StatefulWidget {
   final List<ApiUserInfo>? members;
   final ApiUserInfo? selectedUser;
   final bool isEnabled;
@@ -36,6 +36,11 @@ class SpaceUserFooter extends StatelessWidget {
   });
 
   @override
+  State<SpaceUserFooter> createState() => _SpaceUserFooterState();
+}
+
+class _SpaceUserFooterState extends State<SpaceUserFooter> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
@@ -43,14 +48,18 @@ class SpaceUserFooter extends StatelessWidget {
         children: [
           _mapControlBtn(context),
           SelectedMemberDetailView(
-            userInfo: selectedUser,
-            onDismiss: () => onDismiss(),
-            onTapTimeline: () => onTapTimeline(),
+            userInfo: widget.selectedUser,
+            onDismiss: widget.onDismiss,
+            onTapTimeline: widget.onTapTimeline,
           ),
           Visibility(
-              visible: isEnabled && members != null && members!.isNotEmpty,
-              child:
-                  selectedSpaceMemberView(context: context, members: members)),
+              visible: widget.isEnabled &&
+                  widget.members != null &&
+                  widget.members!.isNotEmpty,
+              child: selectedSpaceMemberView(
+                context: context,
+                members: widget.members,
+              )),
         ],
       ),
     );
@@ -69,7 +78,7 @@ class SpaceUserFooter extends StatelessWidget {
             foreground: context.colorScheme.primary,
             background: context.colorScheme.surface,
             visibility: true,
-            onTap: () => onRelocateTap,
+            onTap: widget.onRelocateTap,
           ),
           const SizedBox(height: 8),
           _iconButton(
@@ -79,7 +88,7 @@ class SpaceUserFooter extends StatelessWidget {
             foreground: context.colorScheme.onPrimary,
             background: context.colorScheme.primary,
             visibility: true,
-            onTap: () => onPlacesTap,
+            onTap: widget.onPlacesTap,
           )
         ],
       ),
@@ -133,7 +142,7 @@ class SpaceUserFooter extends StatelessWidget {
 
   Widget addMemberView(BuildContext context) {
     return OnTapScale(
-      onTap: () => onAddMemberTap(),
+      onTap: widget.onAddMemberTap,
       child: Padding(
         padding: const EdgeInsets.only(right: 6),
         child: Column(
@@ -177,7 +186,7 @@ class SpaceUserFooter extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: OnTapScale(
         onTap: () {
-          onMemberTap(userInfo);
+          widget.onMemberTap(userInfo);
         },
         child: SizedBox(
           width: 40,

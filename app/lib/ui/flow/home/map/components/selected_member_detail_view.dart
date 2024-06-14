@@ -30,6 +30,8 @@ class SelectedMemberDetailView extends StatefulWidget {
 }
 
 class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
+  String? address = '';
+
   @override
   Widget build(BuildContext context) {
     final userInfo = widget.userInfo;
@@ -123,22 +125,14 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   }
 
   Widget _userAddressView(ApiLocation? location) {
-    return FutureBuilder<String>(
-      future: getAddress(location),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          final address = snapshot.data ?? '';
-          return Text(
-            address,
-            style: AppTextStyle.body2
-                .copyWith(color: context.colorScheme.textPrimary),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-          );
-        } else {
-          return const SizedBox(height: 16);
-        }
-      },
+    getAddress(location);
+    return Text(
+      address ?? '',
+      style: AppTextStyle.body2.copyWith(
+        color: context.colorScheme.textPrimary,
+      ),
+      overflow: TextOverflow.ellipsis,
+      maxLines: 2,
     );
   }
 
@@ -208,10 +202,17 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
     }
   }
 
-  Future<String> getAddress(ApiLocation? location) async {
-    if (location == null) return '';
-    final latLng = LatLng(location.latitude, location.longitude);
-    final address = await latLng.getAddressFromLocation();
-    return address;
+  void getAddress(ApiLocation? location) async {
+    if (location != null) {
+      final latLng = LatLng(location.latitude, location.longitude);
+      final address = await latLng.getAddressFromLocation();
+      setState(() {
+        this.address = address;
+      });
+    } else {
+      setState(() {
+        address = '';
+      });
+    }
   }
 }

@@ -3,8 +3,18 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 extension LatLngExtensions on LatLng {
+  static String? _cachedAddress;
+  static LatLng? _cachedLatLng;
+
   Future<String> getAddressFromLocation() async {
-    String? address = '';
+    if (_cachedLatLng != null &&
+        _cachedLatLng!.latitude == latitude &&
+        _cachedLatLng!.longitude == longitude &&
+        _cachedAddress != null) {
+      return _cachedAddress!;
+    }
+
+    String address = '';
     try {
       final placeMarks = await placemarkFromCoordinates(latitude, longitude);
       if (placeMarks.isNotEmpty) {
@@ -25,6 +35,10 @@ extension LatLngExtensions on LatLng {
         address += ', ${placeMarks.reversed.last.postalCode ?? ''}';
         address += ', ${placeMarks.reversed.last.country ?? ''}';
       }
+
+      _cachedLatLng = LatLng(latitude, longitude);
+      _cachedAddress = address;
+
       return address;
     } catch (e) {
       logger.e('GetAddress: Error while getting address', error: e);

@@ -3,35 +3,49 @@ import 'package:data/api/place/api_place.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/place_service.dart';
 import 'package:data/service/space_service.dart';
+import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'map_view.dart';
 
 part 'map_view_model.freezed.dart';
 
 final mapViewStateProvider =
     StateNotifierProvider.autoDispose<MapViewNotifier, MapViewState>((ref) {
   return MapViewNotifier(
+    ref.read(currentUserPod),
     ref.read(spaceServiceProvider),
     ref.read(placeServiceProvider),
   );
 });
 
 class MapViewNotifier extends StateNotifier<MapViewState> {
+  final ApiUser? _currentUser;
   final SpaceService spaceService;
   final PlaceService placeService;
 
-  MapViewNotifier(this.spaceService, this.placeService)
+  MapViewNotifier(this._currentUser, this.spaceService, this.placeService)
       : super(const MapViewState());
 
-  void onSelectedSpaceChange(String? spaceId) {
-    if (spaceId == null) {
-      state = state.copyWith(userInfo: [], places: []);
-      return;
-    }
-    state = state.copyWith(markers: []);
+  void loadData(String? spaceId) {
+    onSelectedSpaceChange();
+
+    if (spaceId == null) return;
+
     listenMemberLocation(spaceId);
     listenPlaces(spaceId);
+  }
+
+  void onSelectedSpaceChange() {
+    state = state.copyWith(
+      userInfo: [],
+      places: [],
+      markers: [],
+      defaultPosition: null,
+      selectedUser: null,
+    );
   }
 
   void listenMemberLocation(String spaceId) async {
@@ -39,7 +53,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
       state = state.copyWith(loading: true, selectedUser: null);
       spaceService.getMemberWithLocation(spaceId).listen((userInfo) {
         state = state.copyWith(userInfo: userInfo, loading: false);
-        getUserMarker(userInfo);
+        userMapPositions(userInfo);
       });
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);
@@ -66,9 +80,13 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     }
   }
 
-  void getUserMarker(List<ApiUserInfo> userInfo) {
+  void userMapPositions(List<ApiUserInfo> userInfo) {
     final List<UserMarker> markers = [];
     for (final info in userInfo) {
+      if (info.user.id == _currentUser?.id) {
+        mapDefaultPosition(info);
+      }
+
       if (info.location != null) {
         markers.add(UserMarker(
           userId: info.user.id,
@@ -82,6 +100,15 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     }
 
     state = state.copyWith(markers: markers);
+  }
+
+  void mapDefaultPosition(ApiUserInfo userInfo) {
+    final position = CameraPosition(
+      target: LatLng(userInfo.location?.latitude ?? 0.0,
+          userInfo.location?.longitude ?? 0.0),
+      zoom: defaultCameraZoom,
+    );
+    state = state.copyWith(defaultPosition: position);
   }
 
   void onAddMemberTap(String spaceId) async {
@@ -101,15 +128,22 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   }
 
   void onDismissMemberDetail() {
-    state = state.copyWith(selectedUser: null);
+    state = state.copyWith(selectedUser: null, defaultPosition: null);
     onShowDetailUpdateUserMarker(null);
-    
   }
 
   void showMemberDetail(ApiUserInfo member) {
     final selectedMember =
         (state.selectedUser?.user.id == member.user.id) ? null : member;
-    state = state.copyWith(selectedUser: selectedMember);
+    final position = (selectedMember != null && selectedMember.location != null)
+        ? CameraPosition(
+            target: LatLng(selectedMember.location!.latitude,
+                selectedMember.location!.longitude),
+            zoom: defaultCameraZoomForSelectedUser)
+        : null;
+
+    state =
+        state.copyWith(selectedUser: selectedMember, defaultPosition: position);
     onShowDetailUpdateUserMarker(member.user.id);
   }
 
@@ -129,6 +163,11 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     }
     state = state.copyWith(markers: updatedMarkers);
   }
+
+  void onTapUserMarker(String userId) {
+    final user = state.userInfo.firstWhere((user) => user.user.id == userId);
+    showMemberDetail(user);
+  }
 }
 
 @freezed
@@ -140,7 +179,7 @@ class MapViewState with _$MapViewState {
     @Default([]) List<ApiPlace> places,
     @Default([]) List<UserMarker> markers,
     ApiUserInfo? selectedUser,
-    LatLng? defaultPosition,
+    CameraPosition? defaultPosition,
     @Default('') String spaceInvitationCode,
     Object? error,
   }) = _MapViewState;

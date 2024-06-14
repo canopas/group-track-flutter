@@ -22,7 +22,7 @@ mixin _$MapViewState {
   List<ApiPlace> get places => throw _privateConstructorUsedError;
   List<UserMarker> get markers => throw _privateConstructorUsedError;
   ApiUserInfo? get selectedUser => throw _privateConstructorUsedError;
-  LatLng? get defaultPosition => throw _privateConstructorUsedError;
+  CameraPosition? get defaultPosition => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
@@ -44,7 +44,7 @@ abstract class $MapViewStateCopyWith<$Res> {
       List<ApiPlace> places,
       List<UserMarker> markers,
       ApiUserInfo? selectedUser,
-      LatLng? defaultPosition,
+      CameraPosition? defaultPosition,
       String spaceInvitationCode,
       Object? error});
 
@@ -102,7 +102,7 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
       defaultPosition: freezed == defaultPosition
           ? _value.defaultPosition
           : defaultPosition // ignore: cast_nullable_to_non_nullable
-              as LatLng?,
+              as CameraPosition?,
       spaceInvitationCode: null == spaceInvitationCode
           ? _value.spaceInvitationCode
           : spaceInvitationCode // ignore: cast_nullable_to_non_nullable
@@ -139,7 +139,7 @@ abstract class _$$MapViewStateImplCopyWith<$Res>
       List<ApiPlace> places,
       List<UserMarker> markers,
       ApiUserInfo? selectedUser,
-      LatLng? defaultPosition,
+      CameraPosition? defaultPosition,
       String spaceInvitationCode,
       Object? error});
 
@@ -193,7 +193,7 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
       defaultPosition: freezed == defaultPosition
           ? _value.defaultPosition
           : defaultPosition // ignore: cast_nullable_to_non_nullable
-              as LatLng?,
+              as CameraPosition?,
       spaceInvitationCode: null == spaceInvitationCode
           ? _value.spaceInvitationCode
           : spaceInvitationCode // ignore: cast_nullable_to_non_nullable
@@ -256,7 +256,7 @@ class _$MapViewStateImpl implements _MapViewState {
   @override
   final ApiUserInfo? selectedUser;
   @override
-  final LatLng? defaultPosition;
+  final CameraPosition? defaultPosition;
   @override
   @JsonKey()
   final String spaceInvitationCode;
@@ -316,7 +316,7 @@ abstract class _MapViewState implements MapViewState {
       final List<ApiPlace> places,
       final List<UserMarker> markers,
       final ApiUserInfo? selectedUser,
-      final LatLng? defaultPosition,
+      final CameraPosition? defaultPosition,
       final String spaceInvitationCode,
       final Object? error}) = _$MapViewStateImpl;
 
@@ -333,7 +333,7 @@ abstract class _MapViewState implements MapViewState {
   @override
   ApiUserInfo? get selectedUser;
   @override
-  LatLng? get defaultPosition;
+  CameraPosition? get defaultPosition;
   @override
   String get spaceInvitationCode;
   @override
