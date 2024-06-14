@@ -35,8 +35,8 @@ class _MapScreenState extends ConsumerState<MapView> {
   final Completer<GoogleMapController> _controller = Completer();
   final _cameraPosition =
       const CameraPosition(target: LatLng(0.0, 0.0), zoom: defaultCameraZoom);
-  List<Marker> _markers = [];
-  List<Circle> _places = [];
+  final List<Marker> _markers = [];
+  final List<Circle> _places = [];
 
   @override
   void didUpdateWidget(covariant MapView oldWidget) {
@@ -58,8 +58,6 @@ class _MapScreenState extends ConsumerState<MapView> {
 
     notifier = ref.watch(mapViewStateProvider.notifier);
     final state = ref.watch(mapViewStateProvider);
-
-    print('${_markers.length}, ${_places.length}');
 
     return Stack(
       children: [
@@ -341,13 +339,6 @@ class _MapScreenState extends ConsumerState<MapView> {
         });
       });
     });
-  }
-
-  Future<BitmapDescriptor> getPlaceImage(String assetPath) async {
-    final asset = await rootBundle.load(assetPath);
-    final icon = BitmapDescriptor.fromBytes(asset.buffer.asUint8List(),
-        size: Size(5, 5));
-    return icon;
   }
 
   void _drawPlaceMarker(ui.FrameInfo frameInfo, String placeId, LatLng latLng) {

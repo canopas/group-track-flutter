@@ -47,10 +47,13 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
       child: Column(
         children: [
           _mapControlBtn(context),
-          SelectedMemberDetailView(
-            userInfo: widget.selectedUser,
-            onDismiss: widget.onDismiss,
-            onTapTimeline: widget.onTapTimeline,
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            child: SelectedMemberDetailView(
+              userInfo: widget.selectedUser,
+              onDismiss: widget.onDismiss,
+              onTapTimeline: widget.onTapTimeline,
+            ),
           ),
           Visibility(
               visible: widget.isEnabled &&
