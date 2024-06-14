@@ -38,7 +38,7 @@ class UserBatteryStatus extends StatelessWidget {
           colorFilter: ColorFilter.mode(color, BlendMode.srcATop),
         ),
         Text(
-          '$batteryPct%',
+          '${batteryPct.toInt()}%',
           style: AppTextStyle.caption
               .copyWith(color: context.colorScheme.textPrimary),
         )

@@ -47,13 +47,30 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
       child: Column(
         children: [
           _mapControlBtn(context),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            child: SelectedMemberDetailView(
-              userInfo: widget.selectedUser,
-              onDismiss: widget.onDismiss,
-              onTapTimeline: widget.onTapTimeline,
-            ),
+
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return SlideTransition(
+                position: Tween(
+                  begin: const Offset(0.0, 1.0),
+                  end: const Offset(0.0, 0.0),
+                ).animate(animation),
+                child: ScaleTransition(
+                    scale: animation,
+                    child: child),
+              );
+            },
+            child: widget.selectedUser != null
+                ? SelectedMemberDetailView(
+                    key: const ValueKey('detailView'),
+                    userInfo: widget.selectedUser,
+                    onDismiss: widget.onDismiss,
+                    onTapTimeline: widget.onTapTimeline,
+                  )
+                : const SizedBox.shrink(
+                    key: ValueKey('emptyBox'),
+                  ),
           ),
           Visibility(
               visible: widget.isEnabled &&
