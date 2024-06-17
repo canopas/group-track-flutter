@@ -1,12 +1,18 @@
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/place_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image/image.dart' as img;
 
 import 'map_view.dart';
 
@@ -80,7 +86,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     }
   }
 
-  void userMapPositions(List<ApiUserInfo> userInfo) {
+  void userMapPositions(List<ApiUserInfo> userInfo) async {
     final List<UserMarker> markers = [];
     for (final info in userInfo) {
       if (info.user.id == _currentUser?.id) {
@@ -91,7 +97,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         markers.add(UserMarker(
           userId: info.user.id,
           userName: info.user.fullName,
-          imageUrl: info.user.profile_image,
+          imageUrl: await _convertUrlToImage(info.user.profile_image),
           latitude: info.location!.latitude,
           longitude: info.location!.longitude,
           isSelected: false,
@@ -100,6 +106,38 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     }
 
     state = state.copyWith(markers: markers);
+  }
+
+  Future<ui.Image?> _convertUrlToImage(String? imageUrl) async {
+    if (imageUrl == null || imageUrl.isEmpty) return null;
+
+    try {
+      final cacheManager = DefaultCacheManager();
+      final file = await cacheManager.getSingleFile(imageUrl);
+
+      final bytes = await file.readAsBytes();
+      final image = img.decodeImage(bytes);
+      if (image != null) {
+        final resizedImage = img.copyResize(
+          image,
+          width: placeSize.toInt(),
+          height: placeSize.toInt(),
+        );
+        final circularImage = img.copyCropCircle(resizedImage);
+
+        final byteData = ByteData.view(
+          Uint8List.fromList(img.encodePng(circularImage)).buffer,
+        );
+
+        final codec =
+            await ui.instantiateImageCodec(byteData.buffer.asUint8List());
+        final frame = await codec.getNextFrame();
+        return frame.image;
+      }
+    } catch (e) {
+      debugPrint("Error while getting network image: $e");
+    }
+    return null;
   }
 
   void mapCameraPosition(ApiUserInfo userInfo) {
@@ -190,7 +228,7 @@ class UserMarker with _$UserMarker {
   const factory UserMarker({
     required String userId,
     required String userName,
-    required String? imageUrl,
+    required ui.Image? imageUrl,
     required double latitude,
     required double longitude,
     required bool isSelected,

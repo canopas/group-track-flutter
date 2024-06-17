@@ -2,13 +2,10 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:data/api/space/space_models.dart';
-import 'package:data/log/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:image/image.dart' as img;
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 
@@ -35,6 +32,7 @@ class _MapScreenState extends ConsumerState<MapView> {
   final Completer<GoogleMapController> _controller = Completer();
   final _cameraPosition =
       const CameraPosition(target: LatLng(0.0, 0.0), zoom: defaultCameraZoom);
+
   final List<Marker> _markers = [];
   final List<Circle> _places = [];
 
@@ -71,8 +69,8 @@ class _MapScreenState extends ConsumerState<MapView> {
             myLocationButtonEnabled: false,
             mapToolbarEnabled: false,
             buildingsEnabled: false,
-            markers: _markers.toSet(),
             circles: _places.toSet(),
+            markers: _markers.toSet(),
           ),
         ),
         Positioned(
@@ -138,21 +136,27 @@ class _MapScreenState extends ConsumerState<MapView> {
 
   void _observeMemberPlace(BuildContext context) {
     ref.listen(mapViewStateProvider.select((state) => state.places), (_, next) {
-      if (next.isNotEmpty) {
-        for (final place in next) {
-          final latLng = LatLng(place.latitude, place.longitude);
-          _placeMarker(place.id, latLng);
+      setState(() {
+        _places.clear();
+        _markers
+            .removeWhere((marker) => marker.markerId.value.startsWith('place'));
 
-          _places.add(Circle(
-            circleId: CircleId(place.id),
-            fillColor: context.colorScheme.primary.withOpacity(0.4),
-            strokeColor: context.colorScheme.primary.withOpacity(0.6),
-            strokeWidth: 1,
-            center: latLng,
-            radius: place.radius,
-          ));
+        if (next.isNotEmpty) {
+          for (final place in next) {
+            final latLng = LatLng(place.latitude, place.longitude);
+            _placeMarker(place.id, latLng);
+
+            _places.add(Circle(
+              circleId: CircleId(place.id),
+              fillColor: context.colorScheme.primary.withOpacity(0.4),
+              strokeColor: context.colorScheme.primary.withOpacity(0.6),
+              strokeWidth: 1,
+              center: latLng,
+              radius: place.radius,
+            ));
+          }
         }
-      }
+      });
     });
   }
 
@@ -185,24 +189,23 @@ class _MapScreenState extends ConsumerState<MapView> {
   Future<BitmapDescriptor> _mapMarker(
     bool isSelected,
     String userName,
-    String? imageUrl,
+    ui.Image? imageUrl,
     Color markerBgColor,
     Color iconBgColor,
     TextStyle textStyle,
   ) async {
-    if (imageUrl != null && imageUrl.isNotEmpty) {
+    if (imageUrl != null) {
       return await _userImageMarker(userName, imageUrl, isSelected,
           markerBgColor, iconBgColor, textStyle);
     } else {
-      return await _userCharMarker(isSelected, userName, imageUrl,
-          markerBgColor, iconBgColor, textStyle);
+      return await _userCharMarker(
+          isSelected, userName, markerBgColor, iconBgColor, textStyle);
     }
   }
 
   Future<BitmapDescriptor> _userCharMarker(
     bool isSelected,
     String userName,
-    String? imageUrl,
     Color markerBgColor,
     Color iconBgColor,
     TextStyle textStyle,
@@ -255,76 +258,48 @@ class _MapScreenState extends ConsumerState<MapView> {
 
   Future<BitmapDescriptor> _userImageMarker(
     String userName,
-    String imageUrl,
+    ui.Image uiImage,
     bool isSelected,
     Color markerBgColor,
     Color iconBgColor,
     TextStyle textStyle,
   ) async {
-    try {
-      final cacheManager = DefaultCacheManager();
-      final file = await cacheManager.getSingleFile(imageUrl);
+    // Prepare the canvas to draw the rounded rectangle and the image
+    final recorder = ui.PictureRecorder();
+    final canvas = ui.Canvas(
+        recorder,
+        Rect.fromPoints(
+            const Offset(0, 0), const Offset(markerSize, markerSize)));
 
-      final bytes = await file.readAsBytes();
-      final image = img.decodeImage(bytes);
-      if (image != null) {
-        final resizedImage = img.copyResize(image, width: 80, height: 80);
+    // Draw the rounded rectangle
+    canvas.drawRRect(
+      RRect.fromRectAndCorners(
+        const Rect.fromLTWH(0.0, 0.0, markerSize, markerSize),
+        topLeft: const Radius.circular(40),
+        topRight: const Radius.circular(40),
+        bottomLeft: const Radius.circular(0),
+        bottomRight: const Radius.circular(40),
+      ),
+      Paint()..color = markerBgColor,
+    );
 
-        // Create a circular image
-        final circularImage = img.copyCropCircle(resizedImage);
+    // Calculate the position to center the image
+    final double imageOffset = (markerSize - uiImage.width.toDouble()) / 2;
+    final Offset offset = Offset(imageOffset, imageOffset);
 
-        final byteData = ByteData.view(
-          Uint8List.fromList(img.encodePng(circularImage)).buffer,
-        );
+    // Draw the image on the canvas centered
+    canvas.drawImage(uiImage, offset, Paint()..color = iconBgColor);
 
-        // Create an Image from the ByteData
-        final codec =
-            await ui.instantiateImageCodec(byteData.buffer.asUint8List());
-        final frame = await codec.getNextFrame();
-        final uiImage = frame.image;
+    // End recording and create an image from the canvas
+    final picture = recorder.endRecording();
+    final imgData =
+        await picture.toImage(markerSize.toInt(), markerSize.toInt());
+    final data = await imgData.toByteData(format: ui.ImageByteFormat.png);
 
-        // Prepare the canvas to draw the rounded rectangle and the image
-        final recorder = ui.PictureRecorder();
-        final canvas = ui.Canvas(
-            recorder,
-            Rect.fromPoints(
-                const Offset(0, 0), const Offset(markerSize, markerSize)));
+    final bitmapDescriptor =
+        BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
 
-        // Draw the rounded rectangle
-        canvas.drawRRect(
-          RRect.fromRectAndCorners(
-            const Rect.fromLTWH(0.0, 0.0, markerSize, markerSize),
-            topLeft: const Radius.circular(40),
-            topRight: const Radius.circular(40),
-            bottomLeft: const Radius.circular(0),
-            bottomRight: const Radius.circular(40),
-          ),
-          Paint()..color = markerBgColor,
-        );
-
-        // Calculate the position to center the image
-        final double imageOffset = (markerSize - uiImage.width.toDouble()) / 2;
-        final Offset offset = Offset(imageOffset, imageOffset);
-
-        // Draw the image on the canvas centered
-        canvas.drawImage(uiImage, offset, Paint()..color = iconBgColor);
-
-        // End recording and create an image from the canvas
-        final picture = recorder.endRecording();
-        final imgData =
-            await picture.toImage(markerSize.toInt(), markerSize.toInt());
-        final data = await imgData.toByteData(format: ui.ImageByteFormat.png);
-
-        final bitmapDescriptor =
-            BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
-
-        return bitmapDescriptor;
-      }
-    } catch (e) {
-      logger.e("Error while getting network image:", error: e);
-    }
-    return _userCharMarker(
-        isSelected, userName, imageUrl, markerBgColor, iconBgColor, textStyle);
+    return bitmapDescriptor;
   }
 
   void _placeMarker(String placeId, LatLng latLng) async {
@@ -366,14 +341,12 @@ class _MapScreenState extends ConsumerState<MapView> {
         if (byteData != null) {
           final Uint8List uint8List = byteData.buffer.asUint8List();
 
-          setState(() {
-            _markers.add(Marker(
-              markerId: MarkerId(placeId),
-              position: latLng,
-              anchor: const Offset(0.5, 0.5),
-              icon: BitmapDescriptor.fromBytes(uint8List),
-            ));
-          });
+          _markers.add(Marker(
+            markerId: MarkerId('place-$placeId'),
+            position: latLng,
+            anchor: const Offset(0.5, 0.5),
+            icon: BitmapDescriptor.fromBytes(uint8List),
+          ));
         }
       });
     });

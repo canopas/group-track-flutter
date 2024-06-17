@@ -348,7 +348,7 @@ abstract class _MapViewState implements MapViewState {
 mixin _$UserMarker {
   String get userId => throw _privateConstructorUsedError;
   String get userName => throw _privateConstructorUsedError;
-  String? get imageUrl => throw _privateConstructorUsedError;
+  ui.Image? get imageUrl => throw _privateConstructorUsedError;
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
   bool get isSelected => throw _privateConstructorUsedError;
@@ -367,7 +367,7 @@ abstract class $UserMarkerCopyWith<$Res> {
   $Res call(
       {String userId,
       String userName,
-      String? imageUrl,
+      ui.Image? imageUrl,
       double latitude,
       double longitude,
       bool isSelected});
@@ -405,7 +405,7 @@ class _$UserMarkerCopyWithImpl<$Res, $Val extends UserMarker>
       imageUrl: freezed == imageUrl
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as ui.Image?,
       latitude: null == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
@@ -433,7 +433,7 @@ abstract class _$$UserMarkerImplCopyWith<$Res>
   $Res call(
       {String userId,
       String userName,
-      String? imageUrl,
+      ui.Image? imageUrl,
       double latitude,
       double longitude,
       bool isSelected});
@@ -469,7 +469,7 @@ class __$$UserMarkerImplCopyWithImpl<$Res>
       imageUrl: freezed == imageUrl
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as ui.Image?,
       latitude: null == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
@@ -502,7 +502,7 @@ class _$UserMarkerImpl implements _UserMarker {
   @override
   final String userName;
   @override
-  final String? imageUrl;
+  final ui.Image? imageUrl;
   @override
   final double latitude;
   @override
@@ -548,7 +548,7 @@ abstract class _UserMarker implements UserMarker {
   const factory _UserMarker(
       {required final String userId,
       required final String userName,
-      required final String? imageUrl,
+      required final ui.Image? imageUrl,
       required final double latitude,
       required final double longitude,
       required final bool isSelected}) = _$UserMarkerImpl;
@@ -558,7 +558,7 @@ abstract class _UserMarker implements UserMarker {
   @override
   String get userName;
   @override
-  String? get imageUrl;
+  ui.Image? get imageUrl;
   @override
   double get latitude;
   @override
