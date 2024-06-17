@@ -57,6 +57,7 @@ class _MapScreenState extends ConsumerState<MapView> {
     notifier = ref.watch(mapViewStateProvider.notifier);
     final state = ref.watch(mapViewStateProvider);
 
+    _updateMapStyle(context.brightness == Brightness.dark);
     return Stack(
       children: [
         Center(
@@ -99,6 +100,17 @@ class _MapScreenState extends ConsumerState<MapView> {
 
   void _onMapCreated(GoogleMapController controller) async {
     _controller.complete(controller);
+  }
+
+  void _updateMapStyle(bool isDarkMode) async {
+    final controller = await _controller.future;
+    if (isDarkMode) {
+      final style =
+          await rootBundle.loadString('assets/map/map_theme_night.json');
+      controller.setMapStyle(style);
+    } else {
+      controller.setMapStyle(null);
+    }
   }
 
   void _observeMapCameraPosition() {
