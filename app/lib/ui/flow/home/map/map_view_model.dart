@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/service/permission_service.dart';
 import 'package:data/service/place_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
@@ -24,6 +25,7 @@ final mapViewStateProvider =
     ref.read(currentUserPod),
     ref.read(spaceServiceProvider),
     ref.read(placeServiceProvider),
+    ref.read(permissionServiceProvider),
   );
 });
 
@@ -31,9 +33,14 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   final ApiUser? _currentUser;
   final SpaceService spaceService;
   final PlaceService placeService;
+  final PermissionService permissionService;
 
-  MapViewNotifier(this._currentUser, this.spaceService, this.placeService)
-      : super(const MapViewState());
+  MapViewNotifier(
+    this._currentUser,
+    this.spaceService,
+    this.placeService,
+    this.permissionService,
+  ) : super(const MapViewState());
 
   void loadData(String? spaceId) {
     onSelectedSpaceChange();
@@ -206,6 +213,27 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     final user = state.userInfo.firstWhere((user) => user.user.id == userId);
     showMemberDetail(user);
   }
+
+  void checkLocationAndNotificationPermission() async {
+    final isLocationEnabled = await permissionService.isLocationAlwaysEnabled();
+    final isLocationServiceEnabled =
+        await permissionService.isLocationServiceEnabled();
+    final isNotificationEnabled =
+        await permissionService.hasNotificationPermission();
+    final isFineLocationPermission =
+        await permissionService.isLocationPermissionGranted();
+
+    state = state.copyWith(
+      hasLocationEnabled: isLocationEnabled,
+      hasLocationServiceEnabled: isLocationServiceEnabled,
+      hasNotificationEnabled: isNotificationEnabled,
+      hasFineLocationEnabled: isFineLocationPermission,
+    );
+  }
+
+  void showEnableLocationDialog() {
+    state = state.copyWith(showLocationDialog: DateTime.now());
+  }
 }
 
 @freezed
@@ -213,6 +241,10 @@ class MapViewState with _$MapViewState {
   const factory MapViewState({
     @Default(false) loading,
     @Default(false) bool fetchingInviteCode,
+    @Default(false) bool hasLocationEnabled,
+    @Default(false) bool hasLocationServiceEnabled,
+    @Default(false) bool hasNotificationEnabled,
+    @Default(false) bool hasFineLocationEnabled,
     @Default([]) List<ApiUserInfo> userInfo,
     @Default([]) List<ApiPlace> places,
     @Default([]) List<UserMarker> markers,
@@ -220,6 +252,7 @@ class MapViewState with _$MapViewState {
     CameraPosition? defaultPosition,
     @Default('') String spaceInvitationCode,
     Object? error,
+    DateTime? showLocationDialog,
   }) = _MapViewState;
 }
 

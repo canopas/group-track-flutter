@@ -6,10 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 
 import '../../../app_route.dart';
+import '../../../components/permission_dialog.dart';
 import 'components/space_user_footer.dart';
 import 'map_view_model.dart';
 
@@ -52,6 +56,7 @@ class _MapScreenState extends ConsumerState<MapView> {
     _observeMapCameraPosition();
     _observeNavigation();
     _observeMarkerChange();
+    _observeShowEnableLocationPrompt(context);
     _observeMemberPlace(context);
 
     notifier = ref.watch(mapViewStateProvider.notifier);
@@ -74,28 +79,112 @@ class _MapScreenState extends ConsumerState<MapView> {
             markers: _markers.toSet(),
           ),
         ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: SpaceUserFooter(
-            members: state.userInfo,
-            selectedUser: state.selectedUser,
-            isEnabled: !state.loading,
-            onAddMemberTap: () {
-              notifier.onAddMemberTap(widget.space!.space.id);
-            },
-            onMemberTap: (member) {
-              notifier.showMemberDetail(member);
-            },
-            onRelocateTap: () {},
-            onPlacesTap: () {},
-            onDismiss: () => notifier.onDismissMemberDetail(),
-            onTapTimeline: () {},
-          ),
-        ),
+        Positioned(bottom: 0, left: 0, right: 0, child: _bottomFooters(state)),
       ],
     );
+  }
+
+  Widget _bottomFooters(MapViewState state) {
+    final enabled = !state.hasLocationEnabled ||
+        !state.hasLocationServiceEnabled ||
+        !state.hasNotificationEnabled;
+
+    return Column(
+      children: [
+        SpaceUserFooter(
+          members: state.userInfo,
+          selectedUser: state.selectedUser,
+          isEnabled: !state.loading,
+          onAddMemberTap: () {
+            notifier.onAddMemberTap(widget.space!.space.id);
+          },
+          onMemberTap: (member) {
+            notifier.showMemberDetail(member);
+          },
+          onRelocateTap: () {},
+          onPlacesTap: () {},
+          onDismiss: () => notifier.onDismissMemberDetail(),
+          onTapTimeline: () {},
+        ),
+        Visibility(visible: enabled, child: _permissionFooter(state))
+      ],
+    );
+  }
+
+  Widget _permissionFooter(MapViewState state) {
+    final locationEnabled =
+        state.hasLocationEnabled ? state.hasLocationServiceEnabled : true;
+    final (title, subTitle) = _permissionFooterContent(state);
+
+    return OnTapScale(
+      onTap: () {
+        (!locationEnabled)
+            ? notifier.showEnableLocationDialog()
+            : AppRoute.enablePermission.push(context);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        width: double.infinity,
+        color: !locationEnabled
+            ? context.colorScheme.alert
+            : context.colorScheme.secondary,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: AppTextStyle.subtitle1.copyWith(
+                    color: context.colorScheme.textInversePrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subTitle,
+                  style: AppTextStyle.body1.copyWith(
+                    color: context.colorScheme.textInverseDisabled,
+                  ),
+                )
+              ],
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
+              color: context.colorScheme.textInversePrimary,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  (String, String) _permissionFooterContent(MapViewState state) {
+    final locationEnabled =
+        state.hasLocationEnabled ? state.hasLocationServiceEnabled : true;
+
+    String title = '';
+    String subTitle = '';
+
+    if (!state.hasLocationEnabled) {
+      title = context.l10n.permission_footer_missing_location_permission_title;
+    } else if (!state.hasNotificationEnabled) {
+      title = context.l10n.permission_footer_title;
+    } else {
+      title = context.l10n.permission_footer_missing_location_permission_title;
+    }
+
+    if (!locationEnabled) {
+      subTitle = context.l10n.permission_footer_location_off_subtitle;
+    } else if (!state.hasFineLocationEnabled) {
+      subTitle = context.l10n.permission_footer_subtitle;
+    } else {
+      subTitle =
+          context.l10n.permission_footer_missing_location_permission_subtitle;
+    }
+
+    return (title, subTitle);
   }
 
   void _onMapCreated(GoogleMapController controller) async {
@@ -142,6 +231,28 @@ class _MapScreenState extends ConsumerState<MapView> {
         for (final item in next) {
           _buildMarker(item);
         }
+      }
+    });
+  }
+
+  void _observeShowEnableLocationPrompt(BuildContext context) {
+    ref.listen(mapViewStateProvider.select((state) => state.showLocationDialog),
+        (_, next) {
+      if (next != null) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return PermissionDialog(
+              title: context.l10n.enable_location_service_title,
+              subTitle1: context.l10n.enable_location_service_message,
+              onDismiss: () {},
+              goToSettings: () {
+                openAppSettings();
+                Navigator.of(context).pop();
+              },
+            );
+          },
+        );
       }
     });
   }

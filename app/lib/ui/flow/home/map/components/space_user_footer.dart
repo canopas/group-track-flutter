@@ -43,11 +43,10 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+      padding: const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 16),
       child: Column(
         children: [
           _mapControlBtn(context),
-
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             transitionBuilder: (Widget child, Animation<double> animation) {
@@ -56,9 +55,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                   begin: const Offset(0.0, 1.0),
                   end: const Offset(0.0, 0.0),
                 ).animate(animation),
-                child: ScaleTransition(
-                    scale: animation,
-                    child: child),
+                child: ScaleTransition(scale: animation, child: child),
               );
             },
             child: widget.selectedUser != null
@@ -97,7 +94,6 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
             iconSize: 24,
             foreground: context.colorScheme.primary,
             background: context.colorScheme.surface,
-            visibility: true,
             onTap: widget.onRelocateTap,
           ),
           const SizedBox(height: 8),
@@ -107,9 +103,9 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
             iconSize: 24,
             foreground: context.colorScheme.onPrimary,
             background: context.colorScheme.primary,
-            visibility: true,
             onTap: widget.onPlacesTap,
-          )
+          ),
+          const SizedBox(height: 16)
         ],
       ),
     );
@@ -121,7 +117,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
     required double iconSize,
     required Color foreground,
     required Color background,
-    required bool visibility,
+    bool visibility = true,
     required Function() onTap,
   }) {
     return Visibility(

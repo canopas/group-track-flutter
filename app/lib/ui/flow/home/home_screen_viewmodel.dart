@@ -1,5 +1,6 @@
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/service/permission_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,14 +13,17 @@ final homeViewStateProvider =
   (ref) => HomeViewNotifier(
     ref.read(spaceServiceProvider),
     ref.read(currentUserSessionJsonPod.notifier),
+    ref.read(permissionServiceProvider),
   ),
 );
 
 class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final SpaceService spaceService;
+  final PermissionService permissionService;
   final StateController<String?> _currentSpaceIdController;
 
-  HomeViewNotifier(this.spaceService, this._currentSpaceIdController)
+  HomeViewNotifier(
+      this.spaceService, this._currentSpaceIdController, this.permissionService)
       : super(const HomeViewState());
 
   String? get currentSpaceId => _currentSpaceIdController.state;
@@ -83,6 +87,24 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       currentSpaceId = space.space.id;
     }
   }
+
+  void showBatteryOptimizationDialog() async {
+    // We don't want to show prompt immediately after user opens the app
+    await Future.delayed(const Duration(seconds: 1));
+
+    final isBatteryOptimization =
+        await permissionService.isBatteryOptimizationEnabled();
+    final isBackgroundEnabled =
+        await permissionService.isBackgroundLocationPermissionGranted();
+
+    if (!isBatteryOptimization && isBackgroundEnabled) {
+      state = state.copyWith(showBatteryDialog: DateTime.now());
+    }
+  }
+
+  void requestIgnoreBatteryOptimizations() async {
+    await permissionService.requestIgnoreBatteryOptimizations();
+  }
 }
 
 @freezed
@@ -96,5 +118,6 @@ class HomeViewState with _$HomeViewState {
     @Default('') String spaceInvitationCode,
     @Default([]) List<SpaceInfo> spaceList,
     Object? error,
+    DateTime? showBatteryDialog,
   }) = _HomeViewState;
 }
