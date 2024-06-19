@@ -54,12 +54,7 @@ class PermissionService {
 
     if (status.isDenied) {
       final newStatus = await permission.request();
-      if (newStatus.isDenied || newStatus.isPermanentlyDenied) {
-        await openAppSettings();
-        return false;
-      } else {
-        return newStatus.isGranted;
-      }
+      return newStatus.isGranted;
     } else if (status.isPermanentlyDenied) {
       await openAppSettings();
       return false;
