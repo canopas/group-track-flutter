@@ -25,4 +25,8 @@ class PlaceService {
         .map((doc) => ApiPlace.fromJson(doc.data() as Map<String, dynamic>))
         .toList());
   }
+
+  Future<void> deletePlace(String spaceId, String placeId) async {
+    await spacePlacesRef(spaceId).doc(placeId).delete();
+  }
 }

@@ -31,6 +31,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_add_user_icon.svg
   String get icAddUserIcon => 'assets/images/ic_add_user_icon.svg';
 
+  /// File path: assets/images/ic_close_icon.svg
+  String get icCloseIcon => 'assets/images/ic_close_icon.svg';
+
   /// File path: assets/images/ic_contact_support.svg
   String get icContactSupport => 'assets/images/ic_contact_support.svg';
 
@@ -61,6 +64,27 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_place_marker_icon.png
   AssetGenImage get icPlaceMarkerIcon =>
       const AssetGenImage('assets/images/ic_place_marker_icon.png');
+
+  /// File path: assets/images/ic_places_gym_icon.svg
+  String get icPlacesGymIcon => 'assets/images/ic_places_gym_icon.svg';
+
+  /// File path: assets/images/ic_places_home_icon.svg
+  String get icPlacesHomeIcon => 'assets/images/ic_places_home_icon.svg';
+
+  /// File path: assets/images/ic_places_library_icon.svg
+  String get icPlacesLibraryIcon => 'assets/images/ic_places_library_icon.svg';
+
+  /// File path: assets/images/ic_places_park_icon.svg
+  String get icPlacesParkIcon => 'assets/images/ic_places_park_icon.svg';
+
+  /// File path: assets/images/ic_places_school_icon.svg
+  String get icPlacesSchoolIcon => 'assets/images/ic_places_school_icon.svg';
+
+  /// File path: assets/images/ic_places_work_icon.svg
+  String get icPlacesWorkIcon => 'assets/images/ic_places_work_icon.svg';
+
+  /// File path: assets/images/ic_plus_icon.svg
+  String get icPlusIcon => 'assets/images/ic_plus_icon.svg';
 
   /// File path: assets/images/ic_privacy_policy.svg
   String get icPrivacyPolicy => 'assets/images/ic_privacy_policy.svg';
@@ -102,6 +126,7 @@ class $AssetsImagesGen {
         icAboutUs,
         icAddMember,
         icAddUserIcon,
+        icCloseIcon,
         icContactSupport,
         icDownArrowIcon,
         icEditProfile,
@@ -112,6 +137,13 @@ class $AssetsImagesGen {
         icLocation,
         icMessage,
         icPlaceMarkerIcon,
+        icPlacesGymIcon,
+        icPlacesHomeIcon,
+        icPlacesLibraryIcon,
+        icPlacesParkIcon,
+        icPlacesSchoolIcon,
+        icPlacesWorkIcon,
+        icPlusIcon,
         icPrivacyPolicy,
         icRelocateIcon,
         icRemove,
