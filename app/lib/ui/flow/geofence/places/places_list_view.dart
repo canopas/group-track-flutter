@@ -76,8 +76,7 @@ class _PlacesViewState extends ConsumerState<PlacesListView> {
 
               final item = suggestions[placeIndex];
               return _placeItemView(
-                placeName:
-                    context.l10n.places_list_suggestion_add_your_place(item),
+                placeName: item,
                 icon: _getPlacesIcon(item),
                 isSuggestion: true,
                 onDeletePlace: () {},
