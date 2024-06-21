@@ -7,6 +7,7 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view_model.dart';
 
@@ -91,34 +92,39 @@ class _PlacesViewState extends ConsumerState<PlacesListView> {
   }
 
   Widget _addPlaceButton() {
-    return Container(
-      margin: EdgeInsets.only(
-        right: 16,
-        bottom: context.mediaQueryPadding.bottom + 16,
-      ),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        color: context.colorScheme.primary,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SvgPicture.asset(
-            Assets.images.icPlusIcon,
-            colorFilter: ColorFilter.mode(
-              context.colorScheme.onPrimary,
-              BlendMode.srcATop,
+    return OnTapScale(
+      onTap: () {
+        AppRoute.addNewPlace(widget.spaceId).push(context);
+      },
+      child: Container(
+        margin: EdgeInsets.only(
+          right: 16,
+          bottom: context.mediaQueryPadding.bottom + 16,
+        ),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: context.colorScheme.primary,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset(
+              Assets.images.icPlusIcon,
+              colorFilter: ColorFilter.mode(
+                context.colorScheme.onPrimary,
+                BlendMode.srcATop,
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            context.l10n.places_list_add_place_btn_text,
-            style: AppTextStyle.button.copyWith(
-              color: context.colorScheme.onPrimary,
-            ),
-          )
-        ],
+            const SizedBox(width: 8),
+            Text(
+              context.l10n.places_list_add_place_btn_text,
+              style: AppTextStyle.button.copyWith(
+                color: context.colorScheme.onPrimary,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

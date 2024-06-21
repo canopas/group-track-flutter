@@ -13,6 +13,7 @@ import 'package:yourspace_flutter/ui/flow/space/join/join_space_screen.dart';
 
 import 'flow/auth/sign_in/phone/sign_in_with_phone_screen.dart';
 import 'flow/auth/sign_in/sign_in_method_screen.dart';
+import 'flow/geofence/addplace/add_new_place_view.dart';
 import 'flow/home/home_screen.dart';
 import 'flow/intro/intro_screen.dart';
 
@@ -26,6 +27,7 @@ class AppRoute {
   static const pathEditSpace = '/space';
   static const pathContactSupport = '/contact-support';
   static const pathPlacesList = '/places-list';
+  static const pathAddNewPlace = '/add_new_place';
 
   final String path;
   final String? name;
@@ -159,6 +161,13 @@ class AppRoute {
         builder: (_) => PlacesListView(spaceId: spaceId));
   }
 
+  static AppRoute addNewPlace(String spaceId) {
+    return AppRoute(
+      pathAddNewPlace,
+      builder: (_) => AddNewPlaceView(spaceId: spaceId),
+    );
+  }
+
   static final routes = [
     GoRoute(
       path: intro.path,
@@ -228,6 +237,10 @@ class AppRoute {
     ),
     GoRoute(
       path: pathPlacesList,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathAddNewPlace,
       builder: (context, state) => state.widget(context),
     )
   ];
