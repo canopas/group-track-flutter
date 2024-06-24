@@ -44,8 +44,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppPage(
       body: ResumeDetector(
         onResume: () {
-          if(state.selectedSpace != null){
-          notifier.getAllSpace();
+          if (state.selectedSpace != null) {
+            notifier.getAllSpace();
           }
         },
         child: _body(context, state),

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
-import 'package:yourspace_flutter/ui/flow/geofence/addplace/add_new_place_view_model.dart';
 
-import '../../../../gen/assets.gen.dart';
+import '../../../../../gen/assets.gen.dart';
+import 'add_new_place_view_model.dart';
 
 class AddNewPlaceView extends ConsumerStatefulWidget {
   final String spaceId;
@@ -20,13 +23,12 @@ class AddNewPlaceView extends ConsumerStatefulWidget {
 class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
   late AddNewPlaceViewNotifier notifier;
 
-
   @override
   Widget build(BuildContext context) {
     notifier = ref.watch(addNewPLaceStateProvider.notifier);
 
     return AppPage(
-      title: "Add a new place",
+      title: context.l10n.add_new_place_title,
       body: _body(),
     );
   }
@@ -42,7 +44,7 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
           _locateOnMapView(),
           const SizedBox(height: 40),
           Text(
-            "Some suggestions...",
+            context.l10n.add_new_place_suggestion_text,
             style: AppTextStyle.caption.copyWith(
               color: context.colorScheme.textDisabled,
             ),
@@ -69,7 +71,7 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
                 color: context.colorScheme.textDisabled,
               ),
             ),
-            hintText: 'Search address and location name',
+            hintText: context.l10n.add_new_place_search_hint_text,
             hintStyle: AppTextStyle.subtitle3.copyWith(
               color: context.colorScheme.textDisabled,
             ),
@@ -95,35 +97,40 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
   }
 
   Widget _locateOnMapView() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: context.colorScheme.containerNormal,
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: context.colorScheme.containerLow),
-            child: SvgPicture.asset(
-              Assets.images.icLocation,
-              colorFilter: ColorFilter.mode(
-                context.colorScheme.textPrimary,
-                BlendMode.srcATop,
+    return OnTapScale(
+      onTap: () {
+        AppRoute.locateOnMapScreen(widget.spaceId).push(context);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: context.colorScheme.containerNormal,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: context.colorScheme.containerLow),
+              child: SvgPicture.asset(
+                Assets.images.icLocation,
+                colorFilter: ColorFilter.mode(
+                  context.colorScheme.textPrimary,
+                  BlendMode.srcATop,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 16),
-          Text(
-            "Locate on map",
-            style: AppTextStyle.subtitle3.copyWith(
-              color: context.colorScheme.textPrimary,
-            ),
-          )
-        ],
+            const SizedBox(width: 16),
+            Text(
+              context.l10n.add_new_place_location_on_map_text,
+              style: AppTextStyle.subtitle3.copyWith(
+                color: context.colorScheme.textPrimary,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

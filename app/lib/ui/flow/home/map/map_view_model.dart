@@ -171,7 +171,6 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   }
 
   void showMemberDetail(ApiUserInfo member) {
-    print('XXX user:${member.location}');
     final selectedMember =
         (state.selectedUser?.user.id == member.user.id) ? null : member;
     final position = (selectedMember != null && selectedMember.location != null)

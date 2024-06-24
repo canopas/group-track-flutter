@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_maps_webservice/places.dart';
 
 import '../api/network/client.dart';
 
@@ -33,17 +32,15 @@ class PlaceService {
     await spacePlacesRef(spaceId).doc(placeId).delete();
   }
 
-  Future<void> findPlace(String text, double lat, double lng) async {
-    final places = GoogleMapsPlaces(apiKey: placeApiKey);
-    final result = await places.searchNearbyWithRadius(
-      Location(lat: lat, lng: lng),
-      5000,
-      keyword: text,
-    );
-    if (result.status == "OK") {
-     print('XXX data test:${result.results}');
-    } else {
-      throw Exception(result.errorMessage);
-    }
+  Future<void> addPlace(
+    String spaceId,
+    String name,
+    double latitude,
+    double longitude,
+    String createdBy,
+    List<String> spaceMemberIds,
+  ) async {
+
+
   }
 }

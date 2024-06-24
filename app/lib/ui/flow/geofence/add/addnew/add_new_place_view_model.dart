@@ -30,7 +30,7 @@ class AddNewPlaceViewNotifier extends StateNotifier<AddNewPlaceState> {
   void fidePlace(String value) async {
     try {
       state = state.copyWith(loading: true);
-     await placeService.findPlace(value,0.0,0.0);
+     // todo call get places api here.
     } catch (error, stack) {
       state = state.copyWith(error: error, loading: false);
       logger.e(
