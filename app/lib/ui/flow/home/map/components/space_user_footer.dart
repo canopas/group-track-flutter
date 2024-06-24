@@ -47,7 +47,6 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
       child: Column(
         children: [
           _mapControlBtn(context),
-
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             transitionBuilder: (Widget child, Animation<double> animation) {
@@ -56,9 +55,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                   begin: const Offset(0.0, 1.0),
                   end: const Offset(0.0, 0.0),
                 ).animate(animation),
-                child: ScaleTransition(
-                    scale: animation,
-                    child: child),
+                child: ScaleTransition(scale: animation, child: child),
               );
             },
             child: widget.selectedUser != null
