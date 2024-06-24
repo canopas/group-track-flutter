@@ -24,7 +24,6 @@ class PlacesListView extends ConsumerStatefulWidget {
 
 class _PlacesViewState extends ConsumerState<PlacesListView> {
   late PlacesListViewNotifier notifier;
-  List<String> suggestions = [];
 
   @override
   void initState() {
@@ -40,7 +39,6 @@ class _PlacesViewState extends ConsumerState<PlacesListView> {
     final state = ref.watch(placesListViewStateProvider);
 
     _observeShowDeletePlaceDialog();
-    _observeCurrentUserPlaces(state);
 
     return AppPage(title: context.l10n.places_list_title, body: _body(state));
   }
@@ -56,7 +54,7 @@ class _PlacesViewState extends ConsumerState<PlacesListView> {
       children: [
         Expanded(
           child: ListView.builder(
-            itemCount: placeLength + suggestions.length,
+            itemCount: placeLength + state.suggestions.length,
             itemBuilder: (_, index) {
               if (index < state.places.length) {
                 return _placesListItem(state, state.places[index]);
@@ -74,7 +72,7 @@ class _PlacesViewState extends ConsumerState<PlacesListView> {
                   ? index
                   : index - state.places.length - 1;
 
-              final item = suggestions[placeIndex];
+              final item = state.suggestions[placeIndex];
               return _placeItemView(
                 placeName: item,
                 icon: _getPlacesIcon(item),
@@ -197,43 +195,6 @@ class _PlacesViewState extends ConsumerState<PlacesListView> {
         ],
       ),
     );
-  }
-
-  void _observeCurrentUserPlaces(PlacesListState state) {
-    ref.listen(placesListViewStateProvider.select((state) => state.places),
-        (_, next) {
-      if (next.isNotEmpty) {
-        final suggestedPlaces = _getSuggestionsPlaces();
-
-        final newSuggestedPlace = suggestedPlaces.where((suggestion) {
-          final suggestionName = suggestion.toLowerCase();
-
-          for (final place in next) {
-            final placeName = place.name.toLowerCase();
-            if (state.currentUser?.id == place.created_by &&
-                suggestionName == placeName) {
-              return false;
-            }
-          }
-          return true;
-        }).toList();
-
-        setState(() {
-          suggestions = newSuggestedPlace;
-        });
-      }
-    });
-  }
-
-  List<String> _getSuggestionsPlaces() {
-    return [
-      context.l10n.places_list_suggestion_home_text,
-      context.l10n.places_list_suggestion_work_text,
-      context.l10n.places_list_suggestion_school_text,
-      context.l10n.places_list_suggestion_gym_text,
-      context.l10n.places_list_suggestion_library_text,
-      context.l10n.places_list_suggestion_local_park_text,
-    ];
   }
 
   String _getPlacesIcon(String name) {
