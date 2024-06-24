@@ -44,7 +44,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppPage(
       body: ResumeDetector(
         onResume: () {
+          if(state.selectedSpace != null){
           notifier.getAllSpace();
+          }
         },
         child: _body(context, state),
       ),
@@ -73,30 +75,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void _observeNavigation(HomeViewState state) {
     ref.listen(
         homeViewStateProvider.select((state) => state.spaceInvitationCode),
-            (_, next) {
-          if (next.isNotEmpty) {
-            AppRoute.inviteCode(
+        (_, next) {
+      if (next.isNotEmpty) {
+        AppRoute.inviteCode(
                 code: next, spaceName: state.selectedSpace?.space.name ?? '')
-                .push(context);
-          }
-        });
+            .push(context);
+      }
+    });
   }
 
   void _observeError() {
     ref.listen(homeViewStateProvider.select((state) => state.error),
-            (previous, next) {
-          if (next != null) {
-            showErrorSnackBar(context, next.toString());
-          }
-        });
+        (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
+    });
   }
 
   void _observeSelectedSpace() {
     ref.listen(homeViewStateProvider.select((state) => state.selectedSpace),
-            (previous, next) {
-          if (previous?.space.id != next?.space.id) {
-            mapNotifier.loadData(next?.space.id);
-          }
-        });
+        (previous, next) {
+      if (previous?.space.id != next?.space.id) {
+        mapNotifier.loadData(next?.space.id);
+      }
+    });
   }
 }

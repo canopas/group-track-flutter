@@ -55,6 +55,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   }
 
   void listenMemberLocation(String spaceId) async {
+    if (state.loading) return;
     try {
       state = state.copyWith(loading: true, selectedUser: null);
       spaceService.getMemberWithLocation(spaceId).listen((userInfo) {

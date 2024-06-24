@@ -23,6 +23,7 @@ mixin _$PlacesListState {
   ApiPlace? get placesToDelete => throw _privateConstructorUsedError;
   ApiUser? get currentUser => throw _privateConstructorUsedError;
   List<ApiPlace> get places => throw _privateConstructorUsedError;
+  List<String> get suggestions => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -44,6 +45,7 @@ abstract class $PlacesListStateCopyWith<$Res> {
       ApiPlace? placesToDelete,
       ApiUser? currentUser,
       List<ApiPlace> places,
+      List<String> suggestions,
       Object? error});
 
   $ApiPlaceCopyWith<$Res>? get placesToDelete;
@@ -70,6 +72,7 @@ class _$PlacesListStateCopyWithImpl<$Res, $Val extends PlacesListState>
     Object? placesToDelete = freezed,
     Object? currentUser = freezed,
     Object? places = null,
+    Object? suggestions = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -101,6 +104,10 @@ class _$PlacesListStateCopyWithImpl<$Res, $Val extends PlacesListState>
           ? _value.places
           : places // ignore: cast_nullable_to_non_nullable
               as List<ApiPlace>,
+      suggestions: null == suggestions
+          ? _value.suggestions
+          : suggestions // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       error: freezed == error ? _value.error : error,
     ) as $Val);
   }
@@ -146,6 +153,7 @@ abstract class _$$PlacesListStateImplCopyWith<$Res>
       ApiPlace? placesToDelete,
       ApiUser? currentUser,
       List<ApiPlace> places,
+      List<String> suggestions,
       Object? error});
 
   @override
@@ -172,6 +180,7 @@ class __$$PlacesListStateImplCopyWithImpl<$Res>
     Object? placesToDelete = freezed,
     Object? currentUser = freezed,
     Object? places = null,
+    Object? suggestions = null,
     Object? error = freezed,
   }) {
     return _then(_$PlacesListStateImpl(
@@ -203,6 +212,10 @@ class __$$PlacesListStateImplCopyWithImpl<$Res>
           ? _value._places
           : places // ignore: cast_nullable_to_non_nullable
               as List<ApiPlace>,
+      suggestions: null == suggestions
+          ? _value._suggestions
+          : suggestions // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       error: freezed == error ? _value.error : error,
     ));
   }
@@ -219,8 +232,10 @@ class _$PlacesListStateImpl implements _PlacesListState {
       this.placesToDelete,
       this.currentUser,
       final List<ApiPlace> places = const [],
+      final List<String> suggestions = const [],
       this.error})
-      : _places = places;
+      : _places = places,
+        _suggestions = suggestions;
 
   @override
   @JsonKey()
@@ -245,12 +260,21 @@ class _$PlacesListStateImpl implements _PlacesListState {
     return EqualUnmodifiableListView(_places);
   }
 
+  final List<String> _suggestions;
+  @override
+  @JsonKey()
+  List<String> get suggestions {
+    if (_suggestions is EqualUnmodifiableListView) return _suggestions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_suggestions);
+  }
+
   @override
   final Object? error;
 
   @override
   String toString() {
-    return 'PlacesListState(loading: $loading, deletingPlaces: $deletingPlaces, spaceId: $spaceId, showDeletePlaceDialog: $showDeletePlaceDialog, placesToDelete: $placesToDelete, currentUser: $currentUser, places: $places, error: $error)';
+    return 'PlacesListState(loading: $loading, deletingPlaces: $deletingPlaces, spaceId: $spaceId, showDeletePlaceDialog: $showDeletePlaceDialog, placesToDelete: $placesToDelete, currentUser: $currentUser, places: $places, suggestions: $suggestions, error: $error)';
   }
 
   @override
@@ -269,6 +293,8 @@ class _$PlacesListStateImpl implements _PlacesListState {
             (identical(other.currentUser, currentUser) ||
                 other.currentUser == currentUser) &&
             const DeepCollectionEquality().equals(other._places, _places) &&
+            const DeepCollectionEquality()
+                .equals(other._suggestions, _suggestions) &&
             const DeepCollectionEquality().equals(other.error, error));
   }
 
@@ -282,6 +308,7 @@ class _$PlacesListStateImpl implements _PlacesListState {
       placesToDelete,
       currentUser,
       const DeepCollectionEquality().hash(_places),
+      const DeepCollectionEquality().hash(_suggestions),
       const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
@@ -301,6 +328,7 @@ abstract class _PlacesListState implements PlacesListState {
       final ApiPlace? placesToDelete,
       final ApiUser? currentUser,
       final List<ApiPlace> places,
+      final List<String> suggestions,
       final Object? error}) = _$PlacesListStateImpl;
 
   @override
@@ -317,6 +345,8 @@ abstract class _PlacesListState implements PlacesListState {
   ApiUser? get currentUser;
   @override
   List<ApiPlace> get places;
+  @override
+  List<String> get suggestions;
   @override
   Object? get error;
   @override

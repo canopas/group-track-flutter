@@ -28,6 +28,7 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
     try {
       state = state.copyWith(loading: true, spaceId: spaceId);
       placeService.getAllPlacesStream(spaceId).listen((places) {
+        suggestionPlaces(places);
         state = state.copyWith(places: places, loading: false);
       });
     } catch (error, stack) {
@@ -38,6 +39,31 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
         stackTrace: stack,
       );
     }
+  }
+
+  void suggestionPlaces(List<ApiPlace> places) {
+    final suggestedPlaces = [
+      'Home',
+      'Work',
+      'School',
+      'Gym',
+      'Library',
+      'Local park'
+    ];
+
+    final newSuggestedPlace = suggestedPlaces.where((suggestion) {
+      final suggestionName = suggestion.toLowerCase();
+
+      for (final place in places) {
+        final placeName = place.name.toLowerCase();
+        if (state.currentUser?.id == place.created_by &&
+            suggestionName == placeName) {
+          return false;
+        }
+      }
+      return true;
+    }).toList();
+    state = state.copyWith(suggestions: newSuggestedPlace);
   }
 
   void onClickDeletePlace(ApiPlace place) {
@@ -78,6 +104,7 @@ class PlacesListState with _$PlacesListState {
     ApiPlace? placesToDelete,
     ApiUser? currentUser,
     @Default([]) List<ApiPlace> places,
+    @Default([]) List<String> suggestions,
     Object? error,
   }) = _PlacesListState;
 }
