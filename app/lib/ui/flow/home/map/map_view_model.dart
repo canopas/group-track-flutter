@@ -69,7 +69,6 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         error: error,
         stackTrace: stack,
       );
-      state = state.copyWith(loading: false);
     }
   }
 

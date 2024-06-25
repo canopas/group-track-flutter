@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_support_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/profile/profile_screen.dart';
@@ -24,6 +25,7 @@ class AppRoute {
   static const pathProfile = '/profile';
   static const pathEditSpace = '/space';
   static const pathContactSupport = '/contact-support';
+  static const pathPlacesList = '/places-list';
 
   final String path;
   final String? name;
@@ -110,7 +112,7 @@ class AppRoute {
       );
 
   static AppRoute get pickName => AppRoute(
-    "/pick-name",
+        "/pick-name",
         builder: (_) => const PickNameScreen(),
       );
 
@@ -126,10 +128,10 @@ class AppRoute {
       AppRoute(pathCreateSpace, builder: (_) => const CreateSpace());
 
   static AppRoute get joinSpace =>
-     AppRoute(pathJoinSpace, builder: (_) => const JoinSpace());
+      AppRoute(pathJoinSpace, builder: (_) => const JoinSpace());
 
-  static AppRoute inviteCode({
-    required String code, required String spaceName}) {
+  static AppRoute inviteCode(
+      {required String code, required String spaceName}) {
     return AppRoute(
       pathInviteCode,
       builder: (_) => InviteCode(spaceName: spaceName, inviteCode: code),
@@ -149,8 +151,13 @@ class AppRoute {
     );
   }
 
-  static AppRoute get contactSupport =>
-      AppRoute(pathContactSupport, builder: (_) => const ContactSupportScreen());
+  static AppRoute get contactSupport => AppRoute(pathContactSupport,
+      builder: (_) => const ContactSupportScreen());
+
+  static AppRoute placesList(String spaceId) {
+    return AppRoute(pathPlacesList,
+        builder: (_) => PlacesListView(spaceId: spaceId));
+  }
 
   static final routes = [
     GoRoute(
@@ -191,7 +198,6 @@ class AppRoute {
               ? const PhoneVerificationScreen('', '')
               : state.widget(context);
         }),
-
     GoRoute(
       path: pathCreateSpace,
       builder: (context, state) => state.widget(context),
@@ -220,6 +226,10 @@ class AppRoute {
       path: pathContactSupport,
       builder: (context, state) => state.widget(context),
     ),
+    GoRoute(
+      path: pathPlacesList,
+      builder: (context, state) => state.widget(context),
+    )
   ];
 }
 
