@@ -79,84 +79,30 @@ class _MapScreenState extends ConsumerState<MapView> {
             markers: _markers.toSet(),
           ),
         ),
-        Positioned(bottom: 0, left: 0, right: 0, child: _bottomFooters(state)),
-      ],
-    );
-  }
-
-  Widget _bottomFooters(MapViewState state) {
-    final enabled = !state.hasLocationEnabled ||
-        !state.hasLocationServiceEnabled ||
-        !state.hasNotificationEnabled;
-
-    return Column(
-      children: [
-        SpaceUserFooter(
-          members: state.userInfo,
-          selectedUser: state.selectedUser,
-          isEnabled: !state.loading,
-          onAddMemberTap: () {
-            notifier.onAddMemberTap(widget.space!.space.id);
-          },
-          onMemberTap: (member) {
-            notifier.showMemberDetail(member);
-          },
-          onRelocateTap: () {},
-          onPlacesTap: () {},
-          onDismiss: () => notifier.onDismissMemberDetail(),
-          onTapTimeline: () {},
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: SpaceUserFooter(
+            members: state.userInfo,
+            selectedUser: state.selectedUser,
+            isEnabled: !state.loading,
+            onAddMemberTap: () {
+              notifier.onAddMemberTap(widget.space!.space.id);
+            },
+            onMemberTap: (member) {
+              notifier.showMemberDetail(member);
+            },
+            onRelocateTap: () {},
+            onPlacesTap: () {
+              if (widget.space == null) return;
+              AppRoute.placesList(widget.space!.space.id).push(context);
+            },
+            onDismiss: () => notifier.onDismissMemberDetail(),
+            onTapTimeline: () {},
+          ),
         ),
-        Visibility(visible: enabled, child: _permissionFooter(state))
       ],
-    );
-  }
-
-  Widget _permissionFooter(MapViewState state) {
-    final locationEnabled =
-        state.hasLocationEnabled ? state.hasLocationServiceEnabled : true;
-    final (title, subTitle) = _permissionFooterContent(state);
-
-    return OnTapScale(
-      onTap: () {
-        (!locationEnabled)
-            ? notifier.showEnableLocationDialog()
-            : AppRoute.enablePermission.push(context);
-      },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        width: double.infinity,
-        color: !locationEnabled
-            ? context.colorScheme.alert
-            : context.colorScheme.secondary,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyle.subtitle1.copyWith(
-                    color: context.colorScheme.textInversePrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subTitle,
-                  style: AppTextStyle.body1.copyWith(
-                    color: context.colorScheme.textInverseDisabled,
-                  ),
-                )
-              ],
-            ),
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 16,
-              color: context.colorScheme.textInversePrimary,
-            )
-          ],
-        ),
-      ),
     );
   }
 
