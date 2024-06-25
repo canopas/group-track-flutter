@@ -165,5 +165,8 @@
   "choose_place_screen_title": "Choose place name",
   "choose_place_search_hint_text": "Enter place name",
   "choose_place_suggestion_text": "Some suggestions...",
-  "choose_place_add_place_btn_text": "Add place"
+  "choose_place_add_place_btn_text": "Add place",
+  "choose_place_prompt_added_title_text": "{placeName} Added",
+  "choose_place_prompt_sub_title_text": "You will be notified when members of your space arrive/leave this place",
+  "choose_place_prompt_got_it_btn_text": "Got it"
 }

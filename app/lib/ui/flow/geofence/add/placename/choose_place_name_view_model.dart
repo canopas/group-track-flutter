@@ -49,6 +49,7 @@ class ChoosePlaceNameViewNotifier extends StateNotifier<ChoosePlaceViewState> {
 
   void onTapAddPlaceBtn(String value) async {
     try {
+      state = state.copyWith(addingPlace: true);
       final members = await spaceService.getMemberBySpaceId(_spaceId!);
       final memberIds = members.map((member) => member.id).toList();
 
@@ -60,7 +61,8 @@ class ChoosePlaceNameViewNotifier extends StateNotifier<ChoosePlaceViewState> {
         _currentUser!.id,
         memberIds,
       );
-
+      state =
+          state.copyWith(popToPlaceList: DateTime.now(), addingPlace: false);
     } catch (error, stack) {
       state = state.copyWith(addingPlace: false, error: error);
       logger.e(
@@ -74,9 +76,11 @@ class ChoosePlaceNameViewNotifier extends StateNotifier<ChoosePlaceViewState> {
 
 @freezed
 class ChoosePlaceViewState with _$ChoosePlaceViewState {
-  const factory ChoosePlaceViewState(
-      {@Default(false) addingPlace,
-      List<String>? suggestions,
-      String? placeName,
-      Object? error}) = _ChoosePlaceViewState;
+  const factory ChoosePlaceViewState({
+    @Default(false) addingPlace,
+    List<String>? suggestions,
+    String? placeName,
+    Object? error,
+    DateTime? popToPlaceList,
+  }) = _ChoosePlaceViewState;
 }

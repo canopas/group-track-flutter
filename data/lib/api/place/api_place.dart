@@ -4,6 +4,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'api_place.freezed.dart';
 part 'api_place.g.dart';
 
+const geofenceDefaultPlaceRadius = 200.0;
+
 @freezed
 class ApiPlace with _$ApiPlace {
   const ApiPlace._();

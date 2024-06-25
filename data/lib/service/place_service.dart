@@ -22,6 +22,12 @@ class PlaceService {
   CollectionReference spacePlacesRef(String spaceId) =>
       _spaceRef.doc(spaceId).collection('space_places');
 
+  CollectionReference spacePlacesSettingsRef(String spaceId, String placeId) {
+    return spacePlacesRef(spaceId)
+        .doc(placeId)
+        .collection('place_settings_by_members');
+  }
+
   Stream<List<ApiPlace>> getAllPlacesStream(String spaceId) {
     return spacePlacesRef(spaceId).snapshots().map((snapshot) => snapshot.docs
         .map((doc) => ApiPlace.fromJson(doc.data() as Map<String, dynamic>))
@@ -40,7 +46,37 @@ class PlaceService {
     String createdBy,
     List<String> spaceMemberIds,
   ) async {
+    final placeDoc = spacePlacesRef(spaceId).doc();
+    print('XXX place doc:${placeDoc.id}');
+    final place = ApiPlace(
+      id: placeDoc.id,
+      space_id: spaceId,
+      created_by: createdBy,
+      latitude: latitude,
+      longitude: longitude,
+      radius: geofenceDefaultPlaceRadius,
+      name: name,
+      created_at: DateTime.now(),
+    );
 
+    print('XXX places:${place}');
+    await placeDoc.set(place.toJson());
+    print('XXX place after set');
+    final settings = spaceMemberIds.map((memberId) {
+      final filterIds = spaceMemberIds.where((id) => id != memberId).toList();
+      return ApiPlaceMemberSetting(
+        user_id: memberId,
+        place_id: place.id,
+        alert_enabled: true,
+        arrival_alert_for: filterIds,
+        leave_alert_for: filterIds,
+      );
+    }).toList();
 
+    for (final setting in settings) {
+      await spacePlacesSettingsRef(spaceId, place.id)
+          .doc(setting.user_id)
+          .set(setting.toJson());
+    }
   }
 }
