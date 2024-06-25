@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
-      sdk: flutter
+    sdk: flutter
   intl: any
 
   style:
@@ -56,10 +56,13 @@ dependencies:
   fluttertoast: ^8.2.6
   http: ^1.2.1
   image: ^3.0.1
+  flutter_cache_manager: ^3.3.2
+  permission_handler: ^11.3.1
 
   # map
   google_maps_flutter: ^2.2.8
   geocoding: ^3.0.0
+  geolocator: ^12.0.0
 
   # auth
   firebase_auth: ^4.20.0
@@ -70,7 +73,6 @@ dependencies:
   flutter_svg: ^2.0.9
   # picker
   canopas_country_picker: ^0.0.4
-  flutter_cache_manager: ^3.3.2
 
 
 dev_dependencies:

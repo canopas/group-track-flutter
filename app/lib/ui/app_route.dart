@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
+import 'package:yourspace_flutter/ui/flow/permission/enable_permission_view.dart';
 import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_support_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/profile/profile_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/setting_screen.dart';
@@ -25,6 +26,7 @@ class AppRoute {
   static const pathProfile = '/profile';
   static const pathEditSpace = '/space';
   static const pathContactSupport = '/contact-support';
+  static const pathEnablePermission = '/enable-permission';
   static const pathPlacesList = '/places-list';
 
   final String path;
@@ -138,6 +140,9 @@ class AppRoute {
     );
   }
 
+  static AppRoute get enablePermission => AppRoute(pathEnablePermission,
+      builder: (_) => const EnablePermissionView());
+
   static AppRoute get setting =>
       AppRoute(pathCreateSpace, builder: (_) => const SettingScreen());
 
@@ -224,6 +229,10 @@ class AppRoute {
     ),
     GoRoute(
       path: pathContactSupport,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathEnablePermission,
       builder: (context, state) => state.widget(context),
     ),
     GoRoute(
