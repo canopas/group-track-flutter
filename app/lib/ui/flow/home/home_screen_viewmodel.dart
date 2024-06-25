@@ -38,6 +38,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   }
 
   void getAllSpace() async {
+    if (state.loading) return;
     try {
       state = state.copyWith(loading: state.spaceList.isEmpty);
       final spaces = await spaceService.getAllSpaceInfo();
@@ -60,7 +61,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
         updateSelectedSpace(selectedSpace);
       }
     } catch (error, stack) {
-      state = state.copyWith(error: error);
+      state = state.copyWith(error: error, loading: false);
       logger.e(
         'HomeViewNotifier: error while getting all spaces',
         error: error,

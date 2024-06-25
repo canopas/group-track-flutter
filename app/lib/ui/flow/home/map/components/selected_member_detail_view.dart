@@ -7,6 +7,7 @@ import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
+import 'package:yourspace_flutter/domain/extenstions/time_ago_extenstions.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../components/user_battery_status.dart';
@@ -159,7 +160,6 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   }
 
   Widget _userTimeAgo(int? createdAt) {
-    final time = timeAgo(createdAt);
     return Row(
       children: [
         Icon(
@@ -169,37 +169,12 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
         ),
         const SizedBox(width: 4),
         Text(
-          time,
+          createdAt.timeAgo(),
           style: AppTextStyle.caption
               .copyWith(color: context.colorScheme.textDisabled),
         )
       ],
     );
-  }
-
-  String timeAgo(int? timestamp) {
-    if (timestamp == null) return "";
-
-    final DateTime now = DateTime.now();
-    final DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-
-    final Duration diff = now.difference(date);
-
-    if (diff.inSeconds < 60) {
-      return "just now";
-    } else if (diff.inMinutes < 60) {
-      return "${diff.inMinutes} minutes ago";
-    } else if (diff.inHours < 24) {
-      return "${diff.inHours} hours ago";
-    } else if (diff.inDays < 7) {
-      return "${diff.inDays} days ago";
-    } else if (diff.inDays < 30) {
-      return "${diff.inDays ~/ 7} weeks ago";
-    } else if (diff.inDays < 365) {
-      return "${diff.inDays ~/ 30} months ago";
-    } else {
-      return "${diff.inDays ~/ 365} years ago";
-    }
   }
 
   void getAddress(ApiLocation? location) async {

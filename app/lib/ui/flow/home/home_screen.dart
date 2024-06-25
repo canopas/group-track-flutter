@@ -47,9 +47,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppPage(
       body: ResumeDetector(
         onResume: () {
+          if(state.selectedSpace != null){
           notifier.getAllSpace();
           notifier.showBatteryOptimizationDialog();
           mapNotifier.checkLocationAndNotificationPermission();
+          }
         },
         child: _body(context, state),
       ),
