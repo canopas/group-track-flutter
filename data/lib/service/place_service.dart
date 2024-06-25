@@ -46,30 +46,29 @@ class PlaceService {
     String createdBy,
     List<String> spaceMemberIds,
   ) async {
+
     final placeDoc = spacePlacesRef(spaceId).doc();
-    print('XXX place doc:${placeDoc.id}');
+
     final place = ApiPlace(
       id: placeDoc.id,
       space_id: spaceId,
       created_by: createdBy,
       latitude: latitude,
       longitude: longitude,
-      radius: geofenceDefaultPlaceRadius,
       name: name,
       created_at: DateTime.now(),
     );
 
-    print('XXX places:${place}');
     await placeDoc.set(place.toJson());
-    print('XXX place after set');
+
     final settings = spaceMemberIds.map((memberId) {
       final filterIds = spaceMemberIds.where((id) => id != memberId).toList();
       return ApiPlaceMemberSetting(
         user_id: memberId,
         place_id: place.id,
         alert_enabled: true,
-        arrival_alert_for: filterIds,
         leave_alert_for: filterIds,
+        arrival_alert_for: filterIds,
       );
     }).toList();
 

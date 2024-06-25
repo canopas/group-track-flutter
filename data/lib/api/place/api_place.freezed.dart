@@ -27,6 +27,7 @@ mixin _$ApiPlace {
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
   double get radius => throw _privateConstructorUsedError;
+  @TimeStampJsonConverter()
   DateTime? get created_at => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -48,7 +49,7 @@ abstract class $ApiPlaceCopyWith<$Res> {
       double latitude,
       double longitude,
       double radius,
-      DateTime? created_at});
+      @TimeStampJsonConverter() DateTime? created_at});
 }
 
 /// @nodoc
@@ -126,7 +127,7 @@ abstract class _$$ApiPlaceImplCopyWith<$Res>
       double latitude,
       double longitude,
       double radius,
-      DateTime? created_at});
+      @TimeStampJsonConverter() DateTime? created_at});
 }
 
 /// @nodoc
@@ -196,8 +197,8 @@ class _$ApiPlaceImpl extends _ApiPlace {
       required this.name,
       required this.latitude,
       required this.longitude,
-      required this.radius,
-      this.created_at})
+      this.radius = 200.0,
+      @TimeStampJsonConverter() this.created_at})
       : super._();
 
   factory _$ApiPlaceImpl.fromJson(Map<String, dynamic> json) =>
@@ -216,8 +217,10 @@ class _$ApiPlaceImpl extends _ApiPlace {
   @override
   final double longitude;
   @override
+  @JsonKey()
   final double radius;
   @override
+  @TimeStampJsonConverter()
   final DateTime? created_at;
 
   @override
@@ -272,8 +275,8 @@ abstract class _ApiPlace extends ApiPlace {
       required final String name,
       required final double latitude,
       required final double longitude,
-      required final double radius,
-      final DateTime? created_at}) = _$ApiPlaceImpl;
+      final double radius,
+      @TimeStampJsonConverter() final DateTime? created_at}) = _$ApiPlaceImpl;
   const _ApiPlace._() : super._();
 
   factory _ApiPlace.fromJson(Map<String, dynamic> json) =
@@ -294,6 +297,7 @@ abstract class _ApiPlace extends ApiPlace {
   @override
   double get radius;
   @override
+  @TimeStampJsonConverter()
   DateTime? get created_at;
   @override
   @JsonKey(ignore: true)

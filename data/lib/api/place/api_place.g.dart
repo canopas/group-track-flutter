@@ -14,10 +14,9 @@ _$ApiPlaceImpl _$$ApiPlaceImplFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
-      radius: (json['radius'] as num).toDouble(),
-      created_at: json['created_at'] == null
-          ? null
-          : DateTime.parse(json['created_at'] as String),
+      radius: (json['radius'] as num?)?.toDouble() ?? 200.0,
+      created_at: _$JsonConverterFromJson<Timestamp, DateTime>(
+          json['created_at'], const TimeStampJsonConverter().fromJson),
     );
 
 Map<String, dynamic> _$$ApiPlaceImplToJson(_$ApiPlaceImpl instance) =>
@@ -29,8 +28,21 @@ Map<String, dynamic> _$$ApiPlaceImplToJson(_$ApiPlaceImpl instance) =>
       'latitude': instance.latitude,
       'longitude': instance.longitude,
       'radius': instance.radius,
-      'created_at': instance.created_at?.toIso8601String(),
+      'created_at': _$JsonConverterToJson<Timestamp, DateTime>(
+          instance.created_at, const TimeStampJsonConverter().toJson),
     };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) =>
+    value == null ? null : toJson(value);
 
 _$ApiPlaceMemberSettingImpl _$$ApiPlaceMemberSettingImplFromJson(
         Map<String, dynamic> json) =>

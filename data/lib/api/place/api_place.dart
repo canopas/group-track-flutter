@@ -4,8 +4,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'api_place.freezed.dart';
 part 'api_place.g.dart';
 
-const geofenceDefaultPlaceRadius = 200.0;
-
 @freezed
 class ApiPlace with _$ApiPlace {
   const ApiPlace._();
@@ -17,12 +15,12 @@ class ApiPlace with _$ApiPlace {
     required String name,
     required double latitude,
     required double longitude,
-    required double radius,
-    DateTime? created_at,
+    @Default(200.0) double radius,
+    @TimeStampJsonConverter() DateTime? created_at,
   }) = _ApiPlace;
 
   factory ApiPlace.fromJson(Map<String, dynamic> data) =>
-      _$ApiPlaceFromJson(_convertTimestamps(data));
+      _$ApiPlaceFromJson(data);
 
   factory ApiPlace.fromFireStore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -32,12 +30,6 @@ class ApiPlace with _$ApiPlace {
   }
 
   Map<String, dynamic> toFireStore(ApiPlace space) => space.toJson();
-}
-
-Map<String, dynamic> _convertTimestamps(Map<String, dynamic> json) {
-  json.update('created_at', (value) => (value as Timestamp).toDate().toString(),
-      ifAbsent: () => null);
-  return json;
 }
 
 @freezed
@@ -64,4 +56,16 @@ class ApiPlaceMemberSetting with _$ApiPlaceMemberSetting {
 
   Map<String, dynamic> toFireStore(ApiPlaceMemberSetting space) =>
       space.toJson();
+}
+
+class TimeStampJsonConverter extends JsonConverter<DateTime, Timestamp> {
+  const TimeStampJsonConverter();
+
+  @override
+  DateTime fromJson(Timestamp json) {
+    return json.toDate();
+  }
+
+  @override
+  Timestamp toJson(DateTime object) => Timestamp.fromDate(object);
 }
