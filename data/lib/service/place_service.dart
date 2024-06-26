@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/network/client.dart';
 
-const placeApiKey = "AIzaSyDLlL9HqzRyfVQHsNkNZjJf1ItdwvEJTOc";
-
 final placeServiceProvider = Provider(
   (ref) => PlaceService(
     ref.read(firestoreProvider),
