@@ -13,6 +13,7 @@ import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view_model
 
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../gen/assets.gen.dart';
+import '../../../components/error_snakebar.dart';
 
 class PlacesListView extends ConsumerStatefulWidget {
   final String spaceId;
@@ -39,6 +40,7 @@ class _PlacesViewState extends ConsumerState<PlacesListView> {
   Widget build(BuildContext context) {
     final state = ref.watch(placesListViewStateProvider);
 
+    _observeError();
     _observeShowDeletePlaceDialog();
 
     return AppPage(title: context.l10n.places_list_title, body: _body(state));
@@ -219,6 +221,15 @@ class _PlacesViewState extends ConsumerState<PlacesListView> {
     } else {
       return Assets.images.icLocation;
     }
+  }
+
+  void _observeError() {
+    ref.listen(placesListViewStateProvider.select((state) => state.error),
+            (previous, next) {
+          if (next != null) {
+            showErrorSnackBar(context, next.toString());
+          }
+        });
   }
 
   void _observeShowDeletePlaceDialog() {

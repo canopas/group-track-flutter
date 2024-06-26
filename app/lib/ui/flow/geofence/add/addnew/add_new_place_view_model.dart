@@ -7,7 +7,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'add_new_place_view_model.freezed.dart';
 
-final addNewPLaceStateProvider = StateNotifierProvider.autoDispose<
+final addNewPlaceStateProvider = StateNotifierProvider.autoDispose<
     AddNewPlaceViewNotifier, AddNewPlaceState>((ref) {
   return AddNewPlaceViewNotifier(ref.read(placeServiceProvider));
 });
@@ -34,7 +34,7 @@ class AddNewPlaceViewNotifier extends StateNotifier<AddNewPlaceState> {
     } catch (error, stack) {
       state = state.copyWith(error: error, loading: false);
       logger.e(
-        'PlaceListNotifier: Error while deleting place',
+        'AddNewPlaceViewNotifier: Error while finding place',
         error: error,
         stackTrace: stack,
       );

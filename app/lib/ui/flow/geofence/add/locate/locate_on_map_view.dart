@@ -82,14 +82,14 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapView> {
             onCameraMove: notifier.showLocateBtn,
           ),
         ),
-        Center(child: _centerLocateView()),
+        Center(child: _locateMarkerView()),
         Align(
             alignment: Alignment.bottomRight, child: _locateIconButton(context))
       ]),
     );
   }
 
-  Widget _centerLocateView() {
+  Widget _locateMarkerView() {
     return Container(
       width: 40,
       height: 40,

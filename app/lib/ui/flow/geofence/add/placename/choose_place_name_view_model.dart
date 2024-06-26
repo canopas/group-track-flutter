@@ -79,7 +79,6 @@ class ChoosePlaceViewState with _$ChoosePlaceViewState {
   const factory ChoosePlaceViewState({
     @Default(false) addingPlace,
     List<String>? suggestions,
-    String? placeName,
     Object? error,
     DateTime? popToPlaceList,
   }) = _ChoosePlaceViewState;

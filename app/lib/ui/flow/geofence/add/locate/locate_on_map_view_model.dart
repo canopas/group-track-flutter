@@ -21,7 +21,6 @@ class LocateOnMapVieNotifier extends StateNotifier<LocateOnMapState> {
 @freezed
 class LocateOnMapState with _$LocateOnMapState {
   const factory LocateOnMapState({
-    @Default(false) bool loading,
     CameraPosition? centerPosition,
   }) = _LocateOnMapState;
 }

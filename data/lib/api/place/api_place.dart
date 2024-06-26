@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../converter/time_converter.dart';
+
 part 'api_place.freezed.dart';
 part 'api_place.g.dart';
 
@@ -56,16 +58,4 @@ class ApiPlaceMemberSetting with _$ApiPlaceMemberSetting {
 
   Map<String, dynamic> toFireStore(ApiPlaceMemberSetting space) =>
       space.toJson();
-}
-
-class TimeStampJsonConverter extends JsonConverter<DateTime, Timestamp> {
-  const TimeStampJsonConverter();
-
-  @override
-  DateTime fromJson(Timestamp json) {
-    return json.toDate();
-  }
-
-  @override
-  Timestamp toJson(DateTime object) => Timestamp.fromDate(object);
 }

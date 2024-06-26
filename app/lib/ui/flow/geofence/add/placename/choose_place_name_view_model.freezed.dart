@@ -18,7 +18,6 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ChoosePlaceViewState {
   dynamic get addingPlace => throw _privateConstructorUsedError;
   List<String>? get suggestions => throw _privateConstructorUsedError;
-  String? get placeName => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   DateTime? get popToPlaceList => throw _privateConstructorUsedError;
 
@@ -36,7 +35,6 @@ abstract class $ChoosePlaceViewStateCopyWith<$Res> {
   $Res call(
       {dynamic addingPlace,
       List<String>? suggestions,
-      String? placeName,
       Object? error,
       DateTime? popToPlaceList});
 }
@@ -57,7 +55,6 @@ class _$ChoosePlaceViewStateCopyWithImpl<$Res,
   $Res call({
     Object? addingPlace = freezed,
     Object? suggestions = freezed,
-    Object? placeName = freezed,
     Object? error = freezed,
     Object? popToPlaceList = freezed,
   }) {
@@ -70,10 +67,6 @@ class _$ChoosePlaceViewStateCopyWithImpl<$Res,
           ? _value.suggestions
           : suggestions // ignore: cast_nullable_to_non_nullable
               as List<String>?,
-      placeName: freezed == placeName
-          ? _value.placeName
-          : placeName // ignore: cast_nullable_to_non_nullable
-              as String?,
       error: freezed == error ? _value.error : error,
       popToPlaceList: freezed == popToPlaceList
           ? _value.popToPlaceList
@@ -94,7 +87,6 @@ abstract class _$$ChoosePlaceViewStateImplCopyWith<$Res>
   $Res call(
       {dynamic addingPlace,
       List<String>? suggestions,
-      String? placeName,
       Object? error,
       DateTime? popToPlaceList});
 }
@@ -112,7 +104,6 @@ class __$$ChoosePlaceViewStateImplCopyWithImpl<$Res>
   $Res call({
     Object? addingPlace = freezed,
     Object? suggestions = freezed,
-    Object? placeName = freezed,
     Object? error = freezed,
     Object? popToPlaceList = freezed,
   }) {
@@ -122,10 +113,6 @@ class __$$ChoosePlaceViewStateImplCopyWithImpl<$Res>
           ? _value._suggestions
           : suggestions // ignore: cast_nullable_to_non_nullable
               as List<String>?,
-      placeName: freezed == placeName
-          ? _value.placeName
-          : placeName // ignore: cast_nullable_to_non_nullable
-              as String?,
       error: freezed == error ? _value.error : error,
       popToPlaceList: freezed == popToPlaceList
           ? _value.popToPlaceList
@@ -141,7 +128,6 @@ class _$ChoosePlaceViewStateImpl implements _ChoosePlaceViewState {
   const _$ChoosePlaceViewStateImpl(
       {this.addingPlace = false,
       final List<String>? suggestions,
-      this.placeName,
       this.error,
       this.popToPlaceList})
       : _suggestions = suggestions;
@@ -160,15 +146,13 @@ class _$ChoosePlaceViewStateImpl implements _ChoosePlaceViewState {
   }
 
   @override
-  final String? placeName;
-  @override
   final Object? error;
   @override
   final DateTime? popToPlaceList;
 
   @override
   String toString() {
-    return 'ChoosePlaceViewState(addingPlace: $addingPlace, suggestions: $suggestions, placeName: $placeName, error: $error, popToPlaceList: $popToPlaceList)';
+    return 'ChoosePlaceViewState(addingPlace: $addingPlace, suggestions: $suggestions, error: $error, popToPlaceList: $popToPlaceList)';
   }
 
   @override
@@ -180,8 +164,6 @@ class _$ChoosePlaceViewStateImpl implements _ChoosePlaceViewState {
                 .equals(other.addingPlace, addingPlace) &&
             const DeepCollectionEquality()
                 .equals(other._suggestions, _suggestions) &&
-            (identical(other.placeName, placeName) ||
-                other.placeName == placeName) &&
             const DeepCollectionEquality().equals(other.error, error) &&
             (identical(other.popToPlaceList, popToPlaceList) ||
                 other.popToPlaceList == popToPlaceList));
@@ -192,7 +174,6 @@ class _$ChoosePlaceViewStateImpl implements _ChoosePlaceViewState {
       runtimeType,
       const DeepCollectionEquality().hash(addingPlace),
       const DeepCollectionEquality().hash(_suggestions),
-      placeName,
       const DeepCollectionEquality().hash(error),
       popToPlaceList);
 
@@ -209,7 +190,6 @@ abstract class _ChoosePlaceViewState implements ChoosePlaceViewState {
   const factory _ChoosePlaceViewState(
       {final dynamic addingPlace,
       final List<String>? suggestions,
-      final String? placeName,
       final Object? error,
       final DateTime? popToPlaceList}) = _$ChoosePlaceViewStateImpl;
 
@@ -217,8 +197,6 @@ abstract class _ChoosePlaceViewState implements ChoosePlaceViewState {
   dynamic get addingPlace;
   @override
   List<String>? get suggestions;
-  @override
-  String? get placeName;
   @override
   Object? get error;
   @override

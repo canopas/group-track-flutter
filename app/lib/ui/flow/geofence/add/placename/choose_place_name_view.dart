@@ -13,6 +13,7 @@ import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_na
 
 import '../../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../../gen/assets.gen.dart';
+import '../../../../components/error_snakebar.dart';
 import '../../../home/map/map_view.dart';
 
 class ChoosePlaceNameView extends ConsumerStatefulWidget {
@@ -45,36 +46,34 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
 
   @override
   Widget build(BuildContext context) {
-    _observePopToPlacesListScreen();
-    return AppPage(
-      title: context.l10n.choose_place_screen_title,
-      body: _body(),
-    );
-  }
-
-  Widget _body() {
     final state = ref.watch(choosePlaceViewStateProvider);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _searchTextField(),
-          const SizedBox(height: 40),
-          Text(
-            context.l10n.choose_place_suggestion_text,
-            style: AppTextStyle.caption
-                .copyWith(color: context.colorScheme.textDisabled),
-          ),
-          const SizedBox(height: 16),
-          _suggestionsView(state.suggestions),
-          const Spacer(),
-          Align(
-            alignment: Alignment.center,
-            child: _addPlaceView(state),
-          )
-        ],
+    _observeError();
+    _observePopToPlacesListScreen();
+
+    return AppPage(
+      title: context.l10n.choose_place_screen_title,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _searchTextField(),
+            const SizedBox(height: 40),
+            Text(
+              context.l10n.choose_place_suggestion_text,
+              style: AppTextStyle.caption
+                  .copyWith(color: context.colorScheme.textDisabled),
+            ),
+            const SizedBox(height: 16),
+            _suggestionsView(state.suggestions),
+            const Spacer(),
+            Align(
+              alignment: Alignment.center,
+              child: _addPlaceButtonView(state),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -84,6 +83,13 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
       children: [
         TextField(
           controller: _textController,
+          onChanged: (value) {
+            if (value.isEmpty) {
+              setState(() {
+                _textController.text = '';
+              });
+            }
+          },
           style: AppTextStyle.subtitle3,
           decoration: InputDecoration(
             prefixIcon: Padding(
@@ -98,19 +104,12 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
               color: context.colorScheme.textDisabled,
             ),
             contentPadding: const EdgeInsets.symmetric(vertical: 0),
-            prefixIconConstraints: const BoxConstraints(
-              minHeight: 0,
-              minWidth: 0,
-            ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: context.colorScheme.textDisabled,
-              ),
+            prefixIconConstraints: const BoxConstraints(),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: context.colorScheme.outline),
             ),
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: context.colorScheme.primary,
-              ),
+              borderSide: BorderSide(color: context.colorScheme.primary),
             ),
           ),
         ),
@@ -136,9 +135,7 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
               style: AppTextStyle.body2
                   .copyWith(color: context.colorScheme.textSecondary),
             ),
-            labelPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
+            labelPadding: const EdgeInsets.symmetric(horizontal: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
@@ -150,8 +147,9 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
     );
   }
 
-  Widget _addPlaceView(ChoosePlaceViewState state) {
+  Widget _addPlaceButtonView(ChoosePlaceViewState state) {
     final enable = _textController.text.isNotEmpty && !state.addingPlace;
+
     return Padding(
       padding: EdgeInsets.only(bottom: context.mediaQueryPadding.bottom + 24),
       child: PrimaryButton(
@@ -165,6 +163,15 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
         expanded: false,
       ),
     );
+  }
+
+  void _observeError() {
+    ref.listen(choosePlaceViewStateProvider.select((state) => state.error),
+        (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
+    });
   }
 
   void _observePopToPlacesListScreen() {

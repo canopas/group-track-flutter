@@ -9,6 +9,7 @@ import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 
 import '../../../../../gen/assets.gen.dart';
+import '../../../../components/error_snakebar.dart';
 import 'add_new_place_view_model.dart';
 
 class AddNewPlaceView extends ConsumerStatefulWidget {
@@ -25,32 +26,29 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
 
   @override
   Widget build(BuildContext context) {
-    notifier = ref.watch(addNewPLaceStateProvider.notifier);
+    notifier = ref.watch(addNewPlaceStateProvider.notifier);
+
+    _observeError();
 
     return AppPage(
       title: context.l10n.add_new_place_title,
-      body: _body(),
-    );
-  }
-
-  Widget _body() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _searchTextField(),
-          const SizedBox(height: 56),
-          _locateOnMapView(),
-          const SizedBox(height: 40),
-          Text(
-            context.l10n.add_new_place_suggestion_text,
-            style: AppTextStyle.caption.copyWith(
-              color: context.colorScheme.textDisabled,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _searchTextField(),
+            const SizedBox(height: 40),
+            _locateOnMapView(),
+            const SizedBox(height: 40),
+            Text(
+              context.l10n.add_new_place_suggestion_text,
+              style: AppTextStyle.caption.copyWith(
+                color: context.colorScheme.textDisabled,
+              ),
             ),
-          ),
-          _placeSuggestionView()
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -76,19 +74,12 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
               color: context.colorScheme.textDisabled,
             ),
             contentPadding: const EdgeInsets.symmetric(vertical: 0),
-            prefixIconConstraints: const BoxConstraints(
-              minHeight: 0,
-              minWidth: 0,
-            ),
-            border: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: context.colorScheme.textDisabled,
-              ),
+            prefixIconConstraints: const BoxConstraints(),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: context.colorScheme.outline),
             ),
             focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: context.colorScheme.primary,
-              ),
+              borderSide: BorderSide(color: context.colorScheme.primary),
             ),
           ),
         ),
@@ -135,7 +126,12 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
     );
   }
 
-  Widget _placeSuggestionView() {
-    return Container();
+  void _observeError() {
+    ref.listen(addNewPlaceStateProvider.select((state) => state.error),
+        (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
+    });
   }
 }

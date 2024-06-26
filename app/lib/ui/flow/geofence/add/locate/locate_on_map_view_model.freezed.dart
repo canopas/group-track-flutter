@@ -16,7 +16,6 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$LocateOnMapState {
-  bool get loading => throw _privateConstructorUsedError;
   CameraPosition? get centerPosition => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -30,7 +29,7 @@ abstract class $LocateOnMapStateCopyWith<$Res> {
           LocateOnMapState value, $Res Function(LocateOnMapState) then) =
       _$LocateOnMapStateCopyWithImpl<$Res, LocateOnMapState>;
   @useResult
-  $Res call({bool loading, CameraPosition? centerPosition});
+  $Res call({CameraPosition? centerPosition});
 }
 
 /// @nodoc
@@ -46,14 +45,9 @@ class _$LocateOnMapStateCopyWithImpl<$Res, $Val extends LocateOnMapState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loading = null,
     Object? centerPosition = freezed,
   }) {
     return _then(_value.copyWith(
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
       centerPosition: freezed == centerPosition
           ? _value.centerPosition
           : centerPosition // ignore: cast_nullable_to_non_nullable
@@ -70,7 +64,7 @@ abstract class _$$LocateOnMapStateImplCopyWith<$Res>
       __$$LocateOnMapStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool loading, CameraPosition? centerPosition});
+  $Res call({CameraPosition? centerPosition});
 }
 
 /// @nodoc
@@ -84,14 +78,9 @@ class __$$LocateOnMapStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loading = null,
     Object? centerPosition = freezed,
   }) {
     return _then(_$LocateOnMapStateImpl(
-      loading: null == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as bool,
       centerPosition: freezed == centerPosition
           ? _value.centerPosition
           : centerPosition // ignore: cast_nullable_to_non_nullable
@@ -103,17 +92,14 @@ class __$$LocateOnMapStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LocateOnMapStateImpl implements _LocateOnMapState {
-  const _$LocateOnMapStateImpl({this.loading = false, this.centerPosition});
+  const _$LocateOnMapStateImpl({this.centerPosition});
 
-  @override
-  @JsonKey()
-  final bool loading;
   @override
   final CameraPosition? centerPosition;
 
   @override
   String toString() {
-    return 'LocateOnMapState(loading: $loading, centerPosition: $centerPosition)';
+    return 'LocateOnMapState(centerPosition: $centerPosition)';
   }
 
   @override
@@ -121,13 +107,12 @@ class _$LocateOnMapStateImpl implements _LocateOnMapState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LocateOnMapStateImpl &&
-            (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.centerPosition, centerPosition) ||
                 other.centerPosition == centerPosition));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, loading, centerPosition);
+  int get hashCode => Object.hash(runtimeType, centerPosition);
 
   @JsonKey(ignore: true)
   @override
@@ -138,12 +123,9 @@ class _$LocateOnMapStateImpl implements _LocateOnMapState {
 }
 
 abstract class _LocateOnMapState implements LocateOnMapState {
-  const factory _LocateOnMapState(
-      {final bool loading,
-      final CameraPosition? centerPosition}) = _$LocateOnMapStateImpl;
+  const factory _LocateOnMapState({final CameraPosition? centerPosition}) =
+      _$LocateOnMapStateImpl;
 
-  @override
-  bool get loading;
   @override
   CameraPosition? get centerPosition;
   @override
