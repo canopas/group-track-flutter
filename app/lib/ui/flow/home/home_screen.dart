@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
@@ -9,6 +10,7 @@ import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/home/home_screen_viewmodel.dart';
 import 'package:yourspace_flutter/ui/flow/home/map/map_view_model.dart';
 
+import '../../components/permission_dialog.dart';
 import 'components/home_top_bar.dart';
 import 'map/map_view.dart';
 
