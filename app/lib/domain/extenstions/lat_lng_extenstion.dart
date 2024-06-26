@@ -20,26 +20,27 @@ extension LatLngExtensions on LatLng {
       if (placeMarks.isNotEmpty) {
         var streets = placeMarks
             .map((placeMark) => placeMark.street)
-            .where((street) => street != null);
+            .where((street) => street != null)
+            .where((street) =>
+                street!.toLowerCase() !=
+                placeMarks.last.locality?.toLowerCase())
+            .where((street) => !street!.contains('+'));
 
-        streets = streets.where((street) =>
-            street!.toLowerCase() != placeMarks.last.locality!.toLowerCase());
-
-        streets = streets.where((street) => !street!.contains('+'));
         address += streets.join(', ');
 
-        address += ', ${placeMarks.reversed.last.subLocality ?? ''}';
-        address += ', ${placeMarks.reversed.last.locality ?? ''}';
-        address += ', ${placeMarks.reversed.last.subAdministrativeArea ?? ''}';
-        address += ', ${placeMarks.reversed.last.administrativeArea ?? ''}';
-        address += ', ${placeMarks.reversed.last.postalCode ?? ''}';
-        address += ', ${placeMarks.reversed.last.country ?? ''}';
+        final lastPlaceMark = placeMarks.reversed.last;
+        address += ', ${lastPlaceMark.subLocality ?? ''}';
+        address += ', ${lastPlaceMark.locality ?? ''}';
+        address += ', ${lastPlaceMark.subAdministrativeArea ?? ''}';
+        address += ', ${lastPlaceMark.administrativeArea ?? ''}';
+        address += ', ${lastPlaceMark.postalCode ?? ''}';
+        address += ', ${lastPlaceMark.country ?? ''}';
+
+        _cachedLatLng = LatLng(latitude, longitude);
+        _cachedAddress = address;
+
+        return address;
       }
-
-      _cachedLatLng = LatLng(latitude, longitude);
-      _cachedAddress = address;
-
-      return address;
     } catch (e) {
       logger.e('GetAddress: Error while getting address', error: e);
     }

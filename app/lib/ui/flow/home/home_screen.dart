@@ -38,14 +38,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _observeNavigation(state);
     _observeError();
     _observeSelectedSpace();
+    _observeShowBatteryDialog(context);
 
     mapNotifier = ref.watch(mapViewStateProvider.notifier);
 
     return AppPage(
       body: ResumeDetector(
         onResume: () {
-          if (state.selectedSpace != null) {
-            notifier.getAllSpace();
+          if(state.selectedSpace != null){
+          notifier.getAllSpace();
+          notifier.showBatteryOptimizationDialog();
+          mapNotifier.checkLocationAndNotificationPermission();
           }
         },
         child: _body(context, state),
@@ -98,6 +101,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         (previous, next) {
       if (previous?.space.id != next?.space.id) {
         mapNotifier.loadData(next?.space.id);
+      }
+    });
+  }
+
+  void _observeShowBatteryDialog(BuildContext context) {
+    ref.listen(homeViewStateProvider.select((state) => state.showBatteryDialog),
+        (_, next) {
+      if (next != null) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return PermissionDialog(
+                title: context.l10n.battery_optimization_dialog_title,
+                subTitle1: context.l10n.battery_optimization_dialog_message,
+                confirmBtn:
+                    context.l10n.battery_optimization_dialog_btn_change_now,
+                dismissBtn: context.l10n.common_cancel,
+                onDismiss: () {
+                  Navigator.of(context).pop();
+                },
+                goToSettings: () {
+                  notifier.requestIgnoreBatteryOptimizations();
+                  Navigator.of(context).pop();
+                },
+              );
+            });
       }
     });
   }
