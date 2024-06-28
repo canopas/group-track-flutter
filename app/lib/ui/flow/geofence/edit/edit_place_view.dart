@@ -378,7 +378,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
     return Row(
       children: [
         Text(
-          context.l10n.edit_place_leaves_text,
+          title,
           style: AppTextStyle.body2
               .copyWith(color: context.colorScheme.textDisabled),
         ),
