@@ -38,7 +38,8 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
   late CameraPosition _cameraPosition;
   GoogleMapController? _controller;
   TextEditingController _textController = TextEditingController();
-  double radiusToPixel = 0.0;
+  double _radiusToPixel = 0.0;
+  double _previousZoom = 0.0;
 
   @override
   void initState() {
@@ -57,9 +58,11 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(editPlaceViewStateProvider);
+    final latLng = LatLng(state.updatedPlace?.latitude ?? 0.0,
+        state.updatedPlace?.longitude ?? 0.0);
 
     _observeError();
-    _observeMapCameraPosition();
+    _observeMapCameraPosition(latLng);
     _observePopBack();
     _observeDeleteDialog();
 
@@ -127,6 +130,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
   }
 
   Widget _googleMapView(double lat, double lng, bool isAdmin, double radius) {
+    _convertZoneRadiusToPixels(LatLng(lat, lng), radius * 1.07);
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -148,18 +152,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
             notifier.onMapCameraMove(position);
           },
         ),
-        FutureBuilder(
-            future: convertZoneRadiusToPixels(LatLng(lat, lng), radius * 1.08),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData) {
-                final newRadius = snapshot.data;
-                return IgnorePointer(child: PlaceMarker(radius: newRadius!));
-              } else {
-                return IgnorePointer(child: PlaceMarker(radius: radiusToPixel));
-              }
-            })
-        //IgnorePointer(child: PlaceMarker(radius: radiusToPixel))
+        IgnorePointer(child: PlaceMarker(radius: _radiusToPixel))
       ],
     );
   }
@@ -189,9 +182,8 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
               divisions: 100,
             ),
           ),
-          const SizedBox(width: 8),
           Text(
-            radiusText,
+            radiusText.trim(),
             style: AppTextStyle.caption
                 .copyWith(color: context.colorScheme.textSecondary),
           ),
@@ -438,12 +430,11 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
     });
   }
 
-  void _observeMapCameraPosition() {
-    ref.listen(editPlaceViewStateProvider.select((state) => state.updatedPlace),
+  void _observeMapCameraPosition(LatLng latLng) {
+    ref.listen(editPlaceViewStateProvider.select((state) => state.radius),
         (previous, next) async {
       if (next != null) {
-        final latLng = LatLng(next.latitude, next.longitude);
-        final zoom = getZoomLevel(next.radius);
+        final zoom = _getZoomLevel(next);
         await _controller
             ?.animateCamera(CameraUpdate.newLatLngZoom(latLng, zoom));
       }
@@ -459,16 +450,18 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
     });
   }
 
-  double getZoomLevel(double radius) {
+  double _getZoomLevel(double radius) {
     double scale = radius / 200;
     double zoomLevel = 16 - math.log(scale) / math.log(2);
     return zoomLevel;
   }
 
-  Future<double> convertZoneRadiusToPixels(
+  void _convertZoneRadiusToPixels(
     LatLng latLang,
     double radius,
   ) async {
+    final zoom = await _controller?.getZoomLevel();
+    if (zoom == _previousZoom) return;
     const double earthRadius = 6378100.0;
     double lat1 = radius / earthRadius;
     double lng1 = radius / (earthRadius * cos(pi * latLang.latitude / 180));
@@ -481,9 +474,9 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
     final p2 = await _controller?.getScreenCoordinate(LatLng(lat2, lng2));
 
     setState(() {
-      radiusToPixel = (p1!.x - p2!.x).abs().toDouble();
+      _previousZoom = zoom!;
+      _radiusToPixel = (p1!.x - p2!.x).abs().toDouble();
     });
-    return (p1!.x - p2!.x).abs().toDouble();
   }
 
   void _observeDeleteDialog() {

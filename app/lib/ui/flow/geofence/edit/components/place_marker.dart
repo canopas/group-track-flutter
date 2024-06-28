@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 
@@ -19,13 +20,19 @@ class _PlaceMarkerState extends State<PlaceMarker> {
     return Stack(
       alignment: Alignment.center,
       children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          width: widget.radius,
-          height: widget.radius,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(widget.radius),
-            color: context.colorScheme.primary.withOpacity(0.5),
+        ClipRect(
+          child: OverflowBox(
+            maxHeight: widget.radius,
+            maxWidth: widget.radius,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              width: widget.radius,
+              height: widget.radius,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(widget.radius),
+                color: context.colorScheme.primary.withOpacity(0.5),
+              ),
+            ),
           ),
         ),
         Container(

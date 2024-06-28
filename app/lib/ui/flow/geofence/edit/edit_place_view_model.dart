@@ -124,7 +124,7 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
   void onPlaceRadiusChanged(double value) {
     if (state.updatedPlace == null) return;
     final updatePlace = state.updatedPlace?.copyWith(radius: value);
-    state = state.copyWith(updatedPlace: updatePlace);
+    state = state.copyWith(updatedPlace: updatePlace,radius: value);
     enableSaveBtn();
   }
 
@@ -200,6 +200,7 @@ class EditPlaceState with _$EditPlaceState {
     ApiPlaceMemberSetting? updatedSetting,
     @Default([]) List<ApiUserInfo> membersInfo,
     String? address,
+    double? radius,
     Object? error,
     DateTime? popToBack,
     DateTime? showDeleteDialog,

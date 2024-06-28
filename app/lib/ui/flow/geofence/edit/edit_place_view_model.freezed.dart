@@ -28,6 +28,7 @@ mixin _$EditPlaceState {
       throw _privateConstructorUsedError;
   List<ApiUserInfo> get membersInfo => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
+  double? get radius => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   DateTime? get popToBack => throw _privateConstructorUsedError;
   DateTime? get showDeleteDialog => throw _privateConstructorUsedError;
@@ -55,6 +56,7 @@ abstract class $EditPlaceStateCopyWith<$Res> {
       ApiPlaceMemberSetting? updatedSetting,
       List<ApiUserInfo> membersInfo,
       String? address,
+      double? radius,
       Object? error,
       DateTime? popToBack,
       DateTime? showDeleteDialog});
@@ -87,6 +89,7 @@ class _$EditPlaceStateCopyWithImpl<$Res, $Val extends EditPlaceState>
     Object? updatedSetting = freezed,
     Object? membersInfo = null,
     Object? address = freezed,
+    Object? radius = freezed,
     Object? error = freezed,
     Object? popToBack = freezed,
     Object? showDeleteDialog = freezed,
@@ -136,6 +139,10 @@ class _$EditPlaceStateCopyWithImpl<$Res, $Val extends EditPlaceState>
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
               as String?,
+      radius: freezed == radius
+          ? _value.radius
+          : radius // ignore: cast_nullable_to_non_nullable
+              as double?,
       error: freezed == error ? _value.error : error,
       popToBack: freezed == popToBack
           ? _value.popToBack
@@ -194,6 +201,7 @@ abstract class _$$EditPlaceStateImplCopyWith<$Res>
       ApiPlaceMemberSetting? updatedSetting,
       List<ApiUserInfo> membersInfo,
       String? address,
+      double? radius,
       Object? error,
       DateTime? popToBack,
       DateTime? showDeleteDialog});
@@ -226,6 +234,7 @@ class __$$EditPlaceStateImplCopyWithImpl<$Res>
     Object? updatedSetting = freezed,
     Object? membersInfo = null,
     Object? address = freezed,
+    Object? radius = freezed,
     Object? error = freezed,
     Object? popToBack = freezed,
     Object? showDeleteDialog = freezed,
@@ -275,6 +284,10 @@ class __$$EditPlaceStateImplCopyWithImpl<$Res>
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
               as String?,
+      radius: freezed == radius
+          ? _value.radius
+          : radius // ignore: cast_nullable_to_non_nullable
+              as double?,
       error: freezed == error ? _value.error : error,
       popToBack: freezed == popToBack
           ? _value.popToBack
@@ -303,6 +316,7 @@ class _$EditPlaceStateImpl implements _EditPlaceState {
       this.updatedSetting,
       final List<ApiUserInfo> membersInfo = const [],
       this.address,
+      this.radius,
       this.error,
       this.popToBack,
       this.showDeleteDialog})
@@ -344,6 +358,8 @@ class _$EditPlaceStateImpl implements _EditPlaceState {
   @override
   final String? address;
   @override
+  final double? radius;
+  @override
   final Object? error;
   @override
   final DateTime? popToBack;
@@ -352,7 +368,7 @@ class _$EditPlaceStateImpl implements _EditPlaceState {
 
   @override
   String toString() {
-    return 'EditPlaceState(loading: $loading, isAdmin: $isAdmin, enableSave: $enableSave, saving: $saving, deleting: $deleting, gettingAddress: $gettingAddress, placeId: $placeId, updatedPlace: $updatedPlace, updatedSetting: $updatedSetting, membersInfo: $membersInfo, address: $address, error: $error, popToBack: $popToBack, showDeleteDialog: $showDeleteDialog)';
+    return 'EditPlaceState(loading: $loading, isAdmin: $isAdmin, enableSave: $enableSave, saving: $saving, deleting: $deleting, gettingAddress: $gettingAddress, placeId: $placeId, updatedPlace: $updatedPlace, updatedSetting: $updatedSetting, membersInfo: $membersInfo, address: $address, radius: $radius, error: $error, popToBack: $popToBack, showDeleteDialog: $showDeleteDialog)';
   }
 
   @override
@@ -377,6 +393,7 @@ class _$EditPlaceStateImpl implements _EditPlaceState {
             const DeepCollectionEquality()
                 .equals(other._membersInfo, _membersInfo) &&
             (identical(other.address, address) || other.address == address) &&
+            (identical(other.radius, radius) || other.radius == radius) &&
             const DeepCollectionEquality().equals(other.error, error) &&
             (identical(other.popToBack, popToBack) ||
                 other.popToBack == popToBack) &&
@@ -398,6 +415,7 @@ class _$EditPlaceStateImpl implements _EditPlaceState {
       updatedSetting,
       const DeepCollectionEquality().hash(_membersInfo),
       address,
+      radius,
       const DeepCollectionEquality().hash(error),
       popToBack,
       showDeleteDialog);
@@ -423,6 +441,7 @@ abstract class _EditPlaceState implements EditPlaceState {
       final ApiPlaceMemberSetting? updatedSetting,
       final List<ApiUserInfo> membersInfo,
       final String? address,
+      final double? radius,
       final Object? error,
       final DateTime? popToBack,
       final DateTime? showDeleteDialog}) = _$EditPlaceStateImpl;
@@ -449,6 +468,8 @@ abstract class _EditPlaceState implements EditPlaceState {
   List<ApiUserInfo> get membersInfo;
   @override
   String? get address;
+  @override
+  double? get radius;
   @override
   Object? get error;
   @override
