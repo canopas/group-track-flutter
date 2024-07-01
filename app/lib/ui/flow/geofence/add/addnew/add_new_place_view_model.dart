@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:data/api/place/api_place.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/place_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +31,14 @@ class AddNewPlaceViewNotifier extends StateNotifier<AddNewPlaceState> {
   void fidePlace(String value) async {
     try {
       state = state.copyWith(loading: true);
-     // todo call get places api here.
+      final places = await placeService.searchNearbyPlaces(
+        value,
+        '', // put user latitude coordinates here.
+        '', // put user longitude coordinates here.
+        'AIzaSyDbaJSVGU4Jkhd_V_e9esorzh_8yykh160',
+      );
+
+      state = state.copyWith(places: places, loading: false);
     } catch (error, stack) {
       state = state.copyWith(error: error, loading: false);
       logger.e(
@@ -46,6 +54,7 @@ class AddNewPlaceViewNotifier extends StateNotifier<AddNewPlaceState> {
 class AddNewPlaceState with _$AddNewPlaceState {
   const factory AddNewPlaceState({
     @Default(false) loading,
+    @Default([]) List<ApiNearbyPlace> places,
     Object? error,
   }) = _AddNewPlaceState;
 }

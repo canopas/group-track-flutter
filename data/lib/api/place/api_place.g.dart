@@ -67,3 +67,22 @@ Map<String, dynamic> _$$ApiPlaceMemberSettingImplToJson(
       'arrival_alert_for': instance.arrival_alert_for,
       'leave_alert_for': instance.leave_alert_for,
     };
+
+_$ApiNearbyPlaceImpl _$$ApiNearbyPlaceImplFromJson(Map<String, dynamic> json) =>
+    _$ApiNearbyPlaceImpl(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      formatted_address: json['formatted_address'] as String,
+      lat: (json['lat'] as num).toDouble(),
+      lng: (json['lng'] as num).toDouble(),
+    );
+
+Map<String, dynamic> _$$ApiNearbyPlaceImplToJson(
+        _$ApiNearbyPlaceImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'formatted_address': instance.formatted_address,
+      'lat': instance.lat,
+      'lng': instance.lng,
+    };

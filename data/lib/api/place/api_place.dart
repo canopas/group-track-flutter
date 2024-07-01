@@ -59,3 +59,19 @@ class ApiPlaceMemberSetting with _$ApiPlaceMemberSetting {
   Map<String, dynamic> toFireStore(ApiPlaceMemberSetting space) =>
       space.toJson();
 }
+
+@freezed
+class ApiNearbyPlace with _$ApiNearbyPlace {
+  const ApiNearbyPlace._();
+
+  const factory ApiNearbyPlace({
+    required String id,
+    required String name,
+    required String formatted_address,
+    required double lat,
+    required double lng,
+  }) = _ApiNearbyPlace;
+
+  factory ApiNearbyPlace.fromJson(Map<String, dynamic> data) =>
+      _$ApiNearbyPlaceFromJson(data);
+}

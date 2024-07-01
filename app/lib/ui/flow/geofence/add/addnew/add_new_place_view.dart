@@ -1,8 +1,10 @@
+import 'package:data/api/place/api_place.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/context_extenstions.dart';
+import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
@@ -27,27 +29,42 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
   @override
   Widget build(BuildContext context) {
     notifier = ref.watch(addNewPlaceStateProvider.notifier);
+    final state = ref.watch(addNewPlaceStateProvider);
 
     _observeError();
 
     return AppPage(
       title: context.l10n.add_new_place_title,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _searchTextField(),
-            const SizedBox(height: 40),
-            _locateOnMapView(),
-            const SizedBox(height: 40),
-            Text(
-              context.l10n.add_new_place_suggestion_text,
-              style: AppTextStyle.caption.copyWith(
-                color: context.colorScheme.textDisabled,
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: context.mediaQueryPadding.bottom + 24,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _searchTextField(),
+              const SizedBox(height: 40),
+              _locateOnMapView(),
+              const SizedBox(height: 40),
+              Text(
+                context.l10n.add_new_place_suggestion_text,
+                style: AppTextStyle.caption.copyWith(
+                  color: context.colorScheme.textDisabled,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              ...state.places.map((place) {
+                final isLast =
+                    state.places.indexOf(place) == state.places.length - 1;
+                return _placesItemView(place, isLast);
+              }),
+              const SizedBox(height: 24),
+              state.loading ? const AppProgressIndicator() : Container(),
+            ],
+          ),
         ),
       ),
     );
@@ -123,6 +140,57 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _placesItemView(ApiNearbyPlace place, bool isLast) {
+    return Column(
+      children: [
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Icon(
+              Icons.location_on_outlined,
+              size: 24,
+              color: context.colorScheme.textPrimary,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  place.name,
+                  maxLines: 1,
+                  style: AppTextStyle.subtitle2.copyWith(
+                    color: context.colorScheme.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  place.formatted_address,
+                  style: AppTextStyle.caption
+                      .copyWith(color: context.colorScheme.textSecondary),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                )
+              ],
+            ),
+          )
+        ]),
+        Visibility(
+          visible: !isLast,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Divider(
+              thickness: 1,
+              height: 1,
+              color: context.colorScheme.outline,
+            ),
+          ),
+        )
+      ],
     );
   }
 

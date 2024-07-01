@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 
 import '../api/network/client.dart';
+
+const baseUrl = 'https://maps.googleapis.com/maps/api/place/textsearch/json';
+const defaultRadius = 1500;
 
 final placeServiceProvider = Provider(
   (ref) => PlaceService(
@@ -44,7 +50,6 @@ class PlaceService {
     String createdBy,
     List<String> spaceMemberIds,
   ) async {
-
     final placeDoc = spacePlacesRef(spaceId).doc();
 
     final place = ApiPlace(
@@ -74,6 +79,35 @@ class PlaceService {
       await spacePlacesSettingsRef(spaceId, place.id)
           .doc(setting.user_id)
           .set(setting.toJson());
+    }
+  }
+
+  Future<List<ApiNearbyPlace>> searchNearbyPlaces(
+    String query,
+    String? lat,
+    String? lng,
+    String apiKey,
+  ) async {
+    final placeRadius = (lat != null && lng != null) ? defaultRadius : '';
+    final String url =
+        '$baseUrl?query=$query&location=$lat,$lng&radius=$placeRadius&key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = json.decode(response.body);
+      List<dynamic> results = data['results'];
+      return results.map((result) {
+        return ApiNearbyPlace(
+          id: result['place_id'] ?? '',
+          name: result['name'] ?? '',
+          formatted_address: result['formatted_address'] ?? '',
+          lat: result['geometry']['location']['lat']?.toDouble() ?? 0.0,
+          lng: result['geometry']['location']['lng']?.toDouble() ?? 0.0,
+        );
+      }).toList();
+    } else {
+      throw Exception('Failed to load nearby places');
     }
   }
 }
