@@ -146,39 +146,44 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
   Widget _placesItemView(ApiNearbyPlace place, bool isLast) {
     return Column(
       children: [
-        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Icon(
-              Icons.location_on_outlined,
-              size: 24,
-              color: context.colorScheme.textPrimary,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  place.name,
-                  maxLines: 1,
-                  style: AppTextStyle.subtitle2.copyWith(
-                    color: context.colorScheme.textPrimary,
-                  ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: SvgPicture.asset(
+                Assets.images.icLocation,
+                colorFilter: ColorFilter.mode(
+                  context.colorScheme.textPrimary,
+                  BlendMode.srcATop,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  place.formatted_address,
-                  style: AppTextStyle.caption
-                      .copyWith(color: context.colorScheme.textSecondary),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                )
-              ],
+              ),
             ),
-          )
-        ]),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    place.name,
+                    maxLines: 1,
+                    style: AppTextStyle.subtitle2.copyWith(
+                      color: context.colorScheme.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    place.formatted_address,
+                    style: AppTextStyle.caption
+                        .copyWith(color: context.colorScheme.textSecondary),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  )
+                ],
+              ),
+            )
+          ]),
+        ),
         Visibility(
           visible: !isLast,
           child: Padding(

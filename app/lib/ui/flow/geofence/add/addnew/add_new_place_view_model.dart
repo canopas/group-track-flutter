@@ -35,7 +35,6 @@ class AddNewPlaceViewNotifier extends StateNotifier<AddNewPlaceState> {
         value,
         '', // put user latitude coordinates here.
         '', // put user longitude coordinates here.
-        'AIzaSyDbaJSVGU4Jkhd_V_e9esorzh_8yykh160',
       );
 
       state = state.copyWith(places: places, loading: false);
