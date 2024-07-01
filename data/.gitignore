@@ -22,7 +22,7 @@ migrate_working_dir/
 #.vscode/
 
 # Flutter/Dart/Pub related
-**/config.dart
+lib/config.dart
 
 # Libraries should not include pubspec.lock, per https://dart.dev/guides/libraries/private-files#pubspeclock.
 /pubspec.lock
