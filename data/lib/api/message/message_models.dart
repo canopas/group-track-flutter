@@ -43,7 +43,7 @@ class ApiThreadMessage with _$ApiThreadMessage {
     required String id,
     required String thread_id,
     required String sender_id,
-    String? message,
+    required String message,
     required List<String> seen_by,
     Map<String, double>? archived_for,
     @ServerTimestampConverter() DateTime? created_at,
@@ -61,29 +61,8 @@ class ApiThreadMessage with _$ApiThreadMessage {
 
   Map<String, dynamic> toFireStore(ApiThreadMessage message) =>
       message.toJson();
-}
 
-@freezed
-class ApiThreadMessageInfo with _$ApiThreadMessageInfo {
-  const ApiThreadMessageInfo._();
-
-  const factory ApiThreadMessageInfo({
-    required List<ApiThreadMessage> message,
-    required List<ApiUserInfo> user,
-  }) = _ApiThreadMessageInfo;
-
-  factory ApiThreadMessageInfo.fromJson(Map<String, dynamic> json) =>
-      _$ApiThreadMessageInfoFromJson(json);
-
-  factory ApiThreadMessageInfo.fromFireStore(
-      DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions? options) {
-    Map<String, dynamic>? data = snapshot.data();
-    return ApiThreadMessageInfo.fromJson(data!);
-  }
-
-  Map<String, dynamic> toFireStore(ApiThreadMessageInfo message) =>
-      message.toJson();
+  int get createdAtMs => created_at!.millisecondsSinceEpoch;
 }
 
 @freezed
@@ -92,8 +71,8 @@ class ThreadInfo with _$ThreadInfo {
 
   const factory ThreadInfo({
     required ApiThread thread,
-    required List<ApiUserInfo> members,
     required List<ApiThreadMessage> threadMessage,
+    required List<ApiUserInfo> members,
   }) = _ThreadInfo;
 
   factory ThreadInfo.fromJson(Map<String, dynamic> data) =>

@@ -36,7 +36,7 @@ _$ApiThreadMessageImpl _$$ApiThreadMessageImplFromJson(
       id: json['id'] as String,
       thread_id: json['thread_id'] as String,
       sender_id: json['sender_id'] as String,
-      message: json['message'] as String?,
+      message: json['message'] as String,
       seen_by:
           (json['seen_by'] as List<dynamic>).map((e) => e as String).toList(),
       archived_for: (json['archived_for'] as Map<String, dynamic>?)?.map(
@@ -59,38 +59,20 @@ Map<String, dynamic> _$$ApiThreadMessageImplToJson(
           const ServerTimestampConverter().toJson(instance.created_at),
     };
 
-_$ApiThreadMessageInfoImpl _$$ApiThreadMessageInfoImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ApiThreadMessageInfoImpl(
-      message: (json['message'] as List<dynamic>)
-          .map((e) => ApiThreadMessage.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      user: (json['user'] as List<dynamic>)
-          .map((e) => ApiUserInfo.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
-
-Map<String, dynamic> _$$ApiThreadMessageInfoImplToJson(
-        _$ApiThreadMessageInfoImpl instance) =>
-    <String, dynamic>{
-      'message': instance.message,
-      'user': instance.user,
-    };
-
 _$ThreadInfoImpl _$$ThreadInfoImplFromJson(Map<String, dynamic> json) =>
     _$ThreadInfoImpl(
       thread: ApiThread.fromJson(json['thread'] as Map<String, dynamic>),
-      members: (json['members'] as List<dynamic>)
-          .map((e) => ApiUserInfo.fromJson(e as Map<String, dynamic>))
-          .toList(),
       threadMessage: (json['threadMessage'] as List<dynamic>)
           .map((e) => ApiThreadMessage.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      members: (json['members'] as List<dynamic>)
+          .map((e) => ApiUserInfo.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
 Map<String, dynamic> _$$ThreadInfoImplToJson(_$ThreadInfoImpl instance) =>
     <String, dynamic>{
       'thread': instance.thread,
-      'members': instance.members,
       'threadMessage': instance.threadMessage,
+      'members': instance.members,
     };

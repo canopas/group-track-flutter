@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/message/message_models.dart';
+import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
@@ -12,21 +13,22 @@ import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/profile_picture.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_view_model.dart';
 
 import '../../../../domain/extenstions/widget_extensions.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  final List<ApiUserInfo> users;
-  final String spaceName;
+  final SpaceInfo spaceInfo;
   final ThreadInfo? threadInfo;
+  final List<ThreadInfo>? threadInfoList;
 
   const ChatScreen({
     super.key,
-    required this.users,
-    required this.spaceName,
+    required this.spaceInfo,
     this.threadInfo,
+    this.threadInfoList,
   });
 
   @override
@@ -40,42 +42,51 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void initState() {
     super.initState();
     runPostFrame(() {
-      notifier = ref.watch(chatViewStateProvider.notifier);
-      notifier.setData(widget.users, widget.threadInfo!.thread);
+      notifier.setData(
+          widget.spaceInfo,
+          widget.threadInfo == null,
+          widget.threadInfo,
+          widget.threadInfoList ?? [],
+      );
+      if (widget.threadInfo != null) {
+        notifier.listenThread(widget.threadInfo?.thread.id ?? '');
+        notifier.getThreadMembers(widget.threadInfo!.thread);
+      }
+      notifier.formatMemberNames(widget.threadInfo == null ? [] : widget.threadInfo!.members);
+      notifier.selectExistingThread();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    notifier = ref.watch(chatViewStateProvider.notifier);
+    notifier = ref.watch(chatViewStateProvider(widget.threadInfo?.thread.id ?? '').notifier);
+    final state = ref.watch(chatViewStateProvider(widget.threadInfo?.thread.id ?? ''));
+    _observeError();
+
+    if (widget.threadInfo != null) {
+      notifier.markMessageAsSeen(widget.threadInfo!.thread.id,  widget.threadInfo!.threadMessage);
+    }
 
     return AppPage(
-      title: context.l10n.chat_start_new_chat_title,
-      body: _body(context),
+      title: state.threadInfo == null || widget.threadInfo == null ? context.l10n.chat_start_new_chat_title : state.title,
+      body: _body(context, state),
     );
   }
 
-  Widget _body(BuildContext context) {
-    final state = ref.watch(chatViewStateProvider);
-
-    if (state.loading) {
-      return const Center(child: AppProgressIndicator());
-    }
-
+  Widget _body(BuildContext context, ChatViewState state) {
     return Column(
       children: [
-        if (widget.threadInfo == null) ...[
-          _memberSelectionView(context, state)
-        ],
-        Expanded(child: _chatList(context, state.messages, state.sender)),
+        if (state.showMemberSelectionView)
+          _memberSelectionView(context, state),
+        Expanded(child: _chatList(context, state.messages, state.sender, state.loadingMessages, state.threadId)),
         _textField(context, state),
       ],
     );
   }
 
   Widget _chatList(BuildContext context, List<ApiThreadMessage> messages,
-      List<ApiUserInfo> sender) {
-    if (sender.isEmpty) {
+      List<ApiUserInfo>? sender, bool loadingMessage, String threadId) {
+    if (sender == null && sender!.isEmpty) {
       return const AppProgressIndicator();
     }
 
@@ -84,13 +95,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       reverse: true,
       itemCount: messages.length,
       itemBuilder: (context, index) {
+        if (loadingMessage && index == messages.length - 1) {
+          return const AppProgressIndicator(size: AppProgressIndicatorSize.small);
+        }
+        if (index == messages.length - 1) {
+           runPostFrame(() => notifier.onLoadMore(threadId));
+        }
+
         final message = messages[index];
         final showDateHeader = notifier.showDateHeader(index, message);
         final bool isDifferentSender = index < messages.length - 1 &&
             messages[index + 1].sender_id != message.sender_id;
-        final senderInfo = sender
-            .firstWhere((member) => member.user.id == message.sender_id)
-            .user;
+        final senderInfo = sender.isNotEmpty
+            ? sender.firstWhere((member) => member.user.id == message.sender_id).user
+            : null;
+
+        if (messages.isEmpty) {
+          return const AppProgressIndicator();
+        }
 
         return Column(
           crossAxisAlignment: notifier.isSender(message)
@@ -120,7 +142,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget _chatItem({
     required BuildContext context,
     required ApiThreadMessage message,
-    required ApiUser sender,
+    required ApiUser? sender,
     required bool isSender,
     required bool showTimeHeader,
     required bool isFirstInGroup,
@@ -133,8 +155,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           isSender ? CrossAxisAlignment.start : CrossAxisAlignment.end,
       children: [
         if (showTimeHeader) ...[
-          _timeHeader(
-              message.created_at ?? DateTime.now(), isSender, memberCount)
+          _timeHeader(message.created_at ?? DateTime.now(), isSender, memberCount)
         ],
         const SizedBox(height: 4),
         Row(
@@ -144,8 +165,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           children: [
             if (isSender && (isDifferentSender || showTimeHeader) && memberCount > 2) ...[
               ProfileImage(
-                  profileImageUrl: sender.profile_image ?? '',
-                  firstLetter: sender.userNameFirstLetter,
+                  profileImageUrl: sender?.profile_image ?? '',
+                  firstLetter: sender!.userNameFirstLetter,
                   size: 24,
                 style: AppTextStyle.caption.copyWith(
                   color: context.colorScheme.textPrimaryDark,
@@ -182,7 +203,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   context: context,
                   isSender: isSender,
                   sender: sender,
-                  message: message.message ?? '',
+                  message: message.message,
                   memberCount: memberCount,
                 ),
               ),
@@ -196,7 +217,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget _chatBubbleView({
     required BuildContext context,
     required bool isSender,
-    required ApiUser sender,
+    required ApiUser? sender,
     required String message,
     required int memberCount,
   }) {
@@ -206,7 +227,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         children: [
           if (isSender && memberCount > 2) ...[
             Text(
-              sender.first_name ?? '',
+              sender?.first_name ?? '',
               style: AppTextStyle.caption.copyWith(
                 color: context.colorScheme.positive,
               ),
@@ -268,24 +289,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       child: Row(
         children: [
           const SizedBox(width: 16),
-          _allItem(context),
+          _allItem(context, state),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               itemCount: state.users.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                final isSelected =
-                    notifier.selectedUsers.contains(state.users[index].user.id);
+                final member = state.users[index];
+                final isSelected = state.selectedMember.contains(member.user.id);
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      if (isSelected) {
-                        notifier.selectedUsers
-                            .remove(state.users[index].user.id);
-                      } else {
-                        notifier.selectedUsers.add(state.users[index].user.id);
-                      }
+                      notifier.toggleMemberSelection(member.user.id);
                     });
                   },
                   child: Padding(
@@ -296,11 +312,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         if (isSelected) ...[
                           _selectedView(context),
                         ] else ...[
-                          _profileImageView(context, state.users[index].user),
+                          _profileImageView(context, member.user),
                         ],
                         const SizedBox(height: 8),
                         Text(
-                          state.users[index].user.first_name ?? '',
+                          member.user.first_name ?? '',
                           style: AppTextStyle.caption
                               .copyWith(color: context.colorScheme.textPrimary),
                         ),
@@ -316,45 +332,51 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  Widget _allItem(BuildContext context) {
+  Widget _allItem(BuildContext context, ChatViewState state) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24),
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            notifier.selectedUsers.clear();
-          });
-        },
-        child: Column(
-          children: [
-            if (notifier.selectedUsers.isEmpty) ...[
-              _selectedView(context),
-            ] else ...[
-              Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: context.colorScheme.primary,
+      child: SizedBox(
+        width: 56,
+        child: GestureDetector(
+          onTap: () {
+            setState(() {
+              notifier.clearSelection();
+            });
+          },
+          child: Column(
+            children: [
+              if (state.selectedMember.isEmpty) ...[
+                _selectedView(context),
+              ] else ...[
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: context.colorScheme.primary,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'All',
+                      style: AppTextStyle.subtitle2
+                          .copyWith(color: context.colorScheme.primary),
+                    ),
                   ),
                 ),
-                child: Center(
-                  child: Text(
-                    'All',
-                    style: AppTextStyle.subtitle2
-                        .copyWith(color: context.colorScheme.primary),
-                  ),
+              ],
+              const SizedBox(height: 8),
+              Flexible(
+                child: Text(
+                  widget.spaceInfo.space.name,
+                  style: AppTextStyle.caption
+                      .copyWith(color: context.colorScheme.textPrimary),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
-            const SizedBox(height: 8),
-            Text(
-              widget.spaceName,
-              style: AppTextStyle.caption
-                  .copyWith(color: context.colorScheme.textPrimary),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -436,8 +458,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           const SizedBox(width: 8),
           IconPrimaryButton(
             onTap: () {
-              notifier.sendMessage(
-                  widget.threadInfo?.thread.id ?? '', state.message.text);
+              if (widget.threadInfo != null) {
+                notifier.sendMessage(state.threadId, state.message.text);
+              } else {
+                notifier.createNewThread(widget.spaceInfo.space.id, state.message.text);
+              }
             },
             icon: Icon(Icons.arrow_forward_rounded,
                 color: state.allowSend
@@ -487,5 +512,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ? const Radius.circular(16)
               : Radius.zero,
     );
+  }
+
+  void _observeError() {
+    ref.listen(chatViewStateProvider(widget.threadInfo?.thread.id ?? '').select((state) => state.error), (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
+    });
   }
 }
