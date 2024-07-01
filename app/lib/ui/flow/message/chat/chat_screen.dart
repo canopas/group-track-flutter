@@ -68,7 +68,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     }
 
     return AppPage(
-      title: state.threadInfo == null || widget.threadInfo == null ? context.l10n.chat_start_new_chat_title : state.title,
+      title: state.threadInfo == null && widget.threadInfo == null ? context.l10n.chat_start_new_chat_title : state.title,
       body: _body(context, state),
     );
   }
