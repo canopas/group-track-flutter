@@ -35,7 +35,7 @@ class _MapScreenState extends ConsumerState<MapView> {
   late MapViewNotifier notifier;
   final Completer<GoogleMapController> _controller = Completer();
   final _cameraPosition =
-  const CameraPosition(target: LatLng(0.0, 0.0), zoom: defaultCameraZoom);
+      const CameraPosition(target: LatLng(0.0, 0.0), zoom: defaultCameraZoom);
 
   final List<Marker> _markers = [];
   final List<Circle> _places = [];
@@ -113,7 +113,7 @@ class _MapScreenState extends ConsumerState<MapView> {
 
   Widget _permissionFooter(MapViewState state) {
     final locationEnabled =
-    state.hasLocationEnabled ? state.hasLocationServiceEnabled : true;
+        state.hasLocationEnabled ? state.hasLocationServiceEnabled : true;
     final (title, subTitle) = _permissionFooterContent(state);
 
     return OnTapScale(
@@ -164,7 +164,7 @@ class _MapScreenState extends ConsumerState<MapView> {
 
   (String, String) _permissionFooterContent(MapViewState state) {
     final locationEnabled =
-    state.hasLocationEnabled ? state.hasLocationServiceEnabled : true;
+        state.hasLocationEnabled ? state.hasLocationServiceEnabled : true;
 
     String title = '';
     String subTitle = '';
@@ -197,7 +197,7 @@ class _MapScreenState extends ConsumerState<MapView> {
     final controller = await _controller.future;
     if (isDarkMode) {
       final style =
-      await rootBundle.loadString('assets/map/map_theme_night.json');
+          await rootBundle.loadString('assets/map/map_theme_night.json');
       controller.setMapStyle(style);
     } else {
       controller.setMapStyle(null);
@@ -206,57 +206,57 @@ class _MapScreenState extends ConsumerState<MapView> {
 
   void _observeMapCameraPosition() {
     ref.listen(mapViewStateProvider.select((state) => state.defaultPosition),
-            (previous, next) async {
-          if (next != null) {
-            final GoogleMapController controller = await _controller.future;
-            await controller.animateCamera(CameraUpdate.newCameraPosition(next));
-          }
-        });
+        (previous, next) async {
+      if (next != null) {
+        final GoogleMapController controller = await _controller.future;
+        await controller.animateCamera(CameraUpdate.newCameraPosition(next));
+      }
+    });
   }
 
   void _observeNavigation() {
     ref.listen(
         mapViewStateProvider.select((state) => state.spaceInvitationCode),
-            (_, next) {
-          if (next.isNotEmpty) {
-            AppRoute.inviteCode(
+        (_, next) {
+      if (next.isNotEmpty) {
+        AppRoute.inviteCode(
                 code: next, spaceName: widget.space?.space.name ?? '')
-                .push(context);
-          }
-        });
+            .push(context);
+      }
+    });
   }
 
   void _observeMarkerChange() {
     ref.listen(mapViewStateProvider.select((state) => state.markers),
-            (_, next) {
-          if (next.isNotEmpty) {
-            for (final item in next) {
-              _buildMarker(item);
-            }
-          }
-        });
+        (_, next) {
+      if (next.isNotEmpty) {
+        for (final item in next) {
+          _buildMarker(item);
+        }
+      }
+    });
   }
 
   void _observeShowEnableLocationPrompt(BuildContext context) {
     ref.listen(mapViewStateProvider.select((state) => state.showLocationDialog),
-            (_, next) {
-          if (next != null) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return PermissionDialog(
-                  title: context.l10n.enable_location_service_title,
-                  subTitle1: context.l10n.enable_location_service_message,
-                  onDismiss: () {},
-                  goToSettings: () {
-                    openAppSettings();
-                    Navigator.of(context).pop();
-                  },
-                );
+        (_, next) {
+      if (next != null) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return PermissionDialog(
+              title: context.l10n.enable_location_service_title,
+              subTitle1: context.l10n.enable_location_service_message,
+              onDismiss: () {},
+              goToSettings: () {
+                openAppSettings();
+                Navigator.of(context).pop();
               },
             );
-          }
-        });
+          },
+        );
+      }
+    });
   }
 
   void _observeMemberPlace(BuildContext context) {
@@ -265,23 +265,22 @@ class _MapScreenState extends ConsumerState<MapView> {
         _places.clear();
         _markers
             .removeWhere((marker) => marker.markerId.value.startsWith('place'));
-
-        if (next.isNotEmpty) {
-          for (final place in next) {
-            final latLng = LatLng(place.latitude, place.longitude);
-            _placeMarker(place.id, latLng);
-
-            _places.add(Circle(
-              circleId: CircleId(place.id),
-              fillColor: context.colorScheme.primary.withOpacity(0.4),
-              strokeColor: context.colorScheme.primary.withOpacity(0.6),
-              strokeWidth: 1,
-              center: latLng,
-              radius: place.radius,
-            ));
-          }
-        }
       });
+      if (next.isNotEmpty) {
+        for (final place in next) {
+          final latLng = LatLng(place.latitude, place.longitude);
+          _placeMarker(place.id, latLng);
+
+          _places.add(Circle(
+            circleId: CircleId(place.id),
+            fillColor: context.colorScheme.primary.withOpacity(0.4),
+            strokeColor: context.colorScheme.primary.withOpacity(0.6),
+            strokeWidth: 1,
+            center: latLng,
+            radius: place.radius,
+          ));
+        }
+      }
     });
   }
 
@@ -312,13 +311,13 @@ class _MapScreenState extends ConsumerState<MapView> {
   }
 
   Future<BitmapDescriptor> _mapMarker(
-      bool isSelected,
-      String userName,
-      ui.Image? imageUrl,
-      Color markerBgColor,
-      Color iconBgColor,
-      TextStyle textStyle,
-      ) async {
+    bool isSelected,
+    String userName,
+    ui.Image? imageUrl,
+    Color markerBgColor,
+    Color iconBgColor,
+    TextStyle textStyle,
+  ) async {
     if (imageUrl != null) {
       return await _userImageMarker(userName, imageUrl, isSelected,
           markerBgColor, iconBgColor, textStyle);
@@ -329,12 +328,12 @@ class _MapScreenState extends ConsumerState<MapView> {
   }
 
   Future<BitmapDescriptor> _userCharMarker(
-      bool isSelected,
-      String userName,
-      Color markerBgColor,
-      Color iconBgColor,
-      TextStyle textStyle,
-      ) async {
+    bool isSelected,
+    String userName,
+    Color markerBgColor,
+    Color iconBgColor,
+    TextStyle textStyle,
+  ) async {
     final pictureRecorder = ui.PictureRecorder();
     final canvas = Canvas(pictureRecorder);
 
@@ -356,7 +355,7 @@ class _MapScreenState extends ConsumerState<MapView> {
     final img = await picture.toImage(markerSize.toInt(), markerSize.toInt());
     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
     final bitmapDescriptor =
-    BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
+        BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
 
     return bitmapDescriptor;
   }
@@ -382,13 +381,13 @@ class _MapScreenState extends ConsumerState<MapView> {
   }
 
   Future<BitmapDescriptor> _userImageMarker(
-      String userName,
-      ui.Image uiImage,
-      bool isSelected,
-      Color markerBgColor,
-      Color iconBgColor,
-      TextStyle textStyle,
-      ) async {
+    String userName,
+    ui.Image uiImage,
+    bool isSelected,
+    Color markerBgColor,
+    Color iconBgColor,
+    TextStyle textStyle,
+  ) async {
     // Prepare the canvas to draw the rounded rectangle and the image
     final recorder = ui.PictureRecorder();
     final canvas = ui.Canvas(
@@ -418,11 +417,11 @@ class _MapScreenState extends ConsumerState<MapView> {
     // End recording and create an image from the canvas
     final picture = recorder.endRecording();
     final imgData =
-    await picture.toImage(markerSize.toInt(), markerSize.toInt());
+        await picture.toImage(markerSize.toInt(), markerSize.toInt());
     final data = await imgData.toByteData(format: ui.ImageByteFormat.png);
 
     final bitmapDescriptor =
-    BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
+        BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
 
     return bitmapDescriptor;
   }
