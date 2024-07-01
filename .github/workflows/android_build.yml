@@ -37,7 +37,7 @@ jobs:
           GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
 
         run: |
-          echo $CONFIG_DART_BASE64 | base64 -di > data/lib/config.dart
+          echo $CONFIG_DART_BASE64 | base64 -di > data/config.dart
           cd app
           echo $FIREBASE_OPTIONS_BASE64 | base64 -di > lib/firebase_options.dart
           echo $GOOGLE_SERVICES_JSON_BASE64 | base64 -di > android/app/google-services.json
