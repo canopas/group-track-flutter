@@ -29,4 +29,4 @@ migrate_working_dir/
 build/
 
 # Credentials
-lib/config.dart
+/lib/config.dart
