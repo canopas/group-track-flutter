@@ -109,7 +109,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         final showDateHeader = notifier.showDateHeader(index, message);
         final bool isDifferentSender = index < messages.length - 1 &&
             messages[index + 1].sender_id != message.sender_id;
-        final senderInfo = sender.isNotEmpty
+        final senderInfo = sender.isNotEmpty && sender.length > 2
             ? sender.firstWhere((member) => member.user.id == message.sender_id).user
             : null;
 
@@ -208,7 +208,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   sender: sender,
                   message: message.message,
                   memberCount: memberCount,
-                  isDifferentSender: isDifferentSender,
+                  isDifferentSender: isDifferentSender || showTimeHeader,
                 ),
               ),
             ),
