@@ -117,7 +117,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 child: (state.profileUrl.isEmpty)
                     ? Center(child: Text(
-                    notifier.user?.userNameFirstLetter ?? '',
+                    notifier.user?.firstChar ?? '',
                     style: TextStyle(
                       fontSize: 44,
                       fontWeight: FontWeight.bold,
