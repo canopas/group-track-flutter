@@ -32,7 +32,7 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
   EditPlaceViewNotifier(this._currentUser, this.placeService, this.spaceService)
       : super(const EditPlaceState());
 
-  void loadDate(ApiPlace place) async {
+  void loadData(ApiPlace place) async {
     if (state.loading) return;
     try {
       state = state.copyWith(loading: true);
@@ -44,8 +44,10 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
       final membersInfo = spaceInfo?.members
           .where((member) => member.user.id != _currentUser.id)
           .toList();
+
       _place = place;
       _setting = setting;
+
       state = state.copyWith(
         updatedPlace: place,
         membersInfo: membersInfo ?? [],
@@ -85,6 +87,18 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
     enableSaveBtn();
   }
 
+  void onPlaceRadiusChanged(double value) {
+    if (state.updatedPlace == null) return;
+    final updatePlace = state.updatedPlace?.copyWith(radius: value);
+    state = state.copyWith(updatedPlace: updatePlace,radius: value);
+    enableSaveBtn();
+  }
+
+  void onPlaceNameChanged(String value) {
+    final updatedPlace = state.updatedPlace?.copyWith(name: value);
+    state = state.copyWith(updatedPlace: updatedPlace);
+  }
+
   void onToggleArrives(String userId, bool arrives) {
     final arrivesList =
         List<String>.from(state.updatedSetting?.arrival_alert_for ?? []);
@@ -101,11 +115,6 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
     enableSaveBtn();
   }
 
-  void onPlaceNameChanged(String value) {
-    final updatedPlace = state.updatedPlace?.copyWith(name: value);
-    state = state.copyWith(updatedPlace: updatedPlace);
-  }
-
   void onToggleLeaves(String userId, bool leaves) {
     final leaveList =
         List<String>.from(state.updatedSetting?.leave_alert_for ?? []);
@@ -119,13 +128,6 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
           state.updatedSetting?.copyWith(leave_alert_for: leaveList);
       state = state.copyWith(updatedSetting: updatedSettings);
     }
-  }
-
-  void onPlaceRadiusChanged(double value) {
-    if (state.updatedPlace == null) return;
-    final updatePlace = state.updatedPlace?.copyWith(radius: value);
-    state = state.copyWith(updatedPlace: updatePlace,radius: value);
-    enableSaveBtn();
   }
 
   void enableSaveBtn() {

@@ -51,7 +51,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
 
     runPostFrame(() {
       notifier = ref.watch(editPlaceViewStateProvider.notifier);
-      notifier.loadDate(widget.place);
+      notifier.loadData(widget.place);
     });
   }
 
@@ -207,7 +207,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
                 .copyWith(color: context.colorScheme.textDisabled),
           ),
           const SizedBox(height: 16),
-          _searchTextField(place.name, Icons.bookmark, state.isAdmin),
+          _placeTextField(place.name, Icons.bookmark, state.isAdmin),
           const SizedBox(height: 16),
           _placeAddressView(address),
           const SizedBox(height: 8),
@@ -217,7 +217,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
     );
   }
 
-  Widget _searchTextField(String placeName, IconData iconData, bool isAdmin) {
+  Widget _placeTextField(String placeName, IconData iconData, bool isAdmin) {
     return Column(
       children: [
         TextField(
