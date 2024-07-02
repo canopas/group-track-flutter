@@ -82,6 +82,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         if (state.showMemberSelectionView)
           _memberSelectionView(context, state),
         Expanded(child: _chatList(context, state.messages, state.sender, state.loadingMessages, state.threadId)),
+        const SizedBox(height: 24),
         _textField(context, state),
       ],
     );
@@ -364,7 +365,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      'All',
+                      context.l10n.common_all,
                       style: AppTextStyle.subtitle2
                           .copyWith(color: context.colorScheme.primary),
                     ),
@@ -454,7 +455,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 borderRadius: 24,
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                hintText: 'Type message',
+                hintText: context.l10n.chat_type_message_hint_text,
                 hintStyle: AppTextStyle.subtitle2
                     .copyWith(color: context.colorScheme.textDisabled),
               ),

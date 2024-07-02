@@ -7,6 +7,7 @@
   "@_COMMON": {
   },
   "common_get_started": "Get Started",
+  "common_all": "All",
   "common_next": "Next",
   "common_yes": "Yes",
   "common_cancel": "Cancel",
@@ -131,6 +132,7 @@
   },
 
   "chat_start_new_chat_title": "Start new chat",
+  "chat_type_message_hint_text": "Type message",
 
   "edit_profile_title": "Edit profile",
   "edit_profile_first_name_title": "First name",
