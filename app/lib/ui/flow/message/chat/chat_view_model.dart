@@ -146,6 +146,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 
       final threadId = await messageService.createThread(spaceId, currentUser?.id ?? '', threadMembersIds ?? []);
 
+      if (state.threadId == threadId) return;
+
       if (threadId.isNotEmpty) {
         sendMessage(threadId, message);
         getCreatedThread(threadId);
@@ -196,7 +198,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
         listenThread(matchedThread.thread.id);
         getThreadMembers(matchedThread.thread);
         formatMemberNames(matchedThread.members);
-        state = state.copyWith(threadId: matchedThread.thread.id, threadInfo: matchedThread);
+        state = state.copyWith(threadId: matchedThread.thread.id, threadInfo: matchedThread, sender: matchedThread.members);
       }
     } else {
       state = state.copyWith(sender: [], messages: [], isNewThread: true);

@@ -287,7 +287,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
                 child: Center(
                   child: Text(count > 0 ? context.l10n.message_member_count_text(count) : '',
                       style: AppTextStyle.subtitle2
-                          .copyWith(color: context.colorScheme.textPrimary)),
+                          .copyWith(color: context.colorScheme.textPrimaryDark)),
                 ),
               )
             : profileImageUrl.isNotEmpty
@@ -295,7 +295,12 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
                     imageUrl: profileImageUrl,
                     placeholder: (context, url) => ClipRRect(
                       borderRadius: BorderRadius.circular(size / 2),
-                      child: Icon(Icons.perm_identity_rounded, color: context.colorScheme.textPrimaryDark),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: context.colorScheme.containerLowOnSurface,
+                          borderRadius: BorderRadius.circular(size / 2),
+                        ),
+                          child: Icon(Icons.perm_identity_rounded, color: context.colorScheme.textPrimaryDark)),
                     ),
                     fit: BoxFit.cover,
                   )

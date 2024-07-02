@@ -74,6 +74,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   Widget _body(BuildContext context, ChatViewState state) {
+    if ((widget.threadInfo != null) && state.sender.isEmpty) {
+      return const Center(child: AppProgressIndicator());
+    }
     return Column(
       children: [
         if (state.showMemberSelectionView)
@@ -205,6 +208,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   sender: sender,
                   message: message.message,
                   memberCount: memberCount,
+                  isDifferentSender: isDifferentSender,
                 ),
               ),
             ),
@@ -220,12 +224,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     required ApiUser? sender,
     required String message,
     required int memberCount,
+    required bool isDifferentSender,
   }) {
     return IntrinsicWidth(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (isSender && memberCount > 2) ...[
+          if (isSender && memberCount > 2 && isDifferentSender) ...[
             Text(
               sender?.first_name ?? '',
               style: AppTextStyle.caption.copyWith(
@@ -237,7 +242,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           Text(
             message,
             style: AppTextStyle.subtitle3.copyWith(
-              color: context.colorScheme.textPrimary,
+              color: isSender ? context.colorScheme.textPrimary : context.colorScheme.textPrimaryDark,
             ),
             maxLines: null,
             textAlign: isSender ? TextAlign.start : TextAlign.end,
@@ -417,8 +422,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 color: context.colorScheme.primary,
                 child: Center(
                   child: Text(firstLetter,
-                      style: AppTextStyle.header3
-                          .copyWith(color: context.colorScheme.textPrimary)),
+                      style: AppTextStyle.header4
+                          .copyWith(color: context.colorScheme.textPrimaryDark)),
                 ),
               ),
       ),
@@ -458,7 +463,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           const SizedBox(width: 8),
           IconPrimaryButton(
             onTap: () {
-              if (widget.threadInfo != null) {
+              if (state.threadId.isNotEmpty) {
                 notifier.sendMessage(state.threadId, state.message.text);
               } else {
                 notifier.createNewThread(widget.spaceInfo.space.id, state.message.text);
