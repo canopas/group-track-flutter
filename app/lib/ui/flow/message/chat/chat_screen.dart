@@ -255,7 +255,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget _dateHeader(String date) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.only(bottom: 8, top: 24),
         child: Text(
           date,
           style: AppTextStyle.body1.copyWith(
