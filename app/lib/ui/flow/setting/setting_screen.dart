@@ -64,7 +64,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
 
   Widget _profileView(BuildContext context, SettingViewState state) {
     final profileImageUrl = state.currentUser?.profile_image ?? '';
-    final firstLetter = state.currentUser?.userNameFirstLetter ?? '';
+    final firstLetter = state.currentUser?.firstChar ?? '';
 
     return GestureDetector(
       onTap: () {

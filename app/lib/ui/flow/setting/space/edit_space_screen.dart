@@ -183,7 +183,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
   Widget _locationSharingItem(BuildContext context, ApiUserInfo member,
       {bool isCurrentUser = false, bool locationEnabled = false}) {
     final profileImageUrl = member.user.profile_image ?? '';
-    final firstLetter = member.user.userNameFirstLetter;
+    final firstLetter = member.user.firstChar;
     return Row(
       children: [
         ProfileImage(profileImageUrl: profileImageUrl, firstLetter: firstLetter, size: 40),

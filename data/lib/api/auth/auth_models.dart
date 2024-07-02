@@ -47,7 +47,7 @@ class ApiUser with _$ApiUser {
     return '$first_name $last_name';
   }
 
-  String get userNameFirstLetter {
+  String get firstChar {
     return first_name!.isNotEmpty ? first_name![0].toUpperCase() : '';
   }
 }

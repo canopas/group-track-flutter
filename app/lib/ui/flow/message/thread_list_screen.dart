@@ -274,7 +274,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
   Widget _profileImageView(BuildContext context, ApiUserInfo member,
       {required double size, bool isMoreMember = false, int count = 0}) {
     final profileImageUrl = member.user.profile_image ?? '';
-    final firstLetter = member.user.userNameFirstLetter;
+    final firstLetter = member.user.firstChar;
 
     return SizedBox(
       width: size,

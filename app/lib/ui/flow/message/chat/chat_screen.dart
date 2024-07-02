@@ -170,7 +170,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             if (isSender && (isDifferentSender || showTimeHeader) && memberCount > 2) ...[
               ProfileImage(
                   profileImageUrl: sender?.profile_image ?? '',
-                  firstLetter: sender!.userNameFirstLetter,
+                  firstLetter: sender!.firstChar,
                   size: 24,
                 style: AppTextStyle.caption.copyWith(
                   color: context.colorScheme.textPrimaryDark,
@@ -405,7 +405,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   Widget _profileImageView(BuildContext context, ApiUser user) {
     final profileImageUrl = user.profile_image ?? '';
-    final firstLetter = user.userNameFirstLetter;
+    final firstLetter = user.firstChar;
 
     return SizedBox(
       width: 40,
