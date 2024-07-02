@@ -46,34 +46,38 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(choosePlaceViewStateProvider);
-
     _observeError();
     _observePopToPlacesListScreen();
 
     return AppPage(
       title: context.l10n.choose_place_screen_title,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _searchTextField(),
-            const SizedBox(height: 40),
-            Text(
-              context.l10n.choose_place_suggestion_text,
-              style: AppTextStyle.caption
-                  .copyWith(color: context.colorScheme.textDisabled),
-            ),
-            const SizedBox(height: 16),
-            _suggestionsView(state.suggestions),
-            const Spacer(),
-            Align(
-              alignment: Alignment.center,
-              child: _addPlaceButtonView(state),
-            )
-          ],
-        ),
+      body: _body(),
+    );
+  }
+
+  Widget _body() {
+    final state = ref.watch(choosePlaceViewStateProvider);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _searchTextField(),
+          const SizedBox(height: 40),
+          Text(
+            context.l10n.choose_place_suggestion_text,
+            style: AppTextStyle.caption
+                .copyWith(color: context.colorScheme.textDisabled),
+          ),
+          const SizedBox(height: 16),
+          _suggestionsPlaceView(state.suggestions),
+          const Spacer(),
+          Align(
+            alignment: Alignment.center,
+            child: _addPlaceButtonView(state),
+          )
+        ],
       ),
     );
   }
@@ -117,7 +121,7 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
     );
   }
 
-  Widget _suggestionsView(List<String>? suggestions) {
+  Widget _suggestionsPlaceView(List<String>? suggestions) {
     if (suggestions == null) return Container();
     return Wrap(
       alignment: WrapAlignment.start,
@@ -179,7 +183,7 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
         choosePlaceViewStateProvider.select((state) => state.popToPlaceList),
         (_, next) {
       AppRoute.popTo(context, AppRoute.pathPlacesList);
-      _showPlaceAddedPrompt(
+      _showPlaceAddedDialog(
         context,
         widget.location.latitude,
         widget.location.longitude,
@@ -188,7 +192,7 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
     });
   }
 
-  void _showPlaceAddedPrompt(
+  void _showPlaceAddedDialog(
     BuildContext context,
     double lat,
     double lng,

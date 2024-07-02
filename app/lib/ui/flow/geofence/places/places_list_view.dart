@@ -60,7 +60,7 @@ class _PlacesViewState extends ConsumerState<PlacesListView> {
             itemCount: placeLength + state.suggestions.length,
             itemBuilder: (_, index) {
               if (index < state.places.length) {
-                return _placesListItem(state, state.places[index]);
+                return _memberPlaceItem(state, state.places[index]);
               }
 
               if (index == state.places.length && state.places.isNotEmpty) {
@@ -90,45 +90,7 @@ class _PlacesViewState extends ConsumerState<PlacesListView> {
     );
   }
 
-  Widget _addPlaceButton() {
-    return OnTapScale(
-      onTap: () {
-        AppRoute.addNewPlace(widget.spaceId).push(context);
-      },
-      child: Container(
-        margin: EdgeInsets.only(
-          right: 16,
-          bottom: context.mediaQueryPadding.bottom + 16,
-        ),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: context.colorScheme.primary,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SvgPicture.asset(
-              Assets.images.icPlusIcon,
-              colorFilter: ColorFilter.mode(
-                context.colorScheme.onPrimary,
-                BlendMode.srcATop,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              context.l10n.places_list_add_place_btn_text,
-              style: AppTextStyle.button.copyWith(
-                color: context.colorScheme.onPrimary,
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _placesListItem(PlacesListState state, ApiPlace item) {
+  Widget _memberPlaceItem(PlacesListState state, ApiPlace item) {
     final icon = _getPlacesIcon(item.name);
     final isDeleting =
         state.deletingPlaces && state.placesToDelete?.id == item.id;
@@ -201,6 +163,44 @@ class _PlacesViewState extends ConsumerState<PlacesListView> {
                   ),
                 ),
         ],
+      ),
+    );
+  }
+
+  Widget _addPlaceButton() {
+    return OnTapScale(
+      onTap: () {
+        AppRoute.addNewPlace(widget.spaceId).push(context);
+      },
+      child: Container(
+        margin: EdgeInsets.only(
+          right: 16,
+          bottom: context.mediaQueryPadding.bottom + 16,
+        ),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: context.colorScheme.primary,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SvgPicture.asset(
+              Assets.images.icPlusIcon,
+              colorFilter: ColorFilter.mode(
+                context.colorScheme.onPrimary,
+                BlendMode.srcATop,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              context.l10n.places_list_add_place_btn_text,
+              style: AppTextStyle.button.copyWith(
+                color: context.colorScheme.onPrimary,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

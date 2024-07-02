@@ -84,7 +84,9 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapView> {
         ),
         Center(child: _locateMarkerView()),
         Align(
-            alignment: Alignment.bottomRight, child: _locateIconButton(context))
+          alignment: Alignment.bottomRight,
+          child: _currentLocationIconView(context),
+        )
       ]),
     );
   }
@@ -110,7 +112,7 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapView> {
     );
   }
 
-  Widget _locateIconButton(BuildContext context) {
+  Widget _currentLocationIconView(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: IconPrimaryButton(

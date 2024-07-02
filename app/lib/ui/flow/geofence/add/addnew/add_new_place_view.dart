@@ -29,42 +29,47 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
   @override
   Widget build(BuildContext context) {
     notifier = ref.watch(addNewPlaceStateProvider.notifier);
-    final state = ref.watch(addNewPlaceStateProvider);
 
     _observeError();
 
     return AppPage(
       title: context.l10n.add_new_place_title,
-      body: Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          bottom: context.mediaQueryPadding.bottom + 24,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _searchTextField(),
-              const SizedBox(height: 40),
-              _locateOnMapView(),
-              const SizedBox(height: 40),
-              Text(
-                context.l10n.add_new_place_suggestion_text,
-                style: AppTextStyle.caption.copyWith(
-                  color: context.colorScheme.textDisabled,
-                ),
+      body: _body(),
+    );
+  }
+
+  Widget _body() {
+    final state = ref.watch(addNewPlaceStateProvider);
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        bottom: context.mediaQueryPadding.bottom + 24,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _searchTextField(),
+            const SizedBox(height: 40),
+            _locateOnMapView(),
+            const SizedBox(height: 40),
+            Text(
+              context.l10n.add_new_place_suggestion_text,
+              style: AppTextStyle.caption.copyWith(
+                color: context.colorScheme.textDisabled,
               ),
-              const SizedBox(height: 16),
-              ...state.places.map((place) {
-                final isLast =
-                    state.places.indexOf(place) == state.places.length - 1;
-                return _placesItemView(place, isLast);
-              }),
-              const SizedBox(height: 24),
-              state.loading ? const AppProgressIndicator() : Container(),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16),
+            ...state.places.map((place) {
+              final isLast =
+                  state.places.indexOf(place) == state.places.length - 1;
+              return _suggestedPlaceItemView(place, isLast);
+            }),
+            const SizedBox(height: 24),
+            state.loading ? const AppProgressIndicator() : Container(),
+          ],
         ),
       ),
     );
@@ -143,7 +148,7 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
     );
   }
 
-  Widget _placesItemView(ApiNearbyPlace place, bool isLast) {
+  Widget _suggestedPlaceItemView(ApiNearbyPlace place, bool isLast) {
     return Column(
       children: [
         Padding(

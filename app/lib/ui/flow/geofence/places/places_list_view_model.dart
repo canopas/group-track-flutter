@@ -75,7 +75,7 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
   }
 
   void dismissDeletePlaceDialog() {
-    state = state.copyWith(deletingPlaces: false, placesToDelete: null);
+    state = state.copyWith(placesToDelete: null);
   }
 
   void deletePlace() async {
