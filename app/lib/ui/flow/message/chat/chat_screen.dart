@@ -471,13 +471,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               }
             },
             icon: Icon(Icons.arrow_forward_rounded,
-                color: state.allowSend
+                color: state.allowSend && state.message.text.isNotEmpty
                     ? context.colorScheme.textPrimaryDark
                     : context.colorScheme.textDisabled),
             enabled: state.allowSend,
             radius: 23,
             size: 46,
-            bgColor: state.allowSend
+            bgColor: state.allowSend && state.message.text.isNotEmpty
                 ? context.colorScheme.primary
                 : context.colorScheme.containerLowOnSurface,
           )
