@@ -20,7 +20,7 @@ import 'map_view_model.dart';
 const defaultCameraZoom = 15.0;
 const defaultCameraZoomForSelectedUser = 17.0;
 const markerSize = 100.0;
-const placeSize = 80.0;
+const placeSize = 80;
 
 class MapView extends ConsumerStatefulWidget {
   final SpaceInfo? space;
@@ -33,20 +33,21 @@ class MapView extends ConsumerStatefulWidget {
 
 class _MapScreenState extends ConsumerState<MapView> {
   late MapViewNotifier notifier;
-  final Completer<GoogleMapController> _controller = Completer();
+  GoogleMapController? _controller;
   final _cameraPosition =
       const CameraPosition(target: LatLng(0.0, 0.0), zoom: defaultCameraZoom);
+  String? _mapStyle;
 
-  final List<Marker> _markers = [];
-  final List<Circle> _places = [];
+  List<Marker> _markers = [];
+  List<Circle> _places = [];
 
   @override
   void didUpdateWidget(covariant MapView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.space?.space.id != widget.space?.space.id) {
       setState(() {
-        _markers.clear();
-        _places.clear();
+        _markers = [];
+        _places = [];
       });
     }
   }
@@ -69,6 +70,7 @@ class _MapScreenState extends ConsumerState<MapView> {
           child: GoogleMap(
             onMapCreated: _onMapCreated,
             initialCameraPosition: _cameraPosition,
+            style: _mapStyle,
             compassEnabled: false,
             zoomControlsEnabled: false,
             tiltGesturesEnabled: false,
@@ -195,26 +197,26 @@ class _MapScreenState extends ConsumerState<MapView> {
   }
 
   void _onMapCreated(GoogleMapController controller) async {
-    _controller.complete(controller);
+    _controller = controller;
   }
 
   void _updateMapStyle(bool isDarkMode) async {
-    final controller = await _controller.future;
-    if (isDarkMode) {
-      final style =
-          await rootBundle.loadString('assets/map/map_theme_night.json');
-      controller.setMapStyle(style);
-    } else {
-      controller.setMapStyle(null);
-    }
+    final style =
+        await rootBundle.loadString('assets/map/map_theme_night.json');
+    setState(() {
+      if (isDarkMode) {
+        _mapStyle = style;
+      } else {
+        _mapStyle = null;
+      }
+    });
   }
 
   void _observeMapCameraPosition() {
     ref.listen(mapViewStateProvider.select((state) => state.defaultPosition),
         (previous, next) async {
       if (next != null) {
-        final GoogleMapController controller = await _controller.future;
-        await controller.animateCamera(CameraUpdate.newCameraPosition(next));
+        await _controller?.animateCamera(CameraUpdate.newCameraPosition(next));
       }
     });
   }
@@ -233,7 +235,10 @@ class _MapScreenState extends ConsumerState<MapView> {
 
   void _observeMarkerChange() {
     ref.listen(mapViewStateProvider.select((state) => state.markers),
-        (_, next) {
+        (previous, next) {
+      if (previous?.length != next.length) {
+        _clearNonPlaceMarkers();
+      }
       if (next.isNotEmpty) {
         for (final item in next) {
           _buildMarker(item);
@@ -261,32 +266,6 @@ class _MapScreenState extends ConsumerState<MapView> {
           },
         );
       }
-    });
-  }
-
-  void _observeMemberPlace(BuildContext context) {
-    ref.listen(mapViewStateProvider.select((state) => state.places), (_, next) {
-      setState(() {
-        _places.clear();
-        _markers
-            .removeWhere((marker) => marker.markerId.value.startsWith('place'));
-
-        if (next.isNotEmpty) {
-          for (final place in next) {
-            final latLng = LatLng(place.latitude, place.longitude);
-            _placeMarker(place.id, latLng);
-
-            _places.add(Circle(
-              circleId: CircleId(place.id),
-              fillColor: context.colorScheme.primary.withOpacity(0.4),
-              strokeColor: context.colorScheme.primary.withOpacity(0.6),
-              strokeWidth: 1,
-              center: latLng,
-              radius: place.radius,
-            ));
-          }
-        }
-      });
     });
   }
 
@@ -432,53 +411,80 @@ class _MapScreenState extends ConsumerState<MapView> {
     return bitmapDescriptor;
   }
 
-  void _placeMarker(String placeId, LatLng latLng) async {
-    rootBundle
-        .load('assets/images/ic_place_marker_icon.png')
-        .then((ByteData data) {
-      ui
-          .instantiateImageCodec(data.buffer.asUint8List())
-          .then((ui.Codec codec) {
-        codec.getNextFrame().then((ui.FrameInfo fi) {
-          _drawPlaceMarker(fi, placeId, latLng);
-        });
-      });
+  void _observeMemberPlace(BuildContext context) {
+    ref.listen(mapViewStateProvider.select((state) => state.places),
+        (previous, next) {
+      if (previous?.length != next.length) {
+        _clearPlacesAndPlaceMarkers();
+      }
+
+      if (next.isNotEmpty) {
+        for (final place in next) {
+          final latLng = LatLng(place.latitude, place.longitude);
+
+          _generatePlaceMarker(place.id, latLng);
+          setState(() {
+            _places.add(Circle(
+              circleId: CircleId(place.id),
+              fillColor: context.colorScheme.primary.withOpacity(0.4),
+              strokeColor: context.colorScheme.primary.withOpacity(0.6),
+              strokeWidth: 1,
+              center: latLng,
+              radius: place.radius,
+            ));
+          });
+        }
+      }
     });
   }
 
-  void _drawPlaceMarker(ui.FrameInfo frameInfo, String placeId, LatLng latLng) {
-    final pictureRecorder = ui.PictureRecorder();
-    final canvas = Canvas(pictureRecorder);
-    final paint = Paint()..color = Colors.white;
+  void _generatePlaceMarker(String id, LatLng latLng) async {
+    final icon =
+        await _createCustomIcon('assets/images/ic_place_marker_icon.png');
 
-    canvas.drawCircle(
-        const Offset(placeSize / 2, placeSize / 2), placeSize / 2, paint);
+    setState(() {
+      _markers.add(
+        Marker(
+          markerId: MarkerId("place_$id"),
+          position: latLng,
+          anchor: const Offset(0.5, 0.5),
+          zIndex: 1,
+          icon: icon,
+        ),
+      );
+    });
+  }
 
-    paintImage(
-      canvas: canvas,
-      image: frameInfo.image,
-      rect: const Rect.fromLTWH(0, 0, placeSize, placeSize),
-      fit: BoxFit.contain,
+  Future<BitmapDescriptor> _createCustomIcon(String assetPath) async {
+    final data = await rootBundle.load(assetPath);
+    final bytes = data.buffer.asUint8List();
+
+    final codec = await ui.instantiateImageCodec(
+      bytes,
+      targetWidth: placeSize,
+      targetHeight: placeSize,
     );
+    final frameInfo = await codec.getNextFrame();
 
-    pictureRecorder
-        .endRecording()
-        .toImage(placeSize.toInt(), placeSize.toInt())
-        .then((ui.Image markerAsImage) {
-      markerAsImage
-          .toByteData(format: ui.ImageByteFormat.png)
-          .then((ByteData? byteData) {
-        if (byteData != null) {
-          final Uint8List uint8List = byteData.buffer.asUint8List();
+    final byteData =
+        await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
+    final resizedBytes = byteData!.buffer.asUint8List();
 
-          _markers.add(Marker(
-            markerId: MarkerId('place-$placeId'),
-            position: latLng,
-            anchor: const Offset(0.5, 0.5),
-            icon: BitmapDescriptor.fromBytes(uint8List),
-          ));
-        }
-      });
+    return BitmapDescriptor.fromBytes(resizedBytes);
+  }
+
+  void _clearPlacesAndPlaceMarkers() {
+    setState(() {
+      _places = [];
+      _markers
+          .removeWhere((marker) => marker.markerId.value.startsWith('place'));
+    });
+  }
+
+  void _clearNonPlaceMarkers() {
+    setState(() {
+      _markers
+          .removeWhere((marker) => !marker.markerId.value.startsWith('place'));
     });
   }
 }

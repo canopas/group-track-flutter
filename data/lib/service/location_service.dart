@@ -27,14 +27,16 @@ class LocationService {
           toFirestore: (location, _) => location.toJson());
 
   Stream<List<ApiLocation>?> getCurrentLocationStream(String userId) {
-    return Stream.fromFuture(_locationRef(userId)
+    return _locationRef(userId)
         .where("user_id", isEqualTo: userId)
-        .get()
-        .then((snapshot) {
+        .orderBy('created_at', descending: true)
+        .limit(1)
+        .snapshots()
+        .map((snapshot) {
       if (snapshot.docs.isNotEmpty) {
         return snapshot.docs.map((doc) => doc.data() as ApiLocation).toList();
       }
       return null;
-    }));
+    });
   }
 }

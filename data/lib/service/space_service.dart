@@ -5,6 +5,7 @@ import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/api_space_service.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../api/auth/auth_models.dart';
 import '../storage/app_preferences.dart';
@@ -212,31 +213,36 @@ class SpaceService {
   }
 
   Stream<List<ApiUserInfo>> getMemberWithLocation(String spaceId) {
-    return Stream.fromFuture(Future(() async {
-      List<ApiUserInfo> userInfo = [];
-      final members = await spaceService.getMembersBySpaceId(spaceId);
+    if (spaceId.isEmpty) {
+      return Stream.value([]);
+    }
 
-      if (members.isEmpty) return [];
-
-      for (final member in members) {
-        final userStream = userService.getUserStream(member.user_id);
-        final sessionStream = userService.getUserSessionStream(member.user_id);
-        final user = await userStream.first;
-        final locationStream =
-            locationService.getCurrentLocationStream(user!.id);
-
-        final session = await sessionStream.first;
-        final location = await locationStream.first;
-
-        userInfo.add(ApiUserInfo(
-          user: user,
-          location: location?.firstOrNull,
-          isLocationEnabled: member.location_enabled,
-          session: session,
-        ));
+    return spaceService
+        .getStreamSpaceMemberBySpaceId(spaceId)
+        .switchMap((members) {
+      if (members.isEmpty) {
+        return Stream.value([]);
       }
 
-      return userInfo;
-    }));
+      List<Stream<ApiUserInfo>> userInfoStreams = members.map((member) {
+        return CombineLatestStream.combine4(
+          userService.getUserStream(member.user_id),
+          locationService.getCurrentLocationStream(member.user_id),
+          Stream.value(member.location_enabled),
+          userService.getUserSessionStream(member.user_id),
+          (user, location, isLocationEnabled, session) {
+            return ApiUserInfo(
+              user: user!,
+              location: location?.firstOrNull,
+              isLocationEnabled: isLocationEnabled,
+              session: session,
+            );
+          },
+        );
+      }).toList();
+
+      return CombineLatestStream.list(userInfoStreams)
+          .map((userInfoList) => userInfoList.toList());
+    });
   }
 }

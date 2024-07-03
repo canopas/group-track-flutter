@@ -123,7 +123,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
     return Visibility(
       visible: visibility,
       child: IconPrimaryButton(
-        backgroundColor: background,
+        bgColor: background,
         onTap: () => onTap(),
         icon: SvgPicture.asset(
           icon,

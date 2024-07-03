@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:data/api/message/message_models.dart';
+import 'package:data/api/space/space_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -5,6 +9,8 @@ import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_
 import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_view.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_view.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view.dart';
+import 'package:yourspace_flutter/ui/flow/message/chat/chat_screen.dart';
+import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
 import 'package:yourspace_flutter/ui/flow/permission/enable_permission_view.dart';
 import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_support_screen.dart';
@@ -30,6 +36,8 @@ class AppRoute {
   static const pathProfile = '/profile';
   static const pathEditSpace = '/space';
   static const pathContactSupport = '/contact-support';
+  static const pathMessage = '/message';
+  static const pathChat = '/chat';
   static const pathEnablePermission = '/enable-permission';
   static const pathPlacesList = '/places-list';
   static const pathAddNewPlace = '/add-new-place';
@@ -193,6 +201,19 @@ class AppRoute {
     );
   }
 
+  static AppRoute message(SpaceInfo space) {
+    return AppRoute(
+      pathMessage,
+      builder: (_) => ThreadListScreen(spaceInfo: space),
+    );
+  }
+  static AppRoute chat({required SpaceInfo spaceInfo, ThreadInfo? thread, List<ThreadInfo>? threadInfoList}) {
+    return AppRoute(
+      pathMessage,
+      builder: (_) => ChatScreen(spaceInfo: spaceInfo, threadInfo: thread, threadInfoList: threadInfoList),
+    );
+  }
+
   static final routes = [
     GoRoute(
         path: intro.path,
@@ -257,6 +278,14 @@ class AppRoute {
     ),
     GoRoute(
       path: pathContactSupport,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathMessage,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathChat,
       builder: (context, state) => state.widget(context),
     ),
     GoRoute(

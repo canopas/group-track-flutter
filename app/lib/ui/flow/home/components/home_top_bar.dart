@@ -80,54 +80,55 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   Widget _topBar(BuildContext context) {
     return IntrinsicHeight(
       child: Container(
+        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
         color: context.colorScheme.surface,
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    _iconButton(
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  _iconButton(
                       context: context,
                       icon: Assets.images.icSetting,
                       visibility: !expand,
                       onTap: () {
                         AppRoute.setting.push(context);
-                      },
-                    ),
-                    const SizedBox(width: 8),
-                    _spaceSelection(
-                      context: context,
-                      spaceName: widget.selectedSpace?.space.name ??
-                          context.l10n.home_select_space_text,
-                    ),
-                    const SizedBox(width: 8),
-                    _iconButton(
-                      context: context,
-                      icon: Assets.images.icMessage,
-                      visibility: !expand,
-                      onTap: () {},
-                    ),
-                    SizedBox(width: expand ? 0 : 8),
-                    _iconButton(
-                      context: context,
-                      icon: Assets.images.icLocation,
-                      visibility: !expand,
-                      onTap: () {},
-                    ),
-                    _iconButton(
-                      context: context,
-                      icon: Assets.images.icAddMember,
-                      visibility: expand,
-                      color: context.colorScheme.textPrimary,
-                      onTap: () => widget.onAddMemberTap(),
-                    ),
-                  ],
-                ),
-                _dropDown(context),
-              ],
-            ),
+                      }),
+                  const SizedBox(width: 8),
+                  _spaceSelection(
+                    context: context,
+                    spaceName: widget.selectedSpace?.space.name ??
+                        context.l10n.home_select_space_text,
+                  ),
+                  const SizedBox(width: 8),
+                  _iconButton(
+                    context: context,
+                    icon: Assets.images.icMessage,
+                    visibility: !expand,
+                    onTap: () {
+                      if (widget.selectedSpace != null) {
+                        AppRoute.message(widget.selectedSpace!).push(context);
+                      }
+                    },
+                  ),
+                  SizedBox(width: expand ? 0 : 8),
+                  _iconButton(
+                    context: context,
+                    icon: Assets.images.icLocation,
+                    visibility: !expand,
+                    onTap: () {},
+                  ),
+                  _iconButton(
+                    context: context,
+                    icon: Assets.images.icAddMember,
+                    visibility: expand,
+                    color: context.colorScheme.textPrimary,
+                    onTap: () => widget.onAddMemberTap(),
+                  ),
+                ],
+              ),
+              _dropDown(context),
+            ],
           ),
         ),
       ),
@@ -168,9 +169,8 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                         .copyWith(color: context.colorScheme.textPrimary),
                   ),
                 ),
-                const Spacer(),
                 if (widget.fetchingInviteCode ||
-                    (widget.selectedSpace == null && widget.spaces.isNotEmpty)) ...[
+                    (widget.selectedSpace == null && widget.loading)) ...[
                   const AppProgressIndicator(
                       size: AppProgressIndicatorSize.small)
                 ] else ...[
@@ -234,7 +234,11 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
               onSpaceSelected(space);
             },
             child: _spaceListItem(
-                context, space, index, widget.selectedSpace?.space.id == space.space.id),
+              context,
+              space,
+              index,
+              widget.selectedSpace?.space.id == space.space.id,
+            ),
           ),
         );
       }).toList(),
@@ -289,6 +293,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   style: AppTextStyle.subtitle2.copyWith(
                     color: context.colorScheme.textPrimary,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Row(
