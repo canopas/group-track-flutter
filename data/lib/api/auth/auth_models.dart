@@ -51,11 +51,6 @@ class ApiUser with _$ApiUser {
   String get firstChar {
     return first_name!.isNotEmpty ? first_name![0].toUpperCase() : '';
   }
-
-  String get firstChar {
-    final trimmedName = fullName.trim();
-    return trimmedName.isNotEmpty ? trimmedName[0] : '?';
-  }
 }
 
 @freezed
