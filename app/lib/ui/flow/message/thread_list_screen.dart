@@ -107,10 +107,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
               SlidableAction(
                 onPressed: (context) {
                   _showDeleteConfirmation(() {
-                    setState(() {
-                      notifier.deleteThread(thread.thread);
-                      mutableThreads.removeAt(index);
-                    });
+                    notifier.deleteThread(thread.thread);
                   });
                 },
                 backgroundColor: context.colorScheme.alert,

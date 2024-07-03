@@ -103,7 +103,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           return const AppProgressIndicator(size: AppProgressIndicatorSize.small);
         }
         if (index == messages.length - 1) {
-           runPostFrame(() => notifier.onLoadMore(threadId));
+           runPostFrame(() => notifier.onLoadMore(widget.threadInfo == null ? threadId : widget.threadInfo?.thread.id ?? ''));
         }
 
         final message = messages[index];
@@ -189,7 +189,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             ? 0
                             : showTimeHeader
                                 ? 0
-                                : 32
+                                : memberCount > 2
+                                    ? 32
+                                    : 0
                         : 46,
                     right: isSender ? 48 : 0),
                 decoration: BoxDecoration(
@@ -464,8 +466,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           const SizedBox(width: 8),
           IconPrimaryButton(
             onTap: () {
-              if (state.threadId.isNotEmpty) {
-                notifier.sendMessage(state.threadId, state.message.text);
+              if (state.threadInfo != null || widget.threadInfo != null) {
+                notifier.sendMessage(state.threadId.isEmpty ? widget.threadInfo?.thread.id  ?? '' : state.threadId, state.message.text);
               } else {
                 notifier.createNewThread(widget.spaceInfo.space.id, state.message.text);
               }

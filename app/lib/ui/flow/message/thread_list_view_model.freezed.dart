@@ -20,6 +20,7 @@ mixin _$ThreadListViewState {
   bool get isCreating => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
   bool get fetchingInviteCode => throw _privateConstructorUsedError;
+  bool get deleting => throw _privateConstructorUsedError;
   SpaceInfo? get space => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
@@ -45,6 +46,7 @@ abstract class $ThreadListViewStateCopyWith<$Res> {
       bool isCreating,
       bool loading,
       bool fetchingInviteCode,
+      bool deleting,
       SpaceInfo? space,
       String spaceInvitationCode,
       String message,
@@ -73,6 +75,7 @@ class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
     Object? isCreating = null,
     Object? loading = null,
     Object? fetchingInviteCode = null,
+    Object? deleting = null,
     Object? space = freezed,
     Object? spaceInvitationCode = null,
     Object? message = null,
@@ -97,6 +100,10 @@ class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
       fetchingInviteCode: null == fetchingInviteCode
           ? _value.fetchingInviteCode
           : fetchingInviteCode // ignore: cast_nullable_to_non_nullable
+              as bool,
+      deleting: null == deleting
+          ? _value.deleting
+          : deleting // ignore: cast_nullable_to_non_nullable
               as bool,
       space: freezed == space
           ? _value.space
@@ -152,6 +159,7 @@ abstract class _$$ThreadListViewStateImplCopyWith<$Res>
       bool isCreating,
       bool loading,
       bool fetchingInviteCode,
+      bool deleting,
       SpaceInfo? space,
       String spaceInvitationCode,
       String message,
@@ -179,6 +187,7 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
     Object? isCreating = null,
     Object? loading = null,
     Object? fetchingInviteCode = null,
+    Object? deleting = null,
     Object? space = freezed,
     Object? spaceInvitationCode = null,
     Object? message = null,
@@ -203,6 +212,10 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
       fetchingInviteCode: null == fetchingInviteCode
           ? _value.fetchingInviteCode
           : fetchingInviteCode // ignore: cast_nullable_to_non_nullable
+              as bool,
+      deleting: null == deleting
+          ? _value.deleting
+          : deleting // ignore: cast_nullable_to_non_nullable
               as bool,
       space: freezed == space
           ? _value.space
@@ -241,6 +254,7 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
       this.isCreating = false,
       this.loading = false,
       this.fetchingInviteCode = false,
+      this.deleting = false,
       this.space,
       this.spaceInvitationCode = '',
       this.message = '',
@@ -264,6 +278,9 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
   @override
   @JsonKey()
   final bool fetchingInviteCode;
+  @override
+  @JsonKey()
+  final bool deleting;
   @override
   final SpaceInfo? space;
   @override
@@ -304,7 +321,7 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
 
   @override
   String toString() {
-    return 'ThreadListViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, spaceList: $spaceList, threadInfo: $threadInfo, threadMessages: $threadMessages, error: $error)';
+    return 'ThreadListViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, deleting: $deleting, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, spaceList: $spaceList, threadInfo: $threadInfo, threadMessages: $threadMessages, error: $error)';
   }
 
   @override
@@ -319,6 +336,8 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.fetchingInviteCode, fetchingInviteCode) ||
                 other.fetchingInviteCode == fetchingInviteCode) &&
+            (identical(other.deleting, deleting) ||
+                other.deleting == deleting) &&
             (identical(other.space, space) || other.space == space) &&
             (identical(other.spaceInvitationCode, spaceInvitationCode) ||
                 other.spaceInvitationCode == spaceInvitationCode) &&
@@ -339,6 +358,7 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
       isCreating,
       loading,
       fetchingInviteCode,
+      deleting,
       space,
       spaceInvitationCode,
       message,
@@ -361,6 +381,7 @@ abstract class _ThreadListViewState implements ThreadListViewState {
       final bool isCreating,
       final bool loading,
       final bool fetchingInviteCode,
+      final bool deleting,
       final SpaceInfo? space,
       final String spaceInvitationCode,
       final String message,
@@ -377,6 +398,8 @@ abstract class _ThreadListViewState implements ThreadListViewState {
   bool get loading;
   @override
   bool get fetchingInviteCode;
+  @override
+  bool get deleting;
   @override
   SpaceInfo? get space;
   @override

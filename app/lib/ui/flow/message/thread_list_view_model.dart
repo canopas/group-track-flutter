@@ -37,7 +37,19 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
     try {
       state = state.copyWith(loading: state.threadInfo.isEmpty);
       messageService.getThreadsWithLatestMessage(spaceId, currentUser!.id).listen((thread) {
-        state = state.copyWith(threadInfo: thread, loading: false);
+        final filteredThreads = filterArchivedThreads(thread);
+
+        filteredThreads.sort((a, b) {
+          final aTimestamp = a.threadMessage.isNotEmpty
+              ? a.threadMessage.first.created_at?.millisecondsSinceEpoch ?? 0
+              : 0;
+          final bTimestamp = b.threadMessage.isNotEmpty
+              ? b.threadMessage.first.created_at?.millisecondsSinceEpoch ?? 0
+              : 0;
+          return bTimestamp.compareTo(aTimestamp);
+        });
+
+        state = state.copyWith(threadInfo: filteredThreads, loading: false);
       });
     } catch (error, stack) {
       logger.e(
@@ -47,6 +59,19 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
       );
       state = state.copyWith(error: error, loading: false);
     }
+  }
+
+  List<ThreadInfo> filterArchivedThreads(List<ThreadInfo> threads) {
+    return threads.where((info) {
+      final archiveTimestamp = info.thread.archived_for?[currentUser?.id];
+      if (archiveTimestamp != null) {
+        final latestMessageTimestamp = info.threadMessage.isNotEmpty
+            ? info.threadMessage.first.created_at?.millisecondsSinceEpoch ?? 0
+            : 0;
+        return archiveTimestamp < latestMessageTimestamp;
+      }
+      return true;
+    }).toList();
   }
 
   void onAddNewMemberTap() async {
@@ -66,8 +91,9 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
 
   void deleteThread(ApiThread thread) async {
     try {
+      state = state.copyWith(deleting: true);
       await messageService.deleteThread(thread, currentUser?.id ?? '');
-      listenThreads(state.space?.space.id ?? '');
+      state = state.copyWith(deleting: false);
     } catch (error, stack) {
       state = state.copyWith(error: error);
       logger.e(
@@ -86,6 +112,7 @@ class ThreadListViewState with _$ThreadListViewState {
     @Default(false) bool isCreating,
     @Default(false) bool loading,
     @Default(false) bool fetchingInviteCode,
+    @Default(false) bool deleting,
     SpaceInfo? space,
     @Default('') String spaceInvitationCode,
     @Default('') String message,

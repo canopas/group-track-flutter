@@ -145,14 +145,11 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
           : state.spaceInfo?.members.map((members) => members.user.id).toList();
 
       final threadId = await messageService.createThread(spaceId, currentUser?.id ?? '', threadMembersIds ?? []);
-
-      if (state.threadId == threadId) return;
-
+      state = state.copyWith(showMemberSelectionView: false, threadId: threadId, isNewThread: true);
       if (threadId.isNotEmpty) {
         sendMessage(threadId, message);
         getCreatedThread(threadId);
       }
-      state = state.copyWith(showMemberSelectionView: false, threadId: threadId, isNewThread: true);
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);
       logger.e(
@@ -167,7 +164,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     try {
       final thread = await messageService.getThread(threadId);
       getThreadMembers(thread!.thread);
-      state = state.copyWith(threadInfo: thread);
+      state = state.copyWith(threadInfo: thread, sender: thread.members);
       formatMemberNames(thread.members);
     } catch (error, stack) {
       logger.e(
@@ -201,7 +198,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
         state = state.copyWith(threadId: matchedThread.thread.id, threadInfo: matchedThread, sender: matchedThread.members);
       }
     } else {
-      state = state.copyWith(sender: [], messages: [], isNewThread: true);
+      state = state.copyWith(sender: [], messages: [], isNewThread: true, threadId: '', threadInfo: null);
     }
   }
 
@@ -235,7 +232,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 
   void onLoadMore(String threadId) {
     if (!_hasMoreItems || loadingData) return;
-    loadMoreMessages(state.threadId, true);
+    loadMoreMessages(threadId, true);
   }
 
   bool isSender(ApiThreadMessage message) {
@@ -252,7 +249,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     } else if (filteredMembers.length == 1) {
       state = state.copyWith(title: filteredMembers[0].user.first_name ?? '');
     } else {
-      state = state.copyWith(title: '');
+      state = state.copyWith(title: 'Start a new chat');
     }
   }
 
