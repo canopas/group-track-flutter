@@ -114,7 +114,7 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapView> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: IconPrimaryButton(
-        backgroundColor: context.colorScheme.onPrimary,
+        bgColor: context.colorScheme.onPrimary,
         onTap: () {},
         icon: SvgPicture.asset(
           Assets.images.icRelocateIcon,
