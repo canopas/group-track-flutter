@@ -56,8 +56,7 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
 
       for (final place in places) {
         final placeName = place.name.toLowerCase();
-        if (state.currentUser?.id == place.created_by &&
-            suggestionName == placeName) {
+        if (suggestionName == placeName) {
           return false;
         }
       }

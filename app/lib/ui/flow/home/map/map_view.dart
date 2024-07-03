@@ -104,7 +104,11 @@ class _MapScreenState extends ConsumerState<MapView> {
             notifier.showMemberDetail(member);
           },
           onRelocateTap: () {},
-          onPlacesTap: () {},
+          onPlacesTap: () {
+            if (widget.space != null) {
+              AppRoute.placesList(widget.space!.space.id).push(context);
+            }
+          },
           onDismiss: () => notifier.onDismissMemberDetail(),
           onTapTimeline: () {},
         ),
