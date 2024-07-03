@@ -83,6 +83,17 @@ class ApiSpaceService {
     }).toList();
   }
 
+  Stream<List<ApiSpaceMember>> getStreamSpaceMemberBySpaceId(String spaceId) {
+    return FirebaseFirestore.instance
+        .collection('spaces')
+        .doc(spaceId)
+        .collection('space_members')
+        .snapshots()
+        .map((querySnapshot) => querySnapshot.docs
+            .map((doc) => ApiSpaceMember.fromJson(doc.data()))
+            .toList());
+  }
+
   Future<List<ApiSpaceMember>> getSpaceMemberByUserId(String userId) async {
     final querySnapshot = await _spaceRef.firestore
         .collectionGroup('space_members')

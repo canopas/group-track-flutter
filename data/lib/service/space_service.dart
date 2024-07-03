@@ -217,8 +217,9 @@ class SpaceService {
       return Stream.value([]);
     }
 
-    return Stream.fromFuture(spaceService.getMembersBySpaceId(spaceId))
-        .asyncExpand((members) {
+    return spaceService
+        .getStreamSpaceMemberBySpaceId(spaceId)
+        .switchMap((members) {
       if (members.isEmpty) {
         return Stream.value([]);
       }
