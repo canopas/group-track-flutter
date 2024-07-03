@@ -80,23 +80,25 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   Widget _topBar(BuildContext context) {
     return IntrinsicHeight(
       child: Container(
-        color: expand ? context.colorScheme.surface : null,
+        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+        color: context.colorScheme.surface,
         child: SingleChildScrollView(
           child: Column(
             children: [
               Row(
                 children: [
                   _iconButton(
-                    context: context,
-                    icon: Assets.images.icSetting,
-                    visibility: !expand,
+                      context: context,
+                      icon: Assets.images.icSetting,
+                      visibility: !expand,
                       onTap: () {
                         AppRoute.setting.push(context);
                       }),
                   const SizedBox(width: 8),
                   _spaceSelection(
                     context: context,
-                    spaceName: widget.selectedSpace?.space.name ?? context.l10n.home_select_space_text,
+                    spaceName: widget.selectedSpace?.space.name ??
+                        context.l10n.home_select_space_text,
                   ),
                   const SizedBox(width: 8),
                   _iconButton(
@@ -167,8 +169,10 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                         .copyWith(color: context.colorScheme.textPrimary),
                   ),
                 ),
-                if (widget.fetchingInviteCode || (widget.selectedSpace == null && widget.loading)) ...[
-                  const AppProgressIndicator(size: AppProgressIndicatorSize.small)
+                if (widget.fetchingInviteCode ||
+                    (widget.selectedSpace == null && widget.loading)) ...[
+                  const AppProgressIndicator(
+                      size: AppProgressIndicatorSize.small)
                 ] else ...[
                   Icon(
                     expand
@@ -230,7 +234,11 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
               onSpaceSelected(space);
             },
             child: _spaceListItem(
-                context, space, index, widget.selectedSpace?.space.id == space.space.id),
+              context,
+              space,
+              index,
+              widget.selectedSpace?.space.id == space.space.id,
+            ),
           ),
         );
       }).toList(),
