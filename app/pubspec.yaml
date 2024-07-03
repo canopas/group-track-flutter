@@ -58,6 +58,7 @@ dependencies:
   image: ^3.0.1
   flutter_cache_manager: ^3.3.2
   permission_handler: ^11.3.1
+  flutter_slidable: ^3.1.0
 
   # map
   google_maps_flutter: ^2.3.1
@@ -73,7 +74,6 @@ dependencies:
   flutter_svg: ^2.0.9
   # picker
   canopas_country_picker: ^0.0.4
-
 
 dev_dependencies:
   flutter_test:

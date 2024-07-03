@@ -120,13 +120,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   borderRadius: BorderRadius.circular(64),
                 ),
                 child: (state.profileUrl.isEmpty)
-                    ? Center(
-                        child: Text(notifier.user?.userNameFirstLetter ?? '',
-                            style: TextStyle(
-                              fontSize: 44,
-                              fontWeight: FontWeight.bold,
-                              color: context.colorScheme.textPrimaryDark,
-                            )))
+                    ? Center(child: Text(
+                    notifier.user?.firstChar ?? '',
+                    style: TextStyle(
+                      fontSize: 44,
+                      fontWeight: FontWeight.bold,
+                      color: context.colorScheme.textPrimaryDark,
+                    )
+                ))
                     : CachedNetworkImage(
                         imageUrl: state.profileUrl,
                         fit: BoxFit.cover,
