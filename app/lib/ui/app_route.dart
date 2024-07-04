@@ -2,6 +2,7 @@ import 'package:data/api/place/api_place.dart';
 import 'dart:async';
 
 import 'package:data/api/message/message_models.dart';
+import 'package:data/api/place/api_place.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +12,9 @@ import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_view
 import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_view.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_screen.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_screen.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
@@ -25,7 +29,7 @@ import 'package:yourspace_flutter/ui/flow/space/join/join_space_screen.dart';
 
 import 'flow/auth/sign_in/phone/sign_in_with_phone_screen.dart';
 import 'flow/auth/sign_in/sign_in_method_screen.dart';
-import 'flow/geofence/add/addnew/add_new_place_view.dart';
+import 'flow/geofence/add/addnew/add_new_place_screen.dart';
 import 'flow/home/home_screen.dart';
 import 'flow/intro/intro_screen.dart';
 
@@ -179,25 +183,25 @@ class AppRoute {
 
   static AppRoute placesList(String spaceId) {
     return AppRoute(pathPlacesList,
-        builder: (_) => PlacesListView(spaceId: spaceId));
+        builder: (_) => PlacesListScreen(spaceId: spaceId));
   }
 
   static AppRoute addNewPlace(String spaceId) {
     return AppRoute(
       pathAddNewPlace,
-      builder: (_) => AddNewPlaceView(spaceId: spaceId),
+      builder: (_) => AddNewPlaceScreen(spaceId: spaceId),
     );
   }
 
   static AppRoute locateOnMapScreen(String spaceId) {
     return AppRoute(pathLocateOnMap,
-        builder: (_) => LocateOnMapView(spaceId: spaceId));
+        builder: (_) => LocateOnMapScreen(spaceId: spaceId));
   }
 
   static AppRoute choosePlaceName(LatLng location, String spaceId) {
     return AppRoute(
       pathChoosePlace,
-      builder: (_) => ChoosePlaceNameView(
+      builder: (_) => ChoosePlaceNameScreen(
         location: location,
         spaceId: spaceId,
       ),

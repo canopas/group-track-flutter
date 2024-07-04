@@ -12,18 +12,18 @@ import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_view_model.dart';
 
 import '../../../../../gen/assets.gen.dart';
-import '../../../home/map/map_view.dart';
+import '../../../home/map/map_screen.dart';
 
-class LocateOnMapView extends ConsumerStatefulWidget {
+class LocateOnMapScreen extends ConsumerStatefulWidget {
   final String spaceId;
 
-  const LocateOnMapView({super.key, required this.spaceId});
+  const LocateOnMapScreen({super.key, required this.spaceId});
 
   @override
-  ConsumerState<LocateOnMapView> createState() => _LocateOnMapViewState();
+  ConsumerState<LocateOnMapScreen> createState() => _LocateOnMapViewState();
 }
 
-class _LocateOnMapViewState extends ConsumerState<LocateOnMapView> {
+class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
   late LocateOnMapVieNotifier notifier;
   final _cameraPosition =
       const CameraPosition(target: LatLng(0.0, 0.0), zoom: defaultCameraZoom);
@@ -84,7 +84,9 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapView> {
         ),
         Center(child: _locateMarkerView()),
         Align(
-            alignment: Alignment.bottomRight, child: _locateIconButton(context))
+          alignment: Alignment.bottomRight,
+          child: _currentLocationIconView(context),
+        )
       ]),
     );
   }
@@ -110,7 +112,7 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapView> {
     );
   }
 
-  Widget _locateIconButton(BuildContext context) {
+  Widget _currentLocationIconView(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: IconPrimaryButton(

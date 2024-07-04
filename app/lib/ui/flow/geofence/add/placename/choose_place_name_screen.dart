@@ -6,6 +6,7 @@ import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
@@ -14,26 +15,25 @@ import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_na
 import '../../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../components/error_snakebar.dart';
-import '../../../home/map/map_view.dart';
+import '../../../home/map/map_screen.dart';
 
-class ChoosePlaceNameView extends ConsumerStatefulWidget {
+class ChoosePlaceNameScreen extends ConsumerStatefulWidget {
   final LatLng location;
   final String spaceId;
 
-  const ChoosePlaceNameView({
+  const ChoosePlaceNameScreen({
     super.key,
     required this.location,
     required this.spaceId,
   });
 
   @override
-  ConsumerState<ChoosePlaceNameView> createState() =>
+  ConsumerState<ChoosePlaceNameScreen> createState() =>
       _ChoosePlaceNameViewState();
 }
 
-class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
+class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
   late ChoosePlaceNameViewNotifier notifier;
-  final _textController = TextEditingController();
 
   @override
   void initState() {
@@ -49,75 +49,73 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
     final state = ref.watch(choosePlaceViewStateProvider);
 
     _observeError();
-    _observePopToPlacesListScreen();
+    _observePopToPlacesListScreen(state.title.text);
 
     return AppPage(
       title: context.l10n.choose_place_screen_title,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _searchTextField(),
-            const SizedBox(height: 40),
-            Text(
-              context.l10n.choose_place_suggestion_text,
-              style: AppTextStyle.caption
-                  .copyWith(color: context.colorScheme.textDisabled),
-            ),
-            const SizedBox(height: 16),
-            _suggestionsView(state.suggestions),
-            const Spacer(),
-            Align(
-              alignment: Alignment.center,
-              child: _addPlaceButtonView(state),
-            )
-          ],
-        ),
+      body: _body(state),
+    );
+  }
+
+  Widget _body(ChoosePlaceViewState state) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _searchTextField(state),
+          const SizedBox(height: 40),
+          Text(
+            context.l10n.choose_place_suggestion_text,
+            style: AppTextStyle.caption
+                .copyWith(color: context.colorScheme.textDisabled),
+          ),
+          const SizedBox(height: 16),
+          _suggestionsPlaceView(state.suggestions, state),
+          const Spacer(),
+          Align(
+            alignment: Alignment.center,
+            child: _addPlaceButtonView(state),
+          )
+        ],
       ),
     );
   }
 
-  Widget _searchTextField() {
+  Widget _searchTextField(ChoosePlaceViewState state) {
     return Column(
       children: [
-        TextField(
-          controller: _textController,
-          onChanged: (value) {
-            if (value.isEmpty) {
-              setState(() {
-                _textController.text = '';
-              });
-            }
-          },
-          style: AppTextStyle.subtitle3,
-          decoration: InputDecoration(
-            prefixIcon: Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Icon(
-                Icons.search,
-                color: context.colorScheme.textDisabled,
+        AppTextField(
+          controller: state.title,
+          onChanged: notifier.onSearchTitleChange,
+          style: AppTextStyle.subtitle3.copyWith(
+            color: context.colorScheme.textPrimary,
+          ),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(right: 8, bottom: 8),
+            child: SvgPicture.asset(
+              Assets.images.icSearchIcon,
+              colorFilter: ColorFilter.mode(
+                context.colorScheme.textDisabled,
+                BlendMode.srcATop,
               ),
             ),
-            hintText: context.l10n.choose_place_search_hint_text,
-            hintStyle: AppTextStyle.subtitle3.copyWith(
-              color: context.colorScheme.textDisabled,
-            ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 0),
-            prefixIconConstraints: const BoxConstraints(),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.colorScheme.outline),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.colorScheme.primary),
-            ),
           ),
+          hintText: context.l10n.choose_place_search_hint_text,
+          hintStyle: AppTextStyle.subtitle3.copyWith(
+            color: context.colorScheme.textDisabled,
+          ),
+          isDense: true,
+          contentPadding: const EdgeInsets.all(0),
         ),
       ],
     );
   }
 
-  Widget _suggestionsView(List<String>? suggestions) {
+  Widget _suggestionsPlaceView(
+    List<String>? suggestions,
+    ChoosePlaceViewState state,
+  ) {
     if (suggestions == null) return Container();
     return Wrap(
       alignment: WrapAlignment.start,
@@ -125,9 +123,7 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
       children: suggestions.map((element) {
         return OnTapScale(
           onTap: () {
-            setState(() {
-              _textController.text = element;
-            });
+            notifier.onTapSuggestedPlace(element);
           },
           child: Chip(
             label: Text(
@@ -148,7 +144,7 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
   }
 
   Widget _addPlaceButtonView(ChoosePlaceViewState state) {
-    final enable = _textController.text.isNotEmpty && !state.addingPlace;
+    final enable = state.enableAddBtn && !state.addingPlace;
 
     return Padding(
       padding: EdgeInsets.only(bottom: context.mediaQueryPadding.bottom + 24),
@@ -156,7 +152,7 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
         enabled: enable,
         progress: state.addingPlace,
         onPressed: () {
-          notifier.onTapAddPlaceBtn(_textController.text);
+          notifier.onTapAddPlaceBtn();
         },
         edgeInsets: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
         context.l10n.choose_place_add_place_btn_text,
@@ -174,21 +170,21 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameView> {
     });
   }
 
-  void _observePopToPlacesListScreen() {
+  void _observePopToPlacesListScreen(String title) {
     ref.listen(
         choosePlaceViewStateProvider.select((state) => state.popToPlaceList),
         (_, next) {
       AppRoute.popTo(context, AppRoute.pathPlacesList);
-      _showPlaceAddedPrompt(
+      _showPlaceAddedDialog(
         context,
         widget.location.latitude,
         widget.location.longitude,
-        _textController.text,
+        title,
       );
     });
   }
 
-  void _showPlaceAddedPrompt(
+  void _showPlaceAddedDialog(
     BuildContext context,
     double lat,
     double lng,

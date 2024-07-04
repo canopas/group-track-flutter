@@ -98,6 +98,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_remove.svg
   String get icRemove => 'assets/images/ic_remove.svg';
 
+  /// File path: assets/images/ic_search_icon.svg
+  String get icSearchIcon => 'assets/images/ic_search_icon.svg';
+
   /// File path: assets/images/ic_send_message.svg
   String get icSendMessage => 'assets/images/ic_send_message.svg';
 
@@ -154,6 +157,7 @@ class $AssetsImagesGen {
         icPrivacyPolicy,
         icRelocateIcon,
         icRemove,
+        icSearchIcon,
         icSendMessage,
         icSetting,
         icSignOut,
