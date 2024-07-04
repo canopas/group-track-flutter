@@ -14,6 +14,7 @@ import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_view_model.dart';
@@ -24,16 +25,18 @@ import '../../../components/error_snakebar.dart';
 import '../../../components/user_profile_image.dart';
 import 'components/place_marker.dart';
 
-class EditPlaceView extends ConsumerStatefulWidget {
+const defaultCameraZoom = 15.7;
+
+class EditPlaceScreen extends ConsumerStatefulWidget {
   final ApiPlace place;
 
-  const EditPlaceView({super.key, required this.place});
+  const EditPlaceScreen({super.key, required this.place});
 
   @override
-  ConsumerState<EditPlaceView> createState() => _EditPlaceViewState();
+  ConsumerState<EditPlaceScreen> createState() => _EditPlaceViewState();
 }
 
-class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
+class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
   late EditPlaceViewNotifier notifier;
   late CameraPosition _cameraPosition;
   GoogleMapController? _controller;
@@ -47,7 +50,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
     _textController = TextEditingController(text: widget.place.name);
     _cameraPosition = CameraPosition(
         target: LatLng(widget.place.latitude, widget.place.longitude),
-        zoom: 16);
+        zoom: defaultCameraZoom);
 
     runPostFrame(() {
       notifier = ref.watch(editPlaceViewStateProvider.notifier);
@@ -74,6 +77,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
           child: state.saving
               ? const AppProgressIndicator(size: AppProgressIndicatorSize.small)
               : OnTapScale(
+                  enabled: state.enableSave,
                   onTap: () {
                     notifier.onSavePlace();
                   },
@@ -207,8 +211,8 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
                 .copyWith(color: context.colorScheme.textDisabled),
           ),
           const SizedBox(height: 16),
-          _placeTextField(place.name, Icons.bookmark, state.isAdmin),
-          const SizedBox(height: 16),
+          _placeTextField(place.name, state.isAdmin),
+          const SizedBox(height: 24),
           _placeAddressView(address),
           const SizedBox(height: 8),
           Divider(thickness: 1, height: 1, color: context.colorScheme.outline)
@@ -217,13 +221,13 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
     );
   }
 
-  Widget _placeTextField(String placeName, IconData iconData, bool isAdmin) {
+  Widget _placeTextField(String placeName, bool isAdmin) {
     return Column(
       children: [
-        TextField(
+        AppTextField(
           controller: _textController,
           enabled: isAdmin,
-          style: AppTextStyle.subtitle3
+          style: AppTextStyle.subtitle2
               .copyWith(color: context.colorScheme.textPrimary),
           onChanged: (value) {
             notifier.onPlaceNameChanged(value.trim());
@@ -231,23 +235,16 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
           onTapOutside: (event) {
             FocusManager.instance.primaryFocus?.unfocus();
           },
-          decoration: InputDecoration(
-            prefixIcon: Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Icon(
-                iconData,
-                color: context.colorScheme.textPrimary,
-              ),
-            ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 0),
-            prefixIconConstraints: const BoxConstraints(),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.colorScheme.outline),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.colorScheme.primary),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(right: 8, bottom: 8),
+            child: Icon(
+              Icons.bookmark,
+              size: 24,
+              color: context.colorScheme.textPrimary,
             ),
           ),
+          isDense: true,
+          contentPadding: const EdgeInsets.all(0),
         ),
       ],
     );
@@ -264,7 +261,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
         Expanded(
           child: Text(
             address,
-            style: AppTextStyle.subtitle3
+            style: AppTextStyle.subtitle2
                 .copyWith(color: context.colorScheme.textPrimary),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
@@ -452,7 +449,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
 
   double _getZoomLevel(double radius) {
     double scale = radius / 200;
-    double zoomLevel = 16 - math.log(scale) / math.log(2);
+    double zoomLevel = defaultCameraZoom - math.log(scale) / math.log(2);
     return zoomLevel;
   }
 
@@ -460,6 +457,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceView> {
     LatLng latLang,
     double radius,
   ) async {
+    if (_controller == null) return;
     final zoom = await _controller?.getZoomLevel();
     if (zoom == _previousZoom) return;
     const double earthRadius = 6378100.0;

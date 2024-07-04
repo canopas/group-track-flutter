@@ -5,16 +5,11 @@ import 'package:style/extenstions/context_extenstions.dart';
 
 import '../../../../../gen/assets.gen.dart';
 
-class PlaceMarker extends StatefulWidget {
+class PlaceMarker extends StatelessWidget {
   final double radius;
 
   const PlaceMarker({super.key, required this.radius});
 
-  @override
-  State<PlaceMarker> createState() => _PlaceMarkerState();
-}
-
-class _PlaceMarkerState extends State<PlaceMarker> {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -22,14 +17,14 @@ class _PlaceMarkerState extends State<PlaceMarker> {
       children: [
         ClipRect(
           child: OverflowBox(
-            maxHeight: widget.radius,
-            maxWidth: widget.radius,
+            maxHeight: radius,
+            maxWidth: radius,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              width: widget.radius,
-              height: widget.radius,
+              width: radius,
+              height: radius,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(widget.radius),
+                borderRadius: BorderRadius.circular(radius),
                 color: context.colorScheme.primary.withOpacity(0.5),
               ),
             ),

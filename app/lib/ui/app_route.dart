@@ -9,7 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_view.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_view.dart';
-import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_view.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
@@ -207,7 +207,7 @@ class AppRoute {
   static AppRoute editPlaceScreen(ApiPlace place) {
     return AppRoute(
       pathEditPlace,
-      builder: (_) => EditPlaceView(place: place),
+      builder: (_) => EditPlaceScreen(place: place),
     );
   }
 

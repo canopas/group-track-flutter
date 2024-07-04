@@ -55,7 +55,7 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
         isAdmin: place.created_by == _currentUser.id,
         loading: false,
       );
-      getAddress(place.latitude, place.longitude);
+      _getAddress(place.latitude, place.longitude);
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);
       logger.e(
@@ -66,7 +66,7 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
     }
   }
 
-  void getAddress(double latitude, double longitude) async {
+  void _getAddress(double latitude, double longitude) async {
     if (state.gettingAddress) return;
 
     state = state.copyWith(gettingAddress: true);
@@ -83,15 +83,15 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
         ?.copyWith(latitude: target.latitude, longitude: target.longitude);
 
     state = state.copyWith(updatedPlace: updatePlace);
-    getAddress(target.latitude, target.longitude);
-    enableSaveBtn();
+    _getAddress(target.latitude, target.longitude);
+    _enableSaveBtn();
   }
 
   void onPlaceRadiusChanged(double value) {
     if (state.updatedPlace == null) return;
     final updatePlace = state.updatedPlace?.copyWith(radius: value);
-    state = state.copyWith(updatedPlace: updatePlace,radius: value);
-    enableSaveBtn();
+    state = state.copyWith(updatedPlace: updatePlace, radius: value);
+    _enableSaveBtn();
   }
 
   void onPlaceNameChanged(String value) {
@@ -100,39 +100,58 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
   }
 
   void onToggleArrives(String userId, bool arrives) {
-    final arrivesList =
-        List<String>.from(state.updatedSetting?.arrival_alert_for ?? []);
-    if (arrivesList.isNotEmpty) {
-      if (arrives) {
-        arrivesList.add(userId);
-      } else {
-        arrivesList.remove(userId);
-      }
+    if (state.updatedSetting != null) {
+      final List<String> arrivesList =
+          List.from(state.updatedSetting!.arrival_alert_for);
+
+      arrives ? arrivesList.add(userId) : arrivesList.remove(userId);
+
       final updatedSettings =
           state.updatedSetting?.copyWith(arrival_alert_for: arrivesList);
       state = state.copyWith(updatedSetting: updatedSettings);
+    } else {
+      _updateMemberSetting(userId: userId, isArrives: true);
     }
-    enableSaveBtn();
+    _enableSaveBtn();
   }
 
   void onToggleLeaves(String userId, bool leaves) {
-    final leaveList =
-        List<String>.from(state.updatedSetting?.leave_alert_for ?? []);
-    if (leaveList.isNotEmpty) {
-      if (leaves) {
-        leaveList.add(userId);
-      } else {
-        leaveList.remove(userId);
-      }
+    if (state.updatedSetting != null) {
+      final List<String> leaveList =
+          List.from(state.updatedSetting!.leave_alert_for);
+
+      leaves ? leaveList.add(userId) : leaveList.remove(userId);
+
       final updatedSettings =
           state.updatedSetting?.copyWith(leave_alert_for: leaveList);
       state = state.copyWith(updatedSetting: updatedSettings);
+    } else {
+      _updateMemberSetting(userId: userId, isLeaves: true);
     }
+
+    _enableSaveBtn();
   }
 
-  void enableSaveBtn() {
-    final isChanged = state.updatedPlace != _place ||
-        (_setting != null && state.updatedSetting != _setting);
+  void _updateMemberSetting({
+    required String userId,
+    bool isArrives = false,
+    bool isLeaves = false,
+  }) {
+    final List<String> arrives = isArrives ? [userId] : [];
+    final List<String> leaves = isLeaves ? [userId] : [];
+
+    final setting = ApiPlaceMemberSetting(
+      user_id: _currentUser!.id,
+      place_id: _place!.id,
+      arrival_alert_for: arrives,
+      leave_alert_for: leaves,
+    );
+    state = state.copyWith(updatedSetting: setting);
+  }
+
+  void _enableSaveBtn() {
+    final isChanged =
+        state.updatedPlace != _place || state.updatedSetting != _setting;
     state = state.copyWith(enableSave: isChanged);
   }
 
