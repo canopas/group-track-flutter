@@ -24,7 +24,7 @@ jobs:
         run: |
           cd app
           echo $FIREBASE_OPTIONS_BASE64 | base64 -di > lib/firebase_options.dart
-          echo $INFO_PLIST_BASE64 | base -di > ios/Runner/Info.plist
+          echo $INFO_PLIST_BASE64 | base64 -di > ios/Runner/Info.plist
 
       - name: Install dependencies
         run: |
