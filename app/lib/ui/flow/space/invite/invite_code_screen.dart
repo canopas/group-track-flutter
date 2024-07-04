@@ -101,12 +101,14 @@ class _InviteCodeState extends State<InviteCode> {
             },
           ),
           const SizedBox(height: 16),
-          SecondaryButton(
-            context.l10n.common_skip,
-            onPressed: () {
-              AppRoute.home.go(context);
-            },
-          )
+          if (widget.fromOnboard) ...[
+            SecondaryButton(
+              context.l10n.common_skip,
+              onPressed: () {
+                AppRoute.home.go(context);
+              },
+            )
+          ],
         ],
       ),
     );
