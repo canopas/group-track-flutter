@@ -291,7 +291,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   Widget _memberSelectionView(BuildContext context, ChatViewState state) {
     return Container(
-      height: 112,
+      height: 114,
       decoration:
           BoxDecoration(color: context.colorScheme.containerLowOnSurface),
       child: Row(
