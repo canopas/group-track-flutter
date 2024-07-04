@@ -181,6 +181,8 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
             child: Slider(
               value: radius,
               onChanged: notifier.onPlaceRadiusChanged,
+              activeColor: context.colorScheme.primary,
+              inactiveColor: context.colorScheme.containerLow,
               min: 100,
               max: 3219,
               divisions: 100,
