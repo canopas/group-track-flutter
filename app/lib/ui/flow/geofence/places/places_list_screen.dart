@@ -15,16 +15,16 @@ import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../components/error_snakebar.dart';
 
-class PlacesListView extends ConsumerStatefulWidget {
+class PlacesListScreen extends ConsumerStatefulWidget {
   final String spaceId;
 
-  const PlacesListView({super.key, required this.spaceId});
+  const PlacesListScreen({super.key, required this.spaceId});
 
   @override
-  ConsumerState<PlacesListView> createState() => _PlacesViewState();
+  ConsumerState<PlacesListScreen> createState() => _PlacesViewState();
 }
 
-class _PlacesViewState extends ConsumerState<PlacesListView> {
+class _PlacesViewState extends ConsumerState<PlacesListScreen> {
   late PlacesListViewNotifier notifier;
 
   @override
@@ -225,11 +225,11 @@ class _PlacesViewState extends ConsumerState<PlacesListView> {
 
   void _observeError() {
     ref.listen(placesListViewStateProvider.select((state) => state.error),
-            (previous, next) {
-          if (next != null) {
-            showErrorSnackBar(context, next.toString());
-          }
-        });
+        (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
+    });
   }
 
   void _observeShowDeletePlaceDialog() {

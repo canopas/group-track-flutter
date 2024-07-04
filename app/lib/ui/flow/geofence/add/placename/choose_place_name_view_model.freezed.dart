@@ -17,6 +17,8 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$ChoosePlaceViewState {
   dynamic get addingPlace => throw _privateConstructorUsedError;
+  dynamic get enableAddBtn => throw _privateConstructorUsedError;
+  TextEditingController get title => throw _privateConstructorUsedError;
   List<String>? get suggestions => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   DateTime? get popToPlaceList => throw _privateConstructorUsedError;
@@ -34,6 +36,8 @@ abstract class $ChoosePlaceViewStateCopyWith<$Res> {
   @useResult
   $Res call(
       {dynamic addingPlace,
+      dynamic enableAddBtn,
+      TextEditingController title,
       List<String>? suggestions,
       Object? error,
       DateTime? popToPlaceList});
@@ -54,6 +58,8 @@ class _$ChoosePlaceViewStateCopyWithImpl<$Res,
   @override
   $Res call({
     Object? addingPlace = freezed,
+    Object? enableAddBtn = freezed,
+    Object? title = null,
     Object? suggestions = freezed,
     Object? error = freezed,
     Object? popToPlaceList = freezed,
@@ -63,6 +69,14 @@ class _$ChoosePlaceViewStateCopyWithImpl<$Res,
           ? _value.addingPlace
           : addingPlace // ignore: cast_nullable_to_non_nullable
               as dynamic,
+      enableAddBtn: freezed == enableAddBtn
+          ? _value.enableAddBtn
+          : enableAddBtn // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
       suggestions: freezed == suggestions
           ? _value.suggestions
           : suggestions // ignore: cast_nullable_to_non_nullable
@@ -86,6 +100,8 @@ abstract class _$$ChoosePlaceViewStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {dynamic addingPlace,
+      dynamic enableAddBtn,
+      TextEditingController title,
       List<String>? suggestions,
       Object? error,
       DateTime? popToPlaceList});
@@ -103,12 +119,20 @@ class __$$ChoosePlaceViewStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? addingPlace = freezed,
+    Object? enableAddBtn = freezed,
+    Object? title = null,
     Object? suggestions = freezed,
     Object? error = freezed,
     Object? popToPlaceList = freezed,
   }) {
     return _then(_$ChoosePlaceViewStateImpl(
       addingPlace: freezed == addingPlace ? _value.addingPlace! : addingPlace,
+      enableAddBtn:
+          freezed == enableAddBtn ? _value.enableAddBtn! : enableAddBtn,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
       suggestions: freezed == suggestions
           ? _value._suggestions
           : suggestions // ignore: cast_nullable_to_non_nullable
@@ -127,6 +151,8 @@ class __$$ChoosePlaceViewStateImplCopyWithImpl<$Res>
 class _$ChoosePlaceViewStateImpl implements _ChoosePlaceViewState {
   const _$ChoosePlaceViewStateImpl(
       {this.addingPlace = false,
+      this.enableAddBtn = false,
+      required this.title,
       final List<String>? suggestions,
       this.error,
       this.popToPlaceList})
@@ -135,6 +161,11 @@ class _$ChoosePlaceViewStateImpl implements _ChoosePlaceViewState {
   @override
   @JsonKey()
   final dynamic addingPlace;
+  @override
+  @JsonKey()
+  final dynamic enableAddBtn;
+  @override
+  final TextEditingController title;
   final List<String>? _suggestions;
   @override
   List<String>? get suggestions {
@@ -152,7 +183,7 @@ class _$ChoosePlaceViewStateImpl implements _ChoosePlaceViewState {
 
   @override
   String toString() {
-    return 'ChoosePlaceViewState(addingPlace: $addingPlace, suggestions: $suggestions, error: $error, popToPlaceList: $popToPlaceList)';
+    return 'ChoosePlaceViewState(addingPlace: $addingPlace, enableAddBtn: $enableAddBtn, title: $title, suggestions: $suggestions, error: $error, popToPlaceList: $popToPlaceList)';
   }
 
   @override
@@ -162,6 +193,9 @@ class _$ChoosePlaceViewStateImpl implements _ChoosePlaceViewState {
             other is _$ChoosePlaceViewStateImpl &&
             const DeepCollectionEquality()
                 .equals(other.addingPlace, addingPlace) &&
+            const DeepCollectionEquality()
+                .equals(other.enableAddBtn, enableAddBtn) &&
+            (identical(other.title, title) || other.title == title) &&
             const DeepCollectionEquality()
                 .equals(other._suggestions, _suggestions) &&
             const DeepCollectionEquality().equals(other.error, error) &&
@@ -173,6 +207,8 @@ class _$ChoosePlaceViewStateImpl implements _ChoosePlaceViewState {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(addingPlace),
+      const DeepCollectionEquality().hash(enableAddBtn),
+      title,
       const DeepCollectionEquality().hash(_suggestions),
       const DeepCollectionEquality().hash(error),
       popToPlaceList);
@@ -189,12 +225,18 @@ class _$ChoosePlaceViewStateImpl implements _ChoosePlaceViewState {
 abstract class _ChoosePlaceViewState implements ChoosePlaceViewState {
   const factory _ChoosePlaceViewState(
       {final dynamic addingPlace,
+      final dynamic enableAddBtn,
+      required final TextEditingController title,
       final List<String>? suggestions,
       final Object? error,
       final DateTime? popToPlaceList}) = _$ChoosePlaceViewStateImpl;
 
   @override
   dynamic get addingPlace;
+  @override
+  dynamic get enableAddBtn;
+  @override
+  TextEditingController get title;
   @override
   List<String>? get suggestions;
   @override

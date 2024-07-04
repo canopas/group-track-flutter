@@ -3,6 +3,7 @@ import 'package:data/log/logger.dart';
 import 'package:data/service/place_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -28,7 +29,7 @@ class ChoosePlaceNameViewNotifier extends StateNotifier<ChoosePlaceViewState> {
 
   ChoosePlaceNameViewNotifier(
       this._currentUser, this.placesService, this.spaceService)
-      : super(const ChoosePlaceViewState());
+      : super(ChoosePlaceViewState(title: TextEditingController()));
 
   void setData(LatLng position, String spaceId) {
     final suggestionList = [
@@ -47,7 +48,18 @@ class ChoosePlaceNameViewNotifier extends StateNotifier<ChoosePlaceViewState> {
     state = state.copyWith(suggestions: suggestionList);
   }
 
-  void onTapAddPlaceBtn(String value) async {
+  void onTapSuggestedPlace(String suggestion) {
+    state = state.copyWith(
+      title: TextEditingController(text: suggestion.trim()),
+      enableAddBtn: suggestion.isNotEmpty,
+    );
+  }
+
+  void onSearchTitleChange(String value) {
+    state = state.copyWith(enableAddBtn: value.trim().isNotEmpty);
+  }
+
+  void onTapAddPlaceBtn() async {
     try {
       state = state.copyWith(addingPlace: true);
       final members = await spaceService.getMemberBySpaceId(_spaceId!);
@@ -55,7 +67,7 @@ class ChoosePlaceNameViewNotifier extends StateNotifier<ChoosePlaceViewState> {
 
       await placesService.addPlace(
         _spaceId!,
-        value,
+        state.title.text,
         _location!.latitude,
         _location!.longitude,
         _currentUser!.id,
@@ -78,6 +90,8 @@ class ChoosePlaceNameViewNotifier extends StateNotifier<ChoosePlaceViewState> {
 class ChoosePlaceViewState with _$ChoosePlaceViewState {
   const factory ChoosePlaceViewState({
     @Default(false) addingPlace,
+    @Default(false) enableAddBtn,
+    required TextEditingController title,
     List<String>? suggestions,
     Object? error,
     DateTime? popToPlaceList,

@@ -6,6 +6,7 @@ import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
@@ -14,16 +15,16 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../components/error_snakebar.dart';
 import 'add_new_place_view_model.dart';
 
-class AddNewPlaceView extends ConsumerStatefulWidget {
+class AddNewPlaceScreen extends ConsumerStatefulWidget {
   final String spaceId;
 
-  const AddNewPlaceView({super.key, required this.spaceId});
+  const AddNewPlaceScreen({super.key, required this.spaceId});
 
   @override
-  ConsumerState<AddNewPlaceView> createState() => _AddNewPlaceViewState();
+  ConsumerState<AddNewPlaceScreen> createState() => _AddNewPlaceViewState();
 }
 
-class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
+class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
   late AddNewPlaceViewNotifier notifier;
 
   @override
@@ -78,32 +79,29 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceView> {
   Widget _searchTextField() {
     return Column(
       children: [
-        TextField(
-          style: AppTextStyle.subtitle3,
+        AppTextField(
+          style: AppTextStyle.subtitle3.copyWith(
+            color: context.colorScheme.textPrimary,
+          ),
           onChanged: (value) {
             notifier.onPlaceNameChanged(value.trim());
           },
-          decoration: InputDecoration(
-            prefixIcon: Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Icon(
-                Icons.search,
-                color: context.colorScheme.textDisabled,
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(right: 8, bottom: 8),
+            child: SvgPicture.asset(
+              Assets.images.icSearchIcon,
+              colorFilter: ColorFilter.mode(
+                context.colorScheme.textDisabled,
+                BlendMode.srcATop,
               ),
             ),
-            hintText: context.l10n.add_new_place_search_hint_text,
-            hintStyle: AppTextStyle.subtitle3.copyWith(
-              color: context.colorScheme.textDisabled,
-            ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 0),
-            prefixIconConstraints: const BoxConstraints(),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.colorScheme.outline),
-            ),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: context.colorScheme.primary),
-            ),
           ),
+          hintText: context.l10n.add_new_place_search_hint_text,
+          hintStyle: AppTextStyle.subtitle3.copyWith(
+            color: context.colorScheme.textDisabled,
+          ),
+          isDense: true,
+          contentPadding: const EdgeInsets.all(0),
         ),
       ],
     );
