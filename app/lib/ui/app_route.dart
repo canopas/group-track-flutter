@@ -1,4 +1,3 @@
-import 'package:data/api/place/api_place.dart';
 import 'dart:async';
 
 import 'package:data/api/message/message_models.dart';
@@ -8,12 +7,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
-import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_view.dart';
-import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_view.dart';
-import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_screen.dart';
-import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_screen.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
@@ -221,10 +217,19 @@ class AppRoute {
       builder: (_) => ThreadListScreen(spaceInfo: space),
     );
   }
-  static AppRoute chat({required SpaceInfo spaceInfo, ThreadInfo? thread, List<ThreadInfo>? threadInfoList}) {
+
+  static AppRoute chat({
+    required SpaceInfo spaceInfo,
+    ThreadInfo? thread,
+    List<ThreadInfo>? threadInfoList,
+  }) {
     return AppRoute(
       pathMessage,
-      builder: (_) => ChatScreen(spaceInfo: spaceInfo, threadInfo: thread, threadInfoList: threadInfoList),
+      builder: (_) => ChatScreen(
+        spaceInfo: spaceInfo,
+        threadInfo: thread,
+        threadInfoList: threadInfoList,
+      ),
     );
   }
 
