@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/button/primary_button.dart';
+import 'package:style/button/secondary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:share_plus/share_plus.dart';
 
 class InviteCode extends StatefulWidget {
   final String spaceName;
   final String inviteCode;
+  final bool fromOnboard;
 
   const InviteCode({
     super.key,
     required this.spaceName,
     required this.inviteCode,
+    this.fromOnboard = false,
   });
 
   @override
@@ -54,7 +58,7 @@ class _InviteCodeState extends State<InviteCode> {
             _inviteCode(context),
           ],
         ),
-        _shareButton(context),
+        _shareAndSkipButton(context),
       ],
     );
   }
@@ -86,13 +90,24 @@ class _InviteCodeState extends State<InviteCode> {
     );
   }
 
-  Widget _shareButton(BuildContext context) {
+  Widget _shareAndSkipButton(BuildContext context) {
     return BottomStickyOverlay(
-      child: PrimaryButton(
-        context.l10n.invite_code_share_code_title,
-        onPressed: () {
-          Share.share(widget.inviteCode);
-        },
+      child: Column(
+        children: [
+          PrimaryButton(
+            context.l10n.invite_code_share_code_title,
+            onPressed: () {
+              Share.share(widget.inviteCode);
+            },
+          ),
+          const SizedBox(height: 16),
+          SecondaryButton(
+            context.l10n.common_skip,
+            onPressed: () {
+              AppRoute.home.go(context);
+            },
+          )
+        ],
       ),
     );
   }

@@ -12,7 +12,8 @@ import 'package:yourspace_flutter/ui/flow/space/create/create_space_view_model.d
 import 'package:style/button/bottom_sticky_overlay.dart';
 
 class CreateSpace extends ConsumerStatefulWidget {
-  const CreateSpace({super.key});
+  final bool fromOnboard;
+  const CreateSpace({super.key, this.fromOnboard = false});
 
   @override
   ConsumerState createState() => _CreateSpaceState();
@@ -181,8 +182,13 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
     ref.listen(createSpaceViewStateProvider.select((state) => state.invitationCode),
             (_, next) {
           if (next.isNotEmpty) {
-            AppRoute.inviteCode(
-                code: next, spaceName: state.spaceName.text).pushReplacement(context);
+            if (widget.fromOnboard) {
+              AppRoute.inviteCode(
+                  code: next, spaceName: state.spaceName.text).go(context);
+            } else {
+              AppRoute.inviteCode(
+                  code: next, spaceName: state.spaceName.text).pushReplacement(context);
+            }
           }
         });
   }

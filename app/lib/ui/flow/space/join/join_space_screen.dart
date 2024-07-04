@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/button/primary_button.dart';
+import 'package:style/button/secondary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/alert.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/space/join/join_space_view_model.dart';
@@ -14,7 +16,8 @@ import 'package:yourspace_flutter/ui/flow/space/join/join_space_view_model.dart'
 import '../../../components/app_page.dart';
 
 class JoinSpace extends ConsumerStatefulWidget {
-  const JoinSpace({super.key});
+  final bool fromOnboard;
+  const JoinSpace({super.key, this.fromOnboard = false});
 
   @override
   ConsumerState createState() => _JoinSpaceState();
@@ -60,16 +63,25 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
         padding: const EdgeInsets.all(16),
         children: [
           Text(
-            context.l10n.join_space_invite_code_title,
+            widget.fromOnboard ? context.l10n.join_space_invitation_title : context.l10n.join_space_invite_code_title,
             style: AppTextStyle.header3.copyWith(
               color: context.colorScheme.textPrimary,
             ),
           ),
+          if (widget.fromOnboard) ...[
+            const SizedBox(height: 16),
+            Text(
+              context.l10n.join_space_get_code_from_space_creator_title,
+              style: AppTextStyle.subtitle1.copyWith(
+                color: context.colorScheme.textDisabled,
+              ),
+            )
+          ],
           const SizedBox(height: 40),
           _inviteCode(context),
           const SizedBox(height: 40),
           Text(
-            context.l10n.join_space_get_code_from_space_text,
+            widget.fromOnboard ? '' : context.l10n.join_space_get_code_from_space_text,
             style: AppTextStyle.subtitle1.copyWith(
               color: context.colorScheme.textDisabled,
             ),
@@ -164,6 +176,15 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
               notifier.joinSpace(inviteCode.toUpperCase());
             },
           ),
+          if (widget.fromOnboard) ...[
+            const SizedBox(height: 16),
+            SecondaryButton(
+              context.l10n.join_space_create_new_space_title,
+              onPressed: () {
+                AppRoute.createSpace(fromOnboard: true).push(context);
+              },
+            )
+          ],
         ],
       ),
     );
@@ -213,7 +234,11 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
           message: context.l10n
               .join_space_congratulation_subtitle(next.name),
           onOkay: () {
-            context.pop();
+            if (widget.fromOnboard) {
+              AppRoute.home.go(context);
+            } else {
+              context.pop();
+            }
           },
         );
       }

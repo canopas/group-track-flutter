@@ -100,13 +100,19 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
       ));
 
   void onSignInSuccess() async {
+    final state = ref.watch(signInMethodsStateProvider);
     final user = ref.read(currentUserPod);
 
     if (mounted && (user?.first_name == null || user!.first_name!.isEmpty)) {
       await AppRoute.pickName.push(context);
     }
 
-    if (mounted) AppRoute.home.go(context);
+    if (state.isNewUser && mounted) {
+      AppRoute.connection.go(context);
+    } else {
+      // ignore: use_build_context_synchronously
+      AppRoute.home.go(context);
+    }
   }
 
   _listenSignInSuccess() {
