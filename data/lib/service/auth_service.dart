@@ -51,7 +51,7 @@ class AuthService {
     userJsonNotifier.state = user.toJsonString();
   }
 
-  Future<ApiUser?> getUser() {
+  Future<ApiUser?> getUser({String? userId}) {
     return userService.getUser(_currentUser?.id ?? '');
   }
 
