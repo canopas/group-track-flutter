@@ -47,7 +47,6 @@ class PickNameStateNotifier extends StateNotifier<PickNameState> {
 @freezed
 class PickNameState with _$PickNameState {
   const factory PickNameState({
-    ApiUser? updatedUser,
     @Default(false) bool enableBtn,
     @Default(false) bool savingUser,
     @Default(false) bool saved,
