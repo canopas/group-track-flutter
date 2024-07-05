@@ -164,7 +164,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   child: Text(
                     widget.loading
                         ? context.l10n.home_select_space_text
-                        : spaceName,
+                        : widget.spaces.isEmpty ? context.l10n.home_select_space_text : spaceName,
                     style: AppTextStyle.subtitle2
                         .copyWith(color: context.colorScheme.textPrimary),
                   ),
