@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/message/message_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,6 +35,7 @@ class AppRoute {
   static const pathMessage = '/message';
   static const pathChat = '/chat';
   static const pathConnection = '/connection';
+  static const pathPickName = '/pick-name';
 
   final String path;
   final String? name;
@@ -119,9 +121,9 @@ class AppRoute {
         builder: (_) => const SignInWithPhoneScreen(),
       );
 
-  static AppRoute get pickName => AppRoute(
-    "/pick-name",
-        builder: (_) => const PickNameScreen(),
+  static AppRoute pickName({ApiUser? user}) => AppRoute(
+    pathPickName,
+        builder: (_) => PickNameScreen(user: user),
       );
 
   static AppRoute get connection =>
@@ -188,7 +190,7 @@ class AppRoute {
       },
     ),
     GoRoute(
-      path: pickName.path,
+      path: pathPickName,
       builder: (context, state) {
         return state.extra == null
             ? const PickNameScreen()

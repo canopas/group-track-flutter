@@ -104,7 +104,7 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
     final user = ref.read(currentUserPod);
 
     if (mounted && (user?.first_name == null || user!.first_name!.isEmpty)) {
-      await AppRoute.pickName.push(context);
+      await AppRoute.pickName(user: user).push(context);
     }
 
     if (state.isNewUser && mounted) {
