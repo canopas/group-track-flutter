@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/service/location_manager.dart';
 import 'package:data/service/permission_service.dart';
 import 'package:data/service/place_service.dart';
 import 'package:data/service/space_service.dart';
@@ -26,6 +27,7 @@ final mapViewStateProvider =
     ref.read(spaceServiceProvider),
     ref.read(placeServiceProvider),
     ref.read(permissionServiceProvider),
+    ref.read(locationManagerProvider),
   );
 });
 
@@ -34,12 +36,14 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   final SpaceService spaceService;
   final PlaceService placeService;
   final PermissionService permissionService;
+  final LocationManager locationManager;
 
   MapViewNotifier(
     this._currentUser,
     this.spaceService,
     this.placeService,
     this.permissionService,
+    this.locationManager,
   ) : super(const MapViewState());
 
   void loadData(String? spaceId) {
@@ -98,7 +102,11 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     final List<UserMarker> markers = [];
     for (final info in userInfo) {
       if (info.user.id == _currentUser?.id) {
-        _mapCameraPosition(info);
+        final latLng = LatLng(
+          info.location?.latitude ?? 0.0,
+          info.location?.longitude ?? 0.0,
+        );
+        _mapCameraPosition(latLng, defaultCameraZoom);
       }
 
       if (info.location != null) {
@@ -146,15 +154,6 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
       debugPrint("Error while getting network image: $e");
     }
     return null;
-  }
-
-  void _mapCameraPosition(ApiUserInfo userInfo) {
-    final position = CameraPosition(
-      target: LatLng(userInfo.location?.latitude ?? 0.0,
-          userInfo.location?.longitude ?? 0.0),
-      zoom: defaultCameraZoom,
-    );
-    state = state.copyWith(defaultPosition: position);
   }
 
   void onAddMemberTap(String spaceId) async {
@@ -234,6 +233,56 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
 
   void showEnableLocationDialog() {
     state = state.copyWith(showLocationDialog: DateTime.now());
+  }
+
+  void getUserLastLocation() async {
+    try {
+      locationManager.configure();
+      locationManager.startService();
+      // final isEnabled = await permissionService.isLocationServiceEnabled();
+      // if (isEnabled) {
+      //   final position = await locationManager.getLastLocation();
+      //   final latLng = LatLng(position!.latitude, position.longitude);
+      //   _mapCameraPosition(latLng, defaultCameraZoom);
+      // } else {
+      //   for (final info in state.userInfo) {
+      //     if (info.user.id == _currentUser?.id) {
+      //       final latLng = LatLng(
+      //         info.location?.latitude ?? 0.0,
+      //         info.location?.longitude ?? 0.0,
+      //       );
+      //       _mapCameraPosition(latLng, defaultCameraZoom);
+      //     }
+      //   }
+      // }
+    } catch (error, stack) {
+      logger.e(
+        'MapViewNotifier: Error while getting last location',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  void _mapCameraPosition(LatLng latLng, double zoom) {
+    final cameraPosition = CameraPosition(
+      target: LatLng(latLng.latitude, latLng.longitude),
+      zoom: zoom,
+    );
+    state = state.copyWith(defaultPosition: cameraPosition);
+  }
+
+  void stopTracing(){
+    print('XXX cal stop');
+    try {
+      locationManager.stopLocationTracking();
+    } catch (error, stack) {
+      logger.e(
+        'MapViewNotifier: Error while stopping location',
+        error: error,
+        stackTrace: stack,
+      );
+    }
   }
 }
 
