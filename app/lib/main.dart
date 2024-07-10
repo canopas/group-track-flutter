@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data/service/location_manager.dart';
 import 'package:data/service/location_service.dart';
 import 'package:data/storage/preferences_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -104,7 +105,7 @@ void _startLocationUpdates(String userId, LocationService locationService) {
   Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.high,
-      distanceFilter: 10,
+      distanceFilter: locationUpdateDistance,
     ),
   ).listen((position) {
     timer?.cancel();
