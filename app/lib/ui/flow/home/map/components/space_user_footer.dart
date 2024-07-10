@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/button/icon_primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
+import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 
@@ -15,6 +16,7 @@ class SpaceUserFooter extends StatefulWidget {
   final List<ApiUserInfo>? members;
   final ApiUserInfo? selectedUser;
   final bool isEnabled;
+  final bool fetchingInviteCode;
   final void Function() onAddMemberTap;
   final void Function(ApiUserInfo) onMemberTap;
   final void Function() onRelocateTap;
@@ -27,6 +29,7 @@ class SpaceUserFooter extends StatefulWidget {
     required this.members,
     this.selectedUser,
     required this.isEnabled,
+    required this.fetchingInviteCode,
     required this.onAddMemberTap,
     required this.onMemberTap,
     required this.onRelocateTap,
@@ -158,6 +161,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
 
   Widget addMemberView(BuildContext context) {
     return OnTapScale(
+      enabled: !widget.fetchingInviteCode,
       onTap: widget.onAddMemberTap,
       child: Padding(
         padding: const EdgeInsets.only(right: 6),
@@ -170,16 +174,20 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                   border:
                       Border.all(color: context.colorScheme.primary, width: 1),
                   borderRadius: BorderRadius.circular(30)),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SvgPicture.asset(
-                  Assets.images.icAddUserIcon,
-                  colorFilter: ColorFilter.mode(
-                    context.colorScheme.primary,
-                    BlendMode.srcATop,
-                  ),
-                ),
-              ),
+              child: widget.fetchingInviteCode
+                  ? const AppProgressIndicator(
+                      size: AppProgressIndicatorSize.small,
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SvgPicture.asset(
+                        Assets.images.icAddUserIcon,
+                        colorFilter: ColorFilter.mode(
+                          context.colorScheme.primary,
+                          BlendMode.srcATop,
+                        ),
+                      ),
+                    ),
             ),
             const SizedBox(height: 2),
             Text(

@@ -97,6 +97,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           members: state.userInfo,
           selectedUser: state.selectedUser,
           isEnabled: !state.loading,
+          fetchingInviteCode: state.fetchingInviteCode,
           onAddMemberTap: () {
             notifier.onAddMemberTap(widget.space!.space.id);
           },

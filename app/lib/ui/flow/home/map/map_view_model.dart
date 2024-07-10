@@ -43,15 +43,15 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   ) : super(const MapViewState());
 
   void loadData(String? spaceId) {
-    onSelectedSpaceChange();
+    _onSelectedSpaceChange();
 
     if (spaceId == null) return;
 
-    listenMemberLocation(spaceId);
-    listenPlaces(spaceId);
+    _listenMemberLocation(spaceId);
+    _listenPlaces(spaceId);
   }
 
-  void onSelectedSpaceChange() {
+  void _onSelectedSpaceChange() {
     state = state.copyWith(
       userInfo: [],
       places: [],
@@ -61,14 +61,14 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     );
   }
 
-  void listenMemberLocation(String spaceId) async {
+  void _listenMemberLocation(String spaceId) async {
     if (state.loading) return;
     try {
       state = state.copyWith(loading: true, selectedUser: null);
 
       spaceService.getMemberWithLocation(spaceId).listen((userInfo) {
         state = state.copyWith(userInfo: userInfo, loading: false);
-        userMapPositions(userInfo);
+        _userMapPositions(userInfo);
       });
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);
@@ -80,7 +80,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     }
   }
 
-  void listenPlaces(String spaceId) async {
+  void _listenPlaces(String spaceId) async {
     try {
       placeService.getAllPlacesStream(spaceId).listen((places) {
         state = state.copyWith(places: places);
@@ -94,11 +94,11 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     }
   }
 
-  void userMapPositions(List<ApiUserInfo> userInfo) async {
+  void _userMapPositions(List<ApiUserInfo> userInfo) async {
     final List<UserMarker> markers = [];
     for (final info in userInfo) {
       if (info.user.id == _currentUser?.id) {
-        mapCameraPosition(info);
+        _mapCameraPosition(info);
       }
 
       if (info.location != null) {
@@ -148,7 +148,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     return null;
   }
 
-  void mapCameraPosition(ApiUserInfo userInfo) {
+  void _mapCameraPosition(ApiUserInfo userInfo) {
     final position = CameraPosition(
       target: LatLng(userInfo.location?.latitude ?? 0.0,
           userInfo.location?.longitude ?? 0.0),
@@ -175,7 +175,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
 
   void onDismissMemberDetail() {
     state = state.copyWith(selectedUser: null, defaultPosition: null);
-    onShowDetailUpdateUserMarker(null);
+    _onSelectUserMarker(null);
   }
 
   void showMemberDetail(ApiUserInfo member) {
@@ -190,10 +190,10 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
 
     state =
         state.copyWith(selectedUser: selectedMember, defaultPosition: position);
-    onShowDetailUpdateUserMarker(member.user.id);
+    _onSelectUserMarker(member.user.id);
   }
 
-  void onShowDetailUpdateUserMarker(String? userId) {
+  void _onSelectUserMarker(String? userId) {
     final List<UserMarker> updatedMarkers;
 
     if (userId == null) {
@@ -215,7 +215,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     showMemberDetail(user);
   }
 
-  void checkLocationAndNotificationPermission() async {
+  void checkUserPermission() async {
     final isLocationEnabled = await permissionService.isLocationAlwaysEnabled();
     final isLocationServiceEnabled =
         await permissionService.isLocationServiceEnabled();

@@ -50,7 +50,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           if(state.selectedSpace != null){
           notifier.getAllSpace();
           notifier.showBatteryOptimizationDialog();
-          mapNotifier.checkLocationAndNotificationPermission();
+          mapNotifier.checkUserPermission();
           }
         },
         child: _body(context, state),
