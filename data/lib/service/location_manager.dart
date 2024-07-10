@@ -1,75 +1,36 @@
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:data/service/permission_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'location_service.dart';
 
 const int locationUpdateInterval = 10000; // milliseconds
-const double locationUpdateDistance = 10.0; // meters
+const int locationUpdateDistance = 10; // meters
 
 final locationManagerProvider =
-    Provider((ref) => LocationManager(ref.read(permissionServiceProvider)));
+    Provider((ref) => LocationManager(ref.read(locationServiceProvider)));
 
 class LocationManager {
-  final PermissionService permissionService;
-  final backGroundService = FlutterBackgroundService();
-  Position? _lastLocation;
-  Timer? _locationUpdateTimer;
+  final LocationService locationService;
 
-  LocationManager(this.permissionService);
+  Timer? _timer;
 
-  Stream<Position> getLiveGeoLocatorData() {
-    LocationSettings locationSettings;
+  LocationManager(this.locationService);
 
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      locationSettings = AndroidSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: locationUpdateDistance.toInt(),
-        intervalDuration: const Duration(milliseconds: locationUpdateInterval)
-      );
-    }  else {
-      locationSettings = const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 100,
-      );
-    }
-
-    return Geolocator.getPositionStream(locationSettings: locationSettings);
-  }
-
-  void configure() {
-    getLiveGeoLocatorData().listen((position) {
-
-      final distance = Geolocator.distanceBetween(
-        _lastLocation!.latitude,
-        _lastLocation!.longitude,
-        position.latitude,
-        position.longitude,
-      );
-      print('Location distance:$distance update: $position');
-        _lastLocation = position;
-    });
-    // Geolocator.getPositionStream(
-    //   locationSettings: LocationSettings(
-    //     accuracy: LocationAccuracy.best,
-    //     distanceFilter: locationUpdateDistance.toInt(),
-    //     timeLimit: Duration(seconds: 10)
-    //   ),
-    // ).listen((Position position) {
-    //   print('Location update: $position');
-    //   _lastLocation = position;
-    //   // Handle location update here
-    // });
+  Future<bool> isServiceRunning() async {
+    final service = FlutterBackgroundService();
+    return await service.isRunning();
   }
 
   Future<Position?> getLastLocation() async {
-    if (!await permissionService.isLocationServiceEnabled()) {
-      return null;
-    }
+    if (!await Geolocator.isLocationServiceEnabled()) return null;
 
     if (await Permission.location.isDenied) {
       await Permission.location.request();
@@ -77,18 +38,13 @@ class LocationManager {
         return null;
       }
     }
-
-    final lastLocation = await Geolocator.getLastKnownPosition();
-    return lastLocation;
+    return await Geolocator.getCurrentPosition();
   }
 
-  void stopLocationTracking() {
-    _locationUpdateTimer?.cancel();
-    stopService();
-  }
-
-  void startService() async {
-    await backGroundService.configure(
+  void startService(String userId) async {
+    print('XXX start tracking');
+    final service = FlutterBackgroundService();
+    await service.configure(
       androidConfiguration: AndroidConfiguration(
         onStart: onStart,
         autoStart: true,
@@ -100,28 +56,78 @@ class LocationManager {
         onBackground: onIosBackground,
       ),
     );
-    backGroundService.startService();
+    print('XXX after config');
+    service.startService();
+
+    print('XXX start service');
+    // startLocationTracking(userId);
   }
 
-  void stopService() {
-    FlutterBackgroundService().invoke("stopService");
-  }
+  static Future<void> onStart(ServiceInstance service) async {
 
-  static void onStart(ServiceInstance service) {
     WidgetsFlutterBinding.ensureInitialized();
+    print("This is exAMPLE");
 
     if (service is AndroidServiceInstance) {
       service.setForegroundNotificationInfo(
         title: "Background Location Service",
         content: "Your location is being tracked",
       );
-      service.setAsForegroundService();
-      service.setAsBackgroundService();
     }
 
+    // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    // final prefs = await SharedPreferences.getInstance();
+    // final locationService = LocationService(FirebaseFirestore.instance);
+
+    String userId = '';
+    // final String? encodedUser = prefs.getString("user_account");
+    // if(encodedUser != null){
+    //   final user = jsonDecode(encodedUser);
+    //   userId = user['id'];
+    // }
+
+    Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: locationUpdateDistance,
+      ),
+    ).listen((position) async {
+     print('XXX user id:$userId');
+      // locationService.saveCurrentLocation(userId, position.latitude,
+      //     position.longitude, DateTime.now().millisecondsSinceEpoch, 0);
+    });
     service.on('stopService').listen((event) {
       service.stopSelf();
     });
+  }
+
+  void startLocationTracking(String userId) {
+    Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: locationUpdateDistance,
+      ),
+    ).listen((position) async {
+      _timer?.cancel();
+      _timer = Timer(const Duration(milliseconds: 5000), () {
+        print('XXX position:$position');
+        updateUserLocation(userId, position);
+      });
+    });
+  }
+
+  void updateUserLocation(String userId, Position position) async {
+    await locationService.saveCurrentLocation(
+      userId,
+      position.latitude,
+      position.longitude,
+      DateTime.now().millisecondsSinceEpoch,
+      0,
+    );
+  }
+
+  void stopService() {
+    FlutterBackgroundService().invoke("stopService");
   }
 
   static bool onIosBackground(ServiceInstance service) {

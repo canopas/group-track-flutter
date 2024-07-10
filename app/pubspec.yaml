@@ -74,6 +74,7 @@ dependencies:
   flutter_svg: ^2.0.9
   # picker
   canopas_country_picker: ^0.0.4
+  flutter_background_service: ^5.0.6
 
 dev_dependencies:
   flutter_test:

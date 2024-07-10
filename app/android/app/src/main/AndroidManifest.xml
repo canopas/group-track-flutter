@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:label="Your space"
@@ -43,9 +44,11 @@
             android:value="${MAPS_API_KEY}" />
 
         <service
+            android:enabled="true"
+            android:exported="true"
             android:name="id.flutter.flutter_background_service.BackgroundService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:foregroundServiceType="location" />
+            android:foregroundServiceType="location"
+            />
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

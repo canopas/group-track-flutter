@@ -3,21 +3,23 @@ import 'dart:io';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/auth_service.dart';
+import 'package:data/service/location_manager.dart';
+import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:data/service/space_service.dart';
 
 part 'profile_view_model.freezed.dart';
 
-final editProfileViewStateProvider =
-    StateNotifierProvider.autoDispose<EditProfileViewNotifier, EditProfileViewState>(
+final editProfileViewStateProvider = StateNotifierProvider.autoDispose<
+    EditProfileViewNotifier, EditProfileViewState>(
   (ref) => EditProfileViewNotifier(
     ref.read(spaceServiceProvider),
     ref.read(authServiceProvider),
     ref.read(currentUserPod),
+    ref.read(locationManagerProvider),
   ),
 );
 
@@ -25,9 +27,14 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
   final SpaceService spaceService;
   final AuthService authService;
   final ApiUser? user;
+  final LocationManager locationManager;
 
-  EditProfileViewNotifier(this.spaceService, this.authService, this.user)
-      : super(EditProfileViewState(
+  EditProfileViewNotifier(
+    this.spaceService,
+    this.authService,
+    this.user,
+    this.locationManager,
+  ) : super(EditProfileViewState(
           firstName: TextEditingController(text: user?.first_name),
           lastName: TextEditingController(text: user?.last_name),
           email: TextEditingController(text: user?.email),
@@ -43,6 +50,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
       spaceService.deleteUserSpaces();
       authService.deleteUser();
       state = state.copyWith(deletingAccount: true, accountDeleted: true);
+      locationManager.stopService();
     } catch (error, stack) {
       logger.e(
         'EditProfileViewState: error while delete account',
@@ -69,7 +77,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
       logger.e(
         'EditProfileViewNotifier: error while update user profile',
         error: error,
-        stackTrace: stack
+        stackTrace: stack,
       );
       state = state.copyWith(error: error);
     }
@@ -114,7 +122,8 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
         error: error,
         stackTrace: stack,
       );
-      state = state.copyWith(profileUrl: '', uploadingImage: false, error: error);
+      state =
+          state.copyWith(profileUrl: '', uploadingImage: false, error: error);
       onChange();
     }
   }

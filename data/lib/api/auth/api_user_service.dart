@@ -4,6 +4,7 @@ import 'package:data/service/device_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../service/location_manager.dart';
 import '../../storage/app_preferences.dart';
 import 'auth_models.dart';
 
@@ -14,6 +15,7 @@ final apiUserServiceProvider = StateProvider((ref) => ApiUserService(
       ref.read(currentUserSessionJsonPod.notifier),
       ref.read(currentUserSessionJsonPod.notifier),
       ref.read(isOnboardingShownPod.notifier),
+      ref.read(locationManagerProvider),
     ));
 
 class ApiUserService {
@@ -23,14 +25,17 @@ class ApiUserService {
   final StateController<String?> currentUserSpaceId;
   final StateController<String?> userSessionJsonNotifier;
   final StateController<bool?> onBoardNotifier;
+  final LocationManager locationManager;
 
   ApiUserService(
-      this._db,
-      this._device,
-      this.userJsonNotifier,
-      this.currentUserSpaceId,
-      this.userSessionJsonNotifier,
-      this.onBoardNotifier);
+    this._db,
+    this._device,
+    this.userJsonNotifier,
+    this.currentUserSpaceId,
+    this.userSessionJsonNotifier,
+    this.onBoardNotifier,
+    this.locationManager,
+  );
 
   CollectionReference get _userRef =>
       _db.collection("users").withConverter<ApiUser>(
@@ -186,12 +191,11 @@ class ApiUserService {
   }
 
   Future<void> signOut() async {
-    // locationManager.stopLocationTracking();
+    locationManager.stopService();
     userJsonNotifier.state = null;
     userSessionJsonNotifier.state = null;
     onBoardNotifier.state = false;
     currentUserSpaceId.state = null;
     FirebaseAuth.instance.signOut();
-    // locationManager.stopService();
   }
 }

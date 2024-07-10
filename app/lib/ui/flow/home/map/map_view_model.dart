@@ -237,24 +237,23 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
 
   void getUserLastLocation() async {
     try {
-      locationManager.configure();
-      locationManager.startService();
-      // final isEnabled = await permissionService.isLocationServiceEnabled();
-      // if (isEnabled) {
-      //   final position = await locationManager.getLastLocation();
-      //   final latLng = LatLng(position!.latitude, position.longitude);
-      //   _mapCameraPosition(latLng, defaultCameraZoom);
-      // } else {
-      //   for (final info in state.userInfo) {
-      //     if (info.user.id == _currentUser?.id) {
-      //       final latLng = LatLng(
-      //         info.location?.latitude ?? 0.0,
-      //         info.location?.longitude ?? 0.0,
-      //       );
-      //       _mapCameraPosition(latLng, defaultCameraZoom);
-      //     }
-      //   }
-      // }
+      state = state.copyWith(defaultPosition: null);
+      final isEnabled = await permissionService.isLocationPermissionGranted();
+      if (isEnabled) {
+        final position = await locationManager.getLastLocation();
+        final latLng = LatLng(position!.latitude, position.longitude);
+        _mapCameraPosition(latLng, defaultCameraZoom);
+      } else {
+        for (final info in state.userInfo) {
+          if (info.user.id == _currentUser?.id) {
+            final latLng = LatLng(
+              info.location?.latitude ?? 0.0,
+              info.location?.longitude ?? 0.0,
+            );
+            _mapCameraPosition(latLng, defaultCameraZoom);
+          }
+        }
+      }
     } catch (error, stack) {
       logger.e(
         'MapViewNotifier: Error while getting last location',
@@ -270,19 +269,6 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
       zoom: zoom,
     );
     state = state.copyWith(defaultPosition: cameraPosition);
-  }
-
-  void stopTracing(){
-    print('XXX cal stop');
-    try {
-      locationManager.stopLocationTracking();
-    } catch (error, stack) {
-      logger.e(
-        'MapViewNotifier: Error while stopping location',
-        error: error,
-        stackTrace: stack,
-      );
-    }
   }
 }
 

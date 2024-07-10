@@ -518,7 +518,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_background_service:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_background_service
       sha256: "30d1786c7fccba10ba1ca49297bc14343456f24e3dfd4cafc06f35de68d92619"
