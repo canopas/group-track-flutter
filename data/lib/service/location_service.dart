@@ -47,7 +47,6 @@ class LocationService {
     int? recodedAt,
     int? userState,
   ) async {
-    print('XXX call save location');
     final docRef = _locationRef(userId).doc();
 
     final location = ApiLocation(

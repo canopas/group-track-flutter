@@ -1,8 +1,5 @@
-import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
-import 'package:data/service/location_manager.dart';
-import 'package:data/service/location_service.dart';
 import 'package:data/service/permission_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
@@ -18,9 +15,6 @@ final homeViewStateProvider =
     ref.read(currentUserSessionJsonPod.notifier),
     ref.read(permissionServiceProvider),
     ref.read(lastBatteryDialogPod.notifier),
-    ref.read(locationManagerProvider),
-    ref.read(currentUserPod),
-    ref.read(locationServiceProvider),
   ),
 );
 
@@ -29,19 +23,13 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final PermissionService permissionService;
   final StateController<String?> _currentSpaceIdController;
   final StateController<String?> _lastBatteryDialogDate;
-  final LocationManager locationManager;
-  final ApiUser? _currentUser;
-  final LocationService locationService;
 
   HomeViewNotifier(
-      this.spaceService,
-      this._currentSpaceIdController,
-      this.permissionService,
-      this._lastBatteryDialogDate,
-      this.locationManager,
-      this._currentUser,
-      this.locationService)
-      : super(const HomeViewState());
+    this.spaceService,
+    this._currentSpaceIdController,
+    this.permissionService,
+    this._lastBatteryDialogDate,
+  ) : super(const HomeViewState());
 
   String? get currentSpaceId => _currentSpaceIdController.state;
 
@@ -104,7 +92,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       state = state.copyWith(selectedSpace: space);
       currentSpaceId = space.space.id;
     }
-  //  startLocationTracking();
   }
 
   void showBatteryOptimizationDialog() async {
@@ -139,15 +126,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
   void requestIgnoreBatteryOptimizations() async {
     await permissionService.requestIgnoreBatteryOptimizations();
-  }
-
-  void startLocationTracking() async {
-    final isLocationEnabled =
-        await permissionService.isLocationPermissionGranted();
-
-    if (isLocationEnabled) {
-      locationManager.startService(_currentUser!.id);
-    }
   }
 }
 

@@ -121,7 +121,6 @@ void _startLocationUpdates(String userId, LocationService locationService) {
 }
 
 bool onIosBackground(ServiceInstance service) {
-  WidgetsFlutterBinding.ensureInitialized();
   onStart(service);
   return true;
 }
