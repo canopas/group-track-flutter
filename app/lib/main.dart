@@ -12,6 +12,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yourspace_flutter/firebase_options.dart';
@@ -108,12 +109,13 @@ void _startLocationUpdates(String userId, LocationService locationService) {
       distanceFilter: locationUpdateDistance,
     ),
   ).listen((position) {
+    final location = LatLng(position.latitude, position.longitude);
     timer?.cancel();
     timer = Timer(const Duration(milliseconds: 5000), () {
       locationService.saveCurrentLocation(
         userId,
-        position.latitude,
-        position.longitude,
+        location.latitude,
+        location.longitude,
         DateTime.now().millisecondsSinceEpoch,
         0,
       );
