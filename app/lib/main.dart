@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data/api/location/location.dart';
+import 'package:data/repository/journey_repository.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/location_service.dart';
 import 'package:data/storage/preferences_provider.dart';
@@ -90,10 +92,11 @@ Future<void> onStart(ServiceInstance service) async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final locationService = LocationService(FirebaseFirestore.instance);
+  final journeyRepository = JourneyRepository(FirebaseFirestore.instance);
   final userId = await _getUserIdFromPreferences();
 
   if (userId != null) {
-    _startLocationUpdates(userId, locationService);
+    _startLocationUpdates(userId, locationService, journeyRepository);
   }
 
   service.on('stopService').listen((event) {
@@ -101,7 +104,11 @@ Future<void> onStart(ServiceInstance service) async {
   });
 }
 
-void _startLocationUpdates(String userId, LocationService locationService) {
+void _startLocationUpdates(
+  String userId,
+  LocationService locationService,
+  JourneyRepository journeyRepository,
+) {
   Timer? timer;
   Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
@@ -109,16 +116,15 @@ void _startLocationUpdates(String userId, LocationService locationService) {
       distanceFilter: locationUpdateDistance,
     ),
   ).listen((position) {
-    final location = LatLng(position.latitude, position.longitude);
     timer?.cancel();
     timer = Timer(const Duration(milliseconds: 5000), () {
       locationService.saveCurrentLocation(
         userId,
-        location.latitude,
-        location.longitude,
+        LatLng(position.latitude, position.longitude),
         DateTime.now().millisecondsSinceEpoch,
-        0,
+        userStateMoving,
       );
+      journeyRepository.saveLocationJourney(userStateMoving, userId, position);
     });
   });
 }

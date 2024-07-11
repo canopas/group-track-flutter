@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../api/auth/auth_models.dart';
 import '../api/location/location.dart';
@@ -42,20 +43,19 @@ class LocationService {
 
   Future<void> saveCurrentLocation(
     String userId,
-    double latitude,
-    double longitude,
+    LatLng latLng,
     int? recodedAt,
     int? userState,
   ) async {
     final docRef = _locationRef(userId).doc();
 
     final location = ApiLocation(
-      id: docRef.id,
-      user_id: userId,
-      latitude: latitude,
-      longitude: longitude,
-      created_at: recodedAt,
-    );
+        id: docRef.id,
+        user_id: userId,
+        latitude: latLng.latitude,
+        longitude: latLng.longitude,
+        created_at: recodedAt,
+        user_state: userState);
 
     await docRef.set(location);
   }
