@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -58,5 +60,28 @@ class LocationService {
         user_state: userState);
 
     await docRef.set(location);
+  }
+
+  Stream<List<ApiLocation?>> getLastFiveMinLocation(String userId) {
+    final currentTime = DateTime.now().millisecondsSinceEpoch;
+
+    return Stream.fromIterable(List.generate(5, (i) => i))
+        .asyncMap((i) async {
+          final startTime = currentTime - (i + 1) * 60000;
+          final endTime = startTime - 60000;
+          final querySnapshot = await _locationRef(userId)
+              .where('user_id', isEqualTo: userId)
+              .where('created_at', isGreaterThanOrEqualTo: endTime)
+              .where('created_at', isLessThan: startTime)
+              .orderBy('created_at', descending: true)
+              .limit(1)
+              .get();
+          return querySnapshot.docs.isNotEmpty
+              ? querySnapshot.docs.first as ApiLocation
+              : null;
+        })
+        .where((location) => location != null)
+        .toList()
+        .asStream();
   }
 }

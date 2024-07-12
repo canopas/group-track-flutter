@@ -20,7 +20,7 @@ ApiLocation _$ApiLocationFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ApiLocation {
-  String get id => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
   String get user_id => throw _privateConstructorUsedError;
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
@@ -40,7 +40,7 @@ abstract class $ApiLocationCopyWith<$Res> {
       _$ApiLocationCopyWithImpl<$Res, ApiLocation>;
   @useResult
   $Res call(
-      {String id,
+      {String? id,
       String user_id,
       double latitude,
       double longitude,
@@ -61,7 +61,7 @@ class _$ApiLocationCopyWithImpl<$Res, $Val extends ApiLocation>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? user_id = null,
     Object? latitude = null,
     Object? longitude = null,
@@ -69,10 +69,10 @@ class _$ApiLocationCopyWithImpl<$Res, $Val extends ApiLocation>
     Object? created_at = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       user_id: null == user_id
           ? _value.user_id
           : user_id // ignore: cast_nullable_to_non_nullable
@@ -106,7 +106,7 @@ abstract class _$$ApiLocationImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
+      {String? id,
       String user_id,
       double latitude,
       double longitude,
@@ -125,7 +125,7 @@ class __$$ApiLocationImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? user_id = null,
     Object? latitude = null,
     Object? longitude = null,
@@ -133,10 +133,10 @@ class __$$ApiLocationImplCopyWithImpl<$Res>
     Object? created_at = freezed,
   }) {
     return _then(_$ApiLocationImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       user_id: null == user_id
           ? _value.user_id
           : user_id // ignore: cast_nullable_to_non_nullable
@@ -165,7 +165,7 @@ class __$$ApiLocationImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ApiLocationImpl extends _ApiLocation {
   const _$ApiLocationImpl(
-      {required this.id,
+      {this.id,
       required this.user_id,
       required this.latitude,
       required this.longitude,
@@ -177,7 +177,7 @@ class _$ApiLocationImpl extends _ApiLocation {
       _$$ApiLocationImplFromJson(json);
 
   @override
-  final String id;
+  final String? id;
   @override
   final String user_id;
   @override
@@ -232,7 +232,7 @@ class _$ApiLocationImpl extends _ApiLocation {
 
 abstract class _ApiLocation extends ApiLocation {
   const factory _ApiLocation(
-      {required final String id,
+      {final String? id,
       required final String user_id,
       required final double latitude,
       required final double longitude,
@@ -244,7 +244,7 @@ abstract class _ApiLocation extends ApiLocation {
       _$ApiLocationImpl.fromJson;
 
   @override
-  String get id;
+  String? get id;
   @override
   String get user_id;
   @override

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/location_table.dart';
 import 'package:data/storage/database/location_table_dao.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -26,7 +27,76 @@ class JourneyRepository {
     journeyService = ApiJourneyService(fireStore);
   }
 
-  void saveLocationJourney(
+  Future<int> getUserState(String userId, Position position) async {
+    var locationData = await getLocationData(userId);
+    if (locationData != null) {
+      checkAndUpdateLastFiveMinLocation(
+        userId,
+        locationData,
+        position,
+      );
+    }
+    locationData = await getLocationData(userId);
+    final userState = getCurrentUserState(locationData!, position);
+    return userState;
+  }
+
+  int getCurrentUserState(LocationTable locationData, Position position) {
+    final lastFiveMinLocation = getLastFiveMinuteLocations(locationData);
+    if (lastFiveMinLocation!.isMoving(position)) return userStateMoving;
+    return userStateSteady;
+  }
+
+  void checkAndUpdateLastFiveMinLocation(
+    String userId,
+    LocationTable locationData,
+    Position position,
+  ) async {
+    final locations = getLastFiveMinuteLocations(locationData);
+
+    if (locations == null) {
+      final fiveMinLocation =
+          await locationService.getLastFiveMinLocation(userId).first;
+      updateLocationData(locationData, fiveMinLocation);
+    } else {
+      final latest = locations.reduce((current, next) =>
+          current.created_at! > next.created_at! ? current : next);
+      if (latest == null ||
+          latest.created_at! < DateTime.now().millisecondsSinceEpoch - 60000) {
+        final latLng = LatLng(position.latitude, position.longitude);
+        final updated = List<ApiLocation>.from(locations);
+        updated.removeWhere((loc) =>
+            position.timestamp.millisecondsSinceEpoch - loc.created_at! >
+            minTimeDifference);
+        updated.add(ApiLocation(
+          user_id: userId,
+          latitude: latLng.latitude,
+          longitude: latLng.longitude,
+        ));
+        updateLocationData(locationData, updated);
+      }
+    }
+  }
+
+  List<ApiLocation>? getLastFiveMinuteLocations(LocationTable locationData) {
+    return locationData.lastFiveMinutesLocations != null
+        ? LocationConverters.locationListFromString(
+        locationData.lastFiveMinutesLocations!)
+        : [];
+  }
+
+  Future<void> updateLocationData(
+    LocationTable locationData,
+    List<ApiLocation?> locations,
+  ) async {
+    final updatedData = locationData.copyWith(
+      lastFiveMinutesLocations:
+          LocationConverters.locationListToString(locations),
+    );
+    await locationTableDao.updateLocationTable(updatedData);
+  }
+
+  Future<void> saveLocationJourney(
     int userSate,
     String userId,
     Position position,
@@ -47,7 +117,9 @@ class JourneyRepository {
         await saveJourneyForSteadyUser(userId, lastJourney, position);
       }
     } catch (e) {
-      print('JourneyRepository: Error while saving location journey:$e');
+      if (kDebugMode) {
+        print('JourneyRepository: Error while saving location journey:$e');
+      }
     }
   }
 
@@ -194,8 +266,7 @@ class JourneyRepository {
     } else if (timeDifference < minTimeDifference && distance < minDistance) {
       await journeyService.updateLastLocationJourney(
         userId = userId,
-        lastJourney.copyWith(
-            update_at: DateTime.now().millisecondsSinceEpoch),
+        lastJourney.copyWith(update_at: DateTime.now().millisecondsSinceEpoch),
       );
     }
   }
@@ -207,5 +278,22 @@ class JourneyRepository {
       endLocation.latitude,
       endLocation.longitude,
     );
+  }
+}
+
+extension ApiLocationListExtensions on List<ApiLocation> {
+  bool isMoving(Position currentLocation) {
+    return any((location) {
+      final newLocation =
+          LatLng(currentLocation.latitude, currentLocation.longitude);
+      final lastLocation = LatLng(location.latitude, location.longitude);
+      final distance = Geolocator.distanceBetween(
+        lastLocation.latitude,
+        lastLocation.longitude,
+        newLocation.latitude,
+        newLocation.longitude,
+      );
+      return distance > minDistance;
+    });
   }
 }
