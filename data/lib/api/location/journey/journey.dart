@@ -40,8 +40,8 @@ class ApiLocationJourney with _$ApiLocationJourney {
 @freezed
 class JourneyRoute with _$JourneyRoute {
   const factory JourneyRoute({
-    @Default(0.0) double latitude,
-    @Default(0.0) double longitude,
+    required double latitude,
+    required double longitude,
   }) = _JourneyRoute;
 
   factory JourneyRoute.fromJson(Map<String, dynamic> json) =>

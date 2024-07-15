@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data/log/logger.dart';
 import 'package:data/repository/journey_repository.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/location_service.dart';
@@ -117,19 +118,26 @@ void _startLocationUpdates(
   ).listen((position) {
     timer?.cancel();
     timer = Timer(const Duration(milliseconds: 5000), () async {
-      final userState = await journeyRepository.getUserState(userId, position);
-      print('XXX user state:$userState');
-      await locationService.saveCurrentLocation(
-        userId,
-        LatLng(position.latitude, position.longitude),
-        DateTime.now().millisecondsSinceEpoch,
-        userState,
-      );
-      // await journeyRepository.saveLocationJourney(
-      //   userState,
-      //   userId,
-      //   position,
-      // );
+      try {
+        final userState =
+            await journeyRepository.getUserState(userId, position);
+
+        await locationService.saveCurrentLocation(
+          userId,
+          LatLng(position.latitude, position.longitude),
+          DateTime.now().millisecondsSinceEpoch,
+          userState,
+        );
+
+        await journeyRepository.saveUserJourney(
+            userState, userId, position);
+      } catch (error, stack) {
+        logger.e(
+          'Main: error while getting ot update user location and journey',
+          error: error,
+          stackTrace: stack,
+        );
+      }
     });
   });
 }

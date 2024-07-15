@@ -3,13 +3,13 @@ import 'package:data/storage/database/location_database.dart';
 import 'package:sqflite/sqflite.dart';
 
 class LocationTableDao {
-  final LocationDatabase _locationDatabase = LocationDatabase();
+  final LocationDatabaseHelper _locationDatabase = LocationDatabaseHelper();
 
   Future<void> insertLocationTable(LocationTable locationTable) async {
     final db = await _locationDatabase.database;
     await db.insert(
-      LocationDatabase.tableName,
-      locationTable.toJson(),
+      LocationDatabaseHelper.tableName,
+      locationTable.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -17,7 +17,7 @@ class LocationTableDao {
   Future<LocationTable?> getLocationData(String userId) async {
     final db = await _locationDatabase.database;
     final data = await db.query(
-      LocationDatabase.tableName,
+      LocationDatabaseHelper.tableName,
       where: 'userId = ?',
       whereArgs: [userId],
     );
@@ -31,7 +31,7 @@ class LocationTableDao {
   Future<void> updateLocationTable(LocationTable locationTable) async {
     final db = await _locationDatabase.database;
     await db.update(
-      LocationDatabase.tableName,
+      LocationDatabaseHelper.tableName,
       locationTable.toJson(),
       where: 'userId = ?',
       whereArgs: [locationTable.userId],
@@ -41,7 +41,7 @@ class LocationTableDao {
   Future<void> deleteLocationTable(String userId) async {
     final db = await _locationDatabase.database;
     await db.delete(
-      LocationDatabase.tableName,
+      LocationDatabaseHelper.tableName,
       where: 'userId = ?',
       whereArgs: [userId],
     );

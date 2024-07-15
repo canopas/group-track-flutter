@@ -124,11 +124,12 @@ class __$$LocationTableImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$LocationTableImpl implements _LocationTable {
+class _$LocationTableImpl extends _LocationTable {
   const _$LocationTableImpl(
       {required this.userId,
       this.lastFiveMinutesLocations,
-      this.lastLocationJourney});
+      this.lastLocationJourney})
+      : super._();
 
   factory _$LocationTableImpl.fromJson(Map<String, dynamic> json) =>
       _$$LocationTableImplFromJson(json);
@@ -177,11 +178,12 @@ class _$LocationTableImpl implements _LocationTable {
   }
 }
 
-abstract class _LocationTable implements LocationTable {
+abstract class _LocationTable extends LocationTable {
   const factory _LocationTable(
       {required final String userId,
       final String? lastFiveMinutesLocations,
       final String? lastLocationJourney}) = _$LocationTableImpl;
+  const _LocationTable._() : super._();
 
   factory _LocationTable.fromJson(Map<String, dynamic> json) =
       _$LocationTableImpl.fromJson;

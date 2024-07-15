@@ -479,16 +479,14 @@ class __$$JourneyRouteImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$JourneyRouteImpl implements _JourneyRoute {
-  const _$JourneyRouteImpl({this.latitude = 0.0, this.longitude = 0.0});
+  const _$JourneyRouteImpl({required this.latitude, required this.longitude});
 
   factory _$JourneyRouteImpl.fromJson(Map<String, dynamic> json) =>
       _$$JourneyRouteImplFromJson(json);
 
   @override
-  @JsonKey()
   final double latitude;
   @override
-  @JsonKey()
   final double longitude;
 
   @override
@@ -526,8 +524,9 @@ class _$JourneyRouteImpl implements _JourneyRoute {
 }
 
 abstract class _JourneyRoute implements JourneyRoute {
-  const factory _JourneyRoute({final double latitude, final double longitude}) =
-      _$JourneyRouteImpl;
+  const factory _JourneyRoute(
+      {required final double latitude,
+      required final double longitude}) = _$JourneyRouteImpl;
 
   factory _JourneyRoute.fromJson(Map<String, dynamic> json) =
       _$JourneyRouteImpl.fromJson;

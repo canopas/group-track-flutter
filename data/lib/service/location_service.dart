@@ -46,7 +46,7 @@ class LocationService {
   Future<void> saveCurrentLocation(
     String userId,
     LatLng latLng,
-    int? recodedAt,
+    int recodedAt,
     int? userState,
   ) async {
     final docRef = _locationRef(userId).doc();
@@ -76,8 +76,9 @@ class LocationService {
               .orderBy('created_at', descending: true)
               .limit(1)
               .get();
+
           return querySnapshot.docs.isNotEmpty
-              ? querySnapshot.docs.first as ApiLocation
+              ? querySnapshot.docs.first.data() as ApiLocation
               : null;
         })
         .where((location) => location != null)
