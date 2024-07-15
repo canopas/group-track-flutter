@@ -33,18 +33,20 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       final spaces = await spaceService.getAllSpaceInfo();
 
       final sortedSpaces = spaces.toList();
-      if (currentSpaceId != null) {
+      if (currentSpaceId?.isNotEmpty ?? false) {
         final selectedSpaceIndex = sortedSpaces.indexWhere((space) => space.space.id == currentSpaceId);
         if (selectedSpaceIndex > -1) {
           final selectedSpace = sortedSpaces.removeAt(selectedSpaceIndex);
           sortedSpaces.insert(0, selectedSpace);
+          updateSelectedSpace(selectedSpace);
         }
       }
 
       state = state.copyWith(loading: false, spaceList: sortedSpaces);
 
-      if (currentSpaceId != null && sortedSpaces.isNotEmpty) {
+      if ((currentSpaceId?.isEmpty ?? false) && sortedSpaces.isNotEmpty) {
         final selectedSpace = sortedSpaces.first;
+        currentSpaceId = selectedSpace.space.id;
         updateSelectedSpace(selectedSpace);
       }
     } catch (error, stack) {

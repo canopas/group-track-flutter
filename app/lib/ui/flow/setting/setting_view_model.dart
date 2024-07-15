@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/space_models.dart';
@@ -25,6 +27,7 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
   final AuthService authService;
   final ApiUserService userService;
   final ApiUser? user;
+  late StreamSubscription<ApiUser?>? _userSubscription;
 
   SettingViewNotifier(this.spaceService, this.authService, this.userService, this.user)
       : super(const SettingViewState()) {
@@ -32,9 +35,17 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
     getUserSpace();
   }
 
+  @override
+  void dispose() {
+    cancelSubscriptions();
+    super.dispose();
+  }
+
   void getUser() {
     state = state.copyWith(currentUser: user);
-    authService.getUserStream().listen((user) {
+    _userSubscription = authService
+        .getUserStream(currentUserId: state.currentUser?.id ?? '')
+        .listen((user) {
       state = state.copyWith(currentUser: user);
     });
   }
@@ -58,6 +69,7 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
   void signOut() async {
     try {
       state = state.copyWith(signingOut: true);
+      cancelSubscriptions();
       await userService.signOut();
       state = state.copyWith(signingOut: false, logOut: true);
     } catch (error, stack) {
@@ -68,6 +80,10 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
         stackTrace: stack,
       );
     }
+  }
+
+  void cancelSubscriptions() {
+    _userSubscription?.cancel();
   }
 }
 
