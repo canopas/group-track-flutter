@@ -11,7 +11,7 @@ final homeViewStateProvider = StateNotifierProvider.autoDispose<
     HomeViewNotifier, HomeViewState>(
       (ref) => HomeViewNotifier(
         ref.read(spaceServiceProvider),
-        ref.read(currentUserSessionJsonPod.notifier),
+        ref.read(currentSpaceId.notifier),
   ),
 );
 

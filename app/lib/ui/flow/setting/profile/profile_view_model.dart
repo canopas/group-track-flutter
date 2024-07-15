@@ -41,7 +41,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
     try {
       state = state.copyWith(deletingAccount: true);
       spaceService.deleteUserSpaces();
-      authService.deleteUser();
+      authService.deleteAccount();
       state = state.copyWith(deletingAccount: true, accountDeleted: true);
     } catch (error, stack) {
       logger.e(

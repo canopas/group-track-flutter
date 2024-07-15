@@ -10,9 +10,9 @@ final apiUserServiceProvider = StateProvider((ref) => ApiUserService(
       ref.read(firestoreProvider),
       ref.read(deviceServiceProvider),
       ref.read(currentUserJsonPod.notifier),
+      ref.read(currentSpaceId.notifier),
       ref.read(currentUserSessionJsonPod.notifier),
-      ref.read(currentUserSessionJsonPod.notifier),
-  ref.read(isOnboardingShownPod.notifier),
+      ref.read(isOnboardingShownPod.notifier),
     ));
 
 class ApiUserService {
