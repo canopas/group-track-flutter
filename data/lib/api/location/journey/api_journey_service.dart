@@ -74,10 +74,6 @@ class ApiJourneyService {
     String userId,
     ApiLocationJourney journey,
   ) async {
-    print('XXX user id:$userId');
-    print('XXX updating data:$journey');
-    print('XXX main data route:${journey.routes.map((route) => route.toJson()).toList()}');
-
     try {
       await _updateLocationJourneyInDatabase(userId, journey);
       await _journeyRef(userId).doc(journey.id).set(journey.toJson());

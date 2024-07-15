@@ -141,10 +141,8 @@ class JourneyRepository {
           fromLongitude: position.longitude,
         );
       } else if (userSate == userStateMoving) {
-        print('XXX user moving');
         await _saveJourneyForMovingUser(userId, lastJourney, position);
       } else if (userSate == userStateSteady) {
-        print('XXX user steady');
         await _saveJourneyForSteadyUser(userId, lastJourney, position);
       }
     } catch (error, stack) {
@@ -195,7 +193,6 @@ class JourneyRepository {
     final distance = _distanceBetween(extractedLocation, lastLocation);
 
     if (lastJourney.isSteadyLocation()) {
-      print('XXX moving if');
       await _journeyService.saveCurrentJourney(
         userId: userId,
         fromLatitude: lastJourney.from_latitude,
@@ -207,14 +204,12 @@ class JourneyRepository {
             position.timestamp.millisecondsSinceEpoch - lastJourney.update_at!,
       );
     } else {
-      print('XXX moving else');
       final updatedRoutes = List<JourneyRoute>.from(lastJourney.routes)
         ..add(JourneyRoute(
           latitude: extractedLocation.latitude,
           longitude: extractedLocation.longitude,
         ));
-      print('XXX position data:$extractedLocation');
-      print('XXX data:$updatedRoutes');
+
       await _journeyService.updateLastLocationJourney(
         userId,
         lastJourney.copyWith(

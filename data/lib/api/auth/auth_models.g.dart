@@ -81,8 +81,8 @@ _$ApiUserInfoImpl _$$ApiUserInfoImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$ApiUserInfoImplToJson(_$ApiUserInfoImpl instance) =>
     <String, dynamic>{
-      'user': instance.user,
-      'location': instance.location,
+      'user': instance.user.toJson(),
+      'location': instance.location?.toJson(),
       'isLocationEnabled': instance.isLocationEnabled,
-      'session': instance.session,
+      'session': instance.session?.toJson(),
     };
