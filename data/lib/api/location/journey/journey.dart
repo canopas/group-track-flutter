@@ -4,8 +4,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'journey.freezed.dart';
 part 'journey.g.dart';
 
-
-
 @freezed
 class ApiLocationJourney with _$ApiLocationJourney {
   const ApiLocationJourney._();

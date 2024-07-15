@@ -129,8 +129,7 @@ void _startLocationUpdates(
           userState,
         );
 
-        await journeyRepository.saveUserJourney(
-            userState, userId, position);
+        await journeyRepository.saveUserJourney(userState, userId, position);
       } catch (error, stack) {
         logger.e(
           'Main: error while getting ot update user location and journey',
