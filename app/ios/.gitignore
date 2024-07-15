@@ -34,3 +34,4 @@ Runner/GeneratedPluginRegistrant.*
 !default.perspectivev3
 firebase_app_id_file.json
 **/GoogleService-Info.plist
+**/Info.plist
