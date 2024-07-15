@@ -227,7 +227,8 @@ class __$$LocationJourneyImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(explicitToJson: true)
 class _$LocationJourneyImpl extends _LocationJourney {
   const _$LocationJourneyImpl(
       {this.id,

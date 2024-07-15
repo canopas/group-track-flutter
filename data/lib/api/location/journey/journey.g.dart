@@ -36,7 +36,7 @@ Map<String, dynamic> _$$LocationJourneyImplToJson(
       'to_longitude': instance.to_longitude,
       'route_distance': instance.route_distance,
       'route_duration': instance.route_duration,
-      'routes': instance.routes,
+      'routes': instance.routes.map((e) => e.toJson()).toList(),
       'created_at': instance.created_at,
       'update_at': instance.update_at,
     };

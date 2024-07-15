@@ -11,7 +11,7 @@ import '../log/logger.dart';
 import '../service/location_service.dart';
 import '../utils/location_converters.dart';
 
-const int minTimeDifference = 5 * 60 * 100;
+const int minTimeDifference = 5 * 60 * 1000;
 const minDistance = 100.0;
 
 class JourneyRepository {
@@ -141,8 +141,10 @@ class JourneyRepository {
           fromLongitude: position.longitude,
         );
       } else if (userSate == userStateMoving) {
+        print('XXX user moving');
         await _saveJourneyForMovingUser(userId, lastJourney, position);
       } else if (userSate == userStateSteady) {
+        print('XXX user steady');
         await _saveJourneyForSteadyUser(userId, lastJourney, position);
       }
     } catch (error, stack) {
@@ -193,6 +195,7 @@ class JourneyRepository {
     final distance = _distanceBetween(extractedLocation, lastLocation);
 
     if (lastJourney.isSteadyLocation()) {
+      print('XXX moving if');
       await _journeyService.saveCurrentJourney(
         userId: userId,
         fromLatitude: lastJourney.from_latitude,
@@ -204,12 +207,14 @@ class JourneyRepository {
             position.timestamp.millisecondsSinceEpoch - lastJourney.update_at!,
       );
     } else {
-      List<JourneyRoute> updatedRoutes = [];
-      updatedRoutes.addAll(lastJourney.routes);
-      updatedRoutes.add(JourneyRoute(
-        latitude: extractedLocation.latitude,
-        longitude: extractedLocation.longitude,
-      ));
+      print('XXX moving else');
+      final updatedRoutes = List<JourneyRoute>.from(lastJourney.routes)
+        ..add(JourneyRoute(
+          latitude: extractedLocation.latitude,
+          longitude: extractedLocation.longitude,
+        ));
+      print('XXX position data:$extractedLocation');
+      print('XXX data:$updatedRoutes');
       await _journeyService.updateLastLocationJourney(
         userId,
         lastJourney.copyWith(
@@ -218,7 +223,7 @@ class JourneyRepository {
           route_distance: (lastJourney.route_distance ?? 0.0) + distance,
           route_duration: position.timestamp.millisecondsSinceEpoch -
               lastJourney.created_at!,
-          // routes: routes,
+          routes: updatedRoutes,
           update_at: _currentTime,
         ),
       );
@@ -265,12 +270,11 @@ class JourneyRepository {
         updated_at: _currentTime,
       );
     } else if (timeDifference < minTimeDifference && distance > minDistance) {
-      List<JourneyRoute> updatedRoutes = [];
-      updatedRoutes.addAll(lastJourney.routes);
-      updatedRoutes.add(JourneyRoute(
-        latitude: extractedLocation.latitude,
-        longitude: extractedLocation.longitude,
-      ));
+      final updatedRoutes = List<JourneyRoute>.from(lastJourney.routes)
+        ..add(JourneyRoute(
+          latitude: extractedLocation.latitude,
+          longitude: extractedLocation.longitude,
+        ));
 
       await _journeyService.updateLastLocationJourney(
           userId,

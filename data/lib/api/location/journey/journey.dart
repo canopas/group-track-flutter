@@ -4,10 +4,13 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'journey.freezed.dart';
 part 'journey.g.dart';
 
+
+
 @freezed
 class ApiLocationJourney with _$ApiLocationJourney {
   const ApiLocationJourney._();
 
+  @JsonSerializable(explicitToJson: true)
   const factory ApiLocationJourney({
     String? id,
     required String user_id,
@@ -35,6 +38,24 @@ class ApiLocationJourney with _$ApiLocationJourney {
   bool isSteadyLocation() {
     return to_latitude == null && to_longitude == null;
   }
+
+  // @override
+  // Map<String, dynamic> toJson() {
+  //   print('XXX data route:${routes.map((route) => route.toJson()).toList()}');
+  //   return {
+  //     'id': id,
+  //     'user_id': user_id,
+  //     'from_latitude': from_latitude,
+  //     'from_longitude': from_longitude,
+  //     'to_latitude': to_latitude,
+  //     'to_longitude': to_longitude,
+  //     'route_distance': route_distance,
+  //     'route_duration': route_duration,
+  //     'routes': [],
+  //     'created_at': created_at,
+  //     'update_at': update_at,
+  //   };
+  // }
 }
 
 @freezed
@@ -46,4 +67,12 @@ class JourneyRoute with _$JourneyRoute {
 
   factory JourneyRoute.fromJson(Map<String, dynamic> json) =>
       _$JourneyRouteFromJson(json);
+
+  // @override
+  // Map<String, dynamic> toJson() {
+  //   return {
+  //     'latitude': latitude,
+  //     'longitude': longitude,
+  //   };
+  // }
 }

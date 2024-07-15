@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/utils/location_converters.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../../log/logger.dart';
 import '../../../storage/database/location_table_dao.dart';
 import 'journey.dart';
 
@@ -73,20 +74,38 @@ class ApiJourneyService {
     String userId,
     ApiLocationJourney journey,
   ) async {
-    await _updateLocationJourneyInDatabase(userId, journey);
-    await _journeyRef(userId).doc(journey.id).set(journey.toJson());
+    print('XXX user id:$userId');
+    print('XXX updating data:$journey');
+    print('XXX main data route:${journey.routes.map((route) => route.toJson()).toList()}');
+
+    try {
+      await _updateLocationJourneyInDatabase(userId, journey);
+      await _journeyRef(userId).doc(journey.id).set(journey.toJson());
+    } catch (error) {
+      logger.e(
+        'ApiJourneyService: Error while updating last location journey',
+        error: error,
+      );
+    }
   }
 
   Future<void> _updateLocationJourneyInDatabase(
     String userId,
     ApiLocationJourney journey,
   ) async {
-    final locationData = await locationTableDao.getLocationData(userId);
-    if (locationData != null) {
-      final updatedLocationData = locationData.copyWith(
-        lastLocationJourney: LocationConverters.journeyToString(journey),
+    try {
+      final locationData = await locationTableDao.getLocationData(userId);
+      if (locationData != null) {
+        final updatedLocationData = locationData.copyWith(
+          lastLocationJourney: LocationConverters.journeyToString(journey),
+        );
+        await locationTableDao.updateLocationTable(updatedLocationData);
+      }
+    } catch (error) {
+      logger.e(
+        'ApiJourneyService: Error while updating journey in database',
+        error: error,
       );
-      await locationTableDao.updateLocationTable(updatedLocationData);
     }
   }
 }
