@@ -162,6 +162,7 @@ class SpaceService {
   Future<void> deleteUserSpaces() async {
     final userId = currentUser?.id ?? '';
     final allSpace = await getUserSpaces(userId);
+    if (allSpace.isEmpty) return;
     final ownSpace = allSpace.where((space) => space?.admin_id == userId).toList();
     final joinedSpace = allSpace.where((space) => space?.admin_id != userId).toList();
 

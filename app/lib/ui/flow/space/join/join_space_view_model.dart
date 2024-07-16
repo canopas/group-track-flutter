@@ -30,7 +30,7 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
 
   Future<void> joinSpace(String code) async {
     try {
-      state = state.copyWith(verifying: true);
+      state = state.copyWith(verifying: true, errorInvalidInvitationCode: false, alreadySpaceMember: false);
       final invitation = await spaceInvitationService.getInvitation(code);
       if (invitation == null) {
         state =

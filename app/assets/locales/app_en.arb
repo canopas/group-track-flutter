@@ -115,6 +115,8 @@
   "settings_other_option_contact_support_text": "Contact support",
   "settings_other_option_about_us_text": "About us",
   "settings_other_option_sign_out_text": "Sign out",
+  "settings_sign_out_alert_title": "See you soon!",
+  "settings_sign_out_alert_description": "Are you sure you want to sign out?",
 
   "message_add_member_to_send_message_title": "Add members to send messages",
   "message_add_member_to_send_message_subtitle": "At least one member needs to join your space to be able to chat.",

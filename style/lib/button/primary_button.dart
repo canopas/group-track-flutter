@@ -67,14 +67,6 @@ class PrimaryButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Visibility(
-              visible: showIcon,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Icon(
-                  Icons.delete_outline_rounded, color: context.colorScheme.alert, size: 20,),
-              ),
-            ),
-            Visibility(
               visible: progress,
               child: Padding(
                 padding: const EdgeInsets.only(right: 12),
@@ -82,6 +74,14 @@ class PrimaryButton extends StatelessWidget {
                   size: AppProgressIndicatorSize.small,
                   color: fgColor,
                 ),
+              ),
+            ),
+            Visibility(
+              visible: showIcon,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Icon(
+                  Icons.delete_outline_rounded, color: context.colorScheme.alert, size: 20,),
               ),
             ),
             Text(

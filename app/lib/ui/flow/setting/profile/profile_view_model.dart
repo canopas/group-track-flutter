@@ -32,17 +32,17 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
           lastName: TextEditingController(text: user?.last_name),
           email: TextEditingController(text: user?.email),
           phone: TextEditingController(text: user?.phone),
-          enableEmail: user?.auth_type == LOGIN_TYPE_GOOGLE,
-          enablePhone: user?.auth_type == LOGIN_TYPE_PHONE,
+          enableEmail: user?.auth_type == LOGIN_TYPE_PHONE,
+          enablePhone: user?.auth_type == LOGIN_TYPE_GOOGLE,
           profileUrl: user?.profile_image ?? '',
         ));
 
-  void deleteAccount() {
+  void deleteAccount() async {
     try {
       state = state.copyWith(deletingAccount: true);
-      spaceService.deleteUserSpaces();
-      authService.deleteAccount();
-      state = state.copyWith(deletingAccount: true, accountDeleted: true);
+      await spaceService.deleteUserSpaces();
+      await authService.deleteAccount(currentUserId: user?.id);
+      state = state.copyWith(deletingAccount: false, accountDeleted: true);
     } catch (error, stack) {
       logger.e(
         'EditProfileViewState: error while delete account',

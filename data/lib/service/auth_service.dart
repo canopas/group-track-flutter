@@ -59,8 +59,8 @@ class AuthService {
    return userService.getUserStream(currentUserId ?? _currentUser?.id ?? '');
   }
 
-  Future<void> deleteAccount() {
-    userService.signOut();
-    return userService.deleteUser(_currentUser?.id ?? '');
+  Future<void> deleteAccount({String? currentUserId}) async {
+    await userService.deleteUser(currentUserId ?? _currentUser?.id ?? '');
+    userService.clearPreference();
   }
 }

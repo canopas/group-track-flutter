@@ -127,7 +127,7 @@ class ApiUserService {
   }
 
   Future<void> deleteUser(String userId) async {
-    await _userRef.doc(userId).delete();
+    await _db.collection("users").doc(userId).delete();
   }
 
   Future<void> registerFcmToken(String userId, String token) async {
@@ -165,12 +165,16 @@ class ApiUserService {
   }
 
   Future<void> signOut() async {
+    clearPreference();
+    await FirebaseAuth.instance.signOut();
+  }
+
+  void clearPreference() {
     // locationManager.stopLocationTracking();
     userJsonNotifier.state = null;
     userSessionJsonNotifier.state = null;
     onBoardNotifier.state = false;
     currentUserSpaceId.state = null;
-    FirebaseAuth.instance.signOut();
     // locationManager.stopService();
   }
 }
