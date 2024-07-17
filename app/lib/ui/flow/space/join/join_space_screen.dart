@@ -51,7 +51,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     _showCongratulationPrompt();
 
     return AppPage(
-      title: context.l10n.join_space_title,
+      title: widget.fromOnboard ? '' : context.l10n.join_space_title,
       body: _body(context),
     );
   }

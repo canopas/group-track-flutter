@@ -1,6 +1,7 @@
 import 'package:data/api/auth/auth_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
@@ -34,44 +35,39 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
     _navToConnectionScreen();
 
     return AppPage(body: Builder(builder: (context) {
-      return Column(
+      return Stack(
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 16),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 80),
-                    Text(context.l10n.onboard_pick_name_title,
-                        style: AppTextStyle.header1
-                            .copyWith(color: context.colorScheme.textPrimary)),
-                    const SizedBox(height: 40),
-                    Text(
-                        context.l10n.onboard_pick_name_hint_first_name
-                            .toUpperCase(),
-                        style: AppTextStyle.subtitle1.copyWith(
-                            color: context.colorScheme.textSecondary)),
-                    _nameTextField(state.firstName),
-                    const SizedBox(height: 6),
-                    Text(
-                        context.l10n.onboard_pick_name_hint_last_name
-                            .toUpperCase(),
-                        style: AppTextStyle.subtitle1.copyWith(
-                          color: context.colorScheme.textSecondary,
-                        )),
-                    _nameTextField(state.lastName),
-                  ]),
-            ),
+          ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              const SizedBox(height: 80),
+              Text(context.l10n.onboard_pick_name_title,
+                  style: AppTextStyle.header1
+                      .copyWith(color: context.colorScheme.textPrimary)),
+              const SizedBox(height: 40),
+              Text(
+                  context.l10n.onboard_pick_name_hint_first_name
+                      .toUpperCase(),
+                  style: AppTextStyle.subtitle1.copyWith(
+                      color: context.colorScheme.textSecondary)),
+              _nameTextField(state.firstName),
+              const SizedBox(height: 6),
+              Text(
+                  context.l10n.onboard_pick_name_hint_last_name
+                      .toUpperCase(),
+                  style: AppTextStyle.subtitle1.copyWith(
+                    color: context.colorScheme.textSecondary,
+                  )),
+              _nameTextField(state.lastName),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 30),
+          BottomStickyOverlay(
             child: PrimaryButton(
               context.l10n.common_next,
               enabled: state.enableBtn,
               progress: state.savingUser,
               onPressed: () {
-                _notifier.saveUser(widget.user!);
+                _notifier.saveUser(widget.user ?? _notifier.user!);
               },
             ),
           )

@@ -110,9 +110,12 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
     if (state.isNewUser && mounted) {
       AppRoute.connection.go(context);
     } else {
-      // ignore: use_build_context_synchronously
-      AppRoute.home.go(context);
+      navigateToHome();
     }
+  }
+
+  void navigateToHome() {
+    AppRoute.home.go(context);
   }
 
   _listenSignInSuccess() {

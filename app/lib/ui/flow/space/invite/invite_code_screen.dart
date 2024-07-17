@@ -29,7 +29,7 @@ class _InviteCodeState extends State<InviteCode> {
   @override
   Widget build(BuildContext context) {
     return AppPage(
-      title: context.l10n.invite_code_title,
+      title: widget.fromOnboard ? '' : context.l10n.invite_code_title,
       body: _body(context),
     );
   }

@@ -144,10 +144,10 @@ class AppRoute {
      AppRoute(pathJoinSpace, builder: (_) => JoinSpace(fromOnboard: fromOnboard));
 
   static AppRoute inviteCode({
-    required String code, required String spaceName}) {
+    required String code, required String spaceName, bool fromOnboard = false}) {
     return AppRoute(
       pathInviteCode,
-      builder: (_) => InviteCode(spaceName: spaceName, inviteCode: code),
+      builder: (_) => InviteCode(spaceName: spaceName, inviteCode: code, fromOnboard: fromOnboard),
     );
   }
 

@@ -184,7 +184,7 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
           if (next.isNotEmpty) {
             if (widget.fromOnboard) {
               AppRoute.inviteCode(
-                  code: next, spaceName: state.spaceName.text).go(context);
+                  code: next, spaceName: state.spaceName.text, fromOnboard: true).go(context);
             } else {
               AppRoute.inviteCode(
                   code: next, spaceName: state.spaceName.text).pushReplacement(context);
