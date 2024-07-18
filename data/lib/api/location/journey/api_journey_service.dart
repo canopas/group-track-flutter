@@ -1,10 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/utils/location_converters.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../log/logger.dart';
 import '../../../storage/database/location_table_dao.dart';
+import '../../network/client.dart';
 import 'journey.dart';
+
+final journeyServiceProvider = Provider((ref) => ApiJourneyService(
+      ref.read(firestoreProvider),
+    ));
 
 class ApiJourneyService {
   late FirebaseFirestore _db;
@@ -64,7 +70,7 @@ class ApiJourneyService {
       route_duration: routeDuration,
       routes: [],
       created_at: created_at ?? DateTime.now().millisecondsSinceEpoch,
-      update_at: created_at ?? DateTime.now().millisecondsSinceEpoch,
+      update_at: updated_at ?? created_at ?? DateTime.now().millisecondsSinceEpoch,
     );
     await docRef.set(journey.toJson());
     await _updateLocationJourneyInDatabase(userId, journey);
@@ -103,5 +109,75 @@ class ApiJourneyService {
         error: error,
       );
     }
+  }
+
+  Future<List<ApiLocationJourney>> getJourneyHistory(
+    String userId,
+    int? from,
+    int? to,
+  ) async {
+    if (from == null) {
+      final querySnapshot = await _journeyRef(userId)
+          .where('user_id', isEqualTo: userId)
+          .orderBy('created_at', descending: true)
+          .limit(20)
+          .get();
+      return querySnapshot.docs
+          .map((doc) =>
+              ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } else if (to == null) {
+      final querySnapshot = await _journeyRef(userId)
+          .where('user_id', isEqualTo: userId)
+          .where('created_at', isGreaterThanOrEqualTo: from)
+          .orderBy('created_at', descending: true)
+          .limit(20)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) =>
+              ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } else {
+      final querySnapshot = await _journeyRef(userId)
+          .where('user_id', isEqualTo: userId)
+          .where('created_at', isGreaterThanOrEqualTo: from)
+          .where('created_at', isLessThanOrEqualTo: to)
+          .orderBy('created_at', descending: true)
+          .limit(20)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) =>
+              ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    }
+  }
+
+  Future<List<ApiLocationJourney>> getMoreJourneyHistory(
+    String userId,
+    int? from,
+  ) async {
+    if (from == null) {
+      final querySnapshot = await _journeyRef(userId)
+          .where('user_id', isEqualTo: userId)
+          .orderBy('created_at', descending: true)
+          .limit(20)
+          .get();
+      return querySnapshot.docs
+          .map((doc) =>
+              ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    }
+    final querySnapshot = await _journeyRef(userId)
+        .where('user_id', isEqualTo: userId)
+        .where('created_at', isLessThan: from)
+        .orderBy('created_at', descending: true)
+        .limit(20)
+        .get();
+    return querySnapshot.docs
+        .map((doc) =>
+            ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
   }
 }
