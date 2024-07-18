@@ -80,7 +80,8 @@ class AppTextField extends StatelessWidget {
     );
   }
 
-  Widget _textField(BuildContext context) => Material(
+  Widget _textField(BuildContext context) =>
+      Material(
         color: Colors.transparent,
         child: TextField(
           controller: controller,
@@ -99,7 +100,7 @@ class AppTextField extends StatelessWidget {
                 color: context.colorScheme.textPrimary,
               ),
           onTapOutside: onTapOutside ??
-              (event) {
+                  (event) {
                 FocusManager.instance.primaryFocus?.unfocus();
               },
           decoration: InputDecoration(
@@ -107,16 +108,16 @@ class AppTextField extends StatelessWidget {
             isCollapsed: isCollapsed,
             hintText: hintText,
             hintStyle: hintStyle,
-            prefixIcon: prefixIcon,
+            prefixIcon:prefixIcon,
             prefixIconConstraints: const BoxConstraints(),
             focusedBorder: _border(context, true, borderRadius ?? 8),
             enabledBorder: _border(context, false, borderRadius ?? 8),
             contentPadding: contentPadding ??
                 (borderType == AppTextFieldBorderType.outline
                     ? const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 12,
-                      )
+                  horizontal: 12,
+                  vertical: 12,
+                )
                     : null),
           ),
         ),

@@ -46,7 +46,7 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
       padding: EdgeInsets.only(
         left: 16,
         right: 16,
-        bottom: context.mediaQueryPadding.bottom + 24,
+        bottom: context.mediaQueryPadding.bottom,
       ),
       child: SingleChildScrollView(
         child: Column(

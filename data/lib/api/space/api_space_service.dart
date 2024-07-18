@@ -84,13 +84,10 @@ class ApiSpaceService {
   }
 
   Stream<List<ApiSpaceMember>> getStreamSpaceMemberBySpaceId(String spaceId) {
-    return FirebaseFirestore.instance
-        .collection('spaces')
-        .doc(spaceId)
-        .collection('space_members')
-        .snapshots()
-        .map((querySnapshot) => querySnapshot.docs
-            .map((doc) => ApiSpaceMember.fromJson(doc.data()))
+    return spaceMemberRef(spaceId).snapshots().map((querySnapshot) =>
+        querySnapshot.docs
+            .map((doc) =>
+                ApiSpaceMember.fromJson(doc.data() as Map<String, dynamic>))
             .toList());
   }
 
