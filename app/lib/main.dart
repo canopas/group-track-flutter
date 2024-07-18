@@ -106,7 +106,7 @@ void _startLocationUpdates(String userId, LocationService locationService) {
   Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.high,
-      distanceFilter: locationUpdateDistance,
+      distanceFilter: LOCATION_UPDATE_DISTANCE,
     ),
   ).listen((position) {
     final location = LatLng(position.latitude, position.longitude);
