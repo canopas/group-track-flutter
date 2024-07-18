@@ -28,10 +28,10 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       isCurrentUser: isCurrentUser,
       selectedUser: selectedUser,
     );
-    loadJourney();
+    _loadJourney();
   }
 
-  void loadJourney({bool loadMore = false}) async {
+  void _loadJourney({bool loadMore = false}) async {
     if (loadMore && !state.hasMore) return;
     try {
       state = state.copyWith(
@@ -39,14 +39,14 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       final userId = state.selectedUser!.id;
       final from = state.selectedTimeFrom;
       final to = state.selectedTimeTo;
-      final lastJourneyTime = getEarliestJourneyTime(state.sortedJourney);
+      final lastJourneyTime = _getEarliestJourneyTime(state.sortedJourney);
       final journeys = (loadMore)
           ? await journeyService.getMoreJourneyHistory(userId, lastJourneyTime)
           : await journeyService.getJourneyHistory(userId, from, to);
 
       final allJourney = [...state.sortedJourney, ...journeys];
 
-      final sortJourney = sortJourneysByUpdateAt(allJourney);
+      final sortJourney = _sortJourneysByUpdateAt(allJourney);
 
       state = state.copyWith(
         isLoading: false,
@@ -64,7 +64,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     }
   }
 
-  int? getEarliestJourneyTime(List<ApiLocationJourney> allJourneys) {
+  int? _getEarliestJourneyTime(List<ApiLocationJourney> allJourneys) {
     if (allJourneys.isEmpty) return null;
     int earliestTimestamp = allJourneys
         .map((journey) => journey.created_at)
@@ -72,7 +72,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     return earliestTimestamp;
   }
 
-  List<ApiLocationJourney> sortJourneysByUpdateAt(
+  List<ApiLocationJourney> _sortJourneysByUpdateAt(
       List<ApiLocationJourney> journeys) {
     journeys.sort((a, b) => (b.update_at ?? 0).compareTo(a.update_at ?? 0));
     return journeys;
@@ -81,7 +81,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
   void loadMoreJourney() async {
     if (state.hasMore && !state.appending) {
       await Future.delayed(const Duration(milliseconds: 200));
-      loadJourney(loadMore: true);
+      _loadJourney(loadMore: true);
     }
   }
 
@@ -101,7 +101,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       selectedTimeTo: toTimeStamp,
       sortedJourney: [],
     );
-    loadJourney();
+    _loadJourney();
   }
 }
 

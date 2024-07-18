@@ -60,7 +60,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
             : context.l10n.journey_timeline_title_other_user(
                 state.selectedUser?.first_name ?? '');
 
-    final selectedDate = onSelectDatePickerDate(state.selectedTimeFrom);
+    final selectedDate = _onSelectDatePickerDate(state.selectedTimeFrom);
 
     _observeShowDatePicker(state);
 
@@ -254,7 +254,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
 
   Widget _googleMap(ApiLocationJourney journey, List<Marker> markers) {
     final (ployLines, center, zoom) = _onCreateMap(journey);
-    final _cameraPosition = CameraPosition(target: center, zoom: zoom);
+    final cameraPosition = CameraPosition(target: center, zoom: zoom);
 
     _updateMapStyle(context.brightness == Brightness.dark);
     return SizedBox(
@@ -264,7 +264,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: GoogleMap(
-            initialCameraPosition: _cameraPosition,
+            initialCameraPosition: cameraPosition,
             style: _mapStyle,
             compassEnabled: false,
             scrollGesturesEnabled: false,
@@ -605,7 +605,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     return BitmapDescriptor.fromBytes(resizedBytes);
   }
 
-  String onSelectDatePickerDate(int? timestamp) {
+  String _onSelectDatePickerDate(int? timestamp) {
     if (timestamp == null) return '';
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     final date = DateFormat('dd MMMM').format(dateTime);
