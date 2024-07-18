@@ -6,13 +6,13 @@ import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
-import 'package:yourspace_flutter/ui/components/permission_dialog.dart';
 import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/home/home_screen_viewmodel.dart';
 import 'package:yourspace_flutter/ui/flow/home/map/map_view_model.dart';
 
+import '../../components/permission_dialog.dart';
 import 'components/home_top_bar.dart';
-import 'map/map_view.dart';
+import 'map/map_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -63,7 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       padding: context.mediaQueryPadding,
       child: Stack(
         children: [
-          MapView(space: state.selectedSpace),
+          MapScreen(space: state.selectedSpace),
           HomeTopBar(
             spaces: state.spaceList,
             onSpaceItemTap: (name) => notifier.updateSelectedSpace(name),
