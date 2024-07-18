@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 part 'sign_in_method_viewmodel.freezed.dart';
 
@@ -14,16 +15,18 @@ final googleSignInProvider = Provider<GoogleSignIn>((ref) {
 
 final signInMethodsStateProvider = StateNotifierProvider.autoDispose<
     SignInMethodsScreenViewNotifier, SignInMethodsScreenState>((ref) {
-  return SignInMethodsScreenViewNotifier(
-      ref.read(googleSignInProvider), ref.read(authServiceProvider));
+  return SignInMethodsScreenViewNotifier(ref.read(googleSignInProvider),
+      ref.read(authServiceProvider), FirebaseAuth.instance);
 });
 
 class SignInMethodsScreenViewNotifier
     extends StateNotifier<SignInMethodsScreenState> {
   final GoogleSignIn googleSignIn;
   final AuthService authService;
+  final FirebaseAuth firebaseAuth;
 
-  SignInMethodsScreenViewNotifier(this.googleSignIn, this.authService)
+  SignInMethodsScreenViewNotifier(
+      this.googleSignIn, this.authService, this.firebaseAuth)
       : super(const SignInMethodsScreenState());
 
   Future<void> signInWithGoogle() async {
@@ -34,7 +37,7 @@ class SignInMethodsScreenViewNotifier
         final String userIdToken =
             await userCredential.user?.getIdToken() ?? '';
         final isNewUser = await authService.verifiedLogin(
-            uid: userCredential.user?.uid,
+            uid: userCredential.user?.uid ?? '',
             firebaseToken: userIdToken,
             email: account!.email,
             firstName:
@@ -62,7 +65,7 @@ class SignInMethodsScreenViewNotifier
   }
 
   Future<(UserCredential?, GoogleSignInAccount?)>
-  _getUserCredentialFromGoogle() async {
+      _getUserCredentialFromGoogle() async {
     final signInAccount = await googleSignIn.signIn();
     if (signInAccount != null) {
       final signInAuthentication = await signInAccount.authentication;
@@ -77,6 +80,56 @@ class SignInMethodsScreenViewNotifier
       return (auth, signInAccount);
     }
     return (null, null);
+  }
+
+  Future<void> signInWithApple() async {
+    try {
+      state = state.copyWith(showAppleLoading: true, error: null);
+      final (userCredential, firstName, lastName) =
+          await _getUserCredentialFromApple();
+
+      final String userIdToken = await userCredential.user?.getIdToken() ?? '';
+
+      final isNewUser = await authService.verifiedLogin(
+        uid: userCredential.user?.uid ?? '',
+        firebaseToken: userIdToken,
+        firstName: firstName,
+        lastName: lastName,
+        authType: 3,
+      );
+      state = state.copyWith(
+          showAppleLoading: false,
+          socialSignInCompleted: true,
+          isNewUser: isNewUser);
+    } catch (error, stack) {
+      state =
+          state.copyWith(showAppleLoading: false, socialSignInCompleted: false);
+      logger.e(
+        'SignInMethodScreenViewNotifier: error while sign in with apple',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  Future<(UserCredential, String?, String?)>
+      _getUserCredentialFromApple() async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ]);
+      final user = await firebaseAuth.signInWithCredential(
+        OAuthProvider('apple.com').credential(
+          idToken: credential.identityToken,
+          accessToken: credential.authorizationCode,
+        ),
+      );
+      return (user, credential.givenName, credential.familyName);
+    } catch (error) {
+      logger.e('Error during Apple sign-in', error: error);
+      rethrow;
+    }
   }
 }
 
