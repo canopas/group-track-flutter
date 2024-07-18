@@ -1,3 +1,5 @@
+//ignore_for_file: constant_identifier_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/location_table.dart';
 import 'package:data/storage/database/location_table_dao.dart';
@@ -11,8 +13,8 @@ import '../log/logger.dart';
 import '../service/location_service.dart';
 import '../utils/location_converters.dart';
 
-const int minTimeDifference = 5 * 60 * 1000;
-const minDistance = 100.0;
+const MIN_TIME_DIFFERENCE = 5 * 60 * 1000;
+const MIN_DISTANCE = 100.0;
 
 class JourneyRepository {
   late LocationService _locationService;
@@ -94,7 +96,7 @@ class JourneyRepository {
         final updated = List<ApiLocation>.from(locations);
         updated.removeWhere((loc) =>
             position.timestamp.millisecondsSinceEpoch - loc.created_at! >
-            minTimeDifference);
+            MIN_TIME_DIFFERENCE);
         updated.add(ApiLocation(
           user_id: userId,
           latitude: latLng.latitude,
@@ -237,7 +239,7 @@ class JourneyRepository {
     final timeDifference =
         position.timestamp.millisecondsSinceEpoch - lastJourney.created_at!;
 
-    if (timeDifference > minTimeDifference && distance > minDistance) {
+    if (timeDifference > MIN_TIME_DIFFERENCE && distance > MIN_DISTANCE) {
       if (lastJourney.isSteadyLocation()) {
         await _journeyService.updateLastLocationJourney(
           userId = userId,
@@ -264,7 +266,7 @@ class JourneyRepository {
         created_at: lastJourney.update_at,
         updated_at: DateTime.now().millisecondsSinceEpoch,
       );
-    } else if (timeDifference < minTimeDifference && distance > minDistance) {
+    } else if (timeDifference < MIN_TIME_DIFFERENCE && distance > MIN_DISTANCE) {
       final updatedRoutes = List<JourneyRoute>.from(lastJourney.routes)
         ..add(JourneyRoute(
           latitude: extractedLocation.latitude,
@@ -282,7 +284,7 @@ class JourneyRepository {
                 lastJourney.created_at!,
             update_at: DateTime.now().millisecondsSinceEpoch,
           ));
-    } else if (timeDifference > minTimeDifference && distance < minDistance) {
+    } else if (timeDifference > MIN_TIME_DIFFERENCE && distance < MIN_DISTANCE) {
       if (lastJourney.isSteadyLocation()) {
         await _journeyService.updateLastLocationJourney(
           userId = userId,
@@ -297,7 +299,7 @@ class JourneyRepository {
           created_at: DateTime.now().millisecondsSinceEpoch,
         );
       }
-    } else if (timeDifference < minTimeDifference && distance < minDistance) {
+    } else if (timeDifference < MIN_TIME_DIFFERENCE && distance < MIN_DISTANCE) {
       await _journeyService.updateLastLocationJourney(
         userId = userId,
         lastJourney.copyWith(update_at: DateTime.now().millisecondsSinceEpoch),
@@ -327,7 +329,7 @@ extension ApiLocationListExtensions on List<ApiLocation> {
         newLocation.latitude,
         newLocation.longitude,
       );
-      return distance > minDistance;
+      return distance > MIN_DISTANCE;
     });
   }
 }

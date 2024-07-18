@@ -24,7 +24,7 @@ import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../components/dashed_divider.dart';
 
-const int initialZoomLevel = 6;
+const INITIAL_ZOOM_LEVEL = 6;
 
 class JourneyTimelineScreen extends ConsumerStatefulWidget {
   final ApiUser selectedUser;
@@ -554,7 +554,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     const double earthCircumferenceInMeters = 40075016;
     double zoomLevel = math
         .log(earthCircumferenceInMeters * mapWidth / (distanceInMeters * 250));
-    return zoomLevel > 10 ? 15 : zoomLevel + initialZoomLevel;
+    return zoomLevel > 10 ? 15 : zoomLevel + INITIAL_ZOOM_LEVEL;
   }
 
   LatLng _getCenterCoordinate(LatLng startLatLng, LatLng endLatLng) {
