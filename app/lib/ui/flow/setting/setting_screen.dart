@@ -272,6 +272,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     return IconPrimaryButton(
       onTap: () {},
       size: 36,
+      radius: 8,
       icon: SvgPicture.asset(
         height: 16,
         width: 14,

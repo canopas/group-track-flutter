@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:style/animation/on_tap_scale.dart';
+import 'package:style/button/action_button.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/button/primary_button.dart';
-import 'package:style/button/action_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
@@ -51,12 +51,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           icon: state.saving
               ? const AppProgressIndicator(size: AppProgressIndicatorSize.small)
               : Icon(
-            Icons.check,
-            size: 24,
-            color: state.allowSave
-                ? context.colorScheme.primary
-                : context.colorScheme.textDisabled,
-          ),
+                  Icons.check,
+                  size: 24,
+                  color: state.allowSave
+                      ? context.colorScheme.primary
+                      : context.colorScheme.textDisabled,
+                ),
           onPressed: () {
             if (state.allowSave) {
               notifier.save();
@@ -78,15 +78,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           children: [
             _profileImage(context, ref, state.profileUrl),
             const SizedBox(height: 40),
-            _textFields(context, context.l10n.edit_profile_first_name_title, state.firstName),
+            _textFields(context, context.l10n.edit_profile_first_name_title,
+                state.firstName),
             const SizedBox(height: 16),
-            _textFields(context, context.l10n.edit_profile_last_name_title, state.lastName),
+            _textFields(context, context.l10n.edit_profile_last_name_title,
+                state.lastName),
             const SizedBox(height: 16),
             _textFields(
-                context, context.l10n.edit_profile_email_title, state.email, enabled: state.enableEmail),
+                context, context.l10n.edit_profile_email_title, state.email,
+                enabled: state.enableEmail),
             const SizedBox(height: 16),
             _textFields(
-                context, context.l10n.edit_profile_phone_title, state.phone, enabled: state.enablePhone, isPhoneNumber: true),
+                context, context.l10n.edit_profile_phone_title, state.phone,
+                enabled: state.enablePhone, isPhoneNumber: true),
           ],
         ),
         _deleteAccountButton(context, state),
@@ -94,8 +98,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _profileImage(BuildContext context, WidgetRef ref,
-      String? profileImage) {
+  Widget _profileImage(
+      BuildContext context, WidgetRef ref, String? profileImage) {
     final state = ref.watch(editProfileViewStateProvider);
     return Center(
       child: OnTapScale(
@@ -125,9 +129,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     )
                 ))
                     : CachedNetworkImage(
-                  imageUrl: state.profileUrl,
-                  fit: BoxFit.cover,
-                ),
+                        imageUrl: state.profileUrl,
+                        fit: BoxFit.cover,
+                      ),
               ),
               Align(
                 alignment: Alignment.bottomRight,
@@ -227,17 +231,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   void _openCropImage(BuildContext context, XFile image) async {
     final croppedImage = await ImageCropper().cropImage(
       sourcePath: image.path,
-      aspectRatioPresets: [CropAspectRatioPreset.square],
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: context.l10n.edit_profile_cropper_text,
           toolbarColor: context.colorScheme.primary,
           toolbarWidgetColor: context.colorScheme.onPrimary,
-          initAspectRatio: CropAspectRatioPreset.square,
+          aspectRatioPresets: [CropAspectRatioPreset.square],
           lockAspectRatio: true,
         ),
         IOSUiSettings(
           title: context.l10n.edit_profile_cropper_text,
+          aspectRatioPresets: [CropAspectRatioPreset.square],
         ),
         WebUiSettings(
           context: context,
@@ -248,8 +252,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (croppedImage != null) notifier.uploadProfileImage(croppedImage.path);
   }
 
-  Widget _textFields(BuildContext context, String title,
-      TextEditingController controller, {bool enabled = true, bool isPhoneNumber = false}) {
+  Widget _textFields(
+      BuildContext context, String title, TextEditingController controller,
+      {bool enabled = true, bool isPhoneNumber = false}) {
     return AppTextField(
       controller: controller,
       label: title,
@@ -267,8 +272,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: PrimaryButton(
         context.l10n.edit_profile_delete_account_title,
         expanded: false,
-        edgeInsets:
-        const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+        edgeInsets: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
         showIcon: true,
         foreground: context.colorScheme.alert,
         background: context.colorScheme.containerLow,
@@ -287,9 +291,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void _observePop() {
-    ref.listen(
-        editProfileViewStateProvider.select((state) => state.saved), (previous,
-        next) {
+    ref.listen(editProfileViewStateProvider.select((state) => state.saved),
+        (previous, next) {
       if (next) {
         context.pop();
       }
@@ -298,8 +301,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   void _observeAccountDeleted() {
     ref.listen(
-        editProfileViewStateProvider.select((state) => state.accountDeleted), (
-        previous, next) {
+        editProfileViewStateProvider.select((state) => state.accountDeleted),
+        (previous, next) {
       if (next) {
         AppRoute.signInMethod.push(context);
       }
@@ -307,7 +310,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void _observeError() {
-    ref.listen(editProfileViewStateProvider.select((state) => state.error), (previous, next) {
+    ref.listen(editProfileViewStateProvider.select((state) => state.error),
+        (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
       }
