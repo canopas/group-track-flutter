@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'package:data/log/logger.dart';
 
 import '../api/location/journey/journey.dart';
 import '../api/location/location.dart';
@@ -13,10 +13,8 @@ class LocationConverters {
       return parsed
           .map<ApiLocation>((json) => ApiLocation.fromJson(json))
           .toList();
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error converting location list from string: $e");
-      }
+    } catch (error) {
+      logger.e('Error converting location list from string', error: error);
       return null;
     }
   }
@@ -25,10 +23,8 @@ class LocationConverters {
   static String locationListToString(List<ApiLocation?> list) {
     try {
       return jsonEncode(list.map((location) => location?.toJson()).toList());
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error converting location list to string: $e");
-      }
+    } catch (error) {
+      logger.e('Error converting location list to string', error: error);
       return '';
     }
   }
@@ -38,10 +34,8 @@ class LocationConverters {
     try {
       final parsed = jsonDecode(value);
       return ApiLocationJourney.fromJson(parsed);
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error converting journey from string: $e");
-      }
+    } catch (error) {
+      logger.e('Error converting journey from string', error: error);
       return null;
     }
   }
@@ -50,10 +44,8 @@ class LocationConverters {
   static String journeyToString(ApiLocationJourney? journey) {
     try {
       return jsonEncode(journey?.toJson());
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error converting journey to string: $e");
-      }
+    } catch (error) {
+      logger.e('Error converting journey to string', error: error);
       return '';
     }
   }

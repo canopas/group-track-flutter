@@ -14,7 +14,7 @@ class ApiLocation with _$ApiLocation {
   const ApiLocation._();
 
   const factory ApiLocation({
-    String? id,
+    required String id,
     required String user_id,
     required double latitude,
     required double longitude,

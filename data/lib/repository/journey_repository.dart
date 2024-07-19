@@ -5,6 +5,7 @@ import 'package:data/api/location/location_table.dart';
 import 'package:data/storage/database/location_table_dao.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import '../api/location/journey/api_journey_service.dart';
 import '../api/location/journey/journey.dart';
@@ -41,6 +42,7 @@ class JourneyRepository {
         final latLng = LatLng(position.latitude, position.longitude);
         final location = [
           ApiLocation(
+            id: const Uuid().v4(),
             user_id: userId,
             latitude: latLng.latitude,
             longitude: latLng.longitude,
@@ -99,6 +101,7 @@ class JourneyRepository {
             position.timestamp.millisecondsSinceEpoch - loc.created_at! >
             MIN_TIME_DIFFERENCE);
         updated.add(ApiLocation(
+          id: const Uuid().v4(),
           user_id: userId,
           latitude: latLng.latitude,
           longitude: latLng.longitude,

@@ -8,7 +8,7 @@ part of 'location.dart';
 
 _$ApiLocationImpl _$$ApiLocationImplFromJson(Map<String, dynamic> json) =>
     _$ApiLocationImpl(
-      id: json['id'] as String?,
+      id: json['id'] as String,
       user_id: json['user_id'] as String,
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
