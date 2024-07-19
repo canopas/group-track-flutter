@@ -26,8 +26,6 @@ plugins {
     id "com.android.application" version "7.3.0" apply false
     id "com.google.gms.google-services" version "4.3.15" apply false
     // START: FlutterFire Configuration
-    id "com.google.gms.google-services" version "4.3.15" apply false
-    // END: FlutterFire Configuration
 }
 
 include ":app"
