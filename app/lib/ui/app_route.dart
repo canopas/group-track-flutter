@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
-import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view.dart';
 import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_screen.dart';

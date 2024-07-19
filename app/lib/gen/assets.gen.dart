@@ -66,12 +66,12 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_google_logo.svg
   String get icGoogleLogo => 'assets/images/ic_google_logo.svg';
 
-  /// File path: assets/images/ic_location-feed_icon.svg
-  String get icLocationFeedIcon => 'assets/images/ic_location-feed_icon.svg';
-
   /// File path: assets/images/ic_journey_empty_timeline_image.svg
   String get icJourneyEmptyTimelineImage =>
       'assets/images/ic_journey_empty_timeline_image.svg';
+
+  /// File path: assets/images/ic_location-feed_icon.svg
+  String get icLocationFeedIcon => 'assets/images/ic_location-feed_icon.svg';
 
   /// File path: assets/images/ic_location.svg
   String get icLocation => 'assets/images/ic_location.svg';
