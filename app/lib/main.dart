@@ -113,7 +113,7 @@ void _startLocationUpdates(
   Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.high,
-      distanceFilter: locationUpdateDistance,
+      distanceFilter: LOCATION_UPDATE_DISTANCE,
     ),
   ).listen((position) {
     timer?.cancel();

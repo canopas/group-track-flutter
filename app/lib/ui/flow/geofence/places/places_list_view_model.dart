@@ -28,6 +28,7 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
     try {
       state = state.copyWith(loading: true, spaceId: spaceId);
       placeService.getAllPlacesStream(spaceId).listen((places) {
+        if (!mounted) return;
         suggestionPlaces(places);
         state = state.copyWith(places: places, loading: false);
       });
@@ -73,7 +74,7 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
   }
 
   void dismissDeletePlaceDialog() {
-    state = state.copyWith(deletingPlaces: false, placesToDelete: null);
+    state = state.copyWith(placesToDelete: null);
   }
 
   void deletePlace() async {

@@ -22,16 +22,16 @@ const defaultCameraZoomForSelectedUser = 17.0;
 const markerSize = 100.0;
 const placeSize = 80;
 
-class MapView extends ConsumerStatefulWidget {
+class MapScreen extends ConsumerStatefulWidget {
   final SpaceInfo? space;
 
-  const MapView({super.key, this.space});
+  const MapScreen({super.key, this.space});
 
   @override
-  ConsumerState<MapView> createState() => _MapScreenState();
+  ConsumerState<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends ConsumerState<MapView> {
+class _MapScreenState extends ConsumerState<MapScreen> {
   late MapViewNotifier notifier;
   GoogleMapController? _controller;
   final _cameraPosition =
@@ -43,7 +43,7 @@ class _MapScreenState extends ConsumerState<MapView> {
   List<Circle> _places = [];
 
   @override
-  void didUpdateWidget(covariant MapView oldWidget) {
+  void didUpdateWidget(covariant MapScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.space?.space.id != widget.space?.space.id) {
       setState(() {
@@ -107,8 +107,9 @@ class _MapScreenState extends ConsumerState<MapView> {
           },
           onRelocateTap: () => notifier.getUserLastLocation(),
           onPlacesTap: () {
-            if (widget.space != null) {
-              AppRoute.placesList(widget.space!.space.id).push(context);
+            final space = widget.space;
+            if (space != null) {
+              AppRoute.placesList(space.space.id).push(context);
             }
           },
           onDismiss: () => notifier.onDismissMemberDetail(),
