@@ -93,6 +93,7 @@ class SignInMethodsScreenViewNotifier
       final isNewUser = await authService.verifiedLogin(
         uid: userCredential.user?.uid ?? '',
         firebaseToken: userIdToken,
+        email: userCredential.user?.email,
         firstName: firstName,
         lastName: lastName,
         authType: 3,
@@ -115,10 +116,12 @@ class SignInMethodsScreenViewNotifier
   Future<(UserCredential, String?, String?)>
       _getUserCredentialFromApple() async {
     try {
-      final credential = await SignInWithApple.getAppleIDCredential(scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ]);
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
       final user = await firebaseAuth.signInWithCredential(
         OAuthProvider('apple.com').credential(
           idToken: credential.identityToken,
