@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../api/network/client.dart';
+import '../config.dart';
 
 const defaultRadius = 1500;
 
@@ -131,8 +132,9 @@ class PlaceService {
     String? lat,
     String? lng,
   ) async {
-   // final placeRadius = (lat != null && lng != null) ? defaultRadius : '';
-    const String url ='url';
+    final placeRadius = (lat != null && lng != null) ? defaultRadius : '';
+    final String url =
+        '${AppConfig.placeBaseUrl}?query=$query&location=$lat,$lng&radius=$placeRadius&key=${AppConfig.mapApiKey}';
 
     final response = await http.get(Uri.parse(url));
 
