@@ -7,6 +7,7 @@ import 'package:data/api/location/location.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_models.freezed.dart';
+
 part 'auth_models.g.dart';
 
 const LOGIN_TYPE_GOOGLE = 1;
@@ -57,17 +58,16 @@ class ApiUser with _$ApiUser {
 class ApiSession with _$ApiSession {
   const ApiSession._();
 
-  const factory ApiSession(
-      {required String id,
-      required String user_id,
-      @Default(1) int? platform,
-      @Default("") String? fcm_token,
-      required bool session_active,
-      String? device_name,
-      String? device_id,
-      int? created_at,
-      String? battery_status,
-      int? app_version}) = _ApiSession;
+  const factory ApiSession({required String id,
+    required String user_id,
+    @Default(1) int? platform,
+    @Default("") String? fcm_token,
+    required bool session_active,
+    String? device_name,
+    String? device_id,
+    int? created_at,
+    double? battery_pct,
+    int? app_version}) = _ApiSession;
 
   factory ApiSession.fromJson(Map<String, dynamic> json) =>
       _$ApiSessionFromJson(json);
