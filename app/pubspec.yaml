@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
-      sdk: flutter
+    sdk: flutter
   intl: any
 
   style:
@@ -52,9 +52,18 @@ dependencies:
   visibility_detector: ^0.4.0+2
   cached_network_image: ^3.3.1
   image_picker: ^1.1.1
-  image_cropper: ^6.0.0
+  image_cropper: ^7.1.0
   fluttertoast: ^8.2.6
+  http: ^1.2.1
+  image: ^3.0.1
+  flutter_cache_manager: ^3.3.2
+  permission_handler: ^11.3.1
   flutter_slidable: ^3.1.0
+
+  # map
+  google_maps_flutter: ^2.3.1
+  geocoding: ^3.0.0
+  geolocator: ^12.0.0
 
   # auth
   firebase_auth: ^4.20.0
@@ -94,6 +103,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/map/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

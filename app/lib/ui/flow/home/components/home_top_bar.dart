@@ -74,32 +74,31 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   }
 
   Widget _body(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: _topBar(context),
-    );
+    return _topBar(context);
   }
 
   Widget _topBar(BuildContext context) {
     return IntrinsicHeight(
       child: Container(
-        color: expand ? context.colorScheme.surface : null,
+        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+        color: context.colorScheme.surface,
         child: SingleChildScrollView(
           child: Column(
             children: [
               Row(
                 children: [
                   _iconButton(
-                    context: context,
-                    icon: Assets.images.icSetting,
-                    visibility: !expand,
+                      context: context,
+                      icon: Assets.images.icSetting,
+                      visibility: !expand,
                       onTap: () {
                         AppRoute.setting.push(context);
                       }),
                   const SizedBox(width: 8),
                   _spaceSelection(
                     context: context,
-                    spaceName: widget.selectedSpace?.space.name ?? context.l10n.home_select_space_text,
+                    spaceName: widget.selectedSpace?.space.name ??
+                        context.l10n.home_select_space_text,
                   ),
                   const SizedBox(width: 8),
                   _iconButton(
@@ -150,6 +149,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
         },
         child: Container(
           decoration: BoxDecoration(
+            color: context.colorScheme.surface,
             border: Border.all(
               color: context.colorScheme.outline,
               width: 1,
@@ -169,13 +169,15 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                         .copyWith(color: context.colorScheme.textPrimary),
                   ),
                 ),
-                if (widget.fetchingInviteCode || (widget.selectedSpace == null && widget.loading)) ...[
-                  const AppProgressIndicator(size: AppProgressIndicatorSize.small)
+                if (widget.fetchingInviteCode ||
+                    (widget.selectedSpace == null && widget.loading)) ...[
+                  const AppProgressIndicator(
+                      size: AppProgressIndicatorSize.small)
                 ] else ...[
                   Icon(
                     expand
-                        ? Icons.keyboard_arrow_down_rounded
-                        : Icons.keyboard_arrow_up_rounded,
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
                     color: context.colorScheme.textPrimary,
                   ),
                 ],
@@ -198,7 +200,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
       visible: visibility,
       child: IconPrimaryButton(
         onTap: () => onTap(),
-        radius: 20,
         icon: SvgPicture.asset(
           height: 16,
           width: 14,
@@ -233,7 +234,11 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
               onSpaceSelected(space);
             },
             child: _spaceListItem(
-                context, space, index, widget.selectedSpace?.space.id == space.space.id),
+              context,
+              space,
+              index,
+              widget.selectedSpace?.space.id == space.space.id,
+            ),
           ),
         );
       }).toList(),

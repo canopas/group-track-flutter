@@ -9,10 +9,10 @@ import '../auth/api_user_service.dart';
 import '../auth/auth_models.dart';
 
 final apiSpaceServiceProvider = StateProvider((ref) => ApiSpaceService(
-  ref.read(firestoreProvider),
-  ref.read(currentUserPod),
-  ref.read(apiUserServiceProvider),
-));
+      ref.read(firestoreProvider),
+      ref.read(currentUserPod),
+      ref.read(apiUserServiceProvider),
+    ));
 
 class ApiSpaceService {
   final FirebaseFirestore _db;
@@ -81,6 +81,14 @@ class ApiSpaceService {
     return querySnapshot.docs.map((doc) {
       return ApiSpaceMember.fromJson(doc.data());
     }).toList();
+  }
+
+  Stream<List<ApiSpaceMember>> getStreamSpaceMemberBySpaceId(String spaceId) {
+    return spaceMemberRef(spaceId).snapshots().map((querySnapshot) =>
+        querySnapshot.docs
+            .map((doc) =>
+                ApiSpaceMember.fromJson(doc.data() as Map<String, dynamic>))
+            .toList());
   }
 
   Future<List<ApiSpaceMember>> getSpaceMemberByUserId(String userId) async {

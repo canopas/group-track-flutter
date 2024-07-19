@@ -6,7 +6,6 @@ class IconPrimaryButton extends StatelessWidget {
   final bool progress;
   final bool enabled;
   final Widget icon;
-  final Color? iconColor;
   final double size;
   final double radius;
   final Color? bgColor;
@@ -17,21 +16,22 @@ class IconPrimaryButton extends StatelessWidget {
     this.progress = true,
     this.enabled = true,
     required this.icon,
-    this.iconColor,
-    this.size = 40.0,
-    this.radius = 8,
     this.bgColor,
+    this.size = 40.0,
+    this.radius = 30,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bg = bgColor ?? context.colorScheme.containerLow;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: bgColor ?? context.colorScheme.containerLowOnSurface,
+          color: bg,
           borderRadius: BorderRadius.circular(radius),
         ),
         padding: const EdgeInsets.all(8),
