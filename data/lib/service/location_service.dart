@@ -39,4 +39,24 @@ class LocationService {
       return null;
     });
   }
+
+  Future<void> saveCurrentLocation(
+    String userId,
+    double latitude,
+    double longitude,
+    int? recodedAt,
+    int? userState,
+  ) async {
+    final docRef = _locationRef(userId).doc();
+
+    final location = ApiLocation(
+      id: docRef.id,
+      user_id: userId,
+      latitude: latitude,
+      longitude: longitude,
+      created_at: recodedAt,
+    );
+
+    await docRef.set(location);
+  }
 }

@@ -104,7 +104,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           onMemberTap: (member) {
             notifier.showMemberDetail(member);
           },
-          onRelocateTap: () {},
+          onRelocateTap: () => notifier.getUserLastLocation(),
           onPlacesTap: () {
             final space = widget.space;
             if (space != null) {

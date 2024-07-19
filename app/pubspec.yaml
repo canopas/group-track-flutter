@@ -59,6 +59,7 @@ dependencies:
   flutter_cache_manager: ^3.3.2
   permission_handler: ^11.3.1
   flutter_slidable: ^3.1.0
+  flutter_background_service: ^5.0.6
 
   # map
   google_maps_flutter: ^2.3.1
@@ -69,6 +70,7 @@ dependencies:
   firebase_auth: ^4.20.0
   firebase_core: ^2.23.0
   firebase_storage: ^11.7.7
+  cloud_firestore: ^4.15.5
   google_sign_in: ^6.1.6
   logger: ^2.3.0
   flutter_svg: ^2.0.9
