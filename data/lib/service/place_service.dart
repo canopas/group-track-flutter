@@ -131,7 +131,7 @@ class PlaceService {
     String? lat,
     String? lng,
   ) async {
-    final placeRadius = (lat != null && lng != null) ? defaultRadius : '';
+   // final placeRadius = (lat != null && lng != null) ? defaultRadius : '';
     const String url ='url';
 
     final response = await http.get(Uri.parse(url));
