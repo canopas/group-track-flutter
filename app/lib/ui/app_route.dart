@@ -5,9 +5,13 @@ import 'package:data/api/message/message_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view.dart';
 import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_screen.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_screen.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_screen.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
@@ -22,6 +26,7 @@ import 'package:yourspace_flutter/ui/flow/space/join/join_space_screen.dart';
 
 import 'flow/auth/sign_in/phone/sign_in_with_phone_screen.dart';
 import 'flow/auth/sign_in/sign_in_method_screen.dart';
+import 'flow/geofence/add/addnew/add_new_place_screen.dart';
 import 'flow/home/home_screen.dart';
 import 'flow/intro/intro_screen.dart';
 
@@ -38,6 +43,9 @@ class AppRoute {
   static const pathChat = '/chat';
   static const pathEnablePermission = '/enable-permission';
   static const pathPlacesList = '/places-list';
+  static const pathAddNewPlace = '/add-new-place';
+  static const pathLocateOnMap = "/locate_on_map";
+  static const pathChoosePlace = "/choose_place";
   static const pathJourneyTimeline = '/journey-timeline';
 
   final String path;
@@ -172,7 +180,29 @@ class AppRoute {
 
   static AppRoute placesList(String spaceId) {
     return AppRoute(pathPlacesList,
-        builder: (_) => PlacesListView(spaceId: spaceId));
+        builder: (_) => PlacesListScreen(spaceId: spaceId));
+  }
+
+  static AppRoute addNewPlace(String spaceId) {
+    return AppRoute(
+      pathAddNewPlace,
+      builder: (_) => AddNewPlaceScreen(spaceId: spaceId),
+    );
+  }
+
+  static AppRoute locateOnMapScreen(String spaceId) {
+    return AppRoute(pathLocateOnMap,
+        builder: (_) => LocateOnMapScreen(spaceId: spaceId));
+  }
+
+  static AppRoute choosePlaceName(LatLng location, String spaceId) {
+    return AppRoute(
+      pathChoosePlace,
+      builder: (_) => ChoosePlaceNameScreen(
+        location: location,
+        spaceId: spaceId,
+      ),
+    );
   }
 
   static AppRoute journeyTimeline(ApiUser user) {
@@ -202,13 +232,12 @@ class AppRoute {
 
   static final routes = [
     GoRoute(
-      path: intro.path,
-      builder: (context, state) {
-        return state.extra == null
-            ? const IntroScreen()
-            : state.widget(context);
-      },
-    ),
+        path: intro.path,
+        builder: (context, state) {
+          return state.extra == null
+              ? const IntroScreen()
+              : state.widget(context);
+        }),
     GoRoute(
       path: pickName.path,
       builder: (context, state) {
@@ -281,6 +310,18 @@ class AppRoute {
     ),
     GoRoute(
       path: pathPlacesList,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathAddNewPlace,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathLocateOnMap,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathChoosePlace,
       builder: (context, state) => state.widget(context),
     ),
     GoRoute(

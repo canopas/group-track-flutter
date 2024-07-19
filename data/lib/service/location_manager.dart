@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names, non_constant_identifier_names
+
 import 'dart:async';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,8 +8,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'location_service.dart';
 
-const int locationUpdateInterval = 10000; // milliseconds
-const int locationUpdateDistance = 10; // meters
+const LOCATION_UPDATE_INTERVAL = 10000; // milliseconds
+const LOCATION_UPDATE_DISTANCE = 10; // meters
 
 final locationManagerProvider =
     Provider((ref) => LocationManager(ref.read(locationServiceProvider)));

@@ -5,6 +5,7 @@ import 'package:data/api/location/location_table.dart';
 import 'package:data/storage/database/location_table_dao.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import '../api/location/journey/api_journey_service.dart';
 import '../api/location/journey/journey.dart';
@@ -40,6 +41,7 @@ class JourneyRepository {
         final latLng = LatLng(position.latitude, position.longitude);
         final location = [
           ApiLocation(
+            id: const Uuid().v4(),
             user_id: userId,
             latitude: latLng.latitude,
             longitude: latLng.longitude,
@@ -62,16 +64,16 @@ class JourneyRepository {
         error: error,
         stackTrace: stack,
       );
-      return userStateSteady;
+      return USER_STATE_STEADY;
     }
   }
 
   int _getCurrentUserState(LocationTable? locationData, Position position) {
     if (locationData != null) {
       final lastFiveMinLocation = _getLastFiveMinuteLocations(locationData);
-      if (lastFiveMinLocation!.isMoving(position)) return userStateMoving;
+      if (lastFiveMinLocation!.isMoving(position)) return USER_STATE_MOVING;
     }
-    return userStateSteady;
+    return USER_STATE_STEADY;
   }
 
   void _checkAndUpdateLastFiveMinLocation(
@@ -98,6 +100,7 @@ class JourneyRepository {
             position.timestamp.millisecondsSinceEpoch - loc.created_at! >
             MIN_TIME_DIFFERENCE);
         updated.add(ApiLocation(
+          id: const Uuid().v4(),
           user_id: userId,
           latitude: latLng.latitude,
           longitude: latLng.longitude,
@@ -141,9 +144,9 @@ class JourneyRepository {
           fromLatitude: position.latitude,
           fromLongitude: position.longitude,
         );
-      } else if (userSate == userStateMoving) {
+      } else if (userSate == USER_STATE_MOVING) {
         await _saveJourneyForMovingUser(userId, lastJourney, position);
-      } else if (userSate == userStateSteady) {
+      } else if (userSate == USER_STATE_STEADY) {
         await _saveJourneyForSteadyUser(userId, lastJourney, position);
       }
     } catch (error, stack) {

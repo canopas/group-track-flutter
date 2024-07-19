@@ -66,6 +66,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_google_logo.svg
   String get icGoogleLogo => 'assets/images/ic_google_logo.svg';
 
+  /// File path: assets/images/ic_location-feed_icon.svg
+  String get icLocationFeedIcon => 'assets/images/ic_location-feed_icon.svg';
+
   /// File path: assets/images/ic_journey_empty_timeline_image.svg
   String get icJourneyEmptyTimelineImage =>
       'assets/images/ic_journey_empty_timeline_image.svg';
@@ -109,6 +112,9 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/ic_remove.svg
   String get icRemove => 'assets/images/ic_remove.svg';
+
+  /// File path: assets/images/ic_search_icon.svg
+  String get icSearchIcon => 'assets/images/ic_search_icon.svg';
 
   /// File path: assets/images/ic_send_message.svg
   String get icSendMessage => 'assets/images/ic_send_message.svg';
@@ -160,6 +166,7 @@ class $AssetsImagesGen {
         icGeofenceIcon,
         icGoogleLogo,
         icJourneyEmptyTimelineImage,
+        icLocationFeedIcon,
         icLocation,
         icMessage,
         icPlaceMarkerIcon,
@@ -173,6 +180,7 @@ class $AssetsImagesGen {
         icPrivacyPolicy,
         icRelocateIcon,
         icRemove,
+        icSearchIcon,
         icSendMessage,
         icSetting,
         icSignOut,
