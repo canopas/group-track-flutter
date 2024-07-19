@@ -58,7 +58,7 @@ dependencies:
   image: ^3.0.1
   flutter_cache_manager: ^3.3.2
   permission_handler: ^11.3.1
-  flutter_slidable: ^3.1.0
+  flutter_slidable: ^3.1.1
   flutter_background_service: ^5.0.6
 
   # map
