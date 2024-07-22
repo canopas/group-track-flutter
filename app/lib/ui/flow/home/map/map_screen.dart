@@ -113,7 +113,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             }
           },
           onDismiss: () => notifier.onDismissMemberDetail(),
-          onTapTimeline: () {},
         ),
         Visibility(visible: enabled, child: _permissionFooter(state))
       ],

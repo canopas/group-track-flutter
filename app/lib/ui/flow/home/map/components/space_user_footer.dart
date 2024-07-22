@@ -22,7 +22,6 @@ class SpaceUserFooter extends StatefulWidget {
   final void Function() onRelocateTap;
   final void Function() onPlacesTap;
   final void Function() onDismiss;
-  final void Function() onTapTimeline;
 
   const SpaceUserFooter({
     super.key,
@@ -35,7 +34,6 @@ class SpaceUserFooter extends StatefulWidget {
     required this.onRelocateTap,
     required this.onPlacesTap,
     required this.onDismiss,
-    required this.onTapTimeline,
   });
 
   @override
@@ -66,7 +64,6 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                     key: const ValueKey('detailView'),
                     userInfo: widget.selectedUser,
                     onDismiss: widget.onDismiss,
-                    onTapTimeline: widget.onTapTimeline,
                   )
                 : const SizedBox.shrink(
                     key: ValueKey('emptyBox'),

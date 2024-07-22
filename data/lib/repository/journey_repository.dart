@@ -22,7 +22,6 @@ class JourneyRepository {
   late ApiJourneyService _journeyService;
 
   final LocationTableDao _locationTableDao = LocationTableDao();
-  final _currentTime = DateTime.now().millisecondsSinceEpoch;
 
   JourneyRepository(FirebaseFirestore fireStore) {
     _locationService = LocationService(fireStore);
@@ -46,7 +45,7 @@ class JourneyRepository {
             user_id: userId,
             latitude: latLng.latitude,
             longitude: latLng.longitude,
-            created_at: _currentTime,
+            created_at: DateTime.now().millisecondsSinceEpoch,
           ),
         ];
         final tableData = LocationTable(
@@ -94,7 +93,7 @@ class JourneyRepository {
           : locations.reduce((current, next) =>
               current.created_at! > next.created_at! ? current : next);
 
-      if (latest.created_at! < _currentTime - 60000) {
+      if (latest.created_at! < DateTime.now().millisecondsSinceEpoch - 60000) {
         final latLng = LatLng(position.latitude, position.longitude);
         final updated = List<ApiLocation>.from(locations);
         updated.removeWhere((loc) =>
@@ -105,7 +104,7 @@ class JourneyRepository {
           user_id: userId,
           latitude: latLng.latitude,
           longitude: latLng.longitude,
-          created_at: _currentTime,
+          created_at: DateTime.now().millisecondsSinceEpoch,
         ));
         await _updateLocationData(locationData, updated);
       }
@@ -224,7 +223,7 @@ class JourneyRepository {
           route_duration: position.timestamp.millisecondsSinceEpoch -
               lastJourney.created_at!,
           routes: updatedRoutes,
-          update_at: _currentTime,
+          update_at: DateTime.now().millisecondsSinceEpoch,
         ),
       );
     }
@@ -247,14 +246,15 @@ class JourneyRepository {
       if (lastJourney.isSteadyLocation()) {
         await _journeyService.updateLastLocationJourney(
           userId = userId,
-          lastJourney.copyWith(update_at: _currentTime),
+          lastJourney.copyWith(
+              update_at: DateTime.now().millisecondsSinceEpoch),
         );
       } else {
         await _journeyService.saveCurrentJourney(
           userId: userId,
           fromLatitude: lastJourney.to_latitude!,
           fromLongitude: lastJourney.to_longitude!,
-          created_at: lastJourney.created_at,
+          created_at: lastJourney.update_at,
         );
       }
       await _journeyService.saveCurrentJourney(
@@ -267,7 +267,7 @@ class JourneyRepository {
         routeDuration:
             position.timestamp.millisecondsSinceEpoch - lastJourney.update_at!,
         created_at: lastJourney.update_at,
-        updated_at: _currentTime,
+        updated_at: DateTime.now().millisecondsSinceEpoch,
       );
     } else if (timeDifference < MIN_TIME_DIFFERENCE && distance > MIN_DISTANCE) {
       final updatedRoutes = List<JourneyRoute>.from(lastJourney.routes)
@@ -279,32 +279,33 @@ class JourneyRepository {
       await _journeyService.updateLastLocationJourney(
           userId,
           lastJourney.copyWith(
-            to_latitude: position.latitude,
-            to_longitude: position.longitude,
+            to_latitude: extractedLocation.latitude,
+            to_longitude: extractedLocation.longitude,
             route_distance: distance,
             routes: updatedRoutes,
             route_duration: position.timestamp.millisecondsSinceEpoch -
                 lastJourney.created_at!,
-            update_at: _currentTime,
+            update_at: DateTime.now().millisecondsSinceEpoch,
           ));
     } else if (timeDifference > MIN_TIME_DIFFERENCE && distance < MIN_DISTANCE) {
       if (lastJourney.isSteadyLocation()) {
         await _journeyService.updateLastLocationJourney(
           userId = userId,
-          lastJourney.copyWith(update_at: _currentTime),
+          lastJourney.copyWith(
+              update_at: DateTime.now().millisecondsSinceEpoch),
         );
       } else {
         await _journeyService.saveCurrentJourney(
           userId: userId,
           fromLatitude: position.latitude,
           fromLongitude: position.longitude,
-          created_at: _currentTime,
+          created_at: DateTime.now().millisecondsSinceEpoch,
         );
       }
     } else if (timeDifference < MIN_TIME_DIFFERENCE && distance < MIN_DISTANCE) {
       await _journeyService.updateLastLocationJourney(
         userId = userId,
-        lastJourney.copyWith(update_at: _currentTime),
+        lastJourney.copyWith(update_at: DateTime.now().millisecondsSinceEpoch),
       );
     }
   }

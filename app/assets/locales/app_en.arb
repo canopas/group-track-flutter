@@ -224,5 +224,18 @@
   "choose_place_add_place_btn_text": "Add place",
   "choose_place_prompt_added_title_text": "{placeName} Added",
   "choose_place_prompt_sub_title_text": "You will be notified when members of your space arrive/leave this place",
-  "choose_place_prompt_got_it_btn_text": "Got it"
+  "choose_place_prompt_got_it_btn_text": "Got it",
+
+  "@_Timeline": {
+  },
+  "journey_timeline_title": "Timeline",
+  "journey_timeline_title_your_timeline": "Your Timeline",
+  "journey_timeline_title_other_user": "{userName} Timeline",
+  "journey_timeline_add_place_btn_text": "Add Place",
+  "journey_timeline_unknown_address_text": "Unknown address",
+  "journey_timeline_getting_address_text": "Getting address..",
+  "journey_timeline_empty_screen_text": "No location history found!",
+  "journey_timeline_Since_text": "Since {date}",
+  "journey_timeline_today_text": "Today {date}",
+  "journey_timeline_date_picker_select_text": "Select"
 }
