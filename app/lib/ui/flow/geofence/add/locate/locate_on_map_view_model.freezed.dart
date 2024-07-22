@@ -16,6 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$LocateOnMapState {
+  LatLng? get currentLatLng => throw _privateConstructorUsedError;
   CameraPosition? get centerPosition => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -29,7 +30,7 @@ abstract class $LocateOnMapStateCopyWith<$Res> {
           LocateOnMapState value, $Res Function(LocateOnMapState) then) =
       _$LocateOnMapStateCopyWithImpl<$Res, LocateOnMapState>;
   @useResult
-  $Res call({CameraPosition? centerPosition});
+  $Res call({LatLng? currentLatLng, CameraPosition? centerPosition});
 }
 
 /// @nodoc
@@ -45,9 +46,14 @@ class _$LocateOnMapStateCopyWithImpl<$Res, $Val extends LocateOnMapState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? currentLatLng = freezed,
     Object? centerPosition = freezed,
   }) {
     return _then(_value.copyWith(
+      currentLatLng: freezed == currentLatLng
+          ? _value.currentLatLng
+          : currentLatLng // ignore: cast_nullable_to_non_nullable
+              as LatLng?,
       centerPosition: freezed == centerPosition
           ? _value.centerPosition
           : centerPosition // ignore: cast_nullable_to_non_nullable
@@ -64,7 +70,7 @@ abstract class _$$LocateOnMapStateImplCopyWith<$Res>
       __$$LocateOnMapStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({CameraPosition? centerPosition});
+  $Res call({LatLng? currentLatLng, CameraPosition? centerPosition});
 }
 
 /// @nodoc
@@ -78,9 +84,14 @@ class __$$LocateOnMapStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? currentLatLng = freezed,
     Object? centerPosition = freezed,
   }) {
     return _then(_$LocateOnMapStateImpl(
+      currentLatLng: freezed == currentLatLng
+          ? _value.currentLatLng
+          : currentLatLng // ignore: cast_nullable_to_non_nullable
+              as LatLng?,
       centerPosition: freezed == centerPosition
           ? _value.centerPosition
           : centerPosition // ignore: cast_nullable_to_non_nullable
@@ -92,14 +103,16 @@ class __$$LocateOnMapStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LocateOnMapStateImpl implements _LocateOnMapState {
-  const _$LocateOnMapStateImpl({this.centerPosition});
+  const _$LocateOnMapStateImpl({this.currentLatLng, this.centerPosition});
 
+  @override
+  final LatLng? currentLatLng;
   @override
   final CameraPosition? centerPosition;
 
   @override
   String toString() {
-    return 'LocateOnMapState(centerPosition: $centerPosition)';
+    return 'LocateOnMapState(currentLatLng: $currentLatLng, centerPosition: $centerPosition)';
   }
 
   @override
@@ -107,12 +120,14 @@ class _$LocateOnMapStateImpl implements _LocateOnMapState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LocateOnMapStateImpl &&
+            (identical(other.currentLatLng, currentLatLng) ||
+                other.currentLatLng == currentLatLng) &&
             (identical(other.centerPosition, centerPosition) ||
                 other.centerPosition == centerPosition));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, centerPosition);
+  int get hashCode => Object.hash(runtimeType, currentLatLng, centerPosition);
 
   @JsonKey(ignore: true)
   @override
@@ -123,9 +138,12 @@ class _$LocateOnMapStateImpl implements _LocateOnMapState {
 }
 
 abstract class _LocateOnMapState implements LocateOnMapState {
-  const factory _LocateOnMapState({final CameraPosition? centerPosition}) =
-      _$LocateOnMapStateImpl;
+  const factory _LocateOnMapState(
+      {final LatLng? currentLatLng,
+      final CameraPosition? centerPosition}) = _$LocateOnMapStateImpl;
 
+  @override
+  LatLng? get currentLatLng;
   @override
   CameraPosition? get centerPosition;
   @override
