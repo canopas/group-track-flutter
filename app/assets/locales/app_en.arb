@@ -29,8 +29,10 @@
       "memberCount": {}
     }
   },
-  "@_INTRO": {
-  },
+  "common_skip": "Skip",
+
+   "@_INTRO": {
+   },
   "intro_1_title": "Live location",
   "intro_2_title": "Receive alerts",
   "intro_3_title": "Location history",
@@ -94,6 +96,9 @@
       }
     }
   },
+  "join_space_invitation_title": "Have a Space Invitation?",
+  "join_space_get_code_from_space_creator_title": "Get the code from the space creator and input it here to join.\n\nIf you don't have an invitation code, create a new space.",
+  "join_space_create_new_space_title": "Create a new space",
 
   "invite_code_title": "Invite code",
   "invite_code_invite_member_title": "Invite members to the {spaceName}",
@@ -173,6 +178,10 @@
   "contact_support_attachment": "Attachment (if any)",
   "contact_support_submit_title": "Submit",
   "contact_support_feedback_alert_message": "Thanks! Your feedback has been recorded.",
+
+  "connection_share_title": "Connect, share, explore join your trusted space for safe location sharing.",
+  "connection_share_subtitle": "Simplify your connections and insights explore drive reports, location history effortlessly.",
+  "connection_continue_title": "Continue",
 
   "@_Permission": {
   },

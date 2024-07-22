@@ -181,7 +181,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   child: Text(
                     widget.loading
                         ? context.l10n.home_select_space_text
-                        : spaceName,
+                        : widget.spaces.isEmpty ? context.l10n.home_select_space_text : spaceName,
                     style: AppTextStyle.subtitle2
                         .copyWith(color: context.colorScheme.textPrimary),
                   ),
@@ -367,14 +367,14 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
               Expanded(
                 child: PrimaryButton(context.l10n.home_create_space_title,
                     onPressed: () {
-                  AppRoute.createSpace.push(context);
+                  AppRoute.createSpace().push(context);
                 }),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: PrimaryButton(context.l10n.home_join_space_title,
                     onPressed: () {
-                  AppRoute.joinSpace.push(context);
+                  AppRoute.joinSpace().push(context);
                 }),
               ),
             ],

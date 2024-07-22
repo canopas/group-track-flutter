@@ -1,8 +1,11 @@
+import 'package:data/api/auth/auth_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
@@ -10,16 +13,14 @@ import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_view_model.dart';
 
 class PickNameScreen extends ConsumerStatefulWidget {
-  const PickNameScreen({super.key});
+  final ApiUser? user;
+  const PickNameScreen({super.key, this.user});
 
   @override
   ConsumerState<PickNameScreen> createState() => _PickNameScreenState();
 }
 
 class _PickNameScreenState extends ConsumerState<PickNameScreen> {
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-
   late PickNameStateNotifier _notifier;
 
   @override
@@ -29,61 +30,45 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
   }
 
   @override
-  void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final state = ref.watch(pickNameStateNotifierProvider);
     _observeError();
-    _navToHomeAfterSave();
+    _navToConnectionScreen();
 
     return AppPage(body: Builder(builder: (context) {
-      return Column(
+      return Stack(
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 16),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 80),
-                    Text(context.l10n.onboard_pick_name_title,
-                        style: AppTextStyle.header1
-                            .copyWith(color: context.colorScheme.textPrimary)),
-                    const SizedBox(height: 40),
-                    Text(
-                        context.l10n.onboard_pick_name_hint_first_name
-                            .toUpperCase(),
-                        style: AppTextStyle.subtitle1.copyWith(
-                            color: context.colorScheme.textSecondary)),
-                    _nameTextField(_firstNameController, (value) {
-                      _notifier.onFirstNameChanged(value ?? '');
-                    }),
-                    const SizedBox(height: 6),
-                    Text(
-                        context.l10n.onboard_pick_name_hint_last_name
-                            .toUpperCase(),
-                        style: AppTextStyle.subtitle1.copyWith(
-                          color: context.colorScheme.textSecondary,
-                        )),
-                    _nameTextField(_lastNameController, (value) {
-                      _notifier.onLastNameChanged(value ?? '');
-                    }),
-                  ]),
-            ),
+          ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              const SizedBox(height: 80),
+              Text(context.l10n.onboard_pick_name_title,
+                  style: AppTextStyle.header1
+                      .copyWith(color: context.colorScheme.textPrimary)),
+              const SizedBox(height: 40),
+              Text(
+                  context.l10n.onboard_pick_name_hint_first_name
+                      .toUpperCase(),
+                  style: AppTextStyle.subtitle1.copyWith(
+                      color: context.colorScheme.textSecondary)),
+              _nameTextField(state.firstName),
+              const SizedBox(height: 6),
+              Text(
+                  context.l10n.onboard_pick_name_hint_last_name
+                      .toUpperCase(),
+                  style: AppTextStyle.subtitle1.copyWith(
+                    color: context.colorScheme.textSecondary,
+                  )),
+              _nameTextField(state.lastName),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 30),
+          BottomStickyOverlay(
             child: PrimaryButton(
               context.l10n.common_next,
               enabled: state.enableBtn,
               progress: state.savingUser,
               onPressed: () {
-                _notifier.saveUser();
+                _notifier.saveUser(widget.user ?? state.user);
               },
             ),
           )
@@ -92,13 +77,12 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
     }));
   }
 
-  Widget _nameTextField(
-      TextEditingController controller, ValueChanged<String?> onChanged) {
+  Widget _nameTextField(TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      child: CupertinoTextField(
+      child: AppTextField(
         controller: controller,
-        onChanged: onChanged,
+        onChanged: (value) => _notifier.enableNextButton(),
         keyboardType: TextInputType.text,
         onTapOutside: (event) {
           FocusManager.instance.primaryFocus?.unfocus();
@@ -106,19 +90,16 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
         style: AppTextStyle.subtitle2.copyWith(
           color: context.colorScheme.textPrimary,
         ),
-        decoration: BoxDecoration(
-            border: Border(
-                bottom:
-                    BorderSide(color: context.colorScheme.containerNormal))),
+        borderType: AppTextFieldBorderType.underline,
       ),
     );
   }
 
-  void _navToHomeAfterSave() {
+  void _navToConnectionScreen() {
     ref.listen(pickNameStateNotifierProvider.select((value) => value.saved),
         (previous, next) {
       if (next) {
-        AppRoute.home.go(context);
+        AppRoute.connection.go(context);
       }
     });
   }
