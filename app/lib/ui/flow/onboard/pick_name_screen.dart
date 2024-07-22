@@ -5,6 +5,7 @@ import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
@@ -79,7 +80,7 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
   Widget _nameTextField(TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      child: CupertinoTextField(
+      child: AppTextField(
         controller: controller,
         onChanged: (value) => _notifier.enableNextButton(),
         keyboardType: TextInputType.text,
@@ -89,10 +90,7 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
         style: AppTextStyle.subtitle2.copyWith(
           color: context.colorScheme.textPrimary,
         ),
-        decoration: BoxDecoration(
-            border: Border(
-                bottom:
-                    BorderSide(color: context.colorScheme.containerNormal))),
+        borderType: AppTextFieldBorderType.underline,
       ),
     );
   }

@@ -30,6 +30,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
     return Center(
       child: Stack(children: [
         ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
           const SizedBox(height: 40),
           Text(
