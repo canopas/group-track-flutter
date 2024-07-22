@@ -38,6 +38,19 @@ class PlaceService {
         .toList());
   }
 
+  Future<ApiPlace?> getPlace(String placeId) async {
+    final querySnapshot = await _spaceRef.firestore
+        .collectionGroup('space_places')
+        .where('id', isEqualTo: placeId)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.data() as ApiPlace;
+    }
+    return null;
+  }
+
   Future<void> deletePlace(String spaceId, String placeId) async {
     await spacePlacesRef(spaceId).doc(placeId).delete();
   }
@@ -82,11 +95,43 @@ class PlaceService {
     }
   }
 
-  Future<List<ApiNearbyPlace>> searchNearbyPlaces(
-    String query,
-    String? lat,
-    String? lng,
+  Future<ApiPlaceMemberSetting?> getPlaceMemberSetting(
+    String placeId,
+    String spaceId,
+    String userId,
   ) async {
+    final setting = await spacePlacesSettingsRef(spaceId, placeId)
+        .where("user_id", isEqualTo: userId)
+        .limit(1)
+        .get();
+
+    if (setting.docs.isNotEmpty) {
+      return ApiPlaceMemberSetting.fromJson(
+          setting.docs.first.data() as Map<String, dynamic>);
+    }
+    return null;
+  }
+
+  Future<void> updatePlaceSetting(
+    String spaceId,
+    String placeId,
+    String userId,
+    ApiPlaceMemberSetting setting,
+  ) async {
+    await spacePlacesSettingsRef(spaceId, placeId).doc(userId).set(
+          setting.toJson(),
+        );
+  }
+
+  Future<void> updatePlace(ApiPlace place) async {
+    await spacePlacesRef(place.space_id).doc(place.id).set(place.toJson());
+  }
+
+  Future<List<ApiNearbyPlace>> searchNearbyPlaces(
+      String query,
+      String? lat,
+      String? lng,
+      ) async {
     final placeRadius = (lat != null && lng != null) ? defaultRadius : '';
     final String url =
         '${AppConfig.placeBaseUrl}?query=$query&location=$lat,$lng&radius=$placeRadius&key=${AppConfig.mapApiKey}';

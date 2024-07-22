@@ -63,7 +63,7 @@ class ChoosePlaceNameViewNotifier extends StateNotifier<ChoosePlaceViewState> {
     try {
       state = state.copyWith(addingPlace: true);
       final members = await spaceService.getMemberBySpaceId(_spaceId!);
-      final memberIds = members.map((member) => member.id).toList();
+      final memberIds = members.map((member) => member.user_id).toList();
 
       await placesService.addPlace(
         _spaceId!,

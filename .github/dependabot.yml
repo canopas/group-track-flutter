@@ -8,6 +8,6 @@ updates:
   - package-ecosystem: "pub" 
     directory: "/app/" 
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     open-pull-requests-limit: 3
 

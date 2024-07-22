@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/message/message_models.dart';
+import 'package:data/api/place/api_place.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_
 import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_screen.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
@@ -45,6 +47,7 @@ class AppRoute {
   static const pathAddNewPlace = '/add-new-place';
   static const pathLocateOnMap = "/locate_on_map";
   static const pathChoosePlace = "/choose_place";
+  static const pathEditPlace = "/edit_place";
   static const pathJourneyTimeline = '/journey-timeline';
 
   final String path;
@@ -204,6 +207,13 @@ class AppRoute {
     );
   }
 
+  static AppRoute editPlaceScreen(ApiPlace place) {
+    return AppRoute(
+      pathEditPlace,
+      builder: (_) => EditPlaceScreen(place: place),
+    );
+  }
+
   static AppRoute journeyTimeline(ApiUser user) {
     return AppRoute(pathJourneyTimeline,
         builder: (_) => JourneyTimelineScreen(selectedUser: user));
@@ -216,16 +226,18 @@ class AppRoute {
     );
   }
 
-  static AppRoute chat(
-      {required SpaceInfo spaceInfo,
-      ThreadInfo? thread,
-      List<ThreadInfo>? threadInfoList}) {
+  static AppRoute chat({
+    required SpaceInfo spaceInfo,
+    ThreadInfo? thread,
+    List<ThreadInfo>? threadInfoList,
+  }) {
     return AppRoute(
       pathMessage,
       builder: (_) => ChatScreen(
-          spaceInfo: spaceInfo,
-          threadInfo: thread,
-          threadInfoList: threadInfoList),
+        spaceInfo: spaceInfo,
+        threadInfo: thread,
+        threadInfoList: threadInfoList,
+      ),
     );
   }
 
@@ -321,6 +333,10 @@ class AppRoute {
     ),
     GoRoute(
       path: pathChoosePlace,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathEditPlace,
       builder: (context, state) => state.widget(context),
     ),
     GoRoute(
