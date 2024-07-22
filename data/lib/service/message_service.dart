@@ -59,7 +59,7 @@ class MessageService {
   }
 
   Stream<List<ApiThreadMessage>> getLatestMessages(String threadId, {int limit = 20}) {
-    return messageService.getLatestMessages(threadId, limit: limit);
+    return messageService.streamLatestMessages(threadId, limit: limit);
   }
 
   Stream<List<ApiUserInfo>> getLatestMessageMember(ApiThread thread) {
