@@ -78,7 +78,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
             )
           ],
           const SizedBox(height: 40),
-          _inviteCode(context),
+          _inviteCode(context, state),
           const SizedBox(height: 40),
           Text(
             widget.fromOnboard ? '' : context.l10n.join_space_get_code_from_space_text,
@@ -93,7 +93,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     ]);
   }
 
-  Widget _inviteCode(BuildContext context) {
+  Widget _inviteCode(BuildContext context, JoinSpaceViewState state) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         double containerWidth = (constraints.maxWidth - 48) / 7;
@@ -102,7 +102,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             for (int i = 0; i < 3; i++) ...[
-              _buildCodeBox(context, containerWidth, i),
+              _buildCodeBox(context, containerWidth, i, state),
               const SizedBox(width: 4),
             ],
             Text(
@@ -113,7 +113,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
             ),
             const SizedBox(width: 8),
             for (int i = 3; i < 6; i++) ...[
-              _buildCodeBox(context, containerWidth, i),
+              _buildCodeBox(context, containerWidth, i, state),
               const SizedBox(width: 4),
             ],
           ],
@@ -122,7 +122,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     );
   }
 
-  Widget _buildCodeBox(BuildContext context, double width, int index) {
+  Widget _buildCodeBox(BuildContext context, double width, int index, JoinSpaceViewState state) {
     return Container(
       width: width,
       height: 64,
@@ -152,7 +152,12 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
             if (text.isEmpty) {
               if (index > 0) _focusNodes[index - 1].requestFocus();
             } else {
-              if (index < 5) _focusNodes[index + 1].requestFocus();
+              if (index < 5) {
+                _focusNodes[index + 1].requestFocus();
+              } else {
+                final inviteCode = _controllers.map((controller) => controller.text.trim()).join();
+                notifier.joinSpace(inviteCode);
+              }
             }
             _updateJoinSpaceButtonState();
           },
