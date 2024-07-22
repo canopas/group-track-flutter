@@ -10,6 +10,7 @@ class ProfileImage extends StatefulWidget {
   final String firstLetter;
   final TextStyle? style;
   final Color? backgroundColor;
+  final Color? borderColor;
 
   const ProfileImage({
     super.key,
@@ -18,6 +19,7 @@ class ProfileImage extends StatefulWidget {
     required this.firstLetter,
     this.style,
     this.backgroundColor,
+    this.borderColor,
   });
 
   @override
@@ -42,7 +44,12 @@ class _ProfileImageState extends State<ProfileImage> {
                 fit: BoxFit.cover,
               )
             : Container(
-                color: widget.backgroundColor ?? context.colorScheme.containerInverseHigh,
+                decoration: BoxDecoration(
+                  color: widget.backgroundColor ??
+                      context.colorScheme.containerInverseHigh,
+                  border: Border.all(width: 0.5, color: widget.borderColor ?? Colors.transparent),
+                  borderRadius: BorderRadius.circular(widget.size / 2),
+                ),
                 child: Center(
                   child: Text(
                       widget.firstLetter,

@@ -90,10 +90,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             const SizedBox(height: 16),
             _textFields(
                 context, context.l10n.edit_profile_phone_title, state.phone,
-                enabled: state.enablePhone),
+                enabled: state.enablePhone, isPhoneNumber: true),
           ],
         ),
-        _deleteAccountButton(context),
+        _deleteAccountButton(context, state),
       ],
     );
   }
@@ -254,7 +254,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _textFields(
       BuildContext context, String title, TextEditingController controller,
-      {bool enabled = true}) {
+      {bool enabled = true, bool isPhoneNumber = false}) {
     return AppTextField(
       controller: controller,
       label: title,
@@ -263,10 +263,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
       enabled: enabled,
       onChanged: (text) => notifier.onChange(),
+      keyboardType: isPhoneNumber ? TextInputType.number : TextInputType.name,
     );
   }
 
-  Widget _deleteAccountButton(BuildContext context) {
+  Widget _deleteAccountButton(BuildContext context, EditProfileViewState state) {
     return BottomStickyOverlay(
       child: PrimaryButton(
         context.l10n.edit_profile_delete_account_title,
@@ -275,6 +276,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         showIcon: true,
         foreground: context.colorScheme.alert,
         background: context.colorScheme.containerLow,
+        progress: state.deletingAccount,
         onPressed: () {
           showConfirmation(
             context,

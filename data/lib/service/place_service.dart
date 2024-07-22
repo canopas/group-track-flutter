@@ -128,10 +128,10 @@ class PlaceService {
   }
 
   Future<List<ApiNearbyPlace>> searchNearbyPlaces(
-    String query,
-    String? lat,
-    String? lng,
-  ) async {
+      String query,
+      String? lat,
+      String? lng,
+      ) async {
     final placeRadius = (lat != null && lng != null) ? defaultRadius : '';
     final String url =
         '${AppConfig.placeBaseUrl}?query=$query&location=$lat,$lng&radius=$placeRadius&key=${AppConfig.mapApiKey}';

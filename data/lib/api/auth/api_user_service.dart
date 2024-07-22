@@ -12,7 +12,7 @@ final apiUserServiceProvider = StateProvider((ref) => ApiUserService(
       ref.read(firestoreProvider),
       ref.read(deviceServiceProvider),
       ref.read(currentUserJsonPod.notifier),
-      ref.read(currentUserSessionJsonPod.notifier),
+      ref.read(currentSpaceId.notifier),
       ref.read(currentUserSessionJsonPod.notifier),
       ref.read(isOnboardingShownPod.notifier),
       ref.read(locationManagerProvider),
@@ -139,7 +139,7 @@ class ApiUserService {
   }
 
   Future<void> deleteUser(String userId) async {
-    await _userRef.doc(userId).delete();
+    await _db.collection("users").doc(userId).delete();
   }
 
   Future<void> registerFcmToken(String userId, String token) async {
@@ -191,11 +191,15 @@ class ApiUserService {
   }
 
   Future<void> signOut() async {
+    clearPreference();
+    await FirebaseAuth.instance.signOut();
+  }
+
+  void clearPreference() {
     locationManager.stopService();
     userJsonNotifier.state = null;
     userSessionJsonNotifier.state = null;
     onBoardNotifier.state = false;
     currentUserSpaceId.state = null;
-    FirebaseAuth.instance.signOut();
   }
 }
