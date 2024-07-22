@@ -30,25 +30,30 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
     return Center(
       child: Stack(children: [
         ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
           const SizedBox(height: 40),
-          Text(
-            context.l10n.connection_share_title,
-            style: AppTextStyle.header3.copyWith(
-              color: context.colorScheme.textPrimary,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              context.l10n.connection_share_title,
+              style: AppTextStyle.header3.copyWith(
+                color: context.colorScheme.textPrimary,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 40),
           SvgPicture.asset(Assets.images.connection),
           const SizedBox(height: 40),
-          Text(
-            context.l10n.connection_share_subtitle,
-            style: AppTextStyle.subtitle1.copyWith(
-              color: context.colorScheme.textSecondary,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              context.l10n.connection_share_subtitle,
+              style: AppTextStyle.subtitle1.copyWith(
+                color: context.colorScheme.textSecondary,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           )
         ]),
         _continueAndSkipButton(context),
