@@ -15,6 +15,7 @@ import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/setting/setting_view_model.dart';
 
 import '../../../gen/assets.gen.dart';
+import '../../components/alert.dart';
 
 class SettingScreen extends ConsumerStatefulWidget {
   const SettingScreen({super.key});
@@ -37,7 +38,6 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
       title: context.l10n.settings_title,
       body: ResumeDetector(
           onResume: () {
-            notifier.getUser();
             notifier.getUserSpace();
           }, child: _body(context, state)),
     );
@@ -81,7 +81,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
           const SizedBox(height: 16),
           Container(
             decoration: BoxDecoration(
-              color: context.colorScheme.containerLowOnSurface,
+              color: context.colorScheme.containerNormal,
               borderRadius: BorderRadius.circular(16),
             ),
             padding: const EdgeInsets.all(16),
@@ -91,7 +91,9 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                   profileImageUrl: profileImageUrl,
                   firstLetter: firstLetter,
                   style: AppTextStyle.header3
-                      .copyWith(color: context.colorScheme.textPrimaryDark),
+                      .copyWith(color: context.colorScheme.textPrimary),
+                  backgroundColor: context.colorScheme.containerHigh,
+                  borderColor: context.colorScheme.textSecondary,
                 ),
                 const SizedBox(width: 16),
                 Text(
@@ -220,7 +222,13 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
             title: context.l10n.settings_other_option_sign_out_text,
             icon: Assets.images.icSignOut,
             onTap: () {
-              notifier.signOut();
+              showConfirmation(
+                context,
+                confirmBtnText: context.l10n.settings_other_option_sign_out_text,
+                title: context.l10n.settings_sign_out_alert_title,
+                message: context.l10n.settings_sign_out_alert_description,
+                onConfirm: () => notifier.signOut(),
+              );
             }),
       ],
     );

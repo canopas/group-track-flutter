@@ -39,13 +39,20 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
 
   late AnimationController _animationController;
   late Animation<double> _animation;
+  late AnimationController _buttonController;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 150),
+    );
+
+    _buttonController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+      upperBound: 0.5,
     );
 
     _animation = CurvedAnimation(
@@ -57,6 +64,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   @override
   void dispose() {
     _animationController.dispose();
+    _buttonController.dispose();
     super.dispose();
   }
 
@@ -64,7 +72,15 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     if (expand) {
       _animationController.forward();
     } else {
-      _animationController.reverse();
+      _animationController.reverse(from: 1.0).orCancel;
+    }
+  }
+
+  void performArrowButtonAnimation() {
+    if (expand) {
+      _buttonController.reverse(from: 0.5);
+    } else {
+      _buttonController.forward(from: 0.0);
     }
   }
 
@@ -145,6 +161,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
           setState(() {
             expand = !expand;
             performAnimation();
+            performArrowButtonAnimation();
           });
         },
         child: Container(
@@ -174,12 +191,13 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   const AppProgressIndicator(
                       size: AppProgressIndicatorSize.small)
                 ] else ...[
-                  Icon(
-                    expand
-                        ? Icons.keyboard_arrow_up_rounded
-                        : Icons.keyboard_arrow_down_rounded,
-                    color: context.colorScheme.textPrimary,
-                  ),
+                  RotationTransition(
+                    turns: Tween(begin: 0.0, end: 1.0).animate(_buttonController),
+                    child:  Icon(
+                      Icons.keyboard_arrow_up_rounded,
+                      color: context.colorScheme.textPrimary,
+                    ),
+                  )
                 ],
               ],
             ),
@@ -258,6 +276,9 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
         setState(() {
           selectedIndex = index;
           widget.onSpaceItemTap(space);
+          expand = false;
+          performAnimation();
+          performArrowButtonAnimation();
         });
       },
       child: Container(
