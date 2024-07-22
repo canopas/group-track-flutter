@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:data/api/network/client.dart';
 import 'package:data/service/device_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../service/location_manager.dart';
 import '../../storage/app_preferences.dart';
 import 'auth_models.dart';
 
@@ -10,9 +12,10 @@ final apiUserServiceProvider = StateProvider((ref) => ApiUserService(
       ref.read(firestoreProvider),
       ref.read(deviceServiceProvider),
       ref.read(currentUserJsonPod.notifier),
+      ref.read(currentSpaceId.notifier),
       ref.read(currentUserSessionJsonPod.notifier),
-      ref.read(currentUserSessionJsonPod.notifier),
-  ref.read(isOnboardingShownPod.notifier),
+      ref.read(isOnboardingShownPod.notifier),
+      ref.read(locationManagerProvider),
     ));
 
 class ApiUserService {
@@ -22,9 +25,17 @@ class ApiUserService {
   final StateController<String?> currentUserSpaceId;
   final StateController<String?> userSessionJsonNotifier;
   final StateController<bool?> onBoardNotifier;
+  final LocationManager locationManager;
 
-  ApiUserService(this._db, this._device, this.userJsonNotifier,
-      this.currentUserSpaceId, this.userSessionJsonNotifier, this.onBoardNotifier);
+  ApiUserService(
+    this._db,
+    this._device,
+    this.userJsonNotifier,
+    this.currentUserSpaceId,
+    this.userSessionJsonNotifier,
+    this.onBoardNotifier,
+    this.locationManager,
+  );
 
   CollectionReference get _userRef =>
       _db.collection("users").withConverter<ApiUser>(
@@ -115,8 +126,9 @@ class ApiUserService {
   }
 
   Future<void> deactivateOldSessions(String userId) async {
-    final querySnapshot =
-    await _sessionRef(userId).where("session_active", isEqualTo: true).get();
+    final querySnapshot = await _sessionRef(userId)
+        .where("session_active", isEqualTo: true)
+        .get();
     for (var doc in querySnapshot.docs) {
       await doc.reference.update({"session_active": false});
     }
@@ -127,7 +139,7 @@ class ApiUserService {
   }
 
   Future<void> deleteUser(String userId) async {
-    await _userRef.doc(userId).delete();
+    await _db.collection("users").doc(userId).delete();
   }
 
   Future<void> registerFcmToken(String userId, String token) async {
@@ -140,14 +152,16 @@ class ApiUserService {
     });
   }
 
-  Future<void> updateBatteryPct(String userId, String sessionId, double batteryPct) async {
+  Future<void> updateBatteryPct(
+      String userId, String sessionId, double batteryPct) async {
     await _sessionRef(userId).doc(sessionId).update({
       "battery_pct": batteryPct,
       "updated_at": FieldValue.serverTimestamp(),
     });
   }
 
-  Future<void> updateSessionState(String id, String sessionId, int state) async {
+  Future<void> updateSessionState(
+      String id, String sessionId, int state) async {
     await _sessionRef(id).doc(sessionId).update({
       "user_state": state,
       "updated_at": FieldValue.serverTimestamp(),
@@ -164,13 +178,28 @@ class ApiUserService {
     return null;
   }
 
+  Stream<ApiSession?> getUserSessionStream(String userId) {
+    return Stream.fromFuture(_sessionRef(userId)
+        .where("session_active", isEqualTo: true)
+        .get()
+        .then((querySnapshot) {
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first.data() as ApiSession;
+      }
+      return null;
+    }));
+  }
+
   Future<void> signOut() async {
-    // locationManager.stopLocationTracking();
+    clearPreference();
+    await FirebaseAuth.instance.signOut();
+  }
+
+  void clearPreference() {
+    locationManager.stopService();
     userJsonNotifier.state = null;
     userSessionJsonNotifier.state = null;
     onBoardNotifier.state = false;
     currentUserSpaceId.state = null;
-    FirebaseAuth.instance.signOut();
-    // locationManager.stopService();
   }
 }

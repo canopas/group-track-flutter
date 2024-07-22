@@ -95,7 +95,7 @@ class _SignInWithPhoneScreenState extends ConsumerState<SignInWithPhoneScreen> {
                       enabled: enable && !loading,
                       progress: loading,
                       context.l10n.common_next,
-                      onPressed: notifier.verifyPhone,
+                      onPressed: () => notifier.verifyPhone(),
                     ),
                   ],
                 )));

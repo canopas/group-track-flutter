@@ -1,13 +1,22 @@
 import 'dart:async';
 
+import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/message/message_models.dart';
+import 'package:data/api/place/api_place.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_screen.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_screen.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_screen.dart';
+import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
+import 'package:yourspace_flutter/ui/flow/onboard/connection_screen.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
+import 'package:yourspace_flutter/ui/flow/permission/enable_permission_view.dart';
 import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_support_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/profile/profile_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/setting_screen.dart';
@@ -18,6 +27,7 @@ import 'package:yourspace_flutter/ui/flow/space/join/join_space_screen.dart';
 
 import 'flow/auth/sign_in/phone/sign_in_with_phone_screen.dart';
 import 'flow/auth/sign_in/sign_in_method_screen.dart';
+import 'flow/geofence/add/addnew/add_new_place_screen.dart';
 import 'flow/home/home_screen.dart';
 import 'flow/intro/intro_screen.dart';
 
@@ -32,6 +42,14 @@ class AppRoute {
   static const pathContactSupport = '/contact-support';
   static const pathMessage = '/message';
   static const pathChat = '/chat';
+  static const pathConnection = '/connection';
+  static const pathPickName = '/pick-name';
+  static const pathEnablePermission = '/enable-permission';
+  static const pathPlacesList = '/places-list';
+  static const pathAddNewPlace = '/add-new-place';
+  static const pathLocateOnMap = "/locate_on_map";
+  static const pathChoosePlace = "/choose_place";
+  static const pathEditPlace = "/edit_place";
 
   final String path;
   final String? name;
@@ -117,10 +135,13 @@ class AppRoute {
         builder: (_) => const SignInWithPhoneScreen(),
       );
 
-  static AppRoute get pickName => AppRoute(
-    "/pick-name",
-        builder: (_) => const PickNameScreen(),
+  static AppRoute pickName({ApiUser? user}) => AppRoute(
+    pathPickName,
+        builder: (_) => PickNameScreen(user: user),
       );
+
+  static AppRoute get connection =>
+      AppRoute(pathConnection, builder: (_) => const ConnectionScreen());
 
   static AppRoute otpVerification(
       {required String phoneNumber, required String verificationId}) {
@@ -130,19 +151,22 @@ class AppRoute {
     );
   }
 
-  static AppRoute get createSpace =>
-      AppRoute(pathCreateSpace, builder: (_) => const CreateSpace());
+  static AppRoute createSpace({bool fromOnboard = false}) =>
+      AppRoute(pathCreateSpace, builder: (_) => CreateSpace(fromOnboard: fromOnboard));
 
-  static AppRoute get joinSpace =>
-     AppRoute(pathJoinSpace, builder: (_) => const JoinSpace());
+  static AppRoute joinSpace({bool fromOnboard = false}) =>
+     AppRoute(pathJoinSpace, builder: (_) => JoinSpace(fromOnboard: fromOnboard));
 
   static AppRoute inviteCode({
-    required String code, required String spaceName}) {
+    required String code, required String spaceName, bool fromOnboard = false}) {
     return AppRoute(
       pathInviteCode,
-      builder: (_) => InviteCode(spaceName: spaceName, inviteCode: code),
+      builder: (_) => InviteCode(spaceName: spaceName, inviteCode: code, fromOnboard: fromOnboard),
     );
   }
+
+  static AppRoute get enablePermission => AppRoute(pathEnablePermission,
+      builder: (_) => const EnablePermissionView());
 
   static AppRoute get setting =>
       AppRoute(pathCreateSpace, builder: (_) => const SettingScreen());
@@ -157,8 +181,42 @@ class AppRoute {
     );
   }
 
-  static AppRoute get contactSupport =>
-      AppRoute(pathContactSupport, builder: (_) => const ContactSupportScreen());
+  static AppRoute get contactSupport => AppRoute(pathContactSupport,
+      builder: (_) => const ContactSupportScreen());
+
+  static AppRoute placesList(String spaceId) {
+    return AppRoute(pathPlacesList,
+        builder: (_) => PlacesListScreen(spaceId: spaceId));
+  }
+
+  static AppRoute addNewPlace(String spaceId) {
+    return AppRoute(
+      pathAddNewPlace,
+      builder: (_) => AddNewPlaceScreen(spaceId: spaceId),
+    );
+  }
+
+  static AppRoute locateOnMapScreen(String spaceId) {
+    return AppRoute(pathLocateOnMap,
+        builder: (_) => LocateOnMapScreen(spaceId: spaceId));
+  }
+
+  static AppRoute choosePlaceName(LatLng location, String spaceId) {
+    return AppRoute(
+      pathChoosePlace,
+      builder: (_) => ChoosePlaceNameScreen(
+        location: location,
+        spaceId: spaceId,
+      ),
+    );
+  }
+
+  static AppRoute editPlaceScreen(ApiPlace place) {
+    return AppRoute(
+      pathEditPlace,
+      builder: (_) => EditPlaceScreen(place: place),
+    );
+  }
 
   static AppRoute message(SpaceInfo space) {
     return AppRoute(
@@ -166,24 +224,32 @@ class AppRoute {
       builder: (_) => ThreadListScreen(spaceInfo: space),
     );
   }
-  static AppRoute chat({required SpaceInfo spaceInfo, ThreadInfo? thread, List<ThreadInfo>? threadInfoList}) {
+
+  static AppRoute chat({
+    required SpaceInfo spaceInfo,
+    ThreadInfo? thread,
+    List<ThreadInfo>? threadInfoList,
+  }) {
     return AppRoute(
       pathMessage,
-      builder: (_) => ChatScreen(spaceInfo: spaceInfo, threadInfo: thread, threadInfoList: threadInfoList),
+      builder: (_) => ChatScreen(
+        spaceInfo: spaceInfo,
+        threadInfo: thread,
+        threadInfoList: threadInfoList,
+      ),
     );
   }
 
   static final routes = [
     GoRoute(
-      path: intro.path,
-      builder: (context, state) {
-        return state.extra == null
-            ? const IntroScreen()
-            : state.widget(context);
-      },
-    ),
+        path: intro.path,
+        builder: (context, state) {
+          return state.extra == null
+              ? const IntroScreen()
+              : state.widget(context);
+        }),
     GoRoute(
-      path: pickName.path,
+      path: pathPickName,
       builder: (context, state) {
         return state.extra == null
             ? const PickNameScreen()
@@ -212,7 +278,6 @@ class AppRoute {
               ? const PhoneVerificationScreen('', '')
               : state.widget(context);
         }),
-
     GoRoute(
       path: pathCreateSpace,
       builder: (context, state) => state.widget(context),
@@ -249,6 +314,34 @@ class AppRoute {
       path: pathChat,
       builder: (context, state) => state.widget(context),
     ),
+    GoRoute(
+      path: pathConnection,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathEnablePermission,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathPlacesList,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathAddNewPlace,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathLocateOnMap,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathChoosePlace,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathEditPlace,
+      builder: (context, state) => state.widget(context),
+    )
   ];
 }
 

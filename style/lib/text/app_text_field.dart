@@ -7,6 +7,7 @@ class AppTextField extends StatelessWidget {
   final String? label;
   final TextStyle? labelStyle;
   final TextEditingController? controller;
+  final Widget? prefixIcon;
   final int? maxLines;
   final int? minLines;
   final TextStyle? style;
@@ -33,6 +34,7 @@ class AppTextField extends StatelessWidget {
     this.label,
     this.labelStyle,
     this.controller,
+    this.prefixIcon,
     this.maxLines = 1,
     this.minLines,
     this.style,
@@ -78,45 +80,48 @@ class AppTextField extends StatelessWidget {
     );
   }
 
-  Widget _textField(BuildContext context) => Material(
-    color: Colors.transparent,
-    child: TextField(
-      controller: controller,
-      onChanged: onChanged,
-      enabled: enabled,
-      maxLines: maxLines,
-      minLines: minLines,
-      expands: expands,
-      textInputAction: textInputAction,
-      autofocus: autoFocus,
-      keyboardType: keyboardType,
-      focusNode: focusNode,
-      textAlign: textAlign,
-      style: style ??
-          AppTextStyle.subtitle2.copyWith(
-            color: context.colorScheme.textPrimary,
+  Widget _textField(BuildContext context) =>
+      Material(
+        color: Colors.transparent,
+        child: TextField(
+          controller: controller,
+          onChanged: onChanged,
+          enabled: enabled,
+          maxLines: maxLines,
+          minLines: minLines,
+          expands: expands,
+          textInputAction: textInputAction,
+          autofocus: autoFocus,
+          keyboardType: keyboardType,
+          focusNode: focusNode,
+          textAlign: textAlign,
+          style: style ??
+              AppTextStyle.subtitle2.copyWith(
+                color: context.colorScheme.textPrimary,
+              ),
+          onTapOutside: onTapOutside ??
+                  (event) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+          decoration: InputDecoration(
+            isDense: isDense,
+            isCollapsed: isCollapsed,
+            hintText: hintText,
+            hintStyle: hintStyle,
+            prefixIcon:prefixIcon,
+            prefixIconConstraints: const BoxConstraints(),
+            focusedBorder: _border(context, true, borderRadius ?? 8),
+            enabledBorder: _border(context, false, borderRadius ?? 8),
+            contentPadding: contentPadding ??
+                (borderType == AppTextFieldBorderType.outline
+                    ? const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 12,
+                )
+                    : null),
           ),
-      onTapOutside: onTapOutside ??
-              (event) {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-      decoration: InputDecoration(
-        isDense: isDense,
-        isCollapsed: isCollapsed,
-        hintText: hintText,
-        hintStyle: hintStyle,
-        focusedBorder: _border(context, true, borderRadius ?? 8),
-        enabledBorder: _border(context, false, borderRadius ?? 8),
-        contentPadding: contentPadding ??
-            (borderType == AppTextFieldBorderType.outline
-                ? const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
-            )
-                : null),
-      ),
-    ),
-  );
+        ),
+      );
 
   InputBorder _border(BuildContext context, bool focused, double borderRadius) {
     switch (borderType) {

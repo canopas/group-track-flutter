@@ -16,11 +16,13 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$PickNameState {
-  ApiUser? get updatedUser => throw _privateConstructorUsedError;
   bool get enableBtn => throw _privateConstructorUsedError;
   bool get savingUser => throw _privateConstructorUsedError;
   bool get saved => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
+  TextEditingController get firstName => throw _privateConstructorUsedError;
+  TextEditingController get lastName => throw _privateConstructorUsedError;
+  ApiUser get user => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $PickNameStateCopyWith<PickNameState> get copyWith =>
@@ -34,13 +36,15 @@ abstract class $PickNameStateCopyWith<$Res> {
       _$PickNameStateCopyWithImpl<$Res, PickNameState>;
   @useResult
   $Res call(
-      {ApiUser? updatedUser,
-      bool enableBtn,
+      {bool enableBtn,
       bool savingUser,
       bool saved,
-      Object? error});
+      Object? error,
+      TextEditingController firstName,
+      TextEditingController lastName,
+      ApiUser user});
 
-  $ApiUserCopyWith<$Res>? get updatedUser;
+  $ApiUserCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -56,17 +60,15 @@ class _$PickNameStateCopyWithImpl<$Res, $Val extends PickNameState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? updatedUser = freezed,
     Object? enableBtn = null,
     Object? savingUser = null,
     Object? saved = null,
     Object? error = freezed,
+    Object? firstName = null,
+    Object? lastName = null,
+    Object? user = null,
   }) {
     return _then(_value.copyWith(
-      updatedUser: freezed == updatedUser
-          ? _value.updatedUser
-          : updatedUser // ignore: cast_nullable_to_non_nullable
-              as ApiUser?,
       enableBtn: null == enableBtn
           ? _value.enableBtn
           : enableBtn // ignore: cast_nullable_to_non_nullable
@@ -80,18 +82,26 @@ class _$PickNameStateCopyWithImpl<$Res, $Val extends PickNameState>
           : saved // ignore: cast_nullable_to_non_nullable
               as bool,
       error: freezed == error ? _value.error : error,
+      firstName: null == firstName
+          ? _value.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
+      lastName: null == lastName
+          ? _value.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as ApiUser,
     ) as $Val);
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $ApiUserCopyWith<$Res>? get updatedUser {
-    if (_value.updatedUser == null) {
-      return null;
-    }
-
-    return $ApiUserCopyWith<$Res>(_value.updatedUser!, (value) {
-      return _then(_value.copyWith(updatedUser: value) as $Val);
+  $ApiUserCopyWith<$Res> get user {
+    return $ApiUserCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value) as $Val);
     });
   }
 }
@@ -105,14 +115,16 @@ abstract class _$$PickNameStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {ApiUser? updatedUser,
-      bool enableBtn,
+      {bool enableBtn,
       bool savingUser,
       bool saved,
-      Object? error});
+      Object? error,
+      TextEditingController firstName,
+      TextEditingController lastName,
+      ApiUser user});
 
   @override
-  $ApiUserCopyWith<$Res>? get updatedUser;
+  $ApiUserCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -126,17 +138,15 @@ class __$$PickNameStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? updatedUser = freezed,
     Object? enableBtn = null,
     Object? savingUser = null,
     Object? saved = null,
     Object? error = freezed,
+    Object? firstName = null,
+    Object? lastName = null,
+    Object? user = null,
   }) {
     return _then(_$PickNameStateImpl(
-      updatedUser: freezed == updatedUser
-          ? _value.updatedUser
-          : updatedUser // ignore: cast_nullable_to_non_nullable
-              as ApiUser?,
       enableBtn: null == enableBtn
           ? _value.enableBtn
           : enableBtn // ignore: cast_nullable_to_non_nullable
@@ -150,6 +160,18 @@ class __$$PickNameStateImplCopyWithImpl<$Res>
           : saved // ignore: cast_nullable_to_non_nullable
               as bool,
       error: freezed == error ? _value.error : error,
+      firstName: null == firstName
+          ? _value.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
+      lastName: null == lastName
+          ? _value.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as ApiUser,
     ));
   }
 }
@@ -158,14 +180,14 @@ class __$$PickNameStateImplCopyWithImpl<$Res>
 
 class _$PickNameStateImpl implements _PickNameState {
   const _$PickNameStateImpl(
-      {this.updatedUser,
-      this.enableBtn = false,
+      {this.enableBtn = false,
       this.savingUser = false,
       this.saved = false,
-      this.error});
+      this.error,
+      required this.firstName,
+      required this.lastName,
+      required this.user});
 
-  @override
-  final ApiUser? updatedUser;
   @override
   @JsonKey()
   final bool enableBtn;
@@ -177,10 +199,16 @@ class _$PickNameStateImpl implements _PickNameState {
   final bool saved;
   @override
   final Object? error;
+  @override
+  final TextEditingController firstName;
+  @override
+  final TextEditingController lastName;
+  @override
+  final ApiUser user;
 
   @override
   String toString() {
-    return 'PickNameState(updatedUser: $updatedUser, enableBtn: $enableBtn, savingUser: $savingUser, saved: $saved, error: $error)';
+    return 'PickNameState(enableBtn: $enableBtn, savingUser: $savingUser, saved: $saved, error: $error, firstName: $firstName, lastName: $lastName, user: $user)';
   }
 
   @override
@@ -188,19 +216,22 @@ class _$PickNameStateImpl implements _PickNameState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PickNameStateImpl &&
-            (identical(other.updatedUser, updatedUser) ||
-                other.updatedUser == updatedUser) &&
             (identical(other.enableBtn, enableBtn) ||
                 other.enableBtn == enableBtn) &&
             (identical(other.savingUser, savingUser) ||
                 other.savingUser == savingUser) &&
             (identical(other.saved, saved) || other.saved == saved) &&
-            const DeepCollectionEquality().equals(other.error, error));
+            const DeepCollectionEquality().equals(other.error, error) &&
+            (identical(other.firstName, firstName) ||
+                other.firstName == firstName) &&
+            (identical(other.lastName, lastName) ||
+                other.lastName == lastName) &&
+            (identical(other.user, user) || other.user == user));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, updatedUser, enableBtn,
-      savingUser, saved, const DeepCollectionEquality().hash(error));
+  int get hashCode => Object.hash(runtimeType, enableBtn, savingUser, saved,
+      const DeepCollectionEquality().hash(error), firstName, lastName, user);
 
   @JsonKey(ignore: true)
   @override
@@ -211,14 +242,14 @@ class _$PickNameStateImpl implements _PickNameState {
 
 abstract class _PickNameState implements PickNameState {
   const factory _PickNameState(
-      {final ApiUser? updatedUser,
-      final bool enableBtn,
+      {final bool enableBtn,
       final bool savingUser,
       final bool saved,
-      final Object? error}) = _$PickNameStateImpl;
+      final Object? error,
+      required final TextEditingController firstName,
+      required final TextEditingController lastName,
+      required final ApiUser user}) = _$PickNameStateImpl;
 
-  @override
-  ApiUser? get updatedUser;
   @override
   bool get enableBtn;
   @override
@@ -227,6 +258,12 @@ abstract class _PickNameState implements PickNameState {
   bool get saved;
   @override
   Object? get error;
+  @override
+  TextEditingController get firstName;
+  @override
+  TextEditingController get lastName;
+  @override
+  ApiUser get user;
   @override
   @JsonKey(ignore: true)
   _$$PickNameStateImplCopyWith<_$PickNameStateImpl> get copyWith =>

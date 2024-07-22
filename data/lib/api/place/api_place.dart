@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../converter/time_converter.dart';
+
 part 'api_place.freezed.dart';
 part 'api_place.g.dart';
 
@@ -15,8 +17,8 @@ class ApiPlace with _$ApiPlace {
     required String name,
     required double latitude,
     required double longitude,
-    required double radius,
-    int? created_at,
+    @Default(200.0) double radius,
+    @TimeStampJsonConverter() DateTime? created_at,
   }) = _ApiPlace;
 
   factory ApiPlace.fromJson(Map<String, dynamic> data) =>
@@ -39,7 +41,7 @@ class ApiPlaceMemberSetting with _$ApiPlaceMemberSetting {
   const factory ApiPlaceMemberSetting({
     required String user_id,
     required String place_id,
-    required bool alert_enabled,
+    @Default(false) bool alert_enabled,
     required List<String> arrival_alert_for,
     required List<String> leave_alert_for,
   }) = _ApiPlaceMemberSetting;
@@ -54,5 +56,22 @@ class ApiPlaceMemberSetting with _$ApiPlaceMemberSetting {
     return ApiPlaceMemberSetting.fromJson(data!);
   }
 
-  Map<String, dynamic> toFireStore(ApiPlaceMemberSetting space) => space.toJson();
+  Map<String, dynamic> toFireStore(ApiPlaceMemberSetting space) =>
+      space.toJson();
+}
+
+@freezed
+class ApiNearbyPlace with _$ApiNearbyPlace {
+  const ApiNearbyPlace._();
+
+  const factory ApiNearbyPlace({
+    required String id,
+    required String name,
+    required String formatted_address,
+    required double lat,
+    required double lng,
+  }) = _ApiNearbyPlace;
+
+  factory ApiNearbyPlace.fromJson(Map<String, dynamic> data) =>
+      _$ApiNearbyPlaceFromJson(data);
 }

@@ -51,17 +51,19 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
             setState(() {});
           },
         )),
-        SmoothPageIndicator(
-          controller: _controller,
-          count: _items.length,
-          effect: ExpandingDotsEffect(
-            expansionFactor: 4,
-            dotHeight: 8,
-            dotWidth: 8,
-            dotColor: context.colorScheme.containerHigh,
-            activeDotColor: context.colorScheme.primary,
+        if (_items.isNotEmpty) ...[
+          SmoothPageIndicator(
+            controller: _controller,
+            count: _items.length,
+            effect: ExpandingDotsEffect(
+              expansionFactor: 4,
+              dotHeight: 8,
+              dotWidth: 8,
+              dotColor: context.colorScheme.containerHigh,
+              activeDotColor: context.colorScheme.primary,
+            ),
           ),
-        ),
+        ],
         const SizedBox(height: 60),
         BottomStickyOverlay(
           child: PrimaryButton(
