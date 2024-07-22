@@ -71,7 +71,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           padding: const EdgeInsets.only(right: 16),
           child: OnTapScale(
             onTap: () {
-              notifier.showDatePicker();
+              notifier.showDatePicker(true);
             },
             child: Row(
               children: [
@@ -627,7 +627,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           lastDate: DateTime.now(),
           confirmText: context.l10n.journey_timeline_date_picker_select_text,
         );
-        notifier.dismissDatePicker();
+        notifier.showDatePicker(false);
         if (pickedDate != null) {
           notifier.onFilterBySelectedDate(pickedDate);
         }

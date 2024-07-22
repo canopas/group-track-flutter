@@ -85,12 +85,8 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     }
   }
 
-  void showDatePicker() {
-    state = state.copyWith(showDatePicker: true);
-  }
-
-  void dismissDatePicker() {
-    state = state.copyWith(showDatePicker: false);
+  void showDatePicker(bool showPicker) {
+    state = state.copyWith(showDatePicker: showPicker);
   }
 
   void onFilterBySelectedDate(DateTime pickedDate) {
