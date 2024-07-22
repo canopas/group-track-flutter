@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -25,7 +27,8 @@ class LocateOnMapScreen extends ConsumerStatefulWidget {
 
 class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
   late LocateOnMapVieNotifier notifier;
-  GoogleMapController? _controller;
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
   final CameraPosition _cameraPosition =
       const CameraPosition(target: LatLng(0.0, 0.0), zoom: defaultCameraZoom);
 
@@ -121,11 +124,13 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
       child: IconPrimaryButton(
         bgColor: context.colorScheme.onPrimary,
         onTap: () async {
-          await _controller
-              ?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-            target: state.currentLatLng ?? const LatLng(0.0, 0.0),
-            zoom: defaultCameraZoom,
-          )));
+          await _controller.future.then((controller) {
+            controller
+                .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+              target: state.currentLatLng ?? const LatLng(0.0, 0.0),
+              zoom: defaultCameraZoom,
+            )));
+          });
         },
         icon: SvgPicture.asset(
           Assets.images.icRelocateIcon,
@@ -139,7 +144,7 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
   }
 
   void _onMapCreated(GoogleMapController controller) async {
-    _controller = controller;
+    _controller.complete(controller);
   }
 
   void _observeMapCameraPosition() {
@@ -147,7 +152,9 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
         locateOnMapViewStateProvider.select((state) => state.centerPosition),
         (_, next) async {
       if (next != null) {
-        await _controller?.animateCamera(CameraUpdate.newCameraPosition(next));
+        await _controller.future.then((controller) {
+          controller.animateCamera(CameraUpdate.newCameraPosition(next));
+        });
       }
     });
   }
