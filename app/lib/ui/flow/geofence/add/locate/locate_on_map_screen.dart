@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -25,11 +27,15 @@ class LocateOnMapScreen extends ConsumerStatefulWidget {
 
 class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
   late LocateOnMapVieNotifier notifier;
-  final _cameraPosition =
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
+  final CameraPosition _cameraPosition =
       const CameraPosition(target: LatLng(0.0, 0.0), zoom: defaultCameraZoom);
 
   @override
   Widget build(BuildContext context) {
+    _observeMapCameraPosition();
+
     notifier = ref.watch(locateOnMapViewStateProvider.notifier);
     final state = ref.watch(locateOnMapViewStateProvider);
     final centerPosition = state.centerPosition;
@@ -61,17 +67,18 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
           ),
         )
       ],
-      body: _body(),
+      body: _body(state),
     );
   }
 
-  Widget _body() {
+  Widget _body(LocateOnMapState state) {
     return Padding(
       padding:
           EdgeInsets.only(top: 16, bottom: context.mediaQueryPadding.bottom),
       child: Stack(children: [
         Center(
           child: GoogleMap(
+            onMapCreated: _onMapCreated,
             initialCameraPosition: _cameraPosition,
             compassEnabled: false,
             zoomControlsEnabled: false,
@@ -79,13 +86,12 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
             myLocationButtonEnabled: false,
             mapToolbarEnabled: false,
             buildingsEnabled: false,
-            onCameraMove: notifier.showLocateBtn,
           ),
         ),
         Center(child: _locateMarkerView()),
         Align(
           alignment: Alignment.bottomRight,
-          child: _currentLocationIconView(context),
+          child: _currentLocationIconView(state),
         )
       ]),
     );
@@ -112,12 +118,20 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
     );
   }
 
-  Widget _currentLocationIconView(BuildContext context) {
+  Widget _currentLocationIconView(LocateOnMapState state) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: IconPrimaryButton(
         bgColor: context.colorScheme.onPrimary,
-        onTap: () {},
+        onTap: () async {
+          await _controller.future.then((controller) {
+            controller
+                .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+              target: state.currentLatLng ?? const LatLng(0.0, 0.0),
+              zoom: defaultCameraZoom,
+            )));
+          });
+        },
         icon: SvgPicture.asset(
           Assets.images.icRelocateIcon,
           colorFilter: ColorFilter.mode(
@@ -127,5 +141,21 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
         ),
       ),
     );
+  }
+
+  void _onMapCreated(GoogleMapController controller) async {
+    _controller.complete(controller);
+  }
+
+  void _observeMapCameraPosition() {
+    ref.listen(
+        locateOnMapViewStateProvider.select((state) => state.centerPosition),
+        (_, next) async {
+      if (next != null) {
+        await _controller.future.then((controller) {
+          controller.animateCamera(CameraUpdate.newCameraPosition(next));
+        });
+      }
+    });
   }
 }
