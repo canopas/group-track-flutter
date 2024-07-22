@@ -115,7 +115,7 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
   }
 
   void navigateToHome() {
-    AppRoute.home.go(context);
+    if (mounted) AppRoute.home.go(context);
   }
 
   _listenSignInSuccess() {

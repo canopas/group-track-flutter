@@ -68,7 +68,7 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
               enabled: state.enableBtn,
               progress: state.savingUser,
               onPressed: () {
-                _notifier.saveUser(widget.user ?? _notifier.user!);
+                _notifier.saveUser(widget.user ?? state.user);
               },
             ),
           )

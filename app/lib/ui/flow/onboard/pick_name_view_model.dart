@@ -21,7 +21,7 @@ class PickNameStateNotifier extends StateNotifier<PickNameState> {
   final ApiUser? user;
 
   PickNameStateNotifier(this._authService, this.user)
-      : super(PickNameState(firstName: TextEditingController(), lastName: TextEditingController()));
+      : super(PickNameState(firstName: TextEditingController(), lastName: TextEditingController(), user: user!));
 
   void enableNextButton() {
     state = state.copyWith(enableBtn: state.firstName.text.isNotEmpty && state.firstName.text.length >= 3);
@@ -53,5 +53,6 @@ class PickNameState with _$PickNameState {
     Object? error,
     required TextEditingController firstName,
     required TextEditingController lastName,
+    required ApiUser user,
   }) = _PickNameState;
 }
