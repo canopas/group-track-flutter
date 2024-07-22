@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/message/api_message_service.dart';
@@ -36,6 +38,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 
   bool _hasMoreItems = true;
   bool loadingData = false;
+  StreamSubscription<List<ApiThreadMessage>>? _messageSubscription;
 
   ChatViewNotifier(this.threadId, this.messageService, this.apiMessageService, this.userService, this.currentUser)
       : super(ChatViewState(message: TextEditingController(), currentUserId: currentUser?.id ?? ''));
@@ -61,8 +64,10 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   void listenThread(String threadId) async {
     try {
       if (threadId.isEmpty) return;
+      if (state.creating) return;
+      _cancelMessageSubscription();
       state = state.copyWith(loading: state.messages.isEmpty);
-      messageService.getLatestMessages(threadId, limit: 20).listen((messages) {
+      _messageSubscription = messageService.getLatestMessages(threadId, limit: 20).listen((messages) {
         state = state.copyWith(messages: messages, loading: false);
         _hasMoreItems = messages.length == MAX_PAGE_LIMIT;
       });
@@ -135,6 +140,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 
   void createNewThread(String spaceId, String message) async {
     try {
+      state = state.copyWith(creating: true);
+      _cancelMessageSubscription();
       List<String> selectedMembers = [];
       if (!selectedMembers.contains(currentUser?.id) && state.selectedMember.isNotEmpty) {
         selectedMembers.addAll(state.selectedMember);
@@ -148,7 +155,6 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
       state = state.copyWith(showMemberSelectionView: false, threadId: threadId, isNewThread: true);
       if (threadId.isNotEmpty) {
         sendMessage(threadId, message);
-        getCreatedThread(threadId);
       }
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);
@@ -158,6 +164,11 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
         stackTrace: stack,
       );
     }
+  }
+
+  void _cancelMessageSubscription() {
+    _messageSubscription?.cancel();
+    _messageSubscription = null;
   }
 
   void getCreatedThread(String threadId) async {
@@ -323,6 +334,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 class ChatViewState with _$ChatViewState {
   const factory ChatViewState({
     @Default(false) bool loading,
+    @Default(false) bool creating,
     @Default(false) bool loadingMessages,
     @Default(false) bool messageSending,
     @Default(false) bool allowSend,

@@ -16,7 +16,6 @@ import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
-import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_view_model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -55,10 +54,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
 
     return AppPage(
       title: widget.spaceInfo.space.name,
-      body: ResumeDetector(
-        onResume: () => notifier.listenThreads(widget.spaceInfo.space.id),
-          child: _body(context, state),
-      ),
+      body: _body(context, state),
       floatingActionButton: widget.spaceInfo.members.length >= 2
       ? LargeIconButton(
         onTap: () {

@@ -59,6 +59,7 @@ class ApiMessageService {
   }
 
   Stream<List<ApiThreadMessage>> getLatestMessages(String threadId, {int limit = 20}) {
+    print('called in api message service file');
     return threadMessageRef(threadId)
         .orderBy("created_at", descending: true)
         .limit(limit)
