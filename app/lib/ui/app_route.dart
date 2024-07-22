@@ -15,6 +15,7 @@ import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
+import 'package:yourspace_flutter/ui/flow/onboard/connection_screen.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
 import 'package:yourspace_flutter/ui/flow/permission/enable_permission_view.dart';
 import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_support_screen.dart';
@@ -42,6 +43,8 @@ class AppRoute {
   static const pathContactSupport = '/contact-support';
   static const pathMessage = '/message';
   static const pathChat = '/chat';
+  static const pathConnection = '/connection';
+  static const pathPickName = '/pick-name';
   static const pathEnablePermission = '/enable-permission';
   static const pathPlacesList = '/places-list';
   static const pathAddNewPlace = '/add-new-place';
@@ -134,10 +137,13 @@ class AppRoute {
         builder: (_) => const SignInWithPhoneScreen(),
       );
 
-  static AppRoute get pickName => AppRoute(
-        "/pick-name",
-        builder: (_) => const PickNameScreen(),
+  static AppRoute pickName({ApiUser? user}) => AppRoute(
+    pathPickName,
+        builder: (_) => PickNameScreen(user: user),
       );
+
+  static AppRoute get connection =>
+      AppRoute(pathConnection, builder: (_) => const ConnectionScreen());
 
   static AppRoute otpVerification(
       {required String phoneNumber, required String verificationId}) {
@@ -147,17 +153,17 @@ class AppRoute {
     );
   }
 
-  static AppRoute get createSpace =>
-      AppRoute(pathCreateSpace, builder: (_) => const CreateSpace());
+  static AppRoute createSpace({bool fromOnboard = false}) =>
+      AppRoute(pathCreateSpace, builder: (_) => CreateSpace(fromOnboard: fromOnboard));
 
-  static AppRoute get joinSpace =>
-      AppRoute(pathJoinSpace, builder: (_) => const JoinSpace());
+  static AppRoute joinSpace({bool fromOnboard = false}) =>
+     AppRoute(pathJoinSpace, builder: (_) => JoinSpace(fromOnboard: fromOnboard));
 
-  static AppRoute inviteCode(
-      {required String code, required String spaceName}) {
+  static AppRoute inviteCode({
+    required String code, required String spaceName, bool fromOnboard = false}) {
     return AppRoute(
       pathInviteCode,
-      builder: (_) => InviteCode(spaceName: spaceName, inviteCode: code),
+      builder: (_) => InviteCode(spaceName: spaceName, inviteCode: code, fromOnboard: fromOnboard),
     );
   }
 
@@ -250,7 +256,7 @@ class AppRoute {
               : state.widget(context);
         }),
     GoRoute(
-      path: pickName.path,
+      path: pathPickName,
       builder: (context, state) {
         return state.extra == null
             ? const PickNameScreen()
@@ -313,6 +319,10 @@ class AppRoute {
     ),
     GoRoute(
       path: pathChat,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathConnection,
       builder: (context, state) => state.widget(context),
     ),
     GoRoute(

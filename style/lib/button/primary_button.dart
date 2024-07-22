@@ -40,12 +40,12 @@ class PrimaryButton extends StatelessWidget {
     final bg = background ?? colorScheme.primary;
     final bgColor = tappable
         ? bg
-        : Color.alphaBlend(bg.withOpacity(0.4), colorScheme.surface);
+        : context.colorScheme.containerLowOnSurface;
 
     final fg = foreground ?? colorScheme.onPrimary;
     final fgColor = tappable
         ? fg
-        : Color.alphaBlend(fg.withOpacity(0.5), colorScheme.surface);
+        : context.colorScheme.textDisabled;
 
     return OnTapScale(
       onTap: () {

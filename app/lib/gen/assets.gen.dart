@@ -16,6 +16,9 @@ class $AssetsImagesGen {
   AssetGenImage get appLogo =>
       const AssetGenImage('assets/images/app_logo.png');
 
+  /// File path: assets/images/connection.svg
+  String get connection => 'assets/images/connection.svg';
+
   /// File path: assets/images/ic_30_battery_icon.svg
   String get ic30BatteryIcon => 'assets/images/ic_30_battery_icon.svg';
 
@@ -149,6 +152,7 @@ class $AssetsImagesGen {
   /// List of all assets
   List<dynamic> get values => [
         appLogo,
+        connection,
         ic30BatteryIcon,
         ic50BatteryIcon,
         icAboutUs,
