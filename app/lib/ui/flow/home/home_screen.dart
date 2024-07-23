@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
@@ -26,16 +25,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late MapViewNotifier mapNotifier;
 
   @override
-  void initState() {
-    super.initState();
-    runPostFrame(() {
-      notifier = ref.watch(homeViewStateProvider.notifier);
-      notifier.getAllSpace();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    notifier = ref.watch(homeViewStateProvider.notifier);
     final state = ref.watch(homeViewStateProvider);
     _observeNavigation(state);
     _observeError();

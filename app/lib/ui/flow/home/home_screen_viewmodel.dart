@@ -29,39 +29,38 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this._currentSpaceIdController,
     this.permissionService,
     this._lastBatteryDialogDate,
-  ) : super(const HomeViewState());
+  ) : super(const HomeViewState()) {
+    getAllSpace();
+  }
 
   String? get currentSpaceId => _currentSpaceIdController.state;
-
-  set currentSpaceId(String? value) {
-    _currentSpaceIdController.state = value;
-  }
 
   void getAllSpace() async {
     if (state.loading) return;
     try {
       state = state.copyWith(loading: state.spaceList.isEmpty);
-      final spaces = await spaceService.getAllSpaceInfo();
+      spaceService.streamAllSpaceInfo().listen((spaces) {
+        final sortedSpaces = spaces.toList();
+        if ((currentSpaceId?.isNotEmpty ?? false) && spaces.isNotEmpty) {
+          final selectedSpaceIndex = sortedSpaces
+              .indexWhere((space) => space.space.id == currentSpaceId);
+          if (selectedSpaceIndex > -1) {
+            final selectedSpace = sortedSpaces.removeAt(selectedSpaceIndex);
+            sortedSpaces.insert(0, selectedSpace);
+            updateSelectedSpace(selectedSpace);
+          }
+        }
+        if (spaces.isEmpty) {
+          state = state.copyWith(loading: false, spaceList: []);
+        }
+        state = state.copyWith(loading: false, spaceList: sortedSpaces);
 
-      final sortedSpaces = spaces.toList();
-
-      if (currentSpaceId?.isNotEmpty ?? false) {
-        final selectedSpaceIndex = sortedSpaces
-            .indexWhere((space) => space.space.id == currentSpaceId);
-        if (selectedSpaceIndex > -1) {
-          final selectedSpace = sortedSpaces.removeAt(selectedSpaceIndex);
-          sortedSpaces.insert(0, selectedSpace);
+        if ((currentSpaceId?.isEmpty ?? false) && sortedSpaces.isNotEmpty) {
+          final selectedSpace = sortedSpaces.first;
+          _currentSpaceIdController.state = selectedSpace.space.id;
           updateSelectedSpace(selectedSpace);
         }
-      }
-
-      state = state.copyWith(loading: false, spaceList: sortedSpaces);
-
-      if ((currentSpaceId?.isEmpty ?? false) && sortedSpaces.isNotEmpty) {
-        final selectedSpace = sortedSpaces.first;
-        currentSpaceId = selectedSpace.space.id;
-        updateSelectedSpace(selectedSpace);
-      }
+      });
     } catch (error, stack) {
       state = state.copyWith(error: error, loading: false);
       logger.e(
@@ -92,7 +91,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   void updateSelectedSpace(SpaceInfo space) {
     if (space != state.selectedSpace) {
       state = state.copyWith(selectedSpace: space);
-      currentSpaceId = space.space.id;
+      _currentSpaceIdController.state = space.space.id;
     }
   }
 
