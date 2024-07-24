@@ -163,7 +163,10 @@ class SpaceService {
   }
 
   Future<void> enableLocation(
-      String spaceId, String userId, bool locationEnabled) async {
+    String spaceId,
+    String userId,
+    bool locationEnabled,
+  ) async {
     await spaceService.enableLocation(spaceId, userId, locationEnabled);
   }
 
