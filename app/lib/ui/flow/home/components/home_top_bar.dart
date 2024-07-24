@@ -14,25 +14,19 @@ import '../../../../gen/assets.gen.dart';
 class HomeTopBar extends StatefulWidget {
   final void Function(SpaceInfo) onSpaceItemTap;
   final void Function() onAddMemberTap;
-  final void Function() onToggleLocation;
   final List<SpaceInfo> spaces;
   final SpaceInfo? selectedSpace;
   final bool loading;
   final bool fetchingInviteCode;
-  final bool locationEnabled;
-  final bool enablingLocation;
 
   const HomeTopBar({
     super.key,
     required this.spaces,
     required this.onSpaceItemTap,
     required this.onAddMemberTap,
-    required this.onToggleLocation,
     required this.selectedSpace,
     this.loading = false,
     this.fetchingInviteCode = false,
-    required this.locationEnabled,
-    required this.enablingLocation,
   });
 
   @override
@@ -136,12 +130,9 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   SizedBox(width: expand ? 0 : 8),
                   _iconButton(
                     context: context,
-                    icon: widget.locationEnabled
-                        ? Assets.images.icLocation
-                        : Assets.images.icLocationOff,
+                    icon: Assets.images.icLocation,
                     visibility: !expand,
-                    progress: widget.enablingLocation,
-                    onTap: () => widget.onToggleLocation(),
+                    onTap: () {},
                   ),
                   _iconButton(
                     context: context,
@@ -190,9 +181,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   child: Text(
                     widget.loading
                         ? context.l10n.home_select_space_text
-                        : widget.spaces.isEmpty
-                            ? context.l10n.home_select_space_text
-                            : spaceName,
+                        : widget.spaces.isEmpty ? context.l10n.home_select_space_text : spaceName,
                     style: AppTextStyle.subtitle2
                         .copyWith(color: context.colorScheme.textPrimary),
                   ),
@@ -203,9 +192,8 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                       size: AppProgressIndicatorSize.small)
                 ] else ...[
                   RotationTransition(
-                    turns:
-                        Tween(begin: 0.0, end: 1.0).animate(_buttonController),
-                    child: Icon(
+                    turns: Tween(begin: 0.0, end: 1.0).animate(_buttonController),
+                    child:  Icon(
                       Icons.keyboard_arrow_up_rounded,
                       color: context.colorScheme.textPrimary,
                     ),
@@ -225,13 +213,11 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     Color? color,
     required bool visibility,
     required Function() onTap,
-    bool progress = false,
   }) {
     return Visibility(
       visible: visibility,
       child: IconPrimaryButton(
         onTap: () => onTap(),
-        progress: progress,
         icon: SvgPicture.asset(
           height: 16,
           width: 14,

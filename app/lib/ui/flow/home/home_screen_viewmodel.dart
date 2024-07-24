@@ -1,4 +1,3 @@
-import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/permission_service.dart';
@@ -16,7 +15,6 @@ final homeViewStateProvider =
     ref.read(currentSpaceId.notifier),
     ref.read(permissionServiceProvider),
     ref.read(lastBatteryDialogPod.notifier),
-    ref.read(currentUserPod),
   ),
 );
 
@@ -25,14 +23,12 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final PermissionService permissionService;
   final StateController<String?> _currentSpaceIdController;
   final StateController<String?> _lastBatteryDialogDate;
-  final ApiUser? _currentUser;
 
   HomeViewNotifier(
     this.spaceService,
     this._currentSpaceIdController,
     this.permissionService,
     this._lastBatteryDialogDate,
-    this._currentUser,
   ) : super(const HomeViewState());
 
   String? get currentSpaceId => _currentSpaceIdController.state;
@@ -95,12 +91,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
   void updateSelectedSpace(SpaceInfo space) {
     if (space != state.selectedSpace) {
-      final member = space.members
-          .firstWhere((member) => member.user.id == _currentUser!.id);
-      state = state.copyWith(
-        selectedSpace: space,
-        locationEnabled: member.isLocationEnabled,
-      );
+      state = state.copyWith(selectedSpace: space);
       currentSpaceId = space.space.id;
     }
   }
@@ -138,28 +129,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   void requestIgnoreBatteryOptimizations() async {
     await permissionService.requestIgnoreBatteryOptimizations();
   }
-
-  void toggleLocation() async {
-    if (currentSpaceId == null && _currentUser == null) return;
-    try {
-      final isEnabled = !state.locationEnabled;
-      state = state.copyWith(enablingLocation: true);
-      await spaceService.enableLocation(
-        currentSpaceId!,
-        _currentUser!.id,
-        isEnabled,
-      );
-      state =
-          state.copyWith(enablingLocation: false, locationEnabled: isEnabled);
-    } catch (error, stack) {
-      state = state.copyWith(enablingLocation: false, error: error);
-      logger.e(
-        'HomeViewNotifier: Error while location enabled or disabled',
-        error: error,
-        stackTrace: stack,
-      );
-    }
-  }
 }
 
 @freezed
@@ -169,8 +138,6 @@ class HomeViewState with _$HomeViewState {
     @Default(false) bool isCreating,
     @Default(false) bool loading,
     @Default(false) bool fetchingInviteCode,
-    @Default(false) bool enablingLocation,
-    @Default(true) bool locationEnabled,
     SpaceInfo? selectedSpace,
     @Default('') String spaceInvitationCode,
     @Default([]) List<SpaceInfo> spaceList,

@@ -101,7 +101,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   void _userMapPositions(List<ApiUserInfo> userInfo) async {
     final List<UserMarker> markers = [];
     for (final info in userInfo) {
-      if (info.user.id == _currentUser?.id && state.defaultPosition == null) {
+      if (info.user.id == _currentUser?.id) {
         final latLng = LatLng(
           info.location?.latitude ?? 0.0,
           info.location?.longitude ?? 0.0,
@@ -109,16 +109,14 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         _mapCameraPosition(latLng, defaultCameraZoom);
       }
 
-      if (info.location != null && info.isLocationEnabled) {
+      if (info.location != null) {
         markers.add(UserMarker(
           userId: info.user.id,
           userName: info.user.fullName,
           imageUrl: await _convertUrlToImage(info.user.profile_image),
           latitude: info.location!.latitude,
           longitude: info.location!.longitude,
-          isSelected: state.selectedUser == null
-              ? false
-              : state.selectedUser?.user.id == info.user.id,
+          isSelected: false,
         ));
       }
     }

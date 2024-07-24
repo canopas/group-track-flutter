@@ -16,7 +16,6 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$LocateOnMapState {
-  dynamic get loading => throw _privateConstructorUsedError;
   LatLng? get currentLatLng => throw _privateConstructorUsedError;
   CameraPosition? get centerPosition => throw _privateConstructorUsedError;
 
@@ -31,8 +30,7 @@ abstract class $LocateOnMapStateCopyWith<$Res> {
           LocateOnMapState value, $Res Function(LocateOnMapState) then) =
       _$LocateOnMapStateCopyWithImpl<$Res, LocateOnMapState>;
   @useResult
-  $Res call(
-      {dynamic loading, LatLng? currentLatLng, CameraPosition? centerPosition});
+  $Res call({LatLng? currentLatLng, CameraPosition? centerPosition});
 }
 
 /// @nodoc
@@ -48,15 +46,10 @@ class _$LocateOnMapStateCopyWithImpl<$Res, $Val extends LocateOnMapState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loading = freezed,
     Object? currentLatLng = freezed,
     Object? centerPosition = freezed,
   }) {
     return _then(_value.copyWith(
-      loading: freezed == loading
-          ? _value.loading
-          : loading // ignore: cast_nullable_to_non_nullable
-              as dynamic,
       currentLatLng: freezed == currentLatLng
           ? _value.currentLatLng
           : currentLatLng // ignore: cast_nullable_to_non_nullable
@@ -77,8 +70,7 @@ abstract class _$$LocateOnMapStateImplCopyWith<$Res>
       __$$LocateOnMapStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {dynamic loading, LatLng? currentLatLng, CameraPosition? centerPosition});
+  $Res call({LatLng? currentLatLng, CameraPosition? centerPosition});
 }
 
 /// @nodoc
@@ -92,12 +84,10 @@ class __$$LocateOnMapStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? loading = freezed,
     Object? currentLatLng = freezed,
     Object? centerPosition = freezed,
   }) {
     return _then(_$LocateOnMapStateImpl(
-      loading: freezed == loading ? _value.loading! : loading,
       currentLatLng: freezed == currentLatLng
           ? _value.currentLatLng
           : currentLatLng // ignore: cast_nullable_to_non_nullable
@@ -113,12 +103,8 @@ class __$$LocateOnMapStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LocateOnMapStateImpl implements _LocateOnMapState {
-  const _$LocateOnMapStateImpl(
-      {this.loading = false, this.currentLatLng, this.centerPosition});
+  const _$LocateOnMapStateImpl({this.currentLatLng, this.centerPosition});
 
-  @override
-  @JsonKey()
-  final dynamic loading;
   @override
   final LatLng? currentLatLng;
   @override
@@ -126,7 +112,7 @@ class _$LocateOnMapStateImpl implements _LocateOnMapState {
 
   @override
   String toString() {
-    return 'LocateOnMapState(loading: $loading, currentLatLng: $currentLatLng, centerPosition: $centerPosition)';
+    return 'LocateOnMapState(currentLatLng: $currentLatLng, centerPosition: $centerPosition)';
   }
 
   @override
@@ -134,7 +120,6 @@ class _$LocateOnMapStateImpl implements _LocateOnMapState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LocateOnMapStateImpl &&
-            const DeepCollectionEquality().equals(other.loading, loading) &&
             (identical(other.currentLatLng, currentLatLng) ||
                 other.currentLatLng == currentLatLng) &&
             (identical(other.centerPosition, centerPosition) ||
@@ -142,11 +127,7 @@ class _$LocateOnMapStateImpl implements _LocateOnMapState {
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(loading),
-      currentLatLng,
-      centerPosition);
+  int get hashCode => Object.hash(runtimeType, currentLatLng, centerPosition);
 
   @JsonKey(ignore: true)
   @override
@@ -158,12 +139,9 @@ class _$LocateOnMapStateImpl implements _LocateOnMapState {
 
 abstract class _LocateOnMapState implements LocateOnMapState {
   const factory _LocateOnMapState(
-      {final dynamic loading,
-      final LatLng? currentLatLng,
+      {final LatLng? currentLatLng,
       final CameraPosition? centerPosition}) = _$LocateOnMapStateImpl;
 
-  @override
-  dynamic get loading;
   @override
   LatLng? get currentLatLng;
   @override

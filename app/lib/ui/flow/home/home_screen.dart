@@ -47,9 +47,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppPage(
       body: ResumeDetector(
         onResume: () {
+          if(state.selectedSpace != null) {
           notifier.getAllSpace();
           notifier.showBatteryOptimizationDialog();
           mapNotifier.checkUserPermission();
+          }
         },
         child: _body(context, state),
       ),
@@ -66,12 +68,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             spaces: state.spaceList,
             onSpaceItemTap: (name) => notifier.updateSelectedSpace(name),
             onAddMemberTap: () => notifier.onAddMemberTap(),
-            onToggleLocation: () => notifier.toggleLocation(),
             selectedSpace: state.selectedSpace,
             loading: state.loading,
             fetchingInviteCode: state.fetchingInviteCode,
-            locationEnabled: state.locationEnabled,
-            enablingLocation: state.enablingLocation,
           ),
         ],
       ),

@@ -82,7 +82,7 @@ class PlaceService {
       return ApiPlaceMemberSetting(
         user_id: memberId,
         place_id: place.id,
-        alert_enable: true,
+        alert_enabled: true,
         leave_alert_for: filterIds,
         arrival_alert_for: filterIds,
       );
@@ -128,10 +128,10 @@ class PlaceService {
   }
 
   Future<List<ApiNearbyPlace>> searchNearbyPlaces(
-    String query,
-    String? lat,
-    String? lng,
-  ) async {
+      String query,
+      String? lat,
+      String? lng,
+      ) async {
     final placeRadius = (lat != null && lng != null) ? defaultRadius : '';
     final String url =
         '${AppConfig.placeBaseUrl}?query=$query&location=$lat,$lng&radius=$placeRadius&key=${AppConfig.mapApiKey}';

@@ -20,8 +20,6 @@ mixin _$HomeViewState {
   bool get isCreating => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
   bool get fetchingInviteCode => throw _privateConstructorUsedError;
-  bool get enablingLocation => throw _privateConstructorUsedError;
-  bool get locationEnabled => throw _privateConstructorUsedError;
   SpaceInfo? get selectedSpace => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
   List<SpaceInfo> get spaceList => throw _privateConstructorUsedError;
@@ -44,8 +42,6 @@ abstract class $HomeViewStateCopyWith<$Res> {
       bool isCreating,
       bool loading,
       bool fetchingInviteCode,
-      bool enablingLocation,
-      bool locationEnabled,
       SpaceInfo? selectedSpace,
       String spaceInvitationCode,
       List<SpaceInfo> spaceList,
@@ -72,8 +68,6 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
     Object? isCreating = null,
     Object? loading = null,
     Object? fetchingInviteCode = null,
-    Object? enablingLocation = null,
-    Object? locationEnabled = null,
     Object? selectedSpace = freezed,
     Object? spaceInvitationCode = null,
     Object? spaceList = null,
@@ -96,14 +90,6 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
       fetchingInviteCode: null == fetchingInviteCode
           ? _value.fetchingInviteCode
           : fetchingInviteCode // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enablingLocation: null == enablingLocation
-          ? _value.enablingLocation
-          : enablingLocation // ignore: cast_nullable_to_non_nullable
-              as bool,
-      locationEnabled: null == locationEnabled
-          ? _value.locationEnabled
-          : locationEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
       selectedSpace: freezed == selectedSpace
           ? _value.selectedSpace
@@ -151,8 +137,6 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
       bool isCreating,
       bool loading,
       bool fetchingInviteCode,
-      bool enablingLocation,
-      bool locationEnabled,
       SpaceInfo? selectedSpace,
       String spaceInvitationCode,
       List<SpaceInfo> spaceList,
@@ -178,8 +162,6 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
     Object? isCreating = null,
     Object? loading = null,
     Object? fetchingInviteCode = null,
-    Object? enablingLocation = null,
-    Object? locationEnabled = null,
     Object? selectedSpace = freezed,
     Object? spaceInvitationCode = null,
     Object? spaceList = null,
@@ -202,14 +184,6 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
       fetchingInviteCode: null == fetchingInviteCode
           ? _value.fetchingInviteCode
           : fetchingInviteCode // ignore: cast_nullable_to_non_nullable
-              as bool,
-      enablingLocation: null == enablingLocation
-          ? _value.enablingLocation
-          : enablingLocation // ignore: cast_nullable_to_non_nullable
-              as bool,
-      locationEnabled: null == locationEnabled
-          ? _value.locationEnabled
-          : locationEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
       selectedSpace: freezed == selectedSpace
           ? _value.selectedSpace
@@ -240,8 +214,6 @@ class _$HomeViewStateImpl implements _HomeViewState {
       this.isCreating = false,
       this.loading = false,
       this.fetchingInviteCode = false,
-      this.enablingLocation = false,
-      this.locationEnabled = true,
       this.selectedSpace,
       this.spaceInvitationCode = '',
       final List<SpaceInfo> spaceList = const [],
@@ -261,12 +233,6 @@ class _$HomeViewStateImpl implements _HomeViewState {
   @override
   @JsonKey()
   final bool fetchingInviteCode;
-  @override
-  @JsonKey()
-  final bool enablingLocation;
-  @override
-  @JsonKey()
-  final bool locationEnabled;
   @override
   final SpaceInfo? selectedSpace;
   @override
@@ -288,7 +254,7 @@ class _$HomeViewStateImpl implements _HomeViewState {
 
   @override
   String toString() {
-    return 'HomeViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, enablingLocation: $enablingLocation, locationEnabled: $locationEnabled, selectedSpace: $selectedSpace, spaceInvitationCode: $spaceInvitationCode, spaceList: $spaceList, error: $error, showBatteryDialog: $showBatteryDialog)';
+    return 'HomeViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, selectedSpace: $selectedSpace, spaceInvitationCode: $spaceInvitationCode, spaceList: $spaceList, error: $error, showBatteryDialog: $showBatteryDialog)';
   }
 
   @override
@@ -303,10 +269,6 @@ class _$HomeViewStateImpl implements _HomeViewState {
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.fetchingInviteCode, fetchingInviteCode) ||
                 other.fetchingInviteCode == fetchingInviteCode) &&
-            (identical(other.enablingLocation, enablingLocation) ||
-                other.enablingLocation == enablingLocation) &&
-            (identical(other.locationEnabled, locationEnabled) ||
-                other.locationEnabled == locationEnabled) &&
             (identical(other.selectedSpace, selectedSpace) ||
                 other.selectedSpace == selectedSpace) &&
             (identical(other.spaceInvitationCode, spaceInvitationCode) ||
@@ -325,8 +287,6 @@ class _$HomeViewStateImpl implements _HomeViewState {
       isCreating,
       loading,
       fetchingInviteCode,
-      enablingLocation,
-      locationEnabled,
       selectedSpace,
       spaceInvitationCode,
       const DeepCollectionEquality().hash(_spaceList),
@@ -346,8 +306,6 @@ abstract class _HomeViewState implements HomeViewState {
       final bool isCreating,
       final bool loading,
       final bool fetchingInviteCode,
-      final bool enablingLocation,
-      final bool locationEnabled,
       final SpaceInfo? selectedSpace,
       final String spaceInvitationCode,
       final List<SpaceInfo> spaceList,
@@ -362,10 +320,6 @@ abstract class _HomeViewState implements HomeViewState {
   bool get loading;
   @override
   bool get fetchingInviteCode;
-  @override
-  bool get enablingLocation;
-  @override
-  bool get locationEnabled;
   @override
   SpaceInfo? get selectedSpace;
   @override

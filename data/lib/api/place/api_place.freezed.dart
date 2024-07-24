@@ -314,7 +314,7 @@ ApiPlaceMemberSetting _$ApiPlaceMemberSettingFromJson(
 mixin _$ApiPlaceMemberSetting {
   String get user_id => throw _privateConstructorUsedError;
   String get place_id => throw _privateConstructorUsedError;
-  bool get alert_enable => throw _privateConstructorUsedError;
+  bool get alert_enabled => throw _privateConstructorUsedError;
   List<String> get arrival_alert_for => throw _privateConstructorUsedError;
   List<String> get leave_alert_for => throw _privateConstructorUsedError;
 
@@ -333,7 +333,7 @@ abstract class $ApiPlaceMemberSettingCopyWith<$Res> {
   $Res call(
       {String user_id,
       String place_id,
-      bool alert_enable,
+      bool alert_enabled,
       List<String> arrival_alert_for,
       List<String> leave_alert_for});
 }
@@ -354,7 +354,7 @@ class _$ApiPlaceMemberSettingCopyWithImpl<$Res,
   $Res call({
     Object? user_id = null,
     Object? place_id = null,
-    Object? alert_enable = null,
+    Object? alert_enabled = null,
     Object? arrival_alert_for = null,
     Object? leave_alert_for = null,
   }) {
@@ -367,9 +367,9 @@ class _$ApiPlaceMemberSettingCopyWithImpl<$Res,
           ? _value.place_id
           : place_id // ignore: cast_nullable_to_non_nullable
               as String,
-      alert_enable: null == alert_enable
-          ? _value.alert_enable
-          : alert_enable // ignore: cast_nullable_to_non_nullable
+      alert_enabled: null == alert_enabled
+          ? _value.alert_enabled
+          : alert_enabled // ignore: cast_nullable_to_non_nullable
               as bool,
       arrival_alert_for: null == arrival_alert_for
           ? _value.arrival_alert_for
@@ -395,7 +395,7 @@ abstract class _$$ApiPlaceMemberSettingImplCopyWith<$Res>
   $Res call(
       {String user_id,
       String place_id,
-      bool alert_enable,
+      bool alert_enabled,
       List<String> arrival_alert_for,
       List<String> leave_alert_for});
 }
@@ -414,7 +414,7 @@ class __$$ApiPlaceMemberSettingImplCopyWithImpl<$Res>
   $Res call({
     Object? user_id = null,
     Object? place_id = null,
-    Object? alert_enable = null,
+    Object? alert_enabled = null,
     Object? arrival_alert_for = null,
     Object? leave_alert_for = null,
   }) {
@@ -427,9 +427,9 @@ class __$$ApiPlaceMemberSettingImplCopyWithImpl<$Res>
           ? _value.place_id
           : place_id // ignore: cast_nullable_to_non_nullable
               as String,
-      alert_enable: null == alert_enable
-          ? _value.alert_enable
-          : alert_enable // ignore: cast_nullable_to_non_nullable
+      alert_enabled: null == alert_enabled
+          ? _value.alert_enabled
+          : alert_enabled // ignore: cast_nullable_to_non_nullable
               as bool,
       arrival_alert_for: null == arrival_alert_for
           ? _value._arrival_alert_for
@@ -449,9 +449,9 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
   const _$ApiPlaceMemberSettingImpl(
       {required this.user_id,
       required this.place_id,
-      this.alert_enable = false,
-      final List<String> arrival_alert_for = const [],
-      final List<String> leave_alert_for = const []})
+      this.alert_enabled = false,
+      required final List<String> arrival_alert_for,
+      required final List<String> leave_alert_for})
       : _arrival_alert_for = arrival_alert_for,
         _leave_alert_for = leave_alert_for,
         super._();
@@ -465,10 +465,9 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
   final String place_id;
   @override
   @JsonKey()
-  final bool alert_enable;
+  final bool alert_enabled;
   final List<String> _arrival_alert_for;
   @override
-  @JsonKey()
   List<String> get arrival_alert_for {
     if (_arrival_alert_for is EqualUnmodifiableListView)
       return _arrival_alert_for;
@@ -478,7 +477,6 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
 
   final List<String> _leave_alert_for;
   @override
-  @JsonKey()
   List<String> get leave_alert_for {
     if (_leave_alert_for is EqualUnmodifiableListView) return _leave_alert_for;
     // ignore: implicit_dynamic_type
@@ -487,7 +485,7 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
 
   @override
   String toString() {
-    return 'ApiPlaceMemberSetting(user_id: $user_id, place_id: $place_id, alert_enable: $alert_enable, arrival_alert_for: $arrival_alert_for, leave_alert_for: $leave_alert_for)';
+    return 'ApiPlaceMemberSetting(user_id: $user_id, place_id: $place_id, alert_enabled: $alert_enabled, arrival_alert_for: $arrival_alert_for, leave_alert_for: $leave_alert_for)';
   }
 
   @override
@@ -498,8 +496,8 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
             (identical(other.user_id, user_id) || other.user_id == user_id) &&
             (identical(other.place_id, place_id) ||
                 other.place_id == place_id) &&
-            (identical(other.alert_enable, alert_enable) ||
-                other.alert_enable == alert_enable) &&
+            (identical(other.alert_enabled, alert_enabled) ||
+                other.alert_enabled == alert_enabled) &&
             const DeepCollectionEquality()
                 .equals(other._arrival_alert_for, _arrival_alert_for) &&
             const DeepCollectionEquality()
@@ -512,7 +510,7 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
       runtimeType,
       user_id,
       place_id,
-      alert_enable,
+      alert_enabled,
       const DeepCollectionEquality().hash(_arrival_alert_for),
       const DeepCollectionEquality().hash(_leave_alert_for));
 
@@ -533,11 +531,12 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
 
 abstract class _ApiPlaceMemberSetting extends ApiPlaceMemberSetting {
   const factory _ApiPlaceMemberSetting(
-      {required final String user_id,
-      required final String place_id,
-      final bool alert_enable,
-      final List<String> arrival_alert_for,
-      final List<String> leave_alert_for}) = _$ApiPlaceMemberSettingImpl;
+          {required final String user_id,
+          required final String place_id,
+          final bool alert_enabled,
+          required final List<String> arrival_alert_for,
+          required final List<String> leave_alert_for}) =
+      _$ApiPlaceMemberSettingImpl;
   const _ApiPlaceMemberSetting._() : super._();
 
   factory _ApiPlaceMemberSetting.fromJson(Map<String, dynamic> json) =
@@ -548,7 +547,7 @@ abstract class _ApiPlaceMemberSetting extends ApiPlaceMemberSetting {
   @override
   String get place_id;
   @override
-  bool get alert_enable;
+  bool get alert_enabled;
   @override
   List<String> get arrival_alert_for;
   @override

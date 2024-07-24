@@ -31,7 +31,6 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
       Completer<GoogleMapController>();
   final CameraPosition _cameraPosition =
       const CameraPosition(target: LatLng(0.0, 0.0), zoom: defaultCameraZoom);
-  LatLng _placesPosition = const LatLng(0.0, 0.0);
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +50,7 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
           enabled: enable,
           onTap: () {
             if (centerPosition != null) {
-              AppRoute.choosePlaceName(_placesPosition, widget.spaceId)
+              AppRoute.choosePlaceName(centerPosition.target, widget.spaceId)
                   .push(context);
             }
           },
@@ -87,11 +86,6 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
             myLocationButtonEnabled: false,
             mapToolbarEnabled: false,
             buildingsEnabled: false,
-            onCameraMove: (position) {
-              setState(() {
-                _placesPosition = position.target;
-              });
-            },
           ),
         ),
         Center(child: _locateMarkerView()),
@@ -138,7 +132,6 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
             )));
           });
         },
-        progress: state.loading,
         icon: SvgPicture.asset(
           Assets.images.icRelocateIcon,
           colorFilter: ColorFilter.mode(

@@ -25,7 +25,7 @@ import '../../../components/error_snakebar.dart';
 import '../../../components/user_profile_image.dart';
 import 'components/place_marker.dart';
 
-const defaultCameraZoom = 15.5;
+const defaultCameraZoom = 15.7;
 
 class EditPlaceScreen extends ConsumerStatefulWidget {
   final ApiPlace place;
