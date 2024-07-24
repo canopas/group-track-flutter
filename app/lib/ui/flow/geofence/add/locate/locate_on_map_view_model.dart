@@ -26,6 +26,7 @@ class LocateOnMapVieNotifier extends StateNotifier<LocateOnMapState> {
   }
 
   void getCurrentUserLocation() async {
+    state = state.copyWith(loading: true);
     final isEnabled = await permissionService.isLocationPermissionGranted();
     if (isEnabled) {
       final position = await locationManager.getLastLocation();
@@ -33,6 +34,7 @@ class LocateOnMapVieNotifier extends StateNotifier<LocateOnMapState> {
       state = state.copyWith(
         currentLatLng: latLng,
         centerPosition: CameraPosition(target: latLng, zoom: defaultCameraZoom),
+        loading: false,
       );
     }
   }
@@ -41,6 +43,7 @@ class LocateOnMapVieNotifier extends StateNotifier<LocateOnMapState> {
 @freezed
 class LocateOnMapState with _$LocateOnMapState {
   const factory LocateOnMapState({
+    @Default(false) loading,
     LatLng? currentLatLng,
     CameraPosition? centerPosition,
   }) = _LocateOnMapState;
