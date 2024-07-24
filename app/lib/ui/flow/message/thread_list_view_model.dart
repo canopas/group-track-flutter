@@ -27,22 +27,23 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   final SpaceService spaceService;
   final ApiMessageService messageService;
   final ApiUser? currentUser;
-  late StreamSubscription<List<ApiThreadMessage>> _userSubscription;
+  final List<StreamSubscription<List<ApiThreadMessage>>> _userSubscriptions =
+      [];
 
-  ThreadListViewNotifier(this.spaceId, this.spaceService, this.messageService, this.currentUser) : super(const ThreadListViewState());
+  ThreadListViewNotifier(
+      this.spaceId, this.spaceService, this.messageService, this.currentUser)
+      : super(const ThreadListViewState());
 
   void setSpace(SpaceInfo space) {
     state = state.copyWith(space: space);
     listenThreads(space.space.id);
-    if (state.threadInfo.isNotEmpty) {
-      _listenLastMessage(state.threadInfo);
-    }
   }
 
   void listenThreads(String spaceId) async {
     try {
       state = state.copyWith(loading: state.threadInfo.isEmpty);
-      messageService.getThreadsWithLatestMessage(spaceId, currentUser!.id).listen((threads) {
+      messageService.getThreadsWithMembers(spaceId, currentUser!.id).listen((threads) {
+        print('called');
         final filteredThreads = _filterArchivedThreads(threads);
 
         filteredThreads.sort((a, b) {
@@ -56,43 +57,31 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
         });
 
         state = state.copyWith(threadInfo: filteredThreads, loading: false);
-        _listenLastMessage(filteredThreads);
+        _listenLastMessage();
       });
     } catch (error, stack) {
-      logger.e(
-        'ChatViewNotifier: error while listing message threads',
-        error: error,
-        stackTrace: stack,
-      );
+      logger.e('ChatViewNotifier: error while listing message threads',
+          error: error, stackTrace: stack);
       state = state.copyWith(error: error, loading: false);
     }
   }
 
-  void _listenLastMessage(List<ThreadInfo> threads) async {
+  void _listenLastMessage() async {
     try {
-      for (ThreadInfo threadInfo in threads) {
-        _userSubscription = messageService.streamLatestMessages(threadInfo.thread.id).listen((threadMessages) {
-          _updateThreadMessages(threadInfo.thread.id, threadMessages);
+      final List<List<ApiThreadMessage>> newThreadMessages = List.generate(state.threadInfo.length, (_) => []);
+
+      for (int i = 0; i < state.threadInfo.length; i++) {
+        final threads = state.threadInfo[i];
+        final subscription = messageService.streamLatestMessages(threads.thread.id).listen((threadMessages) {
+          newThreadMessages[i] = threadMessages;
+          state = state.copyWith(threadMessages: List.from(newThreadMessages));
         });
+        _userSubscriptions.add(subscription);
       }
     } catch (error, stack) {
-      logger.e(
-        'ChatViewNotifier: error while listening to latest messages',
-        error: error,
-        stackTrace: stack,
-      );
+      logger.e('ChatViewNotifier: error while listening to latest messages',
+          error: error, stackTrace: stack);
     }
-  }
-
-  void _updateThreadMessages(String threadId, List<ApiThreadMessage> threadMessages) {
-    final updatedThreads = state.threadInfo.map((threadInfo) {
-      if (threadInfo.thread.id == threadId) {
-        return threadInfo.copyWith(threadMessage: threadMessages);
-      }
-      return threadInfo;
-    }).toList();
-
-    state = state.copyWith(threadInfo: updatedThreads);
   }
 
   List<ThreadInfo> _filterArchivedThreads(List<ThreadInfo> threads) {
@@ -140,14 +129,17 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   }
 
   void _cancelSubscriptions() {
-    _userSubscription.cancel();
+    for (var subscription in _userSubscriptions) {
+      subscription.cancel();
+    }
+    _userSubscriptions.clear();
   }
 
-  // @override
-  // void dispose() {
-  //   _cancelSubscriptions();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    _cancelSubscriptions();
+    super.dispose();
+  }
 }
 
 @freezed
@@ -163,7 +155,7 @@ class ThreadListViewState with _$ThreadListViewState {
     @Default('') String message,
     @Default([]) List<SpaceInfo> spaceList,
     @Default([]) List<ThreadInfo> threadInfo,
-    @Default([]) List<ApiThreadMessage> threadMessages,
+    @Default([]) List<List<ApiThreadMessage>> threadMessages,
     Object? error,
   }) = _ThreadListViewState;
 }

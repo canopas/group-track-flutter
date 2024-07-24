@@ -16,7 +16,6 @@ import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
-import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_view_model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -55,9 +54,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
 
     return AppPage(
       title: widget.spaceInfo.space.name,
-      body: ResumeDetector(
-        onResume: () => notifier.listenThreads(widget.spaceInfo.space.id),
-          child: _body(context, state)),
+      body: _body(context, state),
       floatingActionButton: widget.spaceInfo.members.length >= 2
       ? LargeIconButton(
         onTap: () {
@@ -81,11 +78,11 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: state.threadInfo.isEmpty
           ? _emptyView(context, state)
-          : _threadList(context, state.threadInfo),
+          : _threadList(context, state.threadInfo, state.threadMessages),
     );
   }
 
-  Widget _threadList(BuildContext context, List<ThreadInfo> threads) {
+  Widget _threadList(BuildContext context, List<ThreadInfo> threads, List<List<ApiThreadMessage>> threadMessages) {
     List<ThreadInfo> mutableThreads = List.from(threads);
 
     return ListView.builder(
@@ -98,6 +95,9 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
         final date = thread.threadMessage.isNotEmpty ? thread.threadMessage.first.created_at : null;
         final hasUnreadMessage = thread.threadMessage
             .any((message) => !message.seen_by.contains(notifier.currentUser?.id));
+
+        final filteredMessages = index < threadMessages.length ? threadMessages[index] : [];
+        final firstMessage = filteredMessages.isNotEmpty ? filteredMessages.first.message : '';
 
         return Slidable(
           endActionPane: ActionPane(
@@ -127,9 +127,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
                   context: context,
                   members: members,
                   displayedMembers: displayedMembers,
-                  message: thread.threadMessage.isNotEmpty
-                      ? thread.threadMessage.first.message
-                      : '',
+                  message: firstMessage,
                   date: date ?? DateTime.now(),
                   hasUnreadMessage: hasUnreadMessage,
                 ),

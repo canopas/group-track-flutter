@@ -132,7 +132,7 @@ class ApiMessageService {
     await batch.commit();
   }
 
-  Stream<List<ThreadInfo>> getThreadsWithLatestMessage(String spaceId, String userId) {
+  Stream<List<ThreadInfo>> getThreadsWithMembers(String spaceId, String userId) {
     return getThreads(spaceId, userId).asyncExpand((threads) {
       if (threads.isEmpty) return Stream.value([]);
 
@@ -158,7 +158,7 @@ class ApiMessageService {
   }
 
   Future<void> deleteThread(ApiThread thread, String userId) async {
-    final doc = _db.collection('space_threads').doc(thread.id);
+    final doc = _spaceThreadRef.doc(thread.id);
     final archivedThread = Map<String, double>.from(thread.archived_for ?? {});
 
     if (thread.admin_id == userId) {
