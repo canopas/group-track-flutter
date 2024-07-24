@@ -87,7 +87,7 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
       children: [
         AppTextField(
           controller: state.title,
-          onChanged: notifier.onSearchTitleChange,
+          onChanged: (value) => notifier.onSearchTitleChange(value),
           style: AppTextStyle.subtitle3.copyWith(
             color: context.colorScheme.textPrimary,
           ),
