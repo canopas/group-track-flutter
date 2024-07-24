@@ -62,7 +62,7 @@ class MessageService {
     return messageService.streamLatestMessages(threadId, limit: limit);
   }
 
-  Stream<List<ApiUserInfo>> getLatestMessageMember(ApiThread thread) {
+  Future<List<ApiUserInfo>> getLatestMessageMember(ApiThread thread) {
     return messageService.getLatestMessagesMembers(thread);
   }
 

@@ -74,7 +74,7 @@ class ApiMessageService {
     return snapshot.docs.map((doc) => ApiThreadMessage.fromJson(doc.data() as Map<String, dynamic>)).toList();
   }
 
-  Stream<List<ApiUserInfo>> getLatestMessagesMembers(ApiThread thread) async* {
+  Future<List<ApiUserInfo>> getLatestMessagesMembers(ApiThread thread) async {
     final List<ApiUserInfo?> memberInfoList = [];
     for (String memberId in thread.member_ids) {
       final member = await userService.getUser(memberId);
@@ -83,7 +83,7 @@ class ApiMessageService {
     }
     final List<ApiUserInfo> filteredMemberInfoList = memberInfoList.where((info) => info != null).cast<ApiUserInfo>().toList();
 
-    yield filteredMemberInfoList;
+    return filteredMemberInfoList;
   }
 
   Future<List<ApiThreadMessage>> getMessages(String threadId, DateTime? from, {int limit = 20}) async {
@@ -148,7 +148,7 @@ class ApiMessageService {
 
         return ThreadInfo(
           thread: thread,
-          threadMessage: await getLatestMessages(thread.id, limit: 20),
+          threadMessage: [],
           members: filteredMemberInfoList,
         );
       }).toList();

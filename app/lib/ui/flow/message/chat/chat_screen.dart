@@ -227,7 +227,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   color: isSender
                       ? context.colorScheme.containerLowOnSurface
                       : context.colorScheme.primary,
-                  borderRadius: radius(
+                  borderRadius: _radius(
                     isSender: isSender,
                     isLastInGroup: isLastInGroup,
                     isFirstInGroup: isFirstInGroup,
@@ -495,15 +495,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           const SizedBox(width: 8),
           IconPrimaryButton(
             onTap: () {
-              if (state.threadInfo != null || widget.threadInfo != null) {
-                notifier.sendMessage(
-                    state.threadId.isEmpty
-                        ? widget.threadInfo?.thread.id ?? ''
-                        : state.threadId,
-                    state.message.text);
-              } else {
-                notifier.createNewThread(
-                    widget.spaceInfo.space.id, state.message.text);
+              if (state.message.text.trim().isNotEmpty) {
+                if (state.threadInfo != null || widget.threadInfo != null) {
+                  notifier.sendMessage(
+                      state.threadId.isEmpty
+                          ? widget.threadInfo?.thread.id ?? ''
+                          : state.threadId,
+                      state.message.text);
+                } else {
+                  notifier.createNewThread(
+                      widget.spaceInfo.space.id, state.message.text);
+                }
               }
             },
             icon: Icon(Icons.arrow_forward_rounded,
@@ -522,7 +524,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  BorderRadius radius({
+  BorderRadius _radius({
     required bool isSender,
     required bool isLastInGroup,
     required bool isFirstInGroup,
