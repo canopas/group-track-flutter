@@ -136,7 +136,7 @@ class AppRoute {
       );
 
   static AppRoute pickName({ApiUser? user}) => AppRoute(
-    pathPickName,
+        pathPickName,
         builder: (_) => PickNameScreen(user: user),
       );
 
@@ -152,16 +152,21 @@ class AppRoute {
   }
 
   static AppRoute createSpace({bool fromOnboard = false}) =>
-      AppRoute(pathCreateSpace, builder: (_) => CreateSpace(fromOnboard: fromOnboard));
+      AppRoute(pathCreateSpace,
+          builder: (_) => CreateSpace(fromOnboard: fromOnboard));
 
   static AppRoute joinSpace({bool fromOnboard = false}) =>
-     AppRoute(pathJoinSpace, builder: (_) => JoinSpace(fromOnboard: fromOnboard));
+      AppRoute(pathJoinSpace,
+          builder: (_) => JoinSpace(fromOnboard: fromOnboard));
 
-  static AppRoute inviteCode({
-    required String code, required String spaceName, bool fromOnboard = false}) {
+  static AppRoute inviteCode(
+      {required String code,
+      required String spaceName,
+      bool fromOnboard = false}) {
     return AppRoute(
       pathInviteCode,
-      builder: (_) => InviteCode(spaceName: spaceName, inviteCode: code, fromOnboard: fromOnboard),
+      builder: (_) => InviteCode(
+          spaceName: spaceName, inviteCode: code, fromOnboard: fromOnboard),
     );
   }
 
@@ -196,9 +201,15 @@ class AppRoute {
     );
   }
 
-  static AppRoute locateOnMapScreen(String spaceId) {
+  static AppRoute locateOnMapScreen({
+    required String spaceId,
+    String? placesName,
+  }) {
     return AppRoute(pathLocateOnMap,
-        builder: (_) => LocateOnMapScreen(spaceId: spaceId));
+        builder: (_) => LocateOnMapScreen(
+              spaceId: spaceId,
+              placesName: placesName,
+            ));
   }
 
   static AppRoute choosePlaceName(LatLng location, String spaceId) {

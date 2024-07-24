@@ -16,6 +16,7 @@ extension LatLngExtensions on LatLng {
 
     String address = '';
     try {
+      if(latitude < 1.0 && longitude < 1.0) return '';
       final placeMarks = await placemarkFromCoordinates(latitude, longitude);
       if (placeMarks.isNotEmpty) {
         var streets = placeMarks

@@ -1,25 +1,29 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:style/animation/on_tap_scale.dart';
+import 'package:style/button/action_button.dart';
 import 'package:style/button/icon_primary_button.dart';
+import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_view_model.dart';
 
 import '../../../../../gen/assets.gen.dart';
+import '../../../../components/error_snakebar.dart';
 import '../../../home/map/map_screen.dart';
 
 class LocateOnMapScreen extends ConsumerStatefulWidget {
   final String spaceId;
+  final String? placesName;
 
-  const LocateOnMapScreen({super.key, required this.spaceId});
+  const LocateOnMapScreen({super.key, required this.spaceId, this.placesName});
 
   @override
   ConsumerState<LocateOnMapScreen> createState() => _LocateOnMapViewState();
@@ -27,43 +31,55 @@ class LocateOnMapScreen extends ConsumerStatefulWidget {
 
 class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
   late LocateOnMapVieNotifier notifier;
+  Timer? _debounceTimer;
+
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   final CameraPosition _cameraPosition =
       const CameraPosition(target: LatLng(0.0, 0.0), zoom: defaultCameraZoom);
-  LatLng _placesPosition = const LatLng(0.0, 0.0);
 
   @override
   Widget build(BuildContext context) {
-    _observeMapCameraPosition();
-
     notifier = ref.watch(locateOnMapViewStateProvider.notifier);
     final state = ref.watch(locateOnMapViewStateProvider);
-    final centerPosition = state.centerPosition;
-    final enable = centerPosition != null
-        ? centerPosition.target != _cameraPosition.target
+
+    _observeError();
+    _observeMapCameraPosition();
+    _observePopToPlacesListScreen(state.cameraLatLng);
+
+    final enable = state.cameraLatLng != null
+        ? state.cameraLatLng != _cameraPosition.target
         : false;
 
     return AppPage(
       title: context.l10n.locate_on_map_title,
       actions: [
-        OnTapScale(
-          enabled: enable,
-          onTap: () {
-            if (centerPosition != null) {
-              AppRoute.choosePlaceName(_placesPosition, widget.spaceId)
-                  .push(context);
+        actionButton(
+          context: context,
+          padding: const EdgeInsets.only(right: 16),
+          progress: state.addingPlace,
+          enabled: !state.addingPlace && enable,
+          onPressed: () {
+            if (widget.placesName == null) {
+              if (state.cameraLatLng != null) {
+                AppRoute.choosePlaceName(state.cameraLatLng!, widget.spaceId)
+                    .push(context);
+              }
+            } else {
+              notifier.onTapAddPlaceBtn(
+                widget.spaceId,
+                widget.placesName ?? '',
+              );
             }
           },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              context.l10n.common_next,
-              style: AppTextStyle.button.copyWith(
-                color: enable
-                    ? context.colorScheme.primary
-                    : context.colorScheme.textDisabled,
-              ),
+          icon: Text(
+            widget.placesName != null
+                ? context.l10n.common_add
+                : context.l10n.common_next,
+            style: AppTextStyle.button.copyWith(
+              color: enable
+                  ? context.colorScheme.primary
+                  : context.colorScheme.textDisabled,
             ),
           ),
         )
@@ -73,54 +89,102 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
   }
 
   Widget _body(LocateOnMapState state) {
-    return Padding(
-      padding:
-          EdgeInsets.only(top: 16, bottom: context.mediaQueryPadding.bottom),
-      child: Stack(children: [
-        Center(
-          child: GoogleMap(
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: _cameraPosition,
-            compassEnabled: false,
-            zoomControlsEnabled: false,
-            tiltGesturesEnabled: false,
-            myLocationButtonEnabled: false,
-            mapToolbarEnabled: false,
-            buildingsEnabled: false,
-            onCameraMove: (position) {
-              setState(() {
-                _placesPosition = position.target;
-              });
-            },
+    return Column(
+      children: [
+        if (widget.placesName != null) _placeDetailView(state),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(
+                top: 16, bottom: context.mediaQueryPadding.bottom),
+            child: Stack(children: [
+              Center(
+                child: GoogleMap(
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: _cameraPosition,
+                  compassEnabled: false,
+                  zoomControlsEnabled: false,
+                  tiltGesturesEnabled: false,
+                  myLocationButtonEnabled: false,
+                  mapToolbarEnabled: false,
+                  buildingsEnabled: false,
+                  onCameraMove: _onCameraMove,
+                ),
+              ),
+              Center(child: _locateMarkerView()),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: _currentLocationIconView(state),
+              )
+            ]),
           ),
         ),
-        Center(child: _locateMarkerView()),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: _currentLocationIconView(state),
-        )
-      ]),
+      ],
     );
   }
 
-  Widget _locateMarkerView() {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        color: context.colorScheme.onPrimary,
+  Widget _placeDetailView(LocateOnMapState state) {
+    final address = state.gettingAddress
+        ? context.l10n.edit_place_getting_address_text
+        : state.address ?? '';
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _placeTextField(),
+          const SizedBox(height: 24),
+          _placeAddressView(address),
+          const SizedBox(height: 8),
+          Divider(thickness: 1, height: 1, color: context.colorScheme.outline)
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: SvgPicture.asset(
-          Assets.images.icLocationFeedIcon,
-          colorFilter: ColorFilter.mode(
-            context.colorScheme.primary,
-            BlendMode.srcATop,
+    );
+  }
+
+  Widget _placeTextField() {
+    return Column(
+      children: [
+        AppTextField(
+          controller: TextEditingController(text: widget.placesName),
+          enabled: false,
+          style: AppTextStyle.subtitle2
+              .copyWith(color: context.colorScheme.textPrimary),
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(right: 8, bottom: 8),
+            child: Icon(
+              Icons.bookmark,
+              size: 24,
+              color: context.colorScheme.textPrimary,
+            ),
           ),
+          isDense: true,
+          contentPadding: const EdgeInsets.all(0),
         ),
-      ),
+      ],
+    );
+  }
+
+  Widget _placeAddressView(String address) {
+    return Row(
+      children: [
+        Icon(
+          Icons.location_on_outlined,
+          color: context.colorScheme.textPrimary,
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            address,
+            style: AppTextStyle.subtitle2
+                .copyWith(color: context.colorScheme.textPrimary),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        )
+      ],
     );
   }
 
@@ -150,8 +214,126 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
     );
   }
 
+  void _observePopToPlacesListScreen(LatLng? latLng) {
+    ref.listen(
+        locateOnMapViewStateProvider.select((state) => state.popToPlaceList),
+        (_, next) {
+      AppRoute.popTo(context, AppRoute.pathPlacesList);
+      _showPlaceAddedDialog(context, latLng!.latitude, latLng.longitude);
+    });
+  }
+
+  void _showPlaceAddedDialog(
+    BuildContext context,
+    double lat,
+    double lng,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AspectRatio(
+                aspectRatio: 1.77,
+                child: _googleMapView(lat, lng),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                context.l10n.locate_on_map_prompt_added_title_text(
+                  widget.placesName ?? '',
+                ),
+                style: AppTextStyle.header1
+                    .copyWith(color: context.colorScheme.textPrimary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 14),
+              Text(
+                context.l10n.locate_on_map_prompt_sub_title_text,
+                style: AppTextStyle.body1
+                    .copyWith(color: context.colorScheme.textSecondary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              PrimaryButton(
+                context.l10n.locate_on_map_prompt_got_it_btn_text,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _googleMapView(double lat, double lng) {
+    final cameraPosition =
+        CameraPosition(target: LatLng(lat, lng), zoom: defaultCameraZoom);
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        GoogleMap(
+          initialCameraPosition: cameraPosition,
+          scrollGesturesEnabled: false,
+          rotateGesturesEnabled: false,
+          compassEnabled: false,
+          zoomControlsEnabled: false,
+          tiltGesturesEnabled: false,
+          myLocationButtonEnabled: false,
+          mapToolbarEnabled: false,
+        ),
+        _locateMarkerView()
+      ],
+    );
+  }
+
+  Widget _locateMarkerView() {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        color: context.colorScheme.onPrimary,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: SvgPicture.asset(
+          Assets.images.icLocationFeedIcon,
+          colorFilter: ColorFilter.mode(
+            context.colorScheme.primary,
+            BlendMode.srcATop,
+          ),
+        ),
+      ),
+    );
+  }
+
   void _onMapCreated(GoogleMapController controller) async {
     _controller.complete(controller);
+  }
+
+  void _onCameraMove(CameraPosition position) {
+    _debounceTimer?.cancel();
+
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
+      notifier.onMapCameraMove(position);
+    });
+  }
+
+  void _observeError() {
+    ref.listen(locateOnMapViewStateProvider.select((state) => state.error),
+        (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
+    });
   }
 
   void _observeMapCameraPosition() {

@@ -110,7 +110,7 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
   Widget _locateOnMapView() {
     return OnTapScale(
       onTap: () {
-        AppRoute.locateOnMapScreen(widget.spaceId).push(context);
+        AppRoute.locateOnMapScreen(spaceId:widget.spaceId).push(context);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
