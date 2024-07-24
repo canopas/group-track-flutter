@@ -22,11 +22,13 @@ import '../../../../domain/extenstions/widget_extensions.dart';
 class ChatScreen extends ConsumerStatefulWidget {
   final SpaceInfo spaceInfo;
   final ThreadInfo? threadInfo;
+  final List<ApiThreadMessage>? threadMessages;
   final List<ThreadInfo>? threadInfoList;
 
   const ChatScreen({
     super.key,
     required this.spaceInfo,
+    this.threadMessages,
     this.threadInfo,
     this.threadInfoList,
   });
@@ -64,7 +66,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     _observeError();
 
     if (widget.threadInfo != null) {
-      notifier.markMessageAsSeen(widget.threadInfo!.thread.id,  widget.threadInfo!.threadMessage);
+      notifier.markMessageAsSeen(widget.threadInfo!.thread.id,  widget.threadMessages!);
     }
 
     return AppPage(

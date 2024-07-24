@@ -37,13 +37,15 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   void setSpace(SpaceInfo space) {
     state = state.copyWith(space: space);
     listenThreads(space.space.id);
+    if (state.threadMessages.isEmpty) {
+      _listenLastMessage();
+    }
   }
 
   void listenThreads(String spaceId) async {
     try {
       state = state.copyWith(loading: state.threadInfo.isEmpty);
       messageService.getThreadsWithMembers(spaceId, currentUser!.id).listen((threads) {
-        print('called');
         final filteredThreads = _filterArchivedThreads(threads);
 
         filteredThreads.sort((a, b) {
@@ -68,6 +70,7 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
 
   void _listenLastMessage() async {
     try {
+      _cancelSubscriptions();
       final List<List<ApiThreadMessage>> newThreadMessages = List.generate(state.threadInfo.length, (_) => []);
 
       for (int i = 0; i < state.threadInfo.length; i++) {

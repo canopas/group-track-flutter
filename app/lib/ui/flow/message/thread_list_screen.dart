@@ -90,48 +90,33 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
       itemBuilder: (context, index) {
         final thread = mutableThreads[index];
         final members = thread.members.where((member) => member.user.id != notifier.currentUser?.id).toList();
-        final displayedMembers = members.take(2).toList();
-        final isLastItem = index == mutableThreads.length - 1;
-        final date = thread.threadMessage.isNotEmpty ? thread.threadMessage.first.created_at : null;
-        final hasUnreadMessage = thread.threadMessage
-            .any((message) => !message.seen_by.contains(notifier.currentUser?.id));
-
         final filteredMessages = index < threadMessages.length ? threadMessages[index] : [];
-        final firstMessage = filteredMessages.isNotEmpty ? filteredMessages.first.message : '';
+        final hasUnreadMessage = filteredMessages
+            .any((message) => !message.seen_by.contains(notifier.currentUser?.id));
 
         return Slidable(
           endActionPane: ActionPane(
             motion: const ScrollMotion(),
             children: [
-              SlidableAction(
-                onPressed: (context) {
-                  _showDeleteConfirmation(() {
-                    notifier.deleteThread(thread.thread);
-                  });
-                },
-                backgroundColor: context.colorScheme.alert,
-                foregroundColor: context.colorScheme.textPrimaryDark,
-                icon: Icons.delete_outline_rounded,
-                label: context.l10n.common_delete,
-              ),
+              _deleteSlideButton(context, thread.thread),
             ],
           ),
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
-              AppRoute.chat(spaceInfo: widget.spaceInfo, thread: thread).push(context);
+              AppRoute.chat(spaceInfo: widget.spaceInfo, thread: thread, threadMessage: threadMessages[index]).push(context);
             },
             child: Column(
               children: [
                 _threadItem(
                   context: context,
                   members: members,
-                  displayedMembers: displayedMembers,
-                  message: firstMessage,
-                  date: date ?? DateTime.now(),
+                  displayedMembers: members.take(2).toList(),
+                  message: filteredMessages.isNotEmpty ? filteredMessages.first.message : '',
+                  date: filteredMessages.isNotEmpty ? filteredMessages.first.created_at : DateTime.now(),
                   hasUnreadMessage: hasUnreadMessage,
                 ),
-                if (!isLastItem) ...[
+                if (!(index == mutableThreads.length - 1)) ...[
                   _divider(context),
                 ],
               ],
@@ -139,6 +124,20 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _deleteSlideButton(BuildContext context, ApiThread thread) {
+    return SlidableAction(
+      onPressed: (context) {
+        _showDeleteConfirmation(() {
+          notifier.deleteThread(thread);
+        });
+      },
+      backgroundColor: context.colorScheme.alert,
+      foregroundColor: context.colorScheme.textPrimaryDark,
+      icon: Icons.delete_outline_rounded,
+      label: context.l10n.common_delete,
     );
   }
 
