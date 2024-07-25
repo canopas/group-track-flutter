@@ -30,16 +30,16 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this.permissionService,
     this._lastBatteryDialogDate,
   ) : super(const HomeViewState()) {
-    getAllSpace();
+    getAllSpaces();
   }
 
   String? get currentSpaceId => _currentSpaceIdController.state;
 
-  void getAllSpace() async {
+  void listenSpaceMember() async {
     if (state.loading) return;
     try {
       state = state.copyWith(loading: state.spaceList.isEmpty);
-      spaceService.streamAllSpaceInfo().listen((spaces) {
+      spaceService.streamSpaceMember().listen((spaces) {
         final sortedSpaces = spaces.toList();
         if ((currentSpaceId?.isNotEmpty ?? false) && spaces.isNotEmpty) {
           final selectedSpaceIndex = sortedSpaces
@@ -65,6 +65,21 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       state = state.copyWith(error: error, loading: false);
       logger.e(
         'HomeViewNotifier: error while getting all spaces',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  void getAllSpaces() async {
+    try {
+      state = state.copyWith(loading: state.spaceList.isEmpty);
+      final spaces = await spaceService.getAllSpaceInfo();
+      state = state.copyWith(spaceList: spaces, loading: false);
+      listenSpaceMember();
+    } catch (error, stack) {
+      logger.e(
+        'HomeViewNotifier: error while load user spaces',
         error: error,
         stackTrace: stack,
       );

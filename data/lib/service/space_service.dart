@@ -89,7 +89,7 @@ class SpaceService {
     return spaceInfoList;
   }
 
-  Stream<List<SpaceInfo>> streamAllSpaceInfo() async* {
+  Stream<List<SpaceInfo>> streamSpaceMember() async* {
     await for (final spaces in streamUserSpaces(currentUser?.id ?? '')) {
       final List<SpaceInfo> spaceInfoList = [];
 

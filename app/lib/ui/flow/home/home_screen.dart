@@ -39,7 +39,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: ResumeDetector(
         onResume: () {
           if(state.selectedSpace != null) {
-          notifier.getAllSpace();
+          notifier.getAllSpaces();
           notifier.showBatteryOptimizationDialog();
           mapNotifier.checkUserPermission();
           }
