@@ -159,10 +159,11 @@ class AppRoute {
       AppRoute(pathJoinSpace,
           builder: (_) => JoinSpace(fromOnboard: fromOnboard));
 
-  static AppRoute inviteCode(
-      {required String code,
-      required String spaceName,
-      bool fromOnboard = false}) {
+  static AppRoute inviteCode({
+    required String code,
+    required String spaceName,
+    bool fromOnboard = false,
+  }) {
     return AppRoute(
       pathInviteCode,
       builder: (_) => InviteCode(
@@ -206,18 +207,20 @@ class AppRoute {
     String? placesName,
   }) {
     return AppRoute(pathLocateOnMap,
-        builder: (_) => LocateOnMapScreen(
-              spaceId: spaceId,
-              placesName: placesName,
-            ));
+        builder: (_) => LocateOnMapScreen(spaceId: spaceId));
   }
 
-  static AppRoute choosePlaceName(LatLng location, String spaceId) {
+  static AppRoute choosePlaceName({
+    required LatLng location,
+    required String spaceId,
+    String? placeName,
+  }) {
     return AppRoute(
       pathChoosePlace,
       builder: (_) => ChoosePlaceNameScreen(
         location: location,
         spaceId: spaceId,
+        placesName: placeName ?? '',
       ),
     );
   }

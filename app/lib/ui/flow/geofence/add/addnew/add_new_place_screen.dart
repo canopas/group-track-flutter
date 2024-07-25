@@ -2,6 +2,7 @@ import 'package:data/api/place/api_place.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
@@ -147,45 +148,55 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
   }
 
   Widget _suggestedPlaceItemView(ApiNearbyPlace place, bool isLast) {
+    final latLng = LatLng(place.lat, place.lng);
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: SvgPicture.asset(
-                Assets.images.icLocation,
-                colorFilter: ColorFilter.mode(
-                  context.colorScheme.textPrimary,
-                  BlendMode.srcATop,
+        OnTapScale(
+          onTap: () {
+            AppRoute.choosePlaceName(
+              location: latLng,
+              spaceId: widget.spaceId,
+              placeName: place.name,
+            ).push(context);
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: SvgPicture.asset(
+                  Assets.images.icLocation,
+                  colorFilter: ColorFilter.mode(
+                    context.colorScheme.textPrimary,
+                    BlendMode.srcATop,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    place.name,
-                    maxLines: 1,
-                    style: AppTextStyle.subtitle2.copyWith(
-                      color: context.colorScheme.textPrimary,
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      place.name,
+                      maxLines: 1,
+                      style: AppTextStyle.subtitle2.copyWith(
+                        color: context.colorScheme.textPrimary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    place.formatted_address,
-                    style: AppTextStyle.caption
-                        .copyWith(color: context.colorScheme.textSecondary),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  )
-                ],
-              ),
-            )
-          ]),
+                    const SizedBox(height: 4),
+                    Text(
+                      place.formatted_address,
+                      style: AppTextStyle.caption
+                          .copyWith(color: context.colorScheme.textSecondary),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  ],
+                ),
+              )
+            ]),
+          ),
         ),
         Visibility(
           visible: !isLast,
