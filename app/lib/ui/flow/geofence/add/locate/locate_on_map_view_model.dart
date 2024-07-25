@@ -47,7 +47,6 @@ class LocateOnMapVieNotifier extends StateNotifier<LocateOnMapState> {
     if (isEnabled) {
       state = state.copyWith(loading: true);
       final position = await locationManager.getLastLocation();
-      print('XXX getting location:$position');
       final latLng = LatLng(position!.latitude, position.longitude);
       state = state.copyWith(
         currentLatLng: latLng,
