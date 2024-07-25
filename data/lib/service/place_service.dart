@@ -1,3 +1,4 @@
+// ignore_for_file: constant_identifier_names
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,7 +9,8 @@ import 'package:http/http.dart' as http;
 import '../api/network/client.dart';
 import '../config.dart';
 
-const defaultRadius = 1500;
+const DEFAULT_RADIUS = 1500;
+const PLACE_BASE_URL = 'https://places.googleapis.com/v1/places:searchText';
 
 final placeServiceProvider = Provider(
   (ref) => PlaceService(
@@ -129,25 +131,43 @@ class PlaceService {
 
   Future<List<ApiNearbyPlace>> searchNearbyPlaces(
     String query,
-    String? lat,
-    String? lng,
+    double? lat,
+    double? lng,
   ) async {
-    final placeRadius = (lat != null && lng != null) ? defaultRadius : '';
-    final String url =
-        '${AppConfig.placeBaseUrl}?query=$query&location=$lat,$lng&radius=$placeRadius&key=${AppConfig.mapApiKey}';
+    final placeRadius = (lat != null && lng != null) ? DEFAULT_RADIUS : 0;
+    final headers = {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": AppConfig.placeApiKey,
+      "X-Goog-FieldMask":
+          "places.id,places.displayName,places.formattedAddress,places.location,nextPageToken",
+    };
+    final body = jsonEncode({
+      'textQuery': query,
+      'pageSize': 8,
+      "locationBias": {
+        "circle": {
+          "center": {"latitude": lat, "longitude": lng},
+          "radius": placeRadius
+        }
+      },
+    });
 
-    final response = await http.get(Uri.parse(url));
+    final response = await http.post(
+      Uri.parse(PLACE_BASE_URL),
+      headers: headers,
+      body: body,
+    );
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);
-      List<dynamic> results = data['results'];
+      List<dynamic> results = data['places'];
       return results.map((result) {
         return ApiNearbyPlace(
-          id: result['place_id'] ?? '',
-          name: result['name'] ?? '',
-          formatted_address: result['formatted_address'] ?? '',
-          lat: result['geometry']['location']['lat']?.toDouble() ?? 0.0,
-          lng: result['geometry']['location']['lng']?.toDouble() ?? 0.0,
+          id: result['id'] ?? '',
+          name: result['displayName']['text'] ?? '',
+          formatted_address: result['formattedAddress'] ?? '',
+          lat: result['location']['latitude']?.toDouble() ?? 0.0,
+          lng: result['location']['longitude']?.toDouble() ?? 0.0,
         );
       }).toList();
     } else {

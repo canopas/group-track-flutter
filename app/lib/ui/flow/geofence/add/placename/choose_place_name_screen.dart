@@ -20,11 +20,13 @@ import '../../../home/map/map_screen.dart';
 class ChoosePlaceNameScreen extends ConsumerStatefulWidget {
   final LatLng location;
   final String spaceId;
+  final String placesName;
 
   const ChoosePlaceNameScreen({
     super.key,
     required this.location,
     required this.spaceId,
+    required this.placesName,
   });
 
   @override
@@ -40,7 +42,7 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
     super.initState();
     runPostFrame(() {
       notifier = ref.watch(choosePlaceViewStateProvider.notifier);
-      notifier.setData(widget.location, widget.spaceId);
+      notifier.setData(widget.location, widget.spaceId, widget.placesName);
     });
   }
 
