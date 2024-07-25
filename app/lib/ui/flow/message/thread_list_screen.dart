@@ -159,6 +159,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
           Expanded(child: _threadNamesAndMessage(context: context, members: members, displayedMembers: displayedMembers, message: message)),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 date.format(context, DateFormatType.pastTime),
@@ -166,17 +167,18 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
                   color: context.colorScheme.textDisabled,
                 ),
               ),
-              const SizedBox(height: 12),
-              if (hasUnreadMessage) ...[
-                Container(
+              SizedBox(height: hasUnreadMessage ? 12 : 0),
+              Visibility(
+                visible: hasUnreadMessage,
+                child: Container(
                   height: 8,
                   width: 8,
                   decoration: BoxDecoration(
                     color: context.colorScheme.positive,
                     borderRadius: BorderRadius.circular(4),
                   ),
-                )
-              ],
+                ),
+              )
             ],
           ),
         ],
