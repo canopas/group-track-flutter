@@ -32,6 +32,7 @@ jobs:
 
       - name: Retrieve the secret and decode it to file
         env:
+          MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
           FIREBASE_OPTIONS_BASE64: ${{ secrets.FIREBASE_OPTIONS_BASE64 }}
           GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
           GOOGLE_SERVICES_INFO_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_INFO_JSON_BASE64 }}
