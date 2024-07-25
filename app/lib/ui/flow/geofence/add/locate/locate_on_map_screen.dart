@@ -51,8 +51,10 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
           enabled: enable,
           onTap: () {
             if (centerPosition != null) {
-              AppRoute.choosePlaceName(_placesPosition, widget.spaceId)
-                  .push(context);
+              AppRoute.choosePlaceName(
+                location: _placesPosition,
+                spaceId: widget.spaceId,
+              ).push(context);
             }
           },
           child: Padding(
