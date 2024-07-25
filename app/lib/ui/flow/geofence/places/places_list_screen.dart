@@ -80,9 +80,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
                 placeName: item,
                 icon: _getPlacesIcon(item),
                 isSuggestion: true,
-                onTap: () {
-                  onSuggestionItemTap(item);
-                },
+                onTap: () => onSuggestionItemTap(item),
                 onDeletePlace: () {},
               );
             },
@@ -235,8 +233,8 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
   }
 
   void onSuggestionItemTap(String placeName) {
-    AppRoute.locateOnMapScreen(spaceId: widget.spaceId,placesName: placeName).push(
-        context);
+    AppRoute.locateOnMapScreen(spaceId: widget.spaceId, placesName: placeName)
+        .push(context);
   }
 
   void _observeError() {

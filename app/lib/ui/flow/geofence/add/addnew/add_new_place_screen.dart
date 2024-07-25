@@ -70,7 +70,9 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
               return _suggestedPlaceItemView(place, isLast);
             }),
             const SizedBox(height: 24),
-            state.loading ? const AppProgressIndicator() : Container(),
+            state.loading
+                ? const Center(child: AppProgressIndicator())
+                : Container(),
           ],
         ),
       ),
@@ -111,7 +113,7 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
   Widget _locateOnMapView() {
     return OnTapScale(
       onTap: () {
-        AppRoute.locateOnMapScreen(spaceId:widget.spaceId).push(context);
+        AppRoute.locateOnMapScreen(spaceId: widget.spaceId).push(context);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

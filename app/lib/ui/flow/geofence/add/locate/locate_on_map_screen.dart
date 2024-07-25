@@ -62,8 +62,10 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
           onPressed: () {
             if (widget.placesName == null) {
               if (state.cameraLatLng != null) {
-                AppRoute.choosePlaceName(state.cameraLatLng!, widget.spaceId)
-                    .push(context);
+                AppRoute.choosePlaceName(
+                  location: state.cameraLatLng!,
+                  spaceId: widget.spaceId,
+                ).push(context);
               }
             } else {
               notifier.onTapAddPlaceBtn(
@@ -149,9 +151,6 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
           enabled: false,
           style: AppTextStyle.subtitle2
               .copyWith(color: context.colorScheme.textPrimary),
-          onTapOutside: (event) {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
           prefixIcon: Padding(
             padding: const EdgeInsets.only(right: 8, bottom: 8),
             child: Icon(
