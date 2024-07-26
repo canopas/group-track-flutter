@@ -16,8 +16,9 @@ part 'chat_view_model.freezed.dart';
 
 const MAX_PAGE_LIMIT = 20;
 
-final chatViewStateProvider = StateNotifierProvider.family<
-    ChatViewNotifier, ChatViewState, String>((ref, threadId) {
+final chatViewStateProvider =
+    StateNotifierProvider.family<ChatViewNotifier, ChatViewState, String>(
+        (ref, threadId) {
   return ChatViewNotifier(
     threadId,
     ref.read(messageServiceProvider),
@@ -37,25 +38,30 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   bool _hasMoreItems = true;
   bool loadingData = false;
 
-  ChatViewNotifier(this.threadId, this.messageService, this.apiMessageService, this.userService, this.currentUser)
-      : super(ChatViewState(message: TextEditingController(), currentUserId: currentUser?.id ?? ''));
+  ChatViewNotifier(this.threadId, this.messageService, this.apiMessageService,
+      this.userService, this.currentUser)
+      : super(ChatViewState(
+            message: TextEditingController(),
+            currentUserId: currentUser?.id ?? ''));
 
   void onChange(String text) {
     state = state.copyWith(allowSend: text.trim().isNotEmpty);
   }
 
-  void setData(SpaceInfo spaceInfo, bool show, ThreadInfo? threadInfo, List<ThreadInfo> threadInfoList) {
-    final userList = spaceInfo.members.where(
+  void setData(SpaceInfo spaceInfo, bool show, ThreadInfo? threadInfo,
+      List<ThreadInfo> threadInfoList) {
+    final userList = spaceInfo.members
+        .where(
           (user) => user.user.id != currentUser?.id,
-    ).toList();
+        )
+        .toList();
     state = state.copyWith(
         users: userList,
         spaceInfo: spaceInfo,
         showMemberSelectionView: show,
         threadInfo: threadInfo,
         threadList: threadInfoList,
-        threadId: threadInfo?.thread.id ?? ''
-    );
+        threadId: threadInfo?.thread.id ?? '');
   }
 
   void listenThread(String threadId) async {
@@ -63,7 +69,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
       if (threadId.isEmpty) return;
       state = state.copyWith(loading: state.messages.isEmpty);
       messageService.getLatestMessages(threadId, limit: 20).listen((messages) {
-        state = state.copyWith(messages: messages, loading: false);
+        state = state.copyWith(messages: messages, loading: false, error: null);
         _hasMoreItems = messages.length == MAX_PAGE_LIMIT;
       });
     } catch (error, stack) {
@@ -76,7 +82,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     }
   }
 
-  void markMessageAsSeen(String threadId, List<ApiThreadMessage> message) async {
+  void markMessageAsSeen(
+      String threadId, List<ApiThreadMessage> message) async {
     try {
       final unReadMessage = message
           .where((message) => !message.seen_by.contains(currentUser?.id ?? ''))
@@ -85,7 +92,9 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
           .toList();
 
       if (unReadMessage.isNotEmpty) {
-        await messageService.markMessageAsSeen(threadId, unReadMessage, currentUser?.id ?? '');
+        await messageService.markMessageAsSeen(
+            threadId, unReadMessage, currentUser?.id ?? '');
+        state = state.copyWith(error: null);
       }
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);
@@ -102,7 +111,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
       if (thread.id.isEmpty) return;
       state = state.copyWith(loading: true);
       messageService.getLatestMessageMember(thread).listen((users) {
-        state = state.copyWith(sender: users, loading: false);
+        state = state.copyWith(sender: users, loading: false, error: null);
       });
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);
@@ -118,11 +127,18 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     try {
       if (message.isEmpty) return;
       state = state.copyWith(messageSending: true);
-      final newMessage = await messageService.generateMessage(threadId: threadId, senderId: currentUser?.id ?? '', message: message);
+      final newMessage = await messageService.generateMessage(
+          threadId: threadId,
+          senderId: currentUser?.id ?? '',
+          message: message);
       final newMessages = [newMessage, ...state.messages];
       state = state.copyWith(messages: newMessages);
       await messageService.sendMessage(newMessage);
-      state = state.copyWith(messageSending: false, message: TextEditingController(text: ''), showMemberSelectionView: false);
+      state = state.copyWith(
+          messageSending: false,
+          message: TextEditingController(text: ''),
+          showMemberSelectionView: false,
+          error: null);
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);
       logger.e(
@@ -136,7 +152,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   void createNewThread(String spaceId, String message) async {
     try {
       List<String> selectedMembers = [];
-      if (!selectedMembers.contains(currentUser?.id) && state.selectedMember.isNotEmpty) {
+      if (!selectedMembers.contains(currentUser?.id) &&
+          state.selectedMember.isNotEmpty) {
         selectedMembers.addAll(state.selectedMember);
         selectedMembers.add(currentUser?.id ?? '');
       }
@@ -144,7 +161,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
           ? selectedMembers
           : state.spaceInfo?.members.map((members) => members.user.id).toList();
 
-      final threadId = await messageService.createThread(spaceId, currentUser?.id ?? '', threadMembersIds ?? []);
+      final threadId = await messageService.createThread(
+          spaceId, currentUser?.id ?? '', threadMembersIds ?? []);
 
       if (state.threadId == threadId) return;
 
@@ -152,7 +170,11 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
         sendMessage(threadId, message);
         getCreatedThread(threadId);
       }
-      state = state.copyWith(showMemberSelectionView: false, threadId: threadId, isNewThread: true);
+      state = state.copyWith(
+          showMemberSelectionView: false,
+          threadId: threadId,
+          isNewThread: true,
+          error: null);
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);
       logger.e(
@@ -167,30 +189,31 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     try {
       final thread = await messageService.getThread(threadId);
       getThreadMembers(thread!.thread);
-      state = state.copyWith(threadInfo: thread);
+      state = state.copyWith(threadInfo: thread, error: null);
       formatMemberNames(thread.members);
     } catch (error, stack) {
-      logger.e(
-        'ChatViewNotifier: error while get threads',
-        error: error,
-        stackTrace: stack
-      );
+      logger.e('ChatViewNotifier: error while get threads',
+          error: error, stackTrace: stack);
     }
   }
 
   void selectExistingThread() {
     final userList = state.users.map((e) => e.user.id).toList();
-    final List<String> selectedMembers = List.from(state.selectedMember.isEmpty ? userList : state.selectedMember);
+    final List<String> selectedMembers = List.from(
+        state.selectedMember.isEmpty ? userList : state.selectedMember);
     selectedMembers.add(currentUser?.id ?? '');
 
     final List<List<String>> threadMembers = state.threadList
-        .map((threads) => threads.members.map((e) => e.user.id.toString()).toList())
+        .map((threads) =>
+            threads.members.map((e) => e.user.id.toString()).toList())
         .toList();
 
-    bool hasMatchingThread = threadMembers.any((threadMember) => _listsContainSameMembers(selectedMembers, threadMember));
+    bool hasMatchingThread = threadMembers.any((threadMember) =>
+        _listsContainSameMembers(selectedMembers, threadMember));
     if (hasMatchingThread) {
       final matchingThreads = state.threadList.where((thread) {
-        final List<String> threadMemberIds = thread.members.map((member) => member.user.id.toString()).toList();
+        final List<String> threadMemberIds =
+            thread.members.map((member) => member.user.id.toString()).toList();
         return _listsContainSameMembers(selectedMembers, threadMemberIds);
       }).toList();
       if (matchingThreads.isNotEmpty) {
@@ -198,7 +221,10 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
         listenThread(matchedThread.thread.id);
         getThreadMembers(matchedThread.thread);
         formatMemberNames(matchedThread.members);
-        state = state.copyWith(threadId: matchedThread.thread.id, threadInfo: matchedThread, sender: matchedThread.members);
+        state = state.copyWith(
+            threadId: matchedThread.thread.id,
+            threadInfo: matchedThread,
+            sender: matchedThread.members);
       }
     } else {
       state = state.copyWith(sender: [], messages: [], isNewThread: true);
@@ -217,12 +243,15 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
       if ((loadingData) && threadId.isEmpty) return;
       state = state.copyWith(loadingMessages: state.messages.isEmpty);
       loadingData = true;
-      final minMessage = state.messages.reduce((a, b) => a.createdAtMs < b.createdAtMs ? a : b);
-      final newMessages = await messageService.getMessages(threadId, minMessage.created_at, limit: MAX_PAGE_LIMIT);
+      final minMessage = state.messages
+          .reduce((a, b) => a.createdAtMs < b.createdAtMs ? a : b);
+      final newMessages = await messageService
+          .getMessages(threadId, minMessage.created_at, limit: MAX_PAGE_LIMIT);
       _hasMoreItems = newMessages.length == MAX_PAGE_LIMIT;
       final allMessages = state.messages;
       final messages = append ? [...allMessages, ...newMessages] : allMessages;
-      state = state.copyWith(messages: messages, loadingMessages: false);
+      state = state.copyWith(
+          messages: messages, loadingMessages: false, error: null);
       loadingData = false;
     } catch (error, stack) {
       logger.e(
@@ -243,12 +272,18 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   }
 
   void formatMemberNames(List<ApiUserInfo> members) {
-    final filteredMembers = members.where((member) => member.user.id != state.currentUserId).toList();
+    final filteredMembers = members
+        .where((member) => member.user.id != state.currentUserId)
+        .toList();
     state = state.copyWith(title: '');
     if (filteredMembers.length > 2) {
-      state = state.copyWith(title: '${filteredMembers[0].user.first_name}, ${filteredMembers[1].user.first_name} +${filteredMembers.length - 2}');
+      state = state.copyWith(
+          title:
+              '${filteredMembers[0].user.first_name}, ${filteredMembers[1].user.first_name} +${filteredMembers.length - 2}');
     } else if (filteredMembers.length == 2) {
-      state = state.copyWith(title: '${filteredMembers[0].user.first_name}, ${filteredMembers[1].user.first_name}');
+      state = state.copyWith(
+          title:
+              '${filteredMembers[0].user.first_name}, ${filteredMembers[1].user.first_name}');
     } else if (filteredMembers.length == 1) {
       state = state.copyWith(title: filteredMembers[0].user.first_name ?? '');
     } else {
@@ -284,7 +319,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     final DateTime? nextDate = index < state.messages.length - 1
         ? extractDate(state.messages[index + 1].created_at!.toLocal())
         : null;
-    final showDateHeader = nextDate == null || nextDate != extractDate(message.created_at!);
+    final showDateHeader =
+        nextDate == null || nextDate != extractDate(message.created_at!);
     return showDateHeader;
   }
 
@@ -296,8 +332,9 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     }
 
     final nextMessage = state.messages[index + 1];
-    final bool isDifferentTime = message.created_at!.hour != nextMessage.created_at!.hour ||
-        message.created_at!.minute != nextMessage.created_at!.minute;
+    final bool isDifferentTime =
+        message.created_at!.hour != nextMessage.created_at!.hour ||
+            message.created_at!.minute != nextMessage.created_at!.minute;
     final bool isDifferentSender = message.sender_id != nextMessage.sender_id;
 
     return isDifferentTime || isDifferentSender;
@@ -342,6 +379,6 @@ class ChatViewState with _$ChatViewState {
     SpaceInfo? spaceInfo,
     ThreadInfo? threadInfo,
     required String currentUserId,
-    @Default([]) List<ThreadInfo>  threadList,
+    @Default([]) List<ThreadInfo> threadList,
   }) = _ChatViewState;
 }

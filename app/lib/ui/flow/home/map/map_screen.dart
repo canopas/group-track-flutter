@@ -11,6 +11,7 @@ import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 
 import '../../../app_route.dart';
 import '../../../components/permission_dialog.dart';
@@ -59,6 +60,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     _observeMarkerChange();
     _observeShowEnableLocationPrompt(context);
     _observeMemberPlace(context);
+    _observeError();
 
     notifier = ref.watch(mapViewStateProvider.notifier);
     final state = ref.watch(mapViewStateProvider);
@@ -486,6 +488,14 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     setState(() {
       _markers
           .removeWhere((marker) => !marker.markerId.value.startsWith('place'));
+    });
+  }
+
+  void _observeError() {
+    ref.listen(mapViewStateProvider.select((state) => state.error), (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
     });
   }
 }

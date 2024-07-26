@@ -90,6 +90,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         state = state.copyWith(places: places);
       });
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e(
         'MapViewNotifier: Error while getting places',
         error: error,
@@ -257,6 +258,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         }
       }
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e(
         'MapViewNotifier: Error while getting last location',
         error: error,

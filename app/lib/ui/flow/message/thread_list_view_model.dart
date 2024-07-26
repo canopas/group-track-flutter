@@ -37,7 +37,7 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
     try {
       state = state.copyWith(loading: state.threadInfo.isEmpty);
       messageService.getThreadsWithLatestMessage(spaceId, currentUser!.id).listen((thread) {
-        state = state.copyWith(threadInfo: thread, loading: false);
+        state = state.copyWith(threadInfo: thread, loading: false, error: null);
       });
     } catch (error, stack) {
       logger.e(
@@ -53,7 +53,7 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
     try {
       state = state.copyWith(fetchingInviteCode: true);
       final code = await spaceService.getInviteCode(state.space?.space.id ?? '');
-      state = state.copyWith(spaceInvitationCode: code ?? '', fetchingInviteCode: false);
+      state = state.copyWith(spaceInvitationCode: code ?? '', fetchingInviteCode: false, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error);
       logger.e(
@@ -68,6 +68,7 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
     try {
       await messageService.deleteThread(thread, currentUser?.id ?? '');
       listenThreads(state.space?.space.id ?? '');
+      state = state.copyWith(error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error);
       logger.e(

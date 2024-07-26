@@ -78,7 +78,7 @@ class ChoosePlaceNameViewNotifier extends StateNotifier<ChoosePlaceViewState> {
         memberIds,
       );
       state =
-          state.copyWith(popToPlaceList: DateTime.now(), addingPlace: false);
+          state.copyWith(popToPlaceList: DateTime.now(), addingPlace: false, error: null);
     } catch (error, stack) {
       state = state.copyWith(addingPlace: false, error: error);
       logger.e(
