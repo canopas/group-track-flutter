@@ -11,6 +11,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:style/animation/on_tap_scale.dart';
+import 'package:style/button/action_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
@@ -67,29 +68,28 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     return AppPage(
       title: title,
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: OnTapScale(
-            onTap: () {
-              notifier.showDatePicker(true);
-            },
-            child: Row(
-              children: [
-                Text(
-                  selectedDate,
-                  style: AppTextStyle.body1
-                      .copyWith(color: context.colorScheme.textPrimary),
-                ),
-                const SizedBox(width: 8),
-                SvgPicture.asset(
+        OnTapScale(
+          onTap: () => notifier.showDatePicker(true),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                selectedDate,
+                style: AppTextStyle.body1
+                    .copyWith(color: context.colorScheme.textPrimary),
+              ),
+              actionButton(
+                context,
+                onPressed: () => notifier.showDatePicker(true),
+                icon: SvgPicture.asset(
                   Assets.images.icTimelineFilterIcon,
                   colorFilter: ColorFilter.mode(
                     context.colorScheme.textPrimary,
                     BlendMode.srcATop,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],
