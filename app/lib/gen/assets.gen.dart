@@ -79,6 +79,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_location.svg
   String get icLocation => 'assets/images/ic_location.svg';
 
+  /// File path: assets/images/ic_location_off.svg
+  String get icLocationOff => 'assets/images/ic_location_off.svg';
+
   /// File path: assets/images/ic_message.svg
   String get icMessage => 'assets/images/ic_message.svg';
 
@@ -172,6 +175,7 @@ class $AssetsImagesGen {
         icJourneyEmptyTimelineImage,
         icLocationFeedIcon,
         icLocation,
+        icLocationOff,
         icMessage,
         icPlaceMarkerIcon,
         icPlacesGymIcon,

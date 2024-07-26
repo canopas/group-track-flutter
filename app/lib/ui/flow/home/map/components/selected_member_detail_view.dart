@@ -176,18 +176,16 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   }
 
   void getAddress(ApiLocation? location) async {
-    if (mounted) {
-      if (location != null) {
-        final latLng = LatLng(location.latitude, location.longitude);
-        final address = await latLng.getAddressFromLocation();
-        setState(() {
-          this.address = address;
-        });
-      } else {
-        setState(() {
-          address = '';
-        });
-      }
+    if (mounted && location != null) {
+      final latLng = LatLng(location.latitude, location.longitude);
+      final address = await latLng.getAddressFromLocation();
+      setState(() {
+        this.address = address;
+      });
+    } else {
+      setState(() {
+        address = '';
+      });
     }
   }
 }
