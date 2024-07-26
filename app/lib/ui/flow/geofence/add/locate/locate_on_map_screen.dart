@@ -6,7 +6,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:style/button/action_button.dart';
 import 'package:style/button/icon_primary_button.dart';
-import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:style/text/app_text_field.dart';
@@ -18,6 +17,7 @@ import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_view
 import '../../../../../gen/assets.gen.dart';
 import '../../../../components/error_snakebar.dart';
 import '../../../home/map/map_screen.dart';
+import '../components/place_added_dialog.dart';
 
 class LocateOnMapScreen extends ConsumerStatefulWidget {
   final String spaceId;
@@ -213,86 +213,6 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
     );
   }
 
-  void _observePopToPlacesListScreen(LatLng? latLng) {
-    ref.listen(
-        locateOnMapViewStateProvider.select((state) => state.popToPlaceList),
-        (_, next) {
-      AppRoute.popTo(context, AppRoute.pathPlacesList);
-      _showPlaceAddedDialog(context, latLng!.latitude, latLng.longitude);
-    });
-  }
-
-  void _showPlaceAddedDialog(
-    BuildContext context,
-    double lat,
-    double lng,
-  ) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AspectRatio(
-                aspectRatio: 1.77,
-                child: _googleMapView(lat, lng),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                context.l10n.locate_on_map_prompt_added_title_text(
-                  widget.placesName ?? '',
-                ),
-                style: AppTextStyle.header1
-                    .copyWith(color: context.colorScheme.textPrimary),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 14),
-              Text(
-                context.l10n.locate_on_map_prompt_sub_title_text,
-                style: AppTextStyle.body1
-                    .copyWith(color: context.colorScheme.textSecondary),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              PrimaryButton(
-                context.l10n.locate_on_map_prompt_got_it_btn_text,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _googleMapView(double lat, double lng) {
-    final cameraPosition =
-        CameraPosition(target: LatLng(lat, lng), zoom: defaultCameraZoom);
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        GoogleMap(
-          initialCameraPosition: cameraPosition,
-          scrollGesturesEnabled: false,
-          rotateGesturesEnabled: false,
-          compassEnabled: false,
-          zoomControlsEnabled: false,
-          tiltGesturesEnabled: false,
-          myLocationButtonEnabled: false,
-          mapToolbarEnabled: false,
-        ),
-        _locateMarkerView()
-      ],
-    );
-  }
-
   Widget _locateMarkerView() {
     return Container(
       width: 40,
@@ -312,6 +232,20 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
         ),
       ),
     );
+  }
+
+  void _observePopToPlacesListScreen(LatLng? latLng) {
+    ref.listen(
+        locateOnMapViewStateProvider.select((state) => state.popToPlaceList),
+        (_, next) {
+      AppRoute.popTo(context, AppRoute.pathPlacesList);
+      showPlaceAddedDialog(
+        context,
+        latLng!.latitude,
+        latLng.longitude,
+        widget.placesName ?? '',
+      );
+    });
   }
 
   void _onMapCreated(GoogleMapController controller) async {

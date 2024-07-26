@@ -13,6 +13,7 @@ import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view_model
 
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../gen/assets.gen.dart';
+import '../../../components/alert.dart';
 import '../../../components/error_snakebar.dart';
 
 class PlacesListScreen extends ConsumerStatefulWidget {
@@ -251,39 +252,14 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
         placesListViewStateProvider
             .select((state) => state.showDeletePlaceDialog), (_, next) {
       if (next != null) {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                content: Text(
-                  context.l10n.places_list_delete_dialog_content_text,
-                ),
-                actions: [
-                  TextButton(
-                    child: Text(
-                      context.l10n.common_cancel,
-                      style: AppTextStyle.button
-                          .copyWith(color: context.colorScheme.textSecondary),
-                    ),
-                    onPressed: () {
-                      notifier.dismissDeletePlaceDialog();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: Text(
-                      context.l10n.common_delete,
-                      style: AppTextStyle.button
-                          .copyWith(color: context.colorScheme.alert),
-                    ),
-                    onPressed: () {
-                      notifier.deletePlace();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            });
+        showConfirmation(
+          context,
+          message: context.l10n.places_list_delete_dialog_content_text,
+          confirmBtnText: context.l10n.common_delete,
+          cancelButtonText: context.l10n.common_cancel,
+          onCancel: () => notifier.dismissDeletePlaceDialog(),
+          onConfirm: () => notifier.deletePlace(),
+        );
       }
     });
   }

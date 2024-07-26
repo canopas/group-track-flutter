@@ -80,7 +80,7 @@ class LocateOnMapVieNotifier extends StateNotifier<LocateOnMapState> {
         state.cameraLatLng!.latitude,
         state.cameraLatLng!.longitude,
         _currentUser!.id,
-        memberIds,
+        memberIds
       );
       state =
           state.copyWith(popToPlaceList: DateTime.now(), addingPlace: false);

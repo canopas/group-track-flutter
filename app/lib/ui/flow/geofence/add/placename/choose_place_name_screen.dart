@@ -15,7 +15,7 @@ import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_na
 import '../../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../components/error_snakebar.dart';
-import '../../../home/map/map_screen.dart';
+import '../components/place_added_dialog.dart';
 
 class ChoosePlaceNameScreen extends ConsumerStatefulWidget {
   final LatLng location;
@@ -61,12 +61,12 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
 
   Widget _body(ChoosePlaceViewState state) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _searchTextField(state),
-          const SizedBox(height: 40),
+          const SizedBox(height: 50),
           Text(
             context.l10n.choose_place_suggestion_text,
             style: AppTextStyle.caption
@@ -177,103 +177,12 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
         choosePlaceViewStateProvider.select((state) => state.popToPlaceList),
         (_, next) {
       AppRoute.popTo(context, AppRoute.pathPlacesList);
-      _showPlaceAddedDialog(
+      showPlaceAddedDialog(
         context,
         widget.location.latitude,
         widget.location.longitude,
         title,
       );
     });
-  }
-
-  void _showPlaceAddedDialog(
-    BuildContext context,
-    double lat,
-    double lng,
-    String placeName,
-  ) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AspectRatio(
-                aspectRatio: 1.77,
-                child: _googleMapView(lat, lng),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                context.l10n.choose_place_prompt_added_title_text(placeName),
-                style: AppTextStyle.header1
-                    .copyWith(color: context.colorScheme.textPrimary),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 14),
-              Text(
-                context.l10n.choose_place_prompt_sub_title_text,
-                style: AppTextStyle.body1
-                    .copyWith(color: context.colorScheme.textSecondary),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              PrimaryButton(
-                context.l10n.choose_place_prompt_got_it_btn_text,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _googleMapView(double lat, double lng) {
-    final cameraPosition =
-        CameraPosition(target: LatLng(lat, lng), zoom: defaultCameraZoom);
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        GoogleMap(
-          initialCameraPosition: cameraPosition,
-          scrollGesturesEnabled: false,
-          rotateGesturesEnabled: false,
-          compassEnabled: false,
-          zoomControlsEnabled: false,
-          tiltGesturesEnabled: false,
-          myLocationButtonEnabled: false,
-          mapToolbarEnabled: false,
-        ),
-        _locateMarkerView()
-      ],
-    );
-  }
-
-  Widget _locateMarkerView() {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        color: context.colorScheme.onPrimary,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: SvgPicture.asset(
-          Assets.images.icLocationFeedIcon,
-          colorFilter: ColorFilter.mode(
-            context.colorScheme.primary,
-            BlendMode.srcATop,
-          ),
-        ),
-      ),
-    );
   }
 }

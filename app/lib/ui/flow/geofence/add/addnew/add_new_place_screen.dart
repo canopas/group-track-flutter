@@ -45,6 +45,7 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
 
     return Padding(
       padding: EdgeInsets.only(
+        top: 16,
         left: 16,
         right: 16,
         bottom: context.mediaQueryPadding.bottom,
@@ -54,15 +55,17 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _searchTextField(),
-            const SizedBox(height: 40),
+            const SizedBox(height: 56),
             _locateOnMapView(),
             const SizedBox(height: 40),
-            Text(
-              context.l10n.add_new_place_suggestion_text,
-              style: AppTextStyle.caption.copyWith(
-                color: context.colorScheme.textDisabled,
+            if (state.places.isNotEmpty || state.loading) ...[
+              Text(
+                context.l10n.add_new_place_suggestion_text,
+                style: AppTextStyle.caption.copyWith(
+                  color: context.colorScheme.textDisabled,
+                ),
               ),
-            ),
+            ],
             const SizedBox(height: 16),
             ...state.places.map((place) {
               final isLast =
