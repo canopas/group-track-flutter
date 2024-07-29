@@ -90,8 +90,8 @@ class _JourneyMapState extends State<JourneyMap> {
       polylineId: PolylineId(journey.id!),
       color: context.colorScheme.primary,
       points: latLngList,
-      patterns: [PatternItem.dash(20.0), PatternItem.gap(2)],
-      width: 2,
+      patterns: [PatternItem.dash(20.0), PatternItem.gap(8)],
+      width: 4,
     ));
 
     final centerLatLng =
