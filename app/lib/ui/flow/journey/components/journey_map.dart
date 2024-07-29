@@ -42,8 +42,7 @@ class _JourneyMapState extends State<JourneyMap> {
       behavior: HitTestBehavior.translucent,
       onTap: () {
         if (widget.isTimeLine) {
-          AppRoute.journeyDetail(widget.journey.id!, widget.journey.user_id)
-              .push(context);
+          AppRoute.journeyDetail(widget.journey).push(context);
         }
       },
       child: ClipRRect(
@@ -83,7 +82,7 @@ class _JourneyMapState extends State<JourneyMap> {
     for (var route in journey.routes) {
       latLngList.add(LatLng(route.latitude, route.longitude));
     }
-    if(toLatLng != null) {
+    if (toLatLng != null) {
       latLngList.add(toLatLng);
     }
 

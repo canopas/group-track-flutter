@@ -20,42 +20,13 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
   UserJourneyDetailViewModel(this.journeyService)
       : super(const UserJourneyDetailState());
 
-  void loadData(String journeyId, String userId) {
-    state = state.copyWith(journeyId: journeyId, userId: userId);
-    fetchJourney(journeyId, userId);
-  }
-
-  void fetchJourney(String journeyId, String userId) async {
+  void loadData(ApiLocationJourney journey) async {
     if (state.loading) return;
-    try {
-      state = state.copyWith(loading: true);
-      final journey =
-          await journeyService.getUserJourneyById(journeyId, userId);
-      if (journey == null) {
-        state = state.copyWith(loading: false, error: 'Journey not found');
-        return;
-      }
+    state = state.copyWith(loading: true, error: null);
 
-      final createdTime = journey.created_at!;
-      final selectedFrom =
-          createdTime - (createdTime % Duration.millisecondsPerDay);
-      final selectedTo = selectedFrom + Duration.millisecondsPerDay - 1;
-      await _getJourneyAddress(journey);
+    await _getJourneyAddress(journey);
 
-      state = state.copyWith(
-        journey: journey,
-        selectedTimeFrom: selectedFrom,
-        selectedTimeTo: selectedTo,
-        loading: false,
-      );
-    } catch (error, stack) {
-      state = state.copyWith(error: error, loading: false);
-      logger.e(
-        'UserJourneyDetailViewModel: error while fetching user journeys',
-        error: error,
-        stackTrace: stack,
-      );
-    }
+    state = state.copyWith(journey: journey, loading: false);
   }
 
   Future<void> _getJourneyAddress(ApiLocationJourney journey) async {
@@ -68,6 +39,7 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
           fromLatLng.latitude, fromLatLng.longitude);
       final toPlaceMarks =
           await placemarkFromCoordinates(toLatLng.latitude, toLatLng.longitude);
+
       state = state.copyWith(
         addressFrom: fromPlaceMarks,
         addressTo: toPlaceMarks,
@@ -87,10 +59,7 @@ class UserJourneyDetailState with _$UserJourneyDetailState {
   const factory UserJourneyDetailState({
     @Default(false) bool loading,
     ApiLocationJourney? journey,
-    int? selectedTimeFrom,
-    int? selectedTimeTo,
     String? journeyId,
-    String? userId,
     @Default([]) List<Placemark> addressFrom,
     @Default([]) List<Placemark> addressTo,
     Object? error,

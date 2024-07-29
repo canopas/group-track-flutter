@@ -22,6 +22,7 @@ import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_view
 
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../gen/assets.gen.dart';
+import '../../../app_route.dart';
 import '../components/dotted_line_view.dart';
 import '../components/journey_map.dart';
 
@@ -121,6 +122,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                         journey,
                         state.sortedJourney.first.id == journey.id,
                         state.sortedJourney.last.id == journey.id,
+                        state.spaceId,
                       )
                     : _journeyLocationItem(
                         journey,
@@ -161,6 +163,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     ApiLocationJourney journey,
     bool isFirstItem,
     bool isLastItem,
+    String? spaceId,
   ) {
     final location = LatLng(journey.from_latitude, journey.from_longitude);
     final formattedTime = (isFirstItem)
@@ -183,7 +186,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                   children: [
                     _buildPlaceInfo(location, formattedTime),
                     const SizedBox(height: 8),
-                    _appPlaceButton(),
+                    _appPlaceButton(location, spaceId),
                     const SizedBox(height: 8),
                     Visibility(
                         visible: !isLastItem,
@@ -320,7 +323,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     );
   }
 
-  Widget _appPlaceButton() {
+  Widget _appPlaceButton(LatLng location, String? spaceId) {
     return Container(
       width: 136,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -329,7 +332,10 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           color: context.colorScheme.containerLow),
       child: OnTapScale(
         onTap: () {
-          print('XXX on tap add button');
+          if (spaceId != null) {
+            AppRoute.choosePlaceName(location: location, spaceId: spaceId)
+                .push(context);
+          }
         },
         child: Row(
           children: [

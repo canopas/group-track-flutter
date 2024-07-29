@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 
+import 'package:data/api/location/journey/journey.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,14 +16,13 @@ import 'package:yourspace_flutter/ui/flow/journey/components/journey_map.dart';
 import 'package:yourspace_flutter/ui/flow/journey/detail/user_journey_detail_view_model.dart';
 
 import '../../../../domain/extenstions/widget_extensions.dart';
+import '../../../components/error_snakebar.dart';
 import '../components/dotted_line_view.dart';
 
 class UserJourneyDetailScreen extends ConsumerStatefulWidget {
-  final String journeyId;
-  final String userId;
+  final ApiLocationJourney journey;
 
-  const UserJourneyDetailScreen(
-      {super.key, required this.journeyId, required this.userId});
+  const UserJourneyDetailScreen({super.key, required this.journey});
 
   @override
   ConsumerState<UserJourneyDetailScreen> createState() =>
@@ -37,20 +37,19 @@ class _UserJourneyDetailScreenState
   void initState() {
     super.initState();
     runPostFrame(() {
-      ref.read(userJourneyDetailStateProvider.notifier).loadData(
-            widget.journeyId,
-            widget.userId,
-          );
+      ref
+          .read(userJourneyDetailStateProvider.notifier)
+          .loadData(widget.journey);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    _observeError();
     _observeMapMarker();
 
     final state = ref.watch(userJourneyDetailStateProvider);
-    final title =
-        _formattedAddress(state.addressFrom.first, state.addressTo.first);
+    final title = _formattedAddress(state.addressFrom, state.addressTo);
     return AppPage(title: title, body: _body(state));
   }
 
@@ -168,7 +167,14 @@ class _UserJourneyDetailScreenState
     );
   }
 
-  String _formattedAddress(Placemark fromPlace, Placemark? toPlace) {
+  String _formattedAddress(
+    List<Placemark>? fromPlaces,
+    List<Placemark>? toPlaces,
+  ) {
+    if (fromPlaces == null || fromPlaces.isEmpty) return 'Detail';
+    final fromPlace = fromPlaces.first;
+    final toPlace = toPlaces?.first;
+
     final fromCity = fromPlace.locality ?? '';
     final toCity = toPlace?.locality ?? '';
 
@@ -217,6 +223,15 @@ class _UserJourneyDetailScreenState
     DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
     final dataFormat = DateFormat('dd MMMM hh:mm a');
     return dataFormat.format(createdAtDate);
+  }
+
+  void _observeError() {
+    ref.listen(userJourneyDetailStateProvider.select((state) => state.error),
+        (_, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
+    });
   }
 
   void _observeMapMarker() {

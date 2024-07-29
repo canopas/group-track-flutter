@@ -18,10 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$UserJourneyDetailState {
   bool get loading => throw _privateConstructorUsedError;
   ApiLocationJourney? get journey => throw _privateConstructorUsedError;
-  int? get selectedTimeFrom => throw _privateConstructorUsedError;
-  int? get selectedTimeTo => throw _privateConstructorUsedError;
   String? get journeyId => throw _privateConstructorUsedError;
-  String? get userId => throw _privateConstructorUsedError;
   List<Placemark> get addressFrom => throw _privateConstructorUsedError;
   List<Placemark> get addressTo => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
@@ -40,10 +37,7 @@ abstract class $UserJourneyDetailStateCopyWith<$Res> {
   $Res call(
       {bool loading,
       ApiLocationJourney? journey,
-      int? selectedTimeFrom,
-      int? selectedTimeTo,
       String? journeyId,
-      String? userId,
       List<Placemark> addressFrom,
       List<Placemark> addressTo,
       Object? error});
@@ -67,10 +61,7 @@ class _$UserJourneyDetailStateCopyWithImpl<$Res,
   $Res call({
     Object? loading = null,
     Object? journey = freezed,
-    Object? selectedTimeFrom = freezed,
-    Object? selectedTimeTo = freezed,
     Object? journeyId = freezed,
-    Object? userId = freezed,
     Object? addressFrom = null,
     Object? addressTo = null,
     Object? error = freezed,
@@ -84,21 +75,9 @@ class _$UserJourneyDetailStateCopyWithImpl<$Res,
           ? _value.journey
           : journey // ignore: cast_nullable_to_non_nullable
               as ApiLocationJourney?,
-      selectedTimeFrom: freezed == selectedTimeFrom
-          ? _value.selectedTimeFrom
-          : selectedTimeFrom // ignore: cast_nullable_to_non_nullable
-              as int?,
-      selectedTimeTo: freezed == selectedTimeTo
-          ? _value.selectedTimeTo
-          : selectedTimeTo // ignore: cast_nullable_to_non_nullable
-              as int?,
       journeyId: freezed == journeyId
           ? _value.journeyId
           : journeyId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
               as String?,
       addressFrom: null == addressFrom
           ? _value.addressFrom
@@ -137,10 +116,7 @@ abstract class _$$UserJourneyDetailStateImplCopyWith<$Res>
   $Res call(
       {bool loading,
       ApiLocationJourney? journey,
-      int? selectedTimeFrom,
-      int? selectedTimeTo,
       String? journeyId,
-      String? userId,
       List<Placemark> addressFrom,
       List<Placemark> addressTo,
       Object? error});
@@ -164,10 +140,7 @@ class __$$UserJourneyDetailStateImplCopyWithImpl<$Res>
   $Res call({
     Object? loading = null,
     Object? journey = freezed,
-    Object? selectedTimeFrom = freezed,
-    Object? selectedTimeTo = freezed,
     Object? journeyId = freezed,
-    Object? userId = freezed,
     Object? addressFrom = null,
     Object? addressTo = null,
     Object? error = freezed,
@@ -181,21 +154,9 @@ class __$$UserJourneyDetailStateImplCopyWithImpl<$Res>
           ? _value.journey
           : journey // ignore: cast_nullable_to_non_nullable
               as ApiLocationJourney?,
-      selectedTimeFrom: freezed == selectedTimeFrom
-          ? _value.selectedTimeFrom
-          : selectedTimeFrom // ignore: cast_nullable_to_non_nullable
-              as int?,
-      selectedTimeTo: freezed == selectedTimeTo
-          ? _value.selectedTimeTo
-          : selectedTimeTo // ignore: cast_nullable_to_non_nullable
-              as int?,
       journeyId: freezed == journeyId
           ? _value.journeyId
           : journeyId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
               as String?,
       addressFrom: null == addressFrom
           ? _value._addressFrom
@@ -216,10 +177,7 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
   const _$UserJourneyDetailStateImpl(
       {this.loading = false,
       this.journey,
-      this.selectedTimeFrom,
-      this.selectedTimeTo,
       this.journeyId,
-      this.userId,
       final List<Placemark> addressFrom = const [],
       final List<Placemark> addressTo = const [],
       this.error})
@@ -232,13 +190,7 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
   @override
   final ApiLocationJourney? journey;
   @override
-  final int? selectedTimeFrom;
-  @override
-  final int? selectedTimeTo;
-  @override
   final String? journeyId;
-  @override
-  final String? userId;
   final List<Placemark> _addressFrom;
   @override
   @JsonKey()
@@ -262,7 +214,7 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
 
   @override
   String toString() {
-    return 'UserJourneyDetailState(loading: $loading, journey: $journey, selectedTimeFrom: $selectedTimeFrom, selectedTimeTo: $selectedTimeTo, journeyId: $journeyId, userId: $userId, addressFrom: $addressFrom, addressTo: $addressTo, error: $error)';
+    return 'UserJourneyDetailState(loading: $loading, journey: $journey, journeyId: $journeyId, addressFrom: $addressFrom, addressTo: $addressTo, error: $error)';
   }
 
   @override
@@ -272,13 +224,8 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
             other is _$UserJourneyDetailStateImpl &&
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.journey, journey) || other.journey == journey) &&
-            (identical(other.selectedTimeFrom, selectedTimeFrom) ||
-                other.selectedTimeFrom == selectedTimeFrom) &&
-            (identical(other.selectedTimeTo, selectedTimeTo) ||
-                other.selectedTimeTo == selectedTimeTo) &&
             (identical(other.journeyId, journeyId) ||
                 other.journeyId == journeyId) &&
-            (identical(other.userId, userId) || other.userId == userId) &&
             const DeepCollectionEquality()
                 .equals(other._addressFrom, _addressFrom) &&
             const DeepCollectionEquality()
@@ -291,10 +238,7 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
       runtimeType,
       loading,
       journey,
-      selectedTimeFrom,
-      selectedTimeTo,
       journeyId,
-      userId,
       const DeepCollectionEquality().hash(_addressFrom),
       const DeepCollectionEquality().hash(_addressTo),
       const DeepCollectionEquality().hash(error));
@@ -311,10 +255,7 @@ abstract class _UserJourneyDetailState implements UserJourneyDetailState {
   const factory _UserJourneyDetailState(
       {final bool loading,
       final ApiLocationJourney? journey,
-      final int? selectedTimeFrom,
-      final int? selectedTimeTo,
       final String? journeyId,
-      final String? userId,
       final List<Placemark> addressFrom,
       final List<Placemark> addressTo,
       final Object? error}) = _$UserJourneyDetailStateImpl;
@@ -324,13 +265,7 @@ abstract class _UserJourneyDetailState implements UserJourneyDetailState {
   @override
   ApiLocationJourney? get journey;
   @override
-  int? get selectedTimeFrom;
-  @override
-  int? get selectedTimeTo;
-  @override
   String? get journeyId;
-  @override
-  String? get userId;
   @override
   List<Placemark> get addressFrom;
   @override

@@ -35,10 +35,10 @@ extension PlacemarkExtensions on List<Placemark> {
   String getFormattedAddress() {
     String address = '';
     var streets = map((placeMark) => placeMark.street)
-          .where((street) => street != null)
-          .where(
-              (street) => street!.toLowerCase() != last.locality?.toLowerCase())
-          .where((street) => !street!.contains('+'));
+        .where((street) => street != null)
+        .where(
+            (street) => street!.toLowerCase() != last.locality?.toLowerCase())
+        .where((street) => !street!.contains('+'));
 
     address += streets.join(', ');
 
@@ -54,4 +54,3 @@ extension PlacemarkExtensions on List<Placemark> {
     return address;
   }
 }
-

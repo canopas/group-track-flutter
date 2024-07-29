@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/location/journey/journey.dart';
 import 'package:data/api/message/message_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/api/space/space_models.dart';
@@ -238,13 +239,10 @@ class AppRoute {
         builder: (_) => JourneyTimelineScreen(selectedUser: user));
   }
 
-  static AppRoute journeyDetail(String journeyId, String userId) {
+  static AppRoute journeyDetail(ApiLocationJourney journey) {
     return AppRoute(
       pathJourneyDetail,
-      builder: (_) => UserJourneyDetailScreen(
-        journeyId: journeyId,
-        userId: userId,
-      ),
+      builder: (_) => UserJourneyDetailScreen(journey: journey),
     );
   }
 
