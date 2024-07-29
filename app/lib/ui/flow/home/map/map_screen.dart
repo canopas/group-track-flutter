@@ -37,6 +37,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   final _cameraPosition =
       const CameraPosition(target: LatLng(0.0, 0.0), zoom: defaultCameraZoom);
   String? _mapStyle;
+  bool _isDarkMode = false;
 
   List<Marker> _markers = [];
   List<Circle> _places = [];
@@ -112,7 +113,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             }
           },
           onDismiss: () => notifier.onDismissMemberDetail(),
-          onTapTimeline: () {},
         ),
         Visibility(visible: enabled, child: _permissionFooter(state))
       ],
@@ -202,9 +202,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   void _updateMapStyle(bool isDarkMode) async {
+    if (_isDarkMode == isDarkMode) return;
     final style =
         await rootBundle.loadString('assets/map/map_theme_night.json');
     setState(() {
+      _isDarkMode = isDarkMode;
       if (isDarkMode) {
         _mapStyle = style;
       } else {
