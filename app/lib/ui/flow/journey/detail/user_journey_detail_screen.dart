@@ -171,7 +171,7 @@ class _UserJourneyDetailScreenState
     List<Placemark>? fromPlaces,
     List<Placemark>? toPlaces,
   ) {
-    if (fromPlaces == null || fromPlaces.isEmpty) return 'Detail';
+    if (fromPlaces == null || fromPlaces.isEmpty) return '';
     final fromPlace = fromPlaces.first;
     final toPlace = toPlaces?.first;
 
