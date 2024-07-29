@@ -31,7 +31,7 @@ class UserJourneyDetailScreen extends ConsumerStatefulWidget {
 
 class _UserJourneyDetailScreenState
     extends ConsumerState<UserJourneyDetailScreen> {
-  List<Marker> _markers = [];
+  final List<Marker> _markers = [];
 
   @override
   void initState() {
