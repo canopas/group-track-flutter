@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:data/api/auth/auth_models.dart';
@@ -23,7 +22,8 @@ import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_view
 
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../components/dashed_divider.dart';
+import '../components/dotted_line_view.dart';
+import '../components/journey_map.dart';
 
 const INITIAL_ZOOM_LEVEL = 6;
 
@@ -39,8 +39,6 @@ class JourneyTimelineScreen extends ConsumerStatefulWidget {
 
 class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   late JourneyTimelineViewModel notifier;
-  String? _mapStyle;
-  bool _isDarkMode = false;
 
   @override
   void initState() {
@@ -176,7 +174,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _dottedTimeline(true, isLastItem),
+            DottedLineView(isSteadyLocation: true, isLastItem: isLastItem),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 16),
@@ -220,7 +218,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _dottedTimeline(false, isLastItem),
+          DottedLineView(isSteadyLocation: false, isLastItem: isLastItem),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 16),
@@ -233,103 +231,36 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                     '$time - $distance',
                   ),
                   const SizedBox(height: 16),
-                  FutureBuilder(
+                  SizedBox(
+                    height: 125,
+                    child: FutureBuilder(
                       future: _buildMarkers(fromLatLng, toLatLng),
                       builder: (_, snapshot) {
                         if (snapshot.hasData) {
                           final markers = snapshot.data ?? [];
-                          return _googleMap(journey, markers);
+                          return JourneyMap(
+                            journey: journey,
+                            markers: markers,
+                            isTimeLine: true,
+                            gestureEnable: false,
+                          );
                         } else {
-                          return _googleMap(journey, []);
+                          return JourneyMap(
+                            journey: journey,
+                            markers: const [],
+                            isTimeLine: true,
+                            gestureEnable: false,
+                          );
                         }
-                      })
+                      },
+                    ),
+                  )
                 ],
               ),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _googleMap(ApiLocationJourney journey, List<Marker> markers) {
-    final (ployLines, center, zoom) = _onCreateMap(journey);
-    final cameraPosition = CameraPosition(target: center, zoom: zoom);
-
-    _updateMapStyle(context.brightness == Brightness.dark);
-    return SizedBox(
-      height: 125,
-      child: OnTapScale(
-        onTap: () {},
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: GoogleMap(
-            initialCameraPosition: cameraPosition,
-            style: _mapStyle,
-            compassEnabled: false,
-            scrollGesturesEnabled: false,
-            zoomControlsEnabled: false,
-            zoomGesturesEnabled: false,
-            tiltGesturesEnabled: false,
-            myLocationButtonEnabled: false,
-            mapToolbarEnabled: false,
-            markers: markers.toSet(),
-            polylines: ployLines.toSet(),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _dottedTimeline(bool isSteadyLocation, bool isLastItem) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: isSteadyLocation
-                ? context.colorScheme.containerLowOnSurface
-                : context.colorScheme.surface,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: isSteadyLocation
-                  ? Colors.transparent
-                  : context.colorScheme.outline,
-              width: 1,
-            ),
-          ),
-          child: Center(
-            child: isSteadyLocation
-                ? SvgPicture.asset(
-                    Assets.images.icFeedLocationPin,
-                    colorFilter: ColorFilter.mode(
-                      context.colorScheme.primary,
-                      BlendMode.srcATop,
-                    ),
-                  )
-                : Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: context.colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-          ),
-        ),
-        if (!isLastItem)
-          Expanded(
-            child: CustomPaint(
-              size: const Size(1, double.infinity),
-              painter: DashedLineVerticalPainter(
-                color: context.colorScheme.textPrimary,
-              ),
-            ),
-          ),
-      ],
     );
   }
 
@@ -396,37 +327,28 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           color: context.colorScheme.containerLow),
-      child: Row(
-        children: [
-          SvgPicture.asset(
-            Assets.images.icGeofenceIcon,
-            colorFilter: ColorFilter.mode(
-                context.colorScheme.primary, BlendMode.srcATop),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            context.l10n.journey_timeline_add_place_btn_text,
-            style: AppTextStyle.button.copyWith(
-              color: context.colorScheme.primary,
+      child: OnTapScale(
+        onTap: () {
+          print('XXX on tap add button');
+        },
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              Assets.images.icGeofenceIcon,
+              colorFilter: ColorFilter.mode(
+                  context.colorScheme.primary, BlendMode.srcATop),
             ),
-          )
-        ],
+            const SizedBox(width: 8),
+            Text(
+              context.l10n.journey_timeline_add_place_btn_text,
+              style: AppTextStyle.button.copyWith(
+                color: context.colorScheme.primary,
+              ),
+            )
+          ],
+        ),
       ),
     );
-  }
-
-  void _updateMapStyle(bool isDarkMode) async {
-    if (_isDarkMode == isDarkMode) return;
-    final style =
-        await rootBundle.loadString('assets/map/map_theme_night.json');
-    setState(() {
-      _isDarkMode = isDarkMode;
-      if (isDarkMode) {
-        _mapStyle = style;
-      } else {
-        _mapStyle = null;
-      }
-    });
   }
 
   String _getFormattedLocationTimeForFirstItem(int createdAt) {
@@ -518,50 +440,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     } else {
       return "$fromCity, $fromState to $toCity, $toState";
     }
-  }
-
-  (List<Polyline>, LatLng, double) _onCreateMap(
-    ApiLocationJourney journey,
-  ) {
-    List<LatLng> latLngList = [];
-    List<Polyline> polyline = [];
-    final fromLatLng = LatLng(journey.from_latitude, journey.from_longitude);
-    final toLatLng = journey.to_latitude != null && journey.to_longitude != null
-        ? LatLng(journey.to_latitude!, journey.to_longitude!)
-        : null;
-
-    latLngList.add(fromLatLng);
-    for (var route in journey.routes) {
-      latLngList.add(LatLng(route.latitude, route.longitude));
-    }
-
-    polyline.add(Polyline(
-      polylineId: PolylineId(journey.id!),
-      color: context.colorScheme.primary,
-      points: latLngList,
-      patterns: [PatternItem.dash(20.0), PatternItem.gap(8)],
-      width: 2,
-    ));
-
-    final centerLatLng =
-        _getCenterCoordinate(fromLatLng, toLatLng ?? const LatLng(0.0, 0.0));
-    final zoom = _calculateZoomLevel(
-        journey.route_distance ?? 0, context.mediaQuerySize.width);
-    return (polyline, centerLatLng, zoom);
-  }
-
-  double _calculateZoomLevel(double distanceInMeters, double mapWidth) {
-    const double earthCircumferenceInMeters = 40075016;
-    double zoomLevel = math
-        .log(earthCircumferenceInMeters * mapWidth / (distanceInMeters * 250));
-    return zoomLevel > 10 ? 15 : zoomLevel + INITIAL_ZOOM_LEVEL;
-  }
-
-  LatLng _getCenterCoordinate(LatLng startLatLng, LatLng endLatLng) {
-    double centerLat = (startLatLng.latitude + endLatLng.latitude) / 2;
-    double centerLng = (startLatLng.longitude + endLatLng.longitude) / 2;
-
-    return LatLng(centerLat, centerLng);
   }
 
   Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {
