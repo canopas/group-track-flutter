@@ -141,6 +141,15 @@
 
   "chat_start_new_chat_title": "Start new chat",
   "chat_type_message_hint_text": "Type message",
+  "chat_seen_message_text": "seen",
+  "chat_seen_by_message_text": " seen by {members}",
+  "@chat_seen_by_message_text": {
+    "placeholders": {
+      "members": {
+        "type": "String"
+      }
+    }
+  },
 
   "edit_profile_title": "Edit profile",
   "edit_profile_first_name_title": "First name",

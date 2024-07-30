@@ -22,11 +22,13 @@ import '../../../../domain/extenstions/widget_extensions.dart';
 class ChatScreen extends ConsumerStatefulWidget {
   final SpaceInfo spaceInfo;
   final ThreadInfo? threadInfo;
+  final List<ApiThreadMessage>? threadMessages;
   final List<ThreadInfo>? threadInfoList;
 
   const ChatScreen({
     super.key,
     required this.spaceInfo,
+    this.threadMessages,
     this.threadInfo,
     this.threadInfoList,
   });
@@ -64,7 +66,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     _observeError();
 
     if (widget.threadInfo != null) {
-      notifier.markMessageAsSeen(widget.threadInfo!.thread.id,  widget.threadInfo!.threadMessage);
+      notifier.markMessageAsSeen(widget.threadInfo!.thread.id,  widget.threadMessages!);
     }
 
     return AppPage(
@@ -79,17 +81,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     }
     return Column(
       children: [
-        if (state.showMemberSelectionView)
-          _memberSelectionView(context, state),
-        Expanded(child: _chatList(context, state.messages, state.sender, state.loadingMessages, state.threadId)),
+        if (state.showMemberSelectionView) _memberSelectionView(context, state),
+        Expanded(
+            child: _chatList(context, state.messages, state.sender,
+                state.loadingMessages, state.threadId, state.currentUserId)),
         const SizedBox(height: 24),
         _textField(context, state),
       ],
     );
   }
 
-  Widget _chatList(BuildContext context, List<ApiThreadMessage> messages,
-      List<ApiUserInfo>? sender, bool loadingMessage, String threadId) {
+  Widget _chatList(
+      BuildContext context,
+      List<ApiThreadMessage> messages,
+      List<ApiUserInfo>? sender,
+      bool loadingMessage,
+      String threadId,
+      String currentUserId) {
     if (sender == null && sender!.isEmpty) {
       return const AppProgressIndicator();
     }
@@ -103,7 +111,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           return const AppProgressIndicator(size: AppProgressIndicatorSize.small);
         }
         if (index == messages.length - 1) {
-           runPostFrame(() => notifier.onLoadMore(threadId));
+          runPostFrame(() => notifier.onLoadMore(widget.threadInfo == null
+              ? threadId
+              : widget.threadInfo?.thread.id ?? ''));
         }
 
         final message = messages[index];
@@ -114,13 +124,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ? sender.firstWhere((member) => member.user.id == message.sender_id).user
             : null;
 
+        final seenBy = widget.threadInfo?.members.where((member) =>
+        message.seen_by.contains(member.user.id) &&
+            member.user.id != currentUserId)
+            .toList();
+
+        final showSeenText = notifier.isSender(message) && (seenBy?.isNotEmpty ?? false) && message.id == messages.first.id
+            ? true
+            : false;
+
         if (messages.isEmpty) {
           return const AppProgressIndicator();
         }
 
         return Column(
           crossAxisAlignment: notifier.isSender(message)
-              ? CrossAxisAlignment.start
+              ? showSeenText ? CrossAxisAlignment.end : CrossAxisAlignment.start
               : CrossAxisAlignment.end,
           children: [
             if (showDateHeader)
@@ -137,6 +156,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               memberCount: sender.length,
               isDifferentSender: isDifferentSender,
             ),
+            if (showSeenText) ...[
+              const SizedBox(height: 4),
+              Text(
+                sender.length > 2
+                    ? context.l10n.chat_seen_by_message_text(seenBy!.map((e) => e.user.first_name).join(', '))
+                    : context.l10n.chat_seen_message_text,
+                style: AppTextStyle.caption.copyWith(
+                  color: context.colorScheme.textDisabled,
+                ),
+                textAlign: TextAlign.right,
+              ),
+            ],
           ],
         );
       },
@@ -189,18 +220,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             ? 0
                             : showTimeHeader
                                 ? 0
-                                : 32
+                                : memberCount > 2
+                                    ? 32
+                                    : 0
                         : 46,
                     right: isSender ? 48 : 0),
                 decoration: BoxDecoration(
                   color: isSender
                       ? context.colorScheme.containerLowOnSurface
                       : context.colorScheme.primary,
-                  borderRadius: radius(
-                      isSender: isSender,
-                      isLastInGroup: isLastInGroup,
-                      isFirstInGroup: isFirstInGroup,
-                  isDifferentSender: isDifferentSender,
+                  borderRadius: _radius(
+                    isSender: isSender,
+                    isLastInGroup: isLastInGroup,
+                    isFirstInGroup: isFirstInGroup,
+                    isDifferentSender: isDifferentSender,
                   ),
                 ),
                 child: _chatBubbleView(
@@ -289,7 +322,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   Widget _memberSelectionView(BuildContext context, ChatViewState state) {
     return Container(
-      height: 112,
+      height: 114,
       decoration:
           BoxDecoration(color: context.colorScheme.containerLowOnSurface),
       child: Row(
@@ -464,10 +497,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           const SizedBox(width: 8),
           IconPrimaryButton(
             onTap: () {
-              if (state.threadId.isNotEmpty) {
-                notifier.sendMessage(state.threadId, state.message.text);
-              } else {
-                notifier.createNewThread(widget.spaceInfo.space.id, state.message.text);
+              if (state.message.text.trim().isNotEmpty) {
+                if (state.threadInfo != null || widget.threadInfo != null) {
+                  notifier.sendMessage(
+                      state.threadId.isEmpty
+                          ? widget.threadInfo?.thread.id ?? ''
+                          : state.threadId,
+                      state.message.text);
+                } else {
+                  notifier.createNewThread(
+                      widget.spaceInfo.space.id, state.message.text);
+                }
               }
             },
             icon: Icon(Icons.arrow_forward_rounded,
@@ -486,10 +526,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  BorderRadius radius({
+  BorderRadius _radius({
     required bool isSender,
-      required bool isLastInGroup,
-      required bool isFirstInGroup,
+    required bool isLastInGroup,
+    required bool isFirstInGroup,
     required bool isDifferentSender,
   }) {
     if (isDifferentSender && !isLastInGroup) {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/message/api_message_service.dart';
@@ -36,6 +38,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 
   bool _hasMoreItems = true;
   bool loadingData = false;
+  StreamSubscription<List<ApiThreadMessage>>? _messageSubscription;
 
   ChatViewNotifier(this.threadId, this.messageService, this.apiMessageService, this.userService, this.currentUser)
       : super(ChatViewState(message: TextEditingController(), currentUserId: currentUser?.id ?? ''));
@@ -61,8 +64,10 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   void listenThread(String threadId) async {
     try {
       if (threadId.isEmpty) return;
+      if (state.creating) return;
+      _cancelMessageSubscription();
       state = state.copyWith(loading: state.messages.isEmpty);
-      messageService.getLatestMessages(threadId, limit: 20).listen((messages) {
+      _messageSubscription = messageService.getLatestMessages(threadId, limit: 20).listen((messages) {
         state = state.copyWith(messages: messages, loading: false);
         _hasMoreItems = messages.length == MAX_PAGE_LIMIT;
       });
@@ -101,9 +106,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     try {
       if (thread.id.isEmpty) return;
       state = state.copyWith(loading: true);
-      messageService.getLatestMessageMember(thread).listen((users) {
-        state = state.copyWith(sender: users, loading: false);
-      });
+      final users = await messageService.getLatestMessageMember(thread);
+      state = state.copyWith(sender: users, loading: false);
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);
       logger.e(
@@ -135,6 +139,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 
   void createNewThread(String spaceId, String message) async {
     try {
+      state = state.copyWith(creating: true);
+      _cancelMessageSubscription();
       List<String> selectedMembers = [];
       if (!selectedMembers.contains(currentUser?.id) && state.selectedMember.isNotEmpty) {
         selectedMembers.addAll(state.selectedMember);
@@ -145,14 +151,11 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
           : state.spaceInfo?.members.map((members) => members.user.id).toList();
 
       final threadId = await messageService.createThread(spaceId, currentUser?.id ?? '', threadMembersIds ?? []);
-
-      if (state.threadId == threadId) return;
-
+      state = state.copyWith(showMemberSelectionView: false, threadId: threadId, isNewThread: true);
       if (threadId.isNotEmpty) {
         sendMessage(threadId, message);
         getCreatedThread(threadId);
       }
-      state = state.copyWith(showMemberSelectionView: false, threadId: threadId, isNewThread: true);
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);
       logger.e(
@@ -163,11 +166,16 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     }
   }
 
+  void _cancelMessageSubscription() {
+    _messageSubscription?.cancel();
+    _messageSubscription = null;
+  }
+
   void getCreatedThread(String threadId) async {
     try {
       final thread = await messageService.getThread(threadId);
       getThreadMembers(thread!.thread);
-      state = state.copyWith(threadInfo: thread);
+      state = state.copyWith(threadInfo: thread, sender: thread.members);
       formatMemberNames(thread.members);
     } catch (error, stack) {
       logger.e(
@@ -201,7 +209,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
         state = state.copyWith(threadId: matchedThread.thread.id, threadInfo: matchedThread, sender: matchedThread.members);
       }
     } else {
-      state = state.copyWith(sender: [], messages: [], isNewThread: true);
+      state = state.copyWith(sender: [], messages: [], isNewThread: true, threadId: '', threadInfo: null);
     }
   }
 
@@ -235,7 +243,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 
   void onLoadMore(String threadId) {
     if (!_hasMoreItems || loadingData) return;
-    loadMoreMessages(state.threadId, true);
+    loadMoreMessages(threadId, true);
   }
 
   bool isSender(ApiThreadMessage message) {
@@ -252,7 +260,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     } else if (filteredMembers.length == 1) {
       state = state.copyWith(title: filteredMembers[0].user.first_name ?? '');
     } else {
-      state = state.copyWith(title: '');
+      state = state.copyWith(title: 'Start a new chat');
     }
   }
 
@@ -326,6 +334,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 class ChatViewState with _$ChatViewState {
   const factory ChatViewState({
     @Default(false) bool loading,
+    @Default(false) bool creating,
     @Default(false) bool loadingMessages,
     @Default(false) bool messageSending,
     @Default(false) bool allowSend,
