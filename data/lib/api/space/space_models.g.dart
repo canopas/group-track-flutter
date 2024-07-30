@@ -71,6 +71,6 @@ _$SpaceInfoImpl _$$SpaceInfoImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$SpaceInfoImplToJson(_$SpaceInfoImpl instance) =>
     <String, dynamic>{
-      'space': instance.space,
-      'members': instance.members,
+      'space': instance.space.toJson(),
+      'members': instance.members.map((e) => e.toJson()).toList(),
     };

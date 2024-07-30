@@ -30,7 +30,7 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
       placeService.getAllPlacesStream(spaceId).listen((places) {
         if (!mounted) return;
         suggestionPlaces(places);
-        state = state.copyWith(places: places, loading: false);
+        state = state.copyWith(places: places, loading: false, error: null);
       });
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);

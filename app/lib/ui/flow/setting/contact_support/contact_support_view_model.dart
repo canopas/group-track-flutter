@@ -130,7 +130,7 @@ class ContactSupportViewNotifier
         state.description.text,
         attachments,
       );
-      state = state.copyWith(requestSent: true, submitting: false);
+      state = state.copyWith(requestSent: true, submitting: false, error: null);
     } catch (error, stack) {
       logger.e(
         'ContactSupportViewNotifier: error while submitting response',

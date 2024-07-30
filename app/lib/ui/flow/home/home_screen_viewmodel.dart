@@ -55,9 +55,9 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
           }
         }
         if (spaces.isEmpty) {
-          state = state.copyWith(loading: false, spaceList: []);
+          state = state.copyWith(loading: false, spaceList: [], error: null);
         }
-        state = state.copyWith(loading: false, spaceList: sortedSpaces);
+        state = state.copyWith(loading: false, spaceList: sortedSpaces, error: null);
 
         if ((currentSpaceId?.isEmpty ?? false) && sortedSpaces.isNotEmpty) {
           final selectedSpace = sortedSpaces.first;
@@ -96,7 +96,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       final code =
           await spaceService.getInviteCode(state.selectedSpace?.space.id ?? '');
       state = state.copyWith(
-          spaceInvitationCode: code ?? '', fetchingInviteCode: false);
+          spaceInvitationCode: code ?? '', fetchingInviteCode: false, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error, fetchingInviteCode: false);
       logger.e(
@@ -164,7 +164,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
         isEnabled,
       );
       state =
-          state.copyWith(enablingLocation: false, locationEnabled: isEnabled);
+          state.copyWith(enablingLocation: false, locationEnabled: isEnabled, error: null);
     } catch (error, stack) {
       state = state.copyWith(enablingLocation: false, error: error);
       logger.e(

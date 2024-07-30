@@ -40,6 +40,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_contact_support.svg
   String get icContactSupport => 'assets/images/ic_contact_support.svg';
 
+  /// File path: assets/images/ic_distance_icon.png
+  AssetGenImage get icDistanceIcon =>
+      const AssetGenImage('assets/images/ic_distance_icon.png');
+
   /// File path: assets/images/ic_down_arrow_icon.svg
   String get icDownArrowIcon => 'assets/images/ic_down_arrow_icon.svg';
 
@@ -49,6 +53,13 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_empty_battery_icon.svg
   String get icEmptyBatteryIcon => 'assets/images/ic_empty_battery_icon.svg';
 
+  /// File path: assets/images/ic_feed_location-pin.svg
+  String get icFeedLocationPin => 'assets/images/ic_feed_location-pin.svg';
+
+  /// File path: assets/images/ic_feed_location_icon.png
+  AssetGenImage get icFeedLocationIcon =>
+      const AssetGenImage('assets/images/ic_feed_location_icon.png');
+
   /// File path: assets/images/ic_full_bettery_icon.svg
   String get icFullBetteryIcon => 'assets/images/ic_full_bettery_icon.svg';
 
@@ -57,6 +68,10 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/ic_google_logo.svg
   String get icGoogleLogo => 'assets/images/ic_google_logo.svg';
+
+  /// File path: assets/images/ic_journey_empty_timeline_image.svg
+  String get icJourneyEmptyTimelineImage =>
+      'assets/images/ic_journey_empty_timeline_image.svg';
 
   /// File path: assets/images/ic_location-feed_icon.svg
   String get icLocationFeedIcon => 'assets/images/ic_location-feed_icon.svg';
@@ -120,6 +135,10 @@ class $AssetsImagesGen {
   String get icTimeLineHistoryIcon =>
       'assets/images/ic_time_line_history_icon.svg';
 
+  /// File path: assets/images/ic_timeline_filter_icon.svg
+  String get icTimelineFilterIcon =>
+      'assets/images/ic_timeline_filter_icon.svg';
+
   /// File path: assets/images/intro_1.svg
   String get intro1 => 'assets/images/intro_1.svg';
 
@@ -144,12 +163,16 @@ class $AssetsImagesGen {
         icAddUserIcon,
         icCloseIcon,
         icContactSupport,
+        icDistanceIcon,
         icDownArrowIcon,
         icEditProfile,
         icEmptyBatteryIcon,
+        icFeedLocationPin,
+        icFeedLocationIcon,
         icFullBetteryIcon,
         icGeofenceIcon,
         icGoogleLogo,
+        icJourneyEmptyTimelineImage,
         icLocationFeedIcon,
         icLocation,
         icLocationOff,
@@ -170,6 +193,7 @@ class $AssetsImagesGen {
         icSetting,
         icSignOut,
         icTimeLineHistoryIcon,
+        icTimelineFilterIcon,
         intro1,
         intro2,
         intro3,

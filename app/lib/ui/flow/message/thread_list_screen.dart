@@ -16,7 +16,6 @@ import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
-import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_view_model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -55,10 +54,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
 
     return AppPage(
       title: widget.spaceInfo.space.name,
-      body: ResumeDetector(
-        onResume: () => notifier.listenThreads(widget.spaceInfo.space.id),
-          child: _body(context, state),
-      ),
+      body: _body(context, state),
       floatingActionButton: widget.spaceInfo.members.length >= 2
       ? LargeIconButton(
         onTap: () {
@@ -82,11 +78,11 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: state.threadInfo.isEmpty
           ? _emptyView(context, state)
-          : _threadList(context, state.threadInfo),
+          : _threadList(context, state.threadInfo, state.threadMessages),
     );
   }
 
-  Widget _threadList(BuildContext context, List<ThreadInfo> threads) {
+  Widget _threadList(BuildContext context, List<ThreadInfo> threads, List<List<ApiThreadMessage>> threadMessages) {
     List<ThreadInfo> mutableThreads = List.from(threads);
 
     return ListView.builder(
@@ -94,50 +90,33 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
       itemBuilder: (context, index) {
         final thread = mutableThreads[index];
         final members = thread.members.where((member) => member.user.id != notifier.currentUser?.id).toList();
-        final displayedMembers = members.take(2).toList();
-        final isLastItem = index == mutableThreads.length - 1;
-        final date = thread.threadMessage.isNotEmpty ? thread.threadMessage.first.created_at : null;
-        final hasUnreadMessage = thread.threadMessage
+        final filteredMessages = index < threadMessages.length ? threadMessages[index] : [];
+        final hasUnreadMessage = filteredMessages
             .any((message) => !message.seen_by.contains(notifier.currentUser?.id));
 
         return Slidable(
           endActionPane: ActionPane(
             motion: const ScrollMotion(),
             children: [
-              SlidableAction(
-                onPressed: (context) {
-                  _showDeleteConfirmation(() {
-                    setState(() {
-                      notifier.deleteThread(thread.thread);
-                      mutableThreads.removeAt(index);
-                    });
-                  });
-                },
-                backgroundColor: context.colorScheme.alert,
-                foregroundColor: context.colorScheme.textPrimaryDark,
-                icon: Icons.delete_outline_rounded,
-                label: context.l10n.common_delete,
-              ),
+              _deleteSlideButton(context, thread.thread),
             ],
           ),
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
-              AppRoute.chat(spaceInfo: widget.spaceInfo, thread: thread).push(context);
+              AppRoute.chat(spaceInfo: widget.spaceInfo, thread: thread, threadMessage: threadMessages[index]).push(context);
             },
             child: Column(
               children: [
                 _threadItem(
                   context: context,
                   members: members,
-                  displayedMembers: displayedMembers,
-                  message: thread.threadMessage.isNotEmpty
-                      ? thread.threadMessage.first.message
-                      : '',
-                  date: date ?? DateTime.now(),
+                  displayedMembers: members.take(2).toList(),
+                  message: filteredMessages.isNotEmpty ? filteredMessages.first.message : '',
+                  date: filteredMessages.isNotEmpty ? filteredMessages.first.created_at : DateTime.now(),
                   hasUnreadMessage: hasUnreadMessage,
                 ),
-                if (!isLastItem) ...[
+                if (!(index == mutableThreads.length - 1)) ...[
                   _divider(context),
                 ],
               ],
@@ -145,6 +124,20 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _deleteSlideButton(BuildContext context, ApiThread thread) {
+    return SlidableAction(
+      onPressed: (context) {
+        _showDeleteConfirmation(() {
+          notifier.deleteThread(thread);
+        });
+      },
+      backgroundColor: context.colorScheme.alert,
+      foregroundColor: context.colorScheme.textPrimaryDark,
+      icon: Icons.delete_outline_rounded,
+      label: context.l10n.common_delete,
     );
   }
 
@@ -166,6 +159,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
           Expanded(child: _threadNamesAndMessage(context: context, members: members, displayedMembers: displayedMembers, message: message)),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 date.format(context, DateFormatType.pastTime),
@@ -173,17 +167,18 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
                   color: context.colorScheme.textDisabled,
                 ),
               ),
-              const SizedBox(height: 12),
-              if (hasUnreadMessage) ...[
-                Container(
+              SizedBox(height: hasUnreadMessage ? 12 : 0),
+              Visibility(
+                visible: hasUnreadMessage,
+                child: Container(
                   height: 8,
                   width: 8,
                   decoration: BoxDecoration(
                     color: context.colorScheme.positive,
                     borderRadius: BorderRadius.circular(4),
                   ),
-                )
-              ],
+                ),
+              )
             ],
           ),
         ],
