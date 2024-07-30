@@ -116,7 +116,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
       if (thread.id.isEmpty) return;
       state = state.copyWith(loading: true);
       final users = await messageService.getLatestMessageMember(thread);
-      state = state.copyWith(sender: users, loading: false, error: null;
+      state = state.copyWith(sender: users, loading: false, error: null);
     } catch (error, stack) {
       state = state.copyWith(loading: false, error: error);
       logger.e(
