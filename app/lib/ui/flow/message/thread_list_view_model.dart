@@ -58,7 +58,7 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
           return bTimestamp.compareTo(aTimestamp);
         });
 
-        state = state.copyWith(threadInfo: filteredThreads, loading: false);
+        state = state.copyWith(threadInfo: filteredThreads, loading: false, error: null);
         _listenLastMessage();
       });
     } catch (error, stack) {
@@ -104,7 +104,7 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
     try {
       state = state.copyWith(fetchingInviteCode: true);
       final code = await spaceService.getInviteCode(state.space?.space.id ?? '');
-      state = state.copyWith(spaceInvitationCode: code ?? '', fetchingInviteCode: false);
+      state = state.copyWith(spaceInvitationCode: code ?? '', fetchingInviteCode: false, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error);
       logger.e(
@@ -120,7 +120,7 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
       state = state.copyWith(deleting: true);
       _cancelSubscriptions();
       await messageService.deleteThread(thread, currentUser?.id ?? '');
-      state = state.copyWith(deleting: false);
+      state = state.copyWith(deleting: false, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error);
       logger.e(

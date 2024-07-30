@@ -43,6 +43,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         locationEnabled: currentUserInfo!.user.location_enabled ?? false,
         spaceName: TextEditingController(text: space?.space.name),
         loading: false,
+        error: null,
       );
     } catch (error, stack) {
       logger.e(
@@ -63,7 +64,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
       if (state.currentUserInfo!.user.location_enabled != state.locationEnabled) {
         await spaceService.enableLocation(state.space!.space.id, state.currentUserInfo!.user.id, state.locationEnabled);
       }
-      state = state.copyWith(saving: false, allowSave: false);
+      state = state.copyWith(saving: false, allowSave: false, error: null);
     } catch (error, stack) {
       logger.e(
         'EditSpaceViewNotifier: error while update space info',
@@ -78,7 +79,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
     try {
       state = state.copyWith(deleting: true);
       await spaceService.leaveSpace(state.space!.space.id);
-      state = state.copyWith(deleting: false, deleted: true);
+      state = state.copyWith(deleting: false, deleted: true, error: null);
     } catch (error, stack) {
       logger.e(
         'EditSpaceViewNotifier: error while leave space',
@@ -93,7 +94,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
     try {
       state = state.copyWith(deleting: true);
       await spaceService.deleteSpace(state.space!.space.id);
-      state = state.copyWith(deleting: false, deleted: true);
+      state = state.copyWith(deleting: false, deleted: true, error: null);
     } catch (error, stack) {
       logger.e(
         'EditSpaceViewNotifier: error while delete space',

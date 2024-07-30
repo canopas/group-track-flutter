@@ -49,7 +49,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
       state = state.copyWith(deletingAccount: true);
       await spaceService.deleteUserSpaces();
       await authService.deleteAccount(currentUserId: user?.id);
-      state = state.copyWith(deletingAccount: false, accountDeleted: true);
+      state = state.copyWith(deletingAccount: false, accountDeleted: true, error: null);
       locationManager.stopService();
     } catch (error, stack) {
       logger.e(
@@ -72,7 +72,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
       );
       state = state.copyWith(saving: true);
       authService.updateCurrentUser(newUser);
-      state = state.copyWith(saving: false, saved: true);
+      state = state.copyWith(saving: false, saved: true, error: null);
     } catch (error, stack) {
       logger.e(
         'EditProfileViewNotifier: error while update user profile',

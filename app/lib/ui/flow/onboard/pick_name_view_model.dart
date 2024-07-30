@@ -32,7 +32,7 @@ class PickNameStateNotifier extends StateNotifier<PickNameState> {
       state = state.copyWith(savingUser: true, error: null);
       final newUser = user.copyWith(first_name: state.firstName.text, last_name: state.lastName.text);
       _authService.updateCurrentUser(newUser);
-      state = state.copyWith(savingUser: false, saved: true);
+      state = state.copyWith(savingUser: false, saved: true, error: null);
     } catch (error, stack) {
       state = state.copyWith(savingUser: false, error: error);
       logger.e(
