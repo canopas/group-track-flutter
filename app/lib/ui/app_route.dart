@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
+import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_screen.dart';
@@ -50,6 +51,7 @@ class AppRoute {
   static const pathLocateOnMap = "/locate_on_map";
   static const pathChoosePlace = "/choose_place";
   static const pathEditPlace = "/edit_place";
+  static const pathJourneyTimeline = '/journey-timeline';
 
   final String path;
   final String? name;
@@ -229,6 +231,11 @@ class AppRoute {
     );
   }
 
+  static AppRoute journeyTimeline(ApiUser user) {
+    return AppRoute(pathJourneyTimeline,
+        builder: (_) => JourneyTimelineScreen(selectedUser: user));
+  }
+
   static AppRoute message(SpaceInfo space) {
     return AppRoute(
       pathMessage,
@@ -239,6 +246,7 @@ class AppRoute {
   static AppRoute chat({
     required SpaceInfo spaceInfo,
     ThreadInfo? thread,
+    List<ApiThreadMessage>? threadMessage,
     List<ThreadInfo>? threadInfoList,
   }) {
     return AppRoute(
@@ -246,6 +254,7 @@ class AppRoute {
       builder: (_) => ChatScreen(
         spaceInfo: spaceInfo,
         threadInfo: thread,
+        threadMessages: threadMessage,
         threadInfoList: threadInfoList,
       ),
     );
@@ -351,6 +360,10 @@ class AppRoute {
     ),
     GoRoute(
       path: pathEditPlace,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathJourneyTimeline,
       builder: (context, state) => state.widget(context),
     )
   ];

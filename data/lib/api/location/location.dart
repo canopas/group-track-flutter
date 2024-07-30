@@ -1,9 +1,13 @@
+//ignore_for_file: constant_identifier_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'location.freezed.dart';
 part 'location.g.dart';
+
+const USER_STATE_STEADY = 0;
+const USER_STATE_MOVING = 1;
 
 @freezed
 class ApiLocation with _$ApiLocation {

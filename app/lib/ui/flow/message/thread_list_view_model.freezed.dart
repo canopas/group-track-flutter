@@ -20,12 +20,13 @@ mixin _$ThreadListViewState {
   bool get isCreating => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
   bool get fetchingInviteCode => throw _privateConstructorUsedError;
+  bool get deleting => throw _privateConstructorUsedError;
   SpaceInfo? get space => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
   List<SpaceInfo> get spaceList => throw _privateConstructorUsedError;
   List<ThreadInfo> get threadInfo => throw _privateConstructorUsedError;
-  List<ApiThreadMessage> get threadMessages =>
+  List<List<ApiThreadMessage>> get threadMessages =>
       throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
@@ -45,12 +46,13 @@ abstract class $ThreadListViewStateCopyWith<$Res> {
       bool isCreating,
       bool loading,
       bool fetchingInviteCode,
+      bool deleting,
       SpaceInfo? space,
       String spaceInvitationCode,
       String message,
       List<SpaceInfo> spaceList,
       List<ThreadInfo> threadInfo,
-      List<ApiThreadMessage> threadMessages,
+      List<List<ApiThreadMessage>> threadMessages,
       Object? error});
 
   $SpaceInfoCopyWith<$Res>? get space;
@@ -73,6 +75,7 @@ class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
     Object? isCreating = null,
     Object? loading = null,
     Object? fetchingInviteCode = null,
+    Object? deleting = null,
     Object? space = freezed,
     Object? spaceInvitationCode = null,
     Object? message = null,
@@ -98,6 +101,10 @@ class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
           ? _value.fetchingInviteCode
           : fetchingInviteCode // ignore: cast_nullable_to_non_nullable
               as bool,
+      deleting: null == deleting
+          ? _value.deleting
+          : deleting // ignore: cast_nullable_to_non_nullable
+              as bool,
       space: freezed == space
           ? _value.space
           : space // ignore: cast_nullable_to_non_nullable
@@ -121,7 +128,7 @@ class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
       threadMessages: null == threadMessages
           ? _value.threadMessages
           : threadMessages // ignore: cast_nullable_to_non_nullable
-              as List<ApiThreadMessage>,
+              as List<List<ApiThreadMessage>>,
       error: freezed == error ? _value.error : error,
     ) as $Val);
   }
@@ -152,12 +159,13 @@ abstract class _$$ThreadListViewStateImplCopyWith<$Res>
       bool isCreating,
       bool loading,
       bool fetchingInviteCode,
+      bool deleting,
       SpaceInfo? space,
       String spaceInvitationCode,
       String message,
       List<SpaceInfo> spaceList,
       List<ThreadInfo> threadInfo,
-      List<ApiThreadMessage> threadMessages,
+      List<List<ApiThreadMessage>> threadMessages,
       Object? error});
 
   @override
@@ -179,6 +187,7 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
     Object? isCreating = null,
     Object? loading = null,
     Object? fetchingInviteCode = null,
+    Object? deleting = null,
     Object? space = freezed,
     Object? spaceInvitationCode = null,
     Object? message = null,
@@ -204,6 +213,10 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
           ? _value.fetchingInviteCode
           : fetchingInviteCode // ignore: cast_nullable_to_non_nullable
               as bool,
+      deleting: null == deleting
+          ? _value.deleting
+          : deleting // ignore: cast_nullable_to_non_nullable
+              as bool,
       space: freezed == space
           ? _value.space
           : space // ignore: cast_nullable_to_non_nullable
@@ -227,7 +240,7 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
       threadMessages: null == threadMessages
           ? _value._threadMessages
           : threadMessages // ignore: cast_nullable_to_non_nullable
-              as List<ApiThreadMessage>,
+              as List<List<ApiThreadMessage>>,
       error: freezed == error ? _value.error : error,
     ));
   }
@@ -241,12 +254,13 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
       this.isCreating = false,
       this.loading = false,
       this.fetchingInviteCode = false,
+      this.deleting = false,
       this.space,
       this.spaceInvitationCode = '',
       this.message = '',
       final List<SpaceInfo> spaceList = const [],
       final List<ThreadInfo> threadInfo = const [],
-      final List<ApiThreadMessage> threadMessages = const [],
+      final List<List<ApiThreadMessage>> threadMessages = const [],
       this.error})
       : _spaceList = spaceList,
         _threadInfo = threadInfo,
@@ -264,6 +278,9 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
   @override
   @JsonKey()
   final bool fetchingInviteCode;
+  @override
+  @JsonKey()
+  final bool deleting;
   @override
   final SpaceInfo? space;
   @override
@@ -290,10 +307,10 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
     return EqualUnmodifiableListView(_threadInfo);
   }
 
-  final List<ApiThreadMessage> _threadMessages;
+  final List<List<ApiThreadMessage>> _threadMessages;
   @override
   @JsonKey()
-  List<ApiThreadMessage> get threadMessages {
+  List<List<ApiThreadMessage>> get threadMessages {
     if (_threadMessages is EqualUnmodifiableListView) return _threadMessages;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_threadMessages);
@@ -304,7 +321,7 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
 
   @override
   String toString() {
-    return 'ThreadListViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, spaceList: $spaceList, threadInfo: $threadInfo, threadMessages: $threadMessages, error: $error)';
+    return 'ThreadListViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, deleting: $deleting, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, spaceList: $spaceList, threadInfo: $threadInfo, threadMessages: $threadMessages, error: $error)';
   }
 
   @override
@@ -319,6 +336,8 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.fetchingInviteCode, fetchingInviteCode) ||
                 other.fetchingInviteCode == fetchingInviteCode) &&
+            (identical(other.deleting, deleting) ||
+                other.deleting == deleting) &&
             (identical(other.space, space) || other.space == space) &&
             (identical(other.spaceInvitationCode, spaceInvitationCode) ||
                 other.spaceInvitationCode == spaceInvitationCode) &&
@@ -339,6 +358,7 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
       isCreating,
       loading,
       fetchingInviteCode,
+      deleting,
       space,
       spaceInvitationCode,
       message,
@@ -361,12 +381,13 @@ abstract class _ThreadListViewState implements ThreadListViewState {
       final bool isCreating,
       final bool loading,
       final bool fetchingInviteCode,
+      final bool deleting,
       final SpaceInfo? space,
       final String spaceInvitationCode,
       final String message,
       final List<SpaceInfo> spaceList,
       final List<ThreadInfo> threadInfo,
-      final List<ApiThreadMessage> threadMessages,
+      final List<List<ApiThreadMessage>> threadMessages,
       final Object? error}) = _$ThreadListViewStateImpl;
 
   @override
@@ -378,6 +399,8 @@ abstract class _ThreadListViewState implements ThreadListViewState {
   @override
   bool get fetchingInviteCode;
   @override
+  bool get deleting;
+  @override
   SpaceInfo? get space;
   @override
   String get spaceInvitationCode;
@@ -388,7 +411,7 @@ abstract class _ThreadListViewState implements ThreadListViewState {
   @override
   List<ThreadInfo> get threadInfo;
   @override
-  List<ApiThreadMessage> get threadMessages;
+  List<List<ApiThreadMessage>> get threadMessages;
   @override
   Object? get error;
   @override
