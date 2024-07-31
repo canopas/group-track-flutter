@@ -63,6 +63,7 @@ class NotificationHandler {
   }
 
   void init(BuildContext context) {
+    _requestPermissions();
     _initFcm(context);
     if (Platform.isAndroid) _initLocalNotifications(context);
   }
@@ -94,7 +95,7 @@ class NotificationHandler {
     // handle local notification tap
     _flutterNotificationPlugin.initialize(
         const InitializationSettings(
-          android: AndroidInitializationSettings('app_logo'),
+          android: AndroidInitializationSettings('app_icon'),
         ), onDidReceiveNotificationResponse: (response) {
       if (response.payload != null) {
         _onNotificationTap(context, jsonDecode(response.payload!));
@@ -114,6 +115,14 @@ class NotificationHandler {
     });
   }
 
+  void _requestPermissions() {
+    FirebaseMessaging.instance.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
   void showLocalNotification(RemoteMessage message) async {
     final data = message.data;
     final title = data['title'];
@@ -130,7 +139,7 @@ class NotificationHandler {
             android: AndroidNotificationDetails(
               _androidChannel.id,
               _androidChannel.name,
-              icon: 'app_logo',
+              icon: 'app_icon',
             ),
           ),
           payload: jsonEncode(data),
