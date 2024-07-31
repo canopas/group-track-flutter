@@ -28,6 +28,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late NotificationHandler notificationHandler;
 
   @override
+  Widget build(BuildContext context) {
+    notifier = ref.watch(homeViewStateProvider.notifier);
   void initState() {
     super.initState();
     runPostFrame(() {
@@ -51,7 +53,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppPage(
       body: ResumeDetector(
         onResume: () {
-          notifier.getAllSpace();
+          notifier.getAllSpaces();
           notifier.showBatteryOptimizationDialog();
           mapNotifier.checkUserPermission();
         },

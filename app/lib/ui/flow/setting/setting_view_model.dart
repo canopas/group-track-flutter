@@ -55,7 +55,7 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
       state = state.copyWith(loading: state.spaces.isEmpty);
       final spaces = await spaceService.getUserSpaces(state.currentUser?.id ?? '');
       final nonNullSpaces = spaces.where((space) => space != null).cast<ApiSpace>().toList();
-      state = state.copyWith(spaces: nonNullSpaces, loading: false);
+      state = state.copyWith(spaces: nonNullSpaces, loading: false, error: null);
     } catch (error, stack) {
       logger.e(
         'SettingViewNotifier: error while fetching user space',
@@ -71,7 +71,7 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
       state = state.copyWith(signingOut: true);
       cancelSubscriptions();
       await userService.signOut();
-      state = state.copyWith(signingOut: false, logOut: true);
+      state = state.copyWith(signingOut: false, logOut: true, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error, signingOut: false);
       logger.e(

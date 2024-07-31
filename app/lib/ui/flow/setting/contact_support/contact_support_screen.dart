@@ -47,8 +47,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
     return Stack(
       children: [
         ListView(
-          padding: const EdgeInsets.all(16) +
-              BottomStickyOverlay.padding,
+          padding: const EdgeInsets.all(16) + BottomStickyOverlay.padding,
           children: [
             AppTextField(
               controller: state.title,
@@ -134,7 +133,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
             child: AppProgressIndicator(size: AppProgressIndicatorSize.small),
           ),
         actionButton(
-          context,
+          context: context,
           onPressed: () => onCancelTap(),
           icon: Icon(
             Icons.cancel_rounded,
@@ -201,7 +200,8 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
   }
 
   void _observeError() {
-    ref.listen(contactSupportViewStateProvider.select((state) => state.error), (previous, next) {
+    ref.listen(contactSupportViewStateProvider.select((state) => state.error),
+        (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
       }

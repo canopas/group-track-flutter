@@ -24,13 +24,8 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
   late SignInMethodsScreenViewNotifier notifier;
 
   @override
-  void initState() {
-    notifier = ref.read(signInMethodsStateProvider.notifier);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    notifier = ref.watch(signInMethodsStateProvider.notifier);
     _listenSignInSuccess();
     _observeError();
 

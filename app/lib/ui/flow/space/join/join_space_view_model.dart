@@ -41,13 +41,13 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
       final userSpaces = authService.currentUser?.space_ids ?? [];
 
       if (userSpaces.contains(spaceId)) {
-        state = state.copyWith(verifying: false, alreadySpaceMember: true);
+        state = state.copyWith(verifying: false, alreadySpaceMember: true, error: null);
         return;
       }
 
       spaceService.joinSpace(spaceId);
       final space = await spaceService.getSpace(spaceId);
-      state = state.copyWith(verifying: false, space: space, spaceJoined: true);
+      state = state.copyWith(verifying: false, space: space, spaceJoined: true, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error, verifying: false);
       logger.e(

@@ -163,7 +163,7 @@ class __$$ApiLocationImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ApiLocationImpl extends _ApiLocation with DiagnosticableTreeMixin {
+class _$ApiLocationImpl extends _ApiLocation {
   const _$ApiLocationImpl(
       {required this.id,
       required this.user_id,
@@ -190,21 +190,8 @@ class _$ApiLocationImpl extends _ApiLocation with DiagnosticableTreeMixin {
   final int? created_at;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'ApiLocation(id: $id, user_id: $user_id, latitude: $latitude, longitude: $longitude, user_state: $user_state, created_at: $created_at)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'ApiLocation'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('user_id', user_id))
-      ..add(DiagnosticsProperty('latitude', latitude))
-      ..add(DiagnosticsProperty('longitude', longitude))
-      ..add(DiagnosticsProperty('user_state', user_state))
-      ..add(DiagnosticsProperty('created_at', created_at));
   }
 
   @override

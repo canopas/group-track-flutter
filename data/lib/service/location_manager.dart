@@ -23,12 +23,8 @@ class LocationManager {
   Future<Position?> getLastLocation() async {
     if (!await Geolocator.isLocationServiceEnabled()) return null;
 
-    if (await Permission.location.isDenied) {
-      await Permission.location.request();
-      if (await Permission.location.isDenied) {
-        return null;
-      }
-    }
+    if (await Permission.location.isDenied) return null;
+
     return await Geolocator.getCurrentPosition();
   }
 

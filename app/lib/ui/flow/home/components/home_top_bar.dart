@@ -279,6 +279,9 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
 
   Widget _spaceListItem(
       BuildContext context, SpaceInfo space, int index, bool isSelected) {
+    if (space.members.isEmpty) {
+      return const SizedBox();
+    }
     final admin = space.members
         .firstWhere(
           (member) => member.user.id == space.space.admin_id,

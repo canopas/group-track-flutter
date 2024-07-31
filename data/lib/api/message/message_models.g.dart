@@ -72,7 +72,7 @@ _$ThreadInfoImpl _$$ThreadInfoImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$ThreadInfoImplToJson(_$ThreadInfoImpl instance) =>
     <String, dynamic>{
-      'thread': instance.thread,
-      'threadMessage': instance.threadMessage,
-      'members': instance.members,
+      'thread': instance.thread.toJson(),
+      'threadMessage': instance.threadMessage.map((e) => e.toJson()).toList(),
+      'members': instance.members.map((e) => e.toJson()).toList(),
     };

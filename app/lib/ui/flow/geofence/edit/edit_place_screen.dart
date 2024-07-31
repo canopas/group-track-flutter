@@ -21,9 +21,10 @@ import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_view_model.da
 import 'package:yourspace_flutter/ui/flow/setting/profile/profile_view_model.dart';
 
 import '../../../../domain/extenstions/widget_extensions.dart';
+import '../../../components/alert.dart';
 import '../../../components/error_snakebar.dart';
 import '../../../components/user_profile_image.dart';
-import 'components/place_marker.dart';
+import '../add/components/place_marker.dart';
 
 const defaultCameraZoom = 15.5;
 
@@ -106,31 +107,38 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
     final place = state.updatedPlace;
     if (place == null) return Container();
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AspectRatio(
-            aspectRatio: 1.85,
-            child: _googleMapView(
-              place.latitude,
-              place.longitude,
-              state.isAdmin,
-              place.radius,
+    return Stack(children: [
+      SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AspectRatio(
+              aspectRatio: 1.85,
+              child: _googleMapView(
+                place.latitude,
+                place.longitude,
+                state.isAdmin,
+                place.radius,
+              ),
             ),
-          ),
-          Visibility(
-            visible: state.isAdmin,
-            child: _radiusSliderView(place.radius),
-          ),
-          _placeDetailView(place, state),
-          const SizedBox(height: 40),
-          _placeSettingView(state),
-          const SizedBox(height: 40),
-          _deletePlaceButton(state.isAdmin, state.deleting)
-        ],
+            Visibility(
+              visible: state.isAdmin,
+              child: _radiusSliderView(place.radius),
+            ),
+            _placeDetailView(place, state),
+            const SizedBox(height: 40),
+            _placeSettingView(state),
+            const SizedBox(height: 150),
+          ],
+        ),
       ),
-    );
+      Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: _deletePlaceButton(state.isAdmin, state.deleting),
+      ),
+    ]);
   }
 
   Widget _googleMapView(double lat, double lng, bool isAdmin, double radius) {
@@ -382,35 +390,46 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
               .copyWith(color: context.colorScheme.textDisabled),
         ),
         const SizedBox(width: 16),
-        Switch(value: enable, onChanged: onChanged)
+        Switch(
+          value: enable,
+          onChanged: onChanged,
+          activeTrackColor: context.colorScheme.primary,
+          inactiveTrackColor: context.colorScheme.containerHigh,
+          inactiveThumbColor: context.colorScheme.onPrimary,
+          trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+        )
       ],
     );
   }
 
   Widget _deletePlaceButton(bool isAdmin, bool isDeleting) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          bottom: context.mediaQueryPadding.bottom + 24,
-        ),
-        child: Column(
-          children: [
-            isAdmin
-                ? PrimaryButton(
-                    progress: isDeleting,
-                    context.l10n.edit_place_delete_place_btn_text,
-                    background: context.colorScheme.containerLow,
-                    foreground: context.colorScheme.alert,
-                    onPressed: notifier.onTapDeletePlaceBtn,
-                  )
-                : Text(
-                    context.l10n.edit_place_only_admin_edit_text,
-                    style: AppTextStyle.body2
-                        .copyWith(color: context.colorScheme.textSecondary),
-                  )
-          ],
+    return Container(
+      color: context.colorScheme.surface,
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: 8,
+            left: 16,
+            right: 16,
+            bottom: context.mediaQueryPadding.bottom + 16,
+          ),
+          child: Column(
+            children: [
+              isAdmin
+                  ? PrimaryButton(
+                      progress: isDeleting,
+                      context.l10n.edit_place_delete_place_btn_text,
+                      background: context.colorScheme.containerLow,
+                      foreground: context.colorScheme.alert,
+                      onPressed: notifier.onTapDeletePlaceBtn,
+                    )
+                  : Text(
+                      context.l10n.edit_place_only_admin_edit_text,
+                      style: AppTextStyle.body2
+                          .copyWith(color: context.colorScheme.textSecondary),
+                    )
+            ],
+          ),
         ),
       ),
     );
@@ -484,38 +503,13 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
         editPlaceViewStateProvider.select((state) => state.showDeleteDialog),
         (_, next) {
       if (next != null) {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                content: Text(
-                  context.l10n.edit_place_delete_dialog_sub_title_text,
-                ),
-                actions: [
-                  TextButton(
-                    child: Text(
-                      context.l10n.common_cancel,
-                      style: AppTextStyle.button
-                          .copyWith(color: context.colorScheme.textSecondary),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: Text(
-                      context.l10n.common_delete,
-                      style: AppTextStyle.button
-                          .copyWith(color: context.colorScheme.alert),
-                    ),
-                    onPressed: () {
-                      notifier.onPlaceDelete();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            });
+        showConfirmation(
+          context,
+          message: context.l10n.edit_place_delete_dialog_sub_title_text,
+          confirmBtnText: context.l10n.common_delete,
+          cancelButtonText: context.l10n.common_cancel,
+          onConfirm: () => notifier.onPlaceDelete(),
+        );
       }
     });
   }

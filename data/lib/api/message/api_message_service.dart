@@ -58,7 +58,7 @@ class ApiMessageService {
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
 
-  Stream<List<ApiThreadMessage>> getLatestMessages(String threadId, {int limit = 20}) {
+  Stream<List<ApiThreadMessage>> streamLatestMessages(String threadId, {int limit = 20}) {
     return threadMessageRef(threadId)
         .orderBy("created_at", descending: true)
         .limit(limit)
@@ -66,7 +66,15 @@ class ApiMessageService {
         .map((snapshot) => snapshot.docs.map((doc) => ApiThreadMessage.fromJson(doc.data() as Map<String, dynamic>)).toList());
   }
 
-  Stream<List<ApiUserInfo>> getLatestMessagesMembers(ApiThread thread) async* {
+  Future<List<ApiThreadMessage>> getLatestMessages(String threadId, {int limit = 20}) async {
+    final snapshot = await threadMessageRef(threadId)
+        .orderBy("created_at", descending: true)
+        .limit(limit)
+        .get();
+    return snapshot.docs.map((doc) => ApiThreadMessage.fromJson(doc.data() as Map<String, dynamic>)).toList();
+  }
+
+  Future<List<ApiUserInfo>> getLatestMessagesMembers(ApiThread thread) async {
     final List<ApiUserInfo?> memberInfoList = [];
     for (String memberId in thread.member_ids) {
       final member = await userService.getUser(memberId);
@@ -75,7 +83,7 @@ class ApiMessageService {
     }
     final List<ApiUserInfo> filteredMemberInfoList = memberInfoList.where((info) => info != null).cast<ApiUserInfo>().toList();
 
-    yield filteredMemberInfoList;
+    return filteredMemberInfoList;
   }
 
   Future<List<ApiThreadMessage>> getMessages(String threadId, DateTime? from, {int limit = 20}) async {
@@ -124,17 +132,11 @@ class ApiMessageService {
     await batch.commit();
   }
 
-  Stream<List<ThreadInfo>> getThreadsWithLatestMessage(String spaceId, String userId) {
+  Stream<List<ThreadInfo>> getThreadsWithMembers(String spaceId, String userId) {
     return getThreads(spaceId, userId).asyncExpand((threads) {
       if (threads.isEmpty) return Stream.value([]);
 
       final futures = threads.map((thread) async {
-        final List<ApiThreadMessage> messages = [];
-
-        getLatestMessages(thread.id, limit: 20).listen((messageList) {
-          messages.addAll(messageList);
-        });
-
         final List<ApiUserInfo?> memberInfoList = [];
         for (String memberId in thread.member_ids) {
           final user = await userService.getUser(memberId);
@@ -146,7 +148,7 @@ class ApiMessageService {
 
         return ThreadInfo(
           thread: thread,
-          threadMessage: messages,
+          threadMessage: [],
           members: filteredMemberInfoList,
         );
       }).toList();
