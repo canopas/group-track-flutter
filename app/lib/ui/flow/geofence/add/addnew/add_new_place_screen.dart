@@ -45,6 +45,7 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
 
     return Padding(
       padding: EdgeInsets.only(
+        top: 16,
         left: 16,
         right: 16,
         bottom: context.mediaQueryPadding.bottom,
@@ -54,15 +55,17 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _searchTextField(),
-            const SizedBox(height: 40),
+            const SizedBox(height: 56),
             _locateOnMapView(),
             const SizedBox(height: 40),
-            Text(
-              context.l10n.add_new_place_suggestion_text,
-              style: AppTextStyle.caption.copyWith(
-                color: context.colorScheme.textDisabled,
+            if (state.places.isNotEmpty || state.loading) ...[
+              Text(
+                context.l10n.add_new_place_suggestion_text,
+                style: AppTextStyle.caption.copyWith(
+                  color: context.colorScheme.textDisabled,
+                ),
               ),
-            ),
+            ],
             const SizedBox(height: 16),
             ...state.places.map((place) {
               final isLast =
@@ -70,7 +73,9 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
               return _suggestedPlaceItemView(place, isLast);
             }),
             const SizedBox(height: 24),
-            state.loading ? const AppProgressIndicator() : Container(),
+            state.loading
+                ? const Center(child: AppProgressIndicator())
+                : Container(),
           ],
         ),
       ),
@@ -111,7 +116,7 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
   Widget _locateOnMapView() {
     return OnTapScale(
       onTap: () {
-        AppRoute.locateOnMapScreen(widget.spaceId).push(context);
+        AppRoute.locateOnMapScreen(spaceId: widget.spaceId).push(context);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

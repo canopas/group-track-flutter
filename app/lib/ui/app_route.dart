@@ -204,7 +204,10 @@ class AppRoute {
     );
   }
 
-  static AppRoute locateOnMapScreen(String spaceId) {
+  static AppRoute locateOnMapScreen({
+    required String spaceId,
+    String? placesName,
+  }) {
     return AppRoute(pathLocateOnMap,
         builder: (_) => LocateOnMapScreen(spaceId: spaceId));
   }
