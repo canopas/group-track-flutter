@@ -19,7 +19,7 @@
             android:value="notification_channel_your_space_regional" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_launcher-playstore" />
+            android:resource="@drawable/app_icon" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/ic_launcher_background" />
