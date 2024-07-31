@@ -42,35 +42,37 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
-        <string>We need your location to provide better services.</string>
-        <key>NSLocationAlwaysUsageDescription</key>
-        <string>We need your location to provide background services.</string>
-        <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-        <string>We need your location to provide services when the app is both in use and in the background.</string>
-        <key>UIBackgroundModes</key>
-        <array>
-            <string>location</string>
-            <string>fetch</string>
-            <string>processing</string>
-        </array>
+	<string>We need your location to provide better services.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to provide background services.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need your location to provide services when the app is both in use and in the background.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>fetch</string>
+		<string>processing</string>
+	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>CFBundleURLTypes</key>
-    <array>
-      <dict>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <string>com.googleusercontent.apps.406838982484-to095m87ai3cv8nqi86rbjjusdd7sagh</string>
-        </array>
-      </dict>
-    </array>
-    <key>NSPhotoLibraryUsageDescription</key>
-   	<string>App requires permission to access photos</string>
-   	<key>NSCameraUsageDescription</key>
-   	<string>App requires permission to access camera</string>
-   	<key>ApiMapKey</key>
-    <string>YOUR MAP API KEY</string>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.406838982484-to095m87ai3cv8nqi86rbjjusdd7sagh</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>Notification permission required here to get notified</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>App requires permission to access photos</string>
+	<key>NSCameraUsageDescription</key>
+	<string>App requires permission to access camera</string>
+	<key>ApiMapKey</key>
+	<string>YOUR MAP API KEY</string>
 </dict>
 </plist>

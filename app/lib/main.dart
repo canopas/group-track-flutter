@@ -28,6 +28,11 @@ void main() async {
   final container = await _initContainer();
   final userId = await _getUserIdFromPreferences();
   final isLocationPermission = await Permission.location.isGranted;
+  await Permission.notification.isDenied.then((value) {
+    if (value) {
+      Permission.notification.request();
+    }
+  });
   if (userId != null && isLocationPermission) {
     startService(userId);
   }

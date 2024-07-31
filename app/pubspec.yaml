@@ -70,6 +70,8 @@ dependencies:
   firebase_auth: ^4.20.0
   firebase_core: ^2.23.0
   firebase_storage: ^11.7.7
+  firebase_messaging: ^14.9.4
+  flutter_local_notifications: ^17.1.2
   cloud_firestore: ^4.15.5
   google_sign_in: ^6.1.6
   logger: ^2.3.0

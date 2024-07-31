@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
+import 'package:yourspace_flutter/domain/fcm/notification_handler.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
@@ -24,12 +25,15 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late HomeViewNotifier notifier;
   late MapViewNotifier mapNotifier;
+  late NotificationHandler notificationHandler;
 
   @override
   void initState() {
     super.initState();
     runPostFrame(() {
       notifier = ref.watch(homeViewStateProvider.notifier);
+      notificationHandler = ref.read(notificationHandlerProvider);
+      notificationHandler.init(context);
       notifier.getAllSpace();
     });
   }

@@ -12,6 +12,18 @@
         android:label="Your space"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <!-- Firebase Notification -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="notification_channel_your_space_regional" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_launcher-playstore" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/ic_launcher_background" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
