@@ -38,6 +38,8 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   final PermissionService permissionService;
   final LocationManager locationManager;
 
+  LatLng? _userLocation;
+
   MapViewNotifier(
     this._currentUser,
     this.spaceService,
@@ -102,11 +104,12 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   void _userMapPositions(List<ApiUserInfo> userInfo) async {
     final List<UserMarker> markers = [];
     for (final info in userInfo) {
-      if (info.user.id == _currentUser?.id && state.defaultPosition == null) {
+      if (info.user.id == _currentUser?.id && _userLocation == null) {
         final latLng = LatLng(
           info.location?.latitude ?? 0.0,
           info.location?.longitude ?? 0.0,
         );
+        _userLocation = latLng;
         _mapCameraPosition(latLng, defaultCameraZoom);
       }
 

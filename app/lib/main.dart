@@ -28,11 +28,8 @@ void main() async {
   }
 
   final container = await _initContainer();
-  final userId = await _getUserIdFromPreferences();
-  final isLocationPermission = await Permission.location.isGranted;
-  if (userId != null && isLocationPermission) {
-    startService(userId);
-  }
+
+  startService();
 
   runApp(
     UncontrolledProviderScope(container: container, child: const App()),
@@ -62,25 +59,33 @@ Future<String?> _getUserIdFromPreferences() async {
   return null;
 }
 
-void startService(String userId) async {
-  final service = FlutterBackgroundService();
-  await service.configure(
+void startService() async {
+  await bgService.configure(
     androidConfiguration: AndroidConfiguration(
       onStart: onStart,
-      autoStart: true,
+      autoStart: false,
       isForegroundMode: true,
     ),
     iosConfiguration: IosConfiguration(
-      autoStart: true,
+      autoStart: false,
       onForeground: onStart,
       onBackground: onIosBackground,
     ),
   );
-  service.startService();
+
+  final isLocationPermission = await Permission.location.isGranted;
+  if (isLocationPermission) {
+    bgService.startService();
+  }
 }
+
+StreamSubscription<Position>? positionSubscription;
+Timer? timer;
 
 Future<void> onStart(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
+  final isLocationPermission = await Permission.location.isGranted;
+  if (!isLocationPermission) return;
 
   if (service is AndroidServiceInstance) {
     service.setForegroundNotificationInfo(
@@ -100,6 +105,8 @@ Future<void> onStart(ServiceInstance service) async {
   }
 
   service.on('stopService').listen((event) {
+    timer?.cancel();
+    positionSubscription?.cancel();
     service.stopSelf();
   });
 }
@@ -109,15 +116,14 @@ void _startLocationUpdates(
   LocationService locationService,
   JourneyRepository journeyRepository,
 ) {
-  Timer? timer;
-  Geolocator.getPositionStream(
+  positionSubscription = Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.high,
       distanceFilter: LOCATION_UPDATE_DISTANCE,
     ),
   ).listen((position) {
     timer?.cancel();
-    timer = Timer(const Duration(milliseconds: 5000), () async {
+    timer = Timer(const Duration(seconds: 5), () async {
       try {
         final userState =
             await journeyRepository.getUserState(userId, position);

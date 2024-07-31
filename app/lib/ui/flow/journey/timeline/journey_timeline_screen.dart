@@ -79,7 +79,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                     .copyWith(color: context.colorScheme.textPrimary),
               ),
               actionButton(
-                context,
+                context: context,
                 onPressed: () => notifier.showDatePicker(true),
                 icon: SvgPicture.asset(
                   Assets.images.icTimelineFilterIcon,
@@ -390,28 +390,31 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Widget _appPlaceButton() {
-    return Container(
-      width: 136,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: context.colorScheme.containerLow),
-      child: Row(
-        children: [
-          SvgPicture.asset(
-            Assets.images.icGeofenceIcon,
-            colorFilter: ColorFilter.mode(
-                context.colorScheme.primary, BlendMode.srcATop),
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: context.colorScheme.containerLow),
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                Assets.images.icGeofenceIcon,
+                colorFilter: ColorFilter.mode(
+                    context.colorScheme.primary, BlendMode.srcATop),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                context.l10n.journey_timeline_add_place_btn_text,
+                style: AppTextStyle.button.copyWith(
+                  color: context.colorScheme.primary,
+                ),
+              )
+            ],
           ),
-          const SizedBox(width: 8),
-          Text(
-            context.l10n.journey_timeline_add_place_btn_text,
-            style: AppTextStyle.button.copyWith(
-              color: context.colorScheme.primary,
-            ),
-          )
-        ],
-      ),
+        ),
+      ],
     );
   }
 
