@@ -33,43 +33,57 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this.permissionService,
     this._lastBatteryDialogDate,
     this._currentUser,
-  ) : super(const HomeViewState());
+  ) : super(const HomeViewState()) {
+    getAllSpaces();
+  }
 
   String? get currentSpaceId => _currentSpaceIdController.state;
 
-  set currentSpaceId(String? value) {
-    _currentSpaceIdController.state = value;
-  }
-
-  void getAllSpace() async {
+  void listenSpaceMember() async {
     if (state.loading) return;
     try {
       state = state.copyWith(loading: state.spaceList.isEmpty);
-      final spaces = await spaceService.getAllSpaceInfo();
+      spaceService.streamSpaceMember().listen((spaces) {
+        final sortedSpaces = spaces.toList();
+        if ((currentSpaceId?.isNotEmpty ?? false) && spaces.isNotEmpty) {
+          final selectedSpaceIndex = sortedSpaces
+              .indexWhere((space) => space.space.id == currentSpaceId);
+          if (selectedSpaceIndex > -1) {
+            final selectedSpace = sortedSpaces.removeAt(selectedSpaceIndex);
+            sortedSpaces.insert(0, selectedSpace);
+            updateSelectedSpace(selectedSpace);
+          }
+        }
+        if (spaces.isEmpty) {
+          state = state.copyWith(loading: false, spaceList: [], error: null);
+        }
+        state = state.copyWith(loading: false, spaceList: sortedSpaces, error: null);
 
-      final sortedSpaces = spaces.toList();
-
-      if (currentSpaceId?.isNotEmpty ?? false) {
-        final selectedSpaceIndex = sortedSpaces
-            .indexWhere((space) => space.space.id == currentSpaceId);
-        if (selectedSpaceIndex > -1) {
-          final selectedSpace = sortedSpaces.removeAt(selectedSpaceIndex);
-          sortedSpaces.insert(0, selectedSpace);
+        if ((currentSpaceId?.isEmpty ?? false) && sortedSpaces.isNotEmpty) {
+          final selectedSpace = sortedSpaces.first;
+          _currentSpaceIdController.state = selectedSpace.space.id;
           updateSelectedSpace(selectedSpace);
         }
-      }
-
-      state = state.copyWith(loading: false, spaceList: sortedSpaces, error: null);
-
-      if ((currentSpaceId?.isEmpty ?? false) && sortedSpaces.isNotEmpty) {
-        final selectedSpace = sortedSpaces.first;
-        currentSpaceId = selectedSpace.space.id;
-        updateSelectedSpace(selectedSpace);
-      }
+      });
     } catch (error, stack) {
       state = state.copyWith(error: error, loading: false);
       logger.e(
         'HomeViewNotifier: error while getting all spaces',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  void getAllSpaces() async {
+    try {
+      state = state.copyWith(loading: state.spaceList.isEmpty);
+      final spaces = await spaceService.getAllSpaceInfo();
+      state = state.copyWith(spaceList: spaces, loading: false);
+      listenSpaceMember();
+    } catch (error, stack) {
+      logger.e(
+        'HomeViewNotifier: error while load user spaces',
         error: error,
         stackTrace: stack,
       );
@@ -101,7 +115,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
         selectedSpace: space,
         locationEnabled: member.isLocationEnabled,
       );
-      currentSpaceId = space.space.id;
+      _currentSpaceIdController.state = space.space.id;
     }
   }
 
