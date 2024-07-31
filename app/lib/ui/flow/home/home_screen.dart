@@ -28,15 +28,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late NotificationHandler notificationHandler;
 
   @override
-  Widget build(BuildContext context) {
-    notifier = ref.watch(homeViewStateProvider.notifier);
   void initState() {
     super.initState();
     runPostFrame(() {
       notifier = ref.watch(homeViewStateProvider.notifier);
       notificationHandler = ref.read(notificationHandlerProvider);
       notificationHandler.init(context);
-      notifier.getAllSpace();
+      notifier.getAllSpaces();
     });
   }
 
