@@ -43,8 +43,10 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
       state = state.copyWith(
         addressFrom: fromPlaceMarks,
         addressTo: toPlaceMarks,
+        error: null,
       );
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e(
         'UserJourneyDetailViewModel: error while getting address',
         error: error,

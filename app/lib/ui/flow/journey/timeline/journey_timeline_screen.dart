@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/button/action_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
@@ -361,13 +360,11 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
 
     if (createdAtDate.isToday) {
-      final dataFormat = DateFormat('hh:mm a');
-      return context.l10n
-          .journey_timeline_Since_text(dataFormat.format(createdAtDate));
+      final time = createdAtDate.format(context, DateFormatType.time);
+      return context.l10n.journey_timeline_Since_text(time);
     } else {
-      final dataFormat = DateFormat('dd MMMM hh:mm a');
-      return context.l10n
-          .journey_timeline_Since_text(dataFormat.format(createdAtDate));
+      final dayTime = createdAtDate.format(context, DateFormatType.dayTime);
+      return context.l10n.journey_timeline_Since_text(dayTime);
     }
   }
 
@@ -380,14 +377,13 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     DateTime startAtDate = DateTime.fromMillisecondsSinceEpoch(startAt);
     DateTime endAtDate = DateTime.fromMillisecondsSinceEpoch(endAt);
 
-    final inputFormat = DateFormat('hh:mm a');
-    final dateFormat = DateFormat('d MMMM');
+    final endTime = endAtDate.format(context, DateFormatType.time);
 
-    final formattedStartDate = dateFormat.format(startAtDate);
-    final formattedEndDate = dateFormat.format(endAtDate);
+    final startDate = startAtDate.format(context, DateFormatType.shortDayMonth);
+    final endDate = endAtDate.format(context, DateFormatType.shortDayMonth);
 
-    if (formattedStartDate == formattedEndDate) {
-      return '${_getFormattedLocationTime(startAt)} - ${inputFormat.format(endAtDate)}';
+    if (startDate == endDate) {
+      return '${_getFormattedLocationTime(startAt)} - $endTime';
     } else {
       return '${_getFormattedLocationTime(startAt)} - ${_getFormattedLocationTime(endAt)}';
     }
@@ -397,12 +393,10 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
 
     if (createdAtDate.isToday) {
-      final dataFormat = DateFormat('hh:mm a');
-      return context.l10n
-          .journey_timeline_today_text(dataFormat.format(createdAtDate));
+      final time = createdAtDate.format(context, DateFormatType.time);
+      return context.l10n.journey_timeline_today_text(time);
     } else {
-      final dataFormat = DateFormat('dd MMMM hh:mm a');
-      return dataFormat.format(createdAtDate);
+      return createdAtDate.format(context, DateFormatType.dayTime);
     }
   }
 
@@ -492,7 +486,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   String _onSelectDatePickerDate(int? timestamp) {
     if (timestamp == null) return '';
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    final date = DateFormat('dd MMMM').format(dateTime);
+    final date = dateTime.format(context, DateFormatType.dayMonthFull);
     return date.toString();
   }
 

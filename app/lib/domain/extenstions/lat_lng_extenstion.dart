@@ -24,8 +24,12 @@ extension LatLngExtensions on LatLng {
 
         return address;
       }
-    } catch (e) {
-      logger.e('GetAddress: Error while getting address', error: e);
+    } catch (error, stack) {
+      logger.e(
+        'GetAddress: Error while getting address',
+        error: error,
+        stackTrace: stack,
+      );
     }
     return '';
   }

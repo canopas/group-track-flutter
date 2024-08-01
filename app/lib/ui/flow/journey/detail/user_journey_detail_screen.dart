@@ -6,10 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/journey/components/journey_map.dart';
@@ -221,8 +221,7 @@ class _UserJourneyDetailScreenState
 
   String _getDateAndTime(int createdAt) {
     DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
-    final dataFormat = DateFormat('dd MMMM hh:mm a');
-    return dataFormat.format(createdAtDate);
+    return createdAtDate.format(context, DateFormatType.dayTime);
   }
 
   void _observeError() {
