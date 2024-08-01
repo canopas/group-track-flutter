@@ -47,7 +47,9 @@ class SignInMethodsScreenViewNotifier
         state = state.copyWith(
             showGoogleLoading: false,
             socialSignInCompleted: true,
-            isNewUser: isNewUser);
+            isNewUser: isNewUser,
+            error: null,
+        );
       } else {
         state = state.copyWith(showGoogleLoading: false);
       }
@@ -62,7 +64,7 @@ class SignInMethodsScreenViewNotifier
   }
 
   Future<(UserCredential?, GoogleSignInAccount?)>
-  _getUserCredentialFromGoogle() async {
+      _getUserCredentialFromGoogle() async {
     final signInAccount = await googleSignIn.signIn();
     if (signInAccount != null) {
       final signInAuthentication = await signInAccount.authentication;

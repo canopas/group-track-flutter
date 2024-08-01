@@ -5,16 +5,19 @@ import 'package:flutter/material.dart';
 
 import '../indicator/progress_indicator.dart';
 
-Widget actionButton(
-    BuildContext context, {
-      required void Function() onPressed,
-      required Widget icon,
-      bool progress = false,
-      EdgeInsets padding = EdgeInsets.zero,
-    }) {
+Widget actionButton({
+  required BuildContext context,
+  required void Function() onPressed,
+  required Widget icon,
+  bool progress = false,
+  bool enabled = true,
+  EdgeInsets padding = EdgeInsets.zero,
+}) {
+  final tappable = !progress && enabled;
+
   if (Platform.isIOS) {
     return CupertinoButton(
-      onPressed: onPressed,
+      onPressed: tappable ? onPressed : null,
       padding: padding,
       child: progress
           ? const AppProgressIndicator(size: AppProgressIndicatorSize.small)
@@ -22,7 +25,7 @@ Widget actionButton(
     );
   } else {
     return IconButton(
-      onPressed: onPressed,
+      onPressed: tappable ? onPressed : null,
       icon: progress
           ? const AppProgressIndicator(size: AppProgressIndicatorSize.small)
           : icon,

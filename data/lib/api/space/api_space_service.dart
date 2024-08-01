@@ -102,6 +102,18 @@ class ApiSpaceService {
         .toList();
   }
 
+  Stream<List<ApiSpaceMember>> streamSpaceMemberByUserId(String userId) {
+    return _spaceRef.firestore
+        .collectionGroup('space_members')
+        .where('user_id', isEqualTo: userId)
+        .snapshots()
+        .map((querySnapshot) {
+      return querySnapshot.docs
+          .map((doc) => ApiSpaceMember.fromJson(doc.data()))
+          .toList();
+    });
+  }
+
   Future<void> enableLocation(
       String spaceId, String userId, bool enable) async {
     final querySnapshot =

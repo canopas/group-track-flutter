@@ -24,6 +24,8 @@ mixin _$SignInWithPhoneState {
   Object? get error => throw _privateConstructorUsedError;
   bool get isNewUser => throw _privateConstructorUsedError;
   String get phone => throw _privateConstructorUsedError;
+  TextEditingController get phoneController =>
+      throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $SignInWithPhoneStateCopyWith<SignInWithPhoneState> get copyWith =>
@@ -44,7 +46,8 @@ abstract class $SignInWithPhoneStateCopyWith<$Res> {
       bool enableNext,
       Object? error,
       bool isNewUser,
-      String phone});
+      String phone,
+      TextEditingController phoneController});
 }
 
 /// @nodoc
@@ -69,6 +72,7 @@ class _$SignInWithPhoneStateCopyWithImpl<$Res,
     Object? error = freezed,
     Object? isNewUser = null,
     Object? phone = null,
+    Object? phoneController = null,
   }) {
     return _then(_value.copyWith(
       code: null == code
@@ -100,6 +104,10 @@ class _$SignInWithPhoneStateCopyWithImpl<$Res,
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as String,
+      phoneController: null == phoneController
+          ? _value.phoneController
+          : phoneController // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
     ) as $Val);
   }
 }
@@ -120,7 +128,8 @@ abstract class _$$SignInWithPhoneStateImplCopyWith<$Res>
       bool enableNext,
       Object? error,
       bool isNewUser,
-      String phone});
+      String phone,
+      TextEditingController phoneController});
 }
 
 /// @nodoc
@@ -142,6 +151,7 @@ class __$$SignInWithPhoneStateImplCopyWithImpl<$Res>
     Object? error = freezed,
     Object? isNewUser = null,
     Object? phone = null,
+    Object? phoneController = null,
   }) {
     return _then(_$SignInWithPhoneStateImpl(
       code: null == code
@@ -173,6 +183,10 @@ class __$$SignInWithPhoneStateImplCopyWithImpl<$Res>
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as String,
+      phoneController: null == phoneController
+          ? _value.phoneController
+          : phoneController // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
     ));
   }
 }
@@ -188,7 +202,8 @@ class _$SignInWithPhoneStateImpl implements _SignInWithPhoneState {
       this.enableNext = false,
       this.error,
       this.isNewUser = false,
-      this.phone = ''});
+      this.phone = '',
+      required this.phoneController});
 
   @override
   final CountryCode code;
@@ -211,10 +226,12 @@ class _$SignInWithPhoneStateImpl implements _SignInWithPhoneState {
   @override
   @JsonKey()
   final String phone;
+  @override
+  final TextEditingController phoneController;
 
   @override
   String toString() {
-    return 'SignInWithPhoneState(code: $code, verifying: $verifying, signInSuccess: $signInSuccess, verificationId: $verificationId, enableNext: $enableNext, error: $error, isNewUser: $isNewUser, phone: $phone)';
+    return 'SignInWithPhoneState(code: $code, verifying: $verifying, signInSuccess: $signInSuccess, verificationId: $verificationId, enableNext: $enableNext, error: $error, isNewUser: $isNewUser, phone: $phone, phoneController: $phoneController)';
   }
 
   @override
@@ -234,7 +251,9 @@ class _$SignInWithPhoneStateImpl implements _SignInWithPhoneState {
             const DeepCollectionEquality().equals(other.error, error) &&
             (identical(other.isNewUser, isNewUser) ||
                 other.isNewUser == isNewUser) &&
-            (identical(other.phone, phone) || other.phone == phone));
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.phoneController, phoneController) ||
+                other.phoneController == phoneController));
   }
 
   @override
@@ -247,7 +266,8 @@ class _$SignInWithPhoneStateImpl implements _SignInWithPhoneState {
       enableNext,
       const DeepCollectionEquality().hash(error),
       isNewUser,
-      phone);
+      phone,
+      phoneController);
 
   @JsonKey(ignore: true)
   @override
@@ -260,14 +280,16 @@ class _$SignInWithPhoneStateImpl implements _SignInWithPhoneState {
 
 abstract class _SignInWithPhoneState implements SignInWithPhoneState {
   const factory _SignInWithPhoneState(
-      {required final CountryCode code,
-      final bool verifying,
-      final bool signInSuccess,
-      final String? verificationId,
-      final bool enableNext,
-      final Object? error,
-      final bool isNewUser,
-      final String phone}) = _$SignInWithPhoneStateImpl;
+          {required final CountryCode code,
+          final bool verifying,
+          final bool signInSuccess,
+          final String? verificationId,
+          final bool enableNext,
+          final Object? error,
+          final bool isNewUser,
+          final String phone,
+          required final TextEditingController phoneController}) =
+      _$SignInWithPhoneStateImpl;
 
   @override
   CountryCode get code;
@@ -285,6 +307,8 @@ abstract class _SignInWithPhoneState implements SignInWithPhoneState {
   bool get isNewUser;
   @override
   String get phone;
+  @override
+  TextEditingController get phoneController;
   @override
   @JsonKey(ignore: true)
   _$$SignInWithPhoneStateImplCopyWith<_$SignInWithPhoneStateImpl>

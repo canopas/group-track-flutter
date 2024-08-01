@@ -39,7 +39,10 @@ class AddNewPlaceViewNotifier extends StateNotifier<AddNewPlaceState> {
   }
 
   void fidePlace(String value) async {
-    if (value.isEmpty) return;
+    if (value.isEmpty) {
+      state = state.copyWith(places: []);
+      return;
+    }
     try {
       state = state.copyWith(loading: true);
       final position = await locationManager.getLastLocation();
@@ -54,7 +57,7 @@ class AddNewPlaceViewNotifier extends StateNotifier<AddNewPlaceState> {
         _position?.latitude,
         _position?.longitude,
       );
-      state = state.copyWith(places: places, loading: false);
+      state = state.copyWith(places: places, loading: false, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error, loading: false);
       logger.e(

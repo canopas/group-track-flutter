@@ -207,7 +207,10 @@ class AppRoute {
     );
   }
 
-  static AppRoute locateOnMapScreen(String spaceId) {
+  static AppRoute locateOnMapScreen({
+    required String spaceId,
+    String? placesName,
+  }) {
     return AppRoute(pathLocateOnMap,
         builder: (_) => LocateOnMapScreen(spaceId: spaceId));
   }
@@ -256,6 +259,7 @@ class AppRoute {
   static AppRoute chat({
     required SpaceInfo spaceInfo,
     ThreadInfo? thread,
+    List<ApiThreadMessage>? threadMessage,
     List<ThreadInfo>? threadInfoList,
   }) {
     return AppRoute(
@@ -263,6 +267,7 @@ class AppRoute {
       builder: (_) => ChatScreen(
         spaceInfo: spaceInfo,
         threadInfo: thread,
+        threadMessages: threadMessage,
         threadInfoList: threadInfoList,
       ),
     );

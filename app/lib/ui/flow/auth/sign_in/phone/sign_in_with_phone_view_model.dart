@@ -27,6 +27,7 @@ class SignInWithPhoneViewNotifier extends StateNotifier<SignInWithPhoneState> {
               countryAlpha2Code:
                   WidgetsBinding.instance.platformDispatcher.locale.countryCode,
             ),
+            phoneController: TextEditingController(),
           ),
         );
 
@@ -34,11 +35,11 @@ class SignInWithPhoneViewNotifier extends StateNotifier<SignInWithPhoneState> {
     state = state.copyWith(code: code, error: null);
   }
 
-  void onPhoneChange(String phone) {
+  void onPhoneChange(String phoneNumber) {
     state = state.copyWith(
       error: null,
-      phone: phone.trim(),
-      enableNext: phone.length > 3,
+      phone: phoneNumber.trim(),
+      enableNext: phoneNumber.length > 3,
     );
   }
 
@@ -86,5 +87,6 @@ class SignInWithPhoneState with _$SignInWithPhoneState {
     Object? error,
     @Default(false) bool isNewUser,
     @Default('') String phone,
+    required TextEditingController phoneController,
   }) = _SignInWithPhoneState;
 }

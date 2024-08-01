@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/message/api_message_service.dart';
 import 'package:data/api/message/message_models.dart';
@@ -25,35 +27,84 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   final SpaceService spaceService;
   final ApiMessageService messageService;
   final ApiUser? currentUser;
+  final List<StreamSubscription<List<ApiThreadMessage>>> _userSubscriptions =
+      [];
 
-  ThreadListViewNotifier(this.spaceId, this.spaceService, this.messageService, this.currentUser) : super(const ThreadListViewState());
+  ThreadListViewNotifier(
+      this.spaceId, this.spaceService, this.messageService, this.currentUser)
+      : super(const ThreadListViewState());
 
   void setSpace(SpaceInfo space) {
     state = state.copyWith(space: space);
     listenThreads(space.space.id);
+    if (state.threadMessages.isEmpty) {
+      _listenLastMessage();
+    }
   }
 
   void listenThreads(String spaceId) async {
     try {
       state = state.copyWith(loading: state.threadInfo.isEmpty);
-      messageService.getThreadsWithLatestMessage(spaceId, currentUser!.id).listen((thread) {
-        state = state.copyWith(threadInfo: thread, loading: false);
+      messageService.getThreadsWithMembers(spaceId, currentUser!.id).listen((threads) {
+        final filteredThreads = _filterArchivedThreads(threads);
+
+        filteredThreads.sort((a, b) {
+          final aTimestamp = a.threadMessage.isNotEmpty
+              ? a.threadMessage.first.created_at?.millisecondsSinceEpoch ?? 0
+              : 0;
+          final bTimestamp = b.threadMessage.isNotEmpty
+              ? b.threadMessage.first.created_at?.millisecondsSinceEpoch ?? 0
+              : 0;
+          return bTimestamp.compareTo(aTimestamp);
+        });
+
+        state = state.copyWith(threadInfo: filteredThreads, loading: false, error: null);
+        _listenLastMessage();
       });
     } catch (error, stack) {
-      logger.e(
-        'ChatViewNotifier: error while listing message thread',
-        error: error,
-        stackTrace: stack,
-      );
+      logger.e('ChatViewNotifier: error while listing message threads',
+          error: error, stackTrace: stack);
       state = state.copyWith(error: error, loading: false);
     }
+  }
+
+  void _listenLastMessage() async {
+    try {
+      _cancelSubscriptions();
+      final List<List<ApiThreadMessage>> newThreadMessages = List.generate(state.threadInfo.length, (_) => []);
+
+      for (int i = 0; i < state.threadInfo.length; i++) {
+        final threads = state.threadInfo[i];
+        final subscription = messageService.streamLatestMessages(threads.thread.id).listen((threadMessages) {
+          newThreadMessages[i] = threadMessages;
+          state = state.copyWith(threadMessages: List.from(newThreadMessages));
+        });
+        _userSubscriptions.add(subscription);
+      }
+    } catch (error, stack) {
+      logger.e('ChatViewNotifier: error while listening to latest messages',
+          error: error, stackTrace: stack);
+    }
+  }
+
+  List<ThreadInfo> _filterArchivedThreads(List<ThreadInfo> threads) {
+    return threads.where((info) {
+      final archiveTimestamp = info.thread.archived_for?[currentUser?.id];
+      if (archiveTimestamp != null) {
+        final latestMessageTimestamp = info.threadMessage.isNotEmpty
+            ? info.threadMessage.first.created_at?.millisecondsSinceEpoch ?? 0
+            : 0;
+        return archiveTimestamp < latestMessageTimestamp;
+      }
+      return true;
+    }).toList();
   }
 
   void onAddNewMemberTap() async {
     try {
       state = state.copyWith(fetchingInviteCode: true);
       final code = await spaceService.getInviteCode(state.space?.space.id ?? '');
-      state = state.copyWith(spaceInvitationCode: code ?? '', fetchingInviteCode: false);
+      state = state.copyWith(spaceInvitationCode: code ?? '', fetchingInviteCode: false, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error);
       logger.e(
@@ -66,8 +117,10 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
 
   void deleteThread(ApiThread thread) async {
     try {
+      state = state.copyWith(deleting: true);
+      _cancelSubscriptions();
       await messageService.deleteThread(thread, currentUser?.id ?? '');
-      listenThreads(state.space?.space.id ?? '');
+      state = state.copyWith(deleting: false, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error);
       logger.e(
@@ -76,6 +129,19 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
         stackTrace: stack,
       );
     }
+  }
+
+  void _cancelSubscriptions() {
+    for (var subscription in _userSubscriptions) {
+      subscription.cancel();
+    }
+    _userSubscriptions.clear();
+  }
+
+  @override
+  void dispose() {
+    _cancelSubscriptions();
+    super.dispose();
   }
 }
 
@@ -86,12 +152,13 @@ class ThreadListViewState with _$ThreadListViewState {
     @Default(false) bool isCreating,
     @Default(false) bool loading,
     @Default(false) bool fetchingInviteCode,
+    @Default(false) bool deleting,
     SpaceInfo? space,
     @Default('') String spaceInvitationCode,
     @Default('') String message,
     @Default([]) List<SpaceInfo> spaceList,
     @Default([]) List<ThreadInfo> threadInfo,
-    @Default([]) List<ApiThreadMessage> threadMessages,
+    @Default([]) List<List<ApiThreadMessage>> threadMessages,
     Object? error,
   }) = _ThreadListViewState;
 }
