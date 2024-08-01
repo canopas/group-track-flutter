@@ -77,7 +77,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                     .copyWith(color: context.colorScheme.textPrimary),
               ),
               actionButton(
-                context,
+                context: context,
                 onPressed: () => notifier.showDatePicker(true),
                 icon: SvgPicture.asset(
                   Assets.images.icTimelineFilterIcon,
