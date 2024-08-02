@@ -14,7 +14,7 @@ const YOUR_SPACE_CHANNEL_GEOFENCE = "your_space_notification_channel_geofence";
 
 const _androidChannel = AndroidNotificationChannel(
   'notification_channel_your_space_regional',
-  '',
+  'Notifications',
   importance: Importance.max,
 );
 
@@ -125,8 +125,8 @@ class NotificationHandler {
 
   void showLocalNotification(RemoteMessage message) async {
     final data = message.data;
-    final title = data['title'];
-    final body = data['body'];
+    final title = message.notification?.title;
+    final body = message.notification?.body;
 
     if (title != null && body != null) {
       _flutterNotificationPlugin.show(

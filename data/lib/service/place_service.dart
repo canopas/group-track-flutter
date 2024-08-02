@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:data/api/place/api_place.dart';
-import 'package:data/log/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -99,18 +98,14 @@ class PlaceService {
     }
 
     final data = {
-      'spaceId': spaceId,
-      'placeName': name,
-      'createdBy': createdBy,
-      'spaceMemberIds': spaceMemberIds,
+      "spaceId": spaceId,
+      "placeName": name,
+      "createdBy": createdBy,
+      "spaceMemberIds": spaceMemberIds,
     };
 
-    try {
-      await FirebaseFunctions.instance.httpsCallable('sendNewPlaceNotification')(data);
-      logger.d('Notification sent successfully');
-    } catch (e) {
-      logger.e('Failed to send new place notification: $e');
-    }
+    final HttpsCallable callable = FirebaseFunctions.instanceFor(region: 'asia-south1').httpsCallable('sendNewPlaceNotification');
+    await callable.call(data);
   }
 
   Future<ApiPlaceMemberSetting?> getPlaceMemberSetting(

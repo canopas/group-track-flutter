@@ -3,7 +3,9 @@ import 'package:data/api/network/client.dart';
 import 'package:data/service/device_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
+import '../../log/logger.dart';
 import '../../service/location_manager.dart';
 import '../../storage/app_preferences.dart';
 import 'auth_models.dart';
@@ -15,6 +17,7 @@ final apiUserServiceProvider = StateProvider((ref) => ApiUserService(
       ref.read(currentSpaceId.notifier),
       ref.read(currentUserSessionJsonPod.notifier),
       ref.read(isOnboardingShownPod.notifier),
+      ref.read(currentUserPod),
       ref.read(locationManagerProvider),
     ));
 
@@ -25,6 +28,7 @@ class ApiUserService {
   final StateController<String?> currentUserSpaceId;
   final StateController<String?> userSessionJsonNotifier;
   final StateController<bool?> onBoardNotifier;
+  final ApiUser? currentUser;
   final LocationManager locationManager;
 
   ApiUserService(
@@ -34,6 +38,7 @@ class ApiUserService {
     this.currentUserSpaceId,
     this.userSessionJsonNotifier,
     this.onBoardNotifier,
+    this.currentUser,
     this.locationManager,
   );
 
@@ -144,6 +149,23 @@ class ApiUserService {
 
   Future<void> registerFcmToken(String userId, String token) async {
     await _userRef.doc(userId).update({"fcm_token": token});
+  }
+
+  Future<void> registerDevice() async {
+    if (currentUser == null) return;
+    logger.d('UserService: registerDevice begin');
+
+    try {
+      final deviceToken = await FirebaseMessaging.instance.getToken() ?? "";
+      if (deviceToken.isEmpty) {
+        logger.e('UserService: registerDevice error deviceToken is null');
+        return;
+      }
+      await registerFcmToken(currentUser?.id ?? '',  deviceToken);
+      logger.d('UserService: registerDevice success with token $deviceToken');
+    } catch (error) {
+      logger.e('UserService: registerDevice error ', error: error);
+    }
   }
 
   Future<void> addSpaceId(String userId, String spaceId) async {

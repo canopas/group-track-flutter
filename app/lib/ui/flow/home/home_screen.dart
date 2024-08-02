@@ -1,3 +1,4 @@
+import 'package:data/api/auth/api_user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extenstions/context_extenstions.dart';
@@ -32,9 +33,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     runPostFrame(() {
       notifier = ref.watch(homeViewStateProvider.notifier);
-      notificationHandler = ref.read(notificationHandlerProvider);
-      notificationHandler.init(context);
       notifier.getAllSpaces();
+    });
+
+    onResume();
+  }
+
+  void onResume() {
+    // Delay request to reduce too many API calls when the app is opened
+    Future.delayed(const Duration(seconds: 1)).then((_) {
+      if (mounted) {
+        final service = ref.read(apiUserServiceProvider);
+        service.registerDevice();
+      }
     });
   }
 

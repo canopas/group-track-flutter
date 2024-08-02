@@ -43,6 +43,7 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
 
   void getUser() {
     state = state.copyWith(currentUser: user);
+    cancelSubscriptions();
     _userSubscription = authService
         .getUserStream(currentUserId: state.currentUser?.id ?? '')
         .listen((user) {
