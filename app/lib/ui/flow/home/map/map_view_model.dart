@@ -229,12 +229,23 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     final isFineLocationPermission =
         await permissionService.isLocationPermissionGranted();
 
+    startLocationService(isFineLocationPermission);
+
     state = state.copyWith(
       hasLocationEnabled: isLocationEnabled,
       hasLocationServiceEnabled: isLocationServiceEnabled,
       hasNotificationEnabled: isNotificationEnabled,
       hasFineLocationEnabled: isFineLocationPermission,
     );
+  }
+
+  void startLocationService(bool isPermission) async {
+    final isRunning = await locationManager.isServiceRunning();
+    if (isPermission && !isRunning) {
+      locationManager.startTrackingService();
+    } else {
+      locationManager.stopTrackingService();
+    }
   }
 
   void showEnableLocationDialog() {

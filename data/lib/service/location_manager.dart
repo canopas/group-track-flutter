@@ -1,4 +1,4 @@
-// ignore_for_file: constant_identifier_names, non_constant_identifier_names
+// ignore_for_file: constant_identifier_names
 
 import 'dart:async';
 
@@ -34,6 +34,6 @@ class LocationManager {
   }
 
   void stopTrackingService() async {
-    FlutterBackgroundService().invoke("stopService");
+    bgService.invoke("stopService");
   }
 }
