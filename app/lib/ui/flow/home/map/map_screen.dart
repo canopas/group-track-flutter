@@ -97,6 +97,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     return Column(
       children: [
         SpaceUserFooter(
+          selectedSpace: widget.space,
           members: state.userInfo,
           selectedUser: state.selectedUser,
           isEnabled: !state.loading,
@@ -494,7 +495,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   void _observeError() {
-    ref.listen(mapViewStateProvider.select((state) => state.error), (previous, next) {
+    ref.listen(mapViewStateProvider.select((state) => state.error),
+        (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
       }

@@ -154,13 +154,13 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   }
 
   void toggleLocation() async {
-    if (currentSpaceId == null && _currentUser == null) return;
+    if (currentSpaceId == null || _currentUser == null) return;
     try {
       final isEnabled = !state.locationEnabled;
       state = state.copyWith(enablingLocation: true);
       await spaceService.enableLocation(
         currentSpaceId!,
-        _currentUser!.id,
+        _currentUser.id,
         isEnabled,
       );
       state =
