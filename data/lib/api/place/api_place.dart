@@ -19,6 +19,7 @@ class ApiPlace with _$ApiPlace {
     required double longitude,
     @Default(200.0) double radius,
     @TimeStampJsonConverter() DateTime? created_at,
+    @Default([]) List<String> space_member_ids,
   }) = _ApiPlace;
 
   factory ApiPlace.fromJson(Map<String, dynamic> data) =>

@@ -50,41 +50,35 @@ class NotificationUpdateStateConst {
 }
 
 final notificationHandlerProvider =
-StateProvider.autoDispose((ref) => NotificationHandler());
+    StateProvider.autoDispose((ref) => NotificationHandler());
 
 class NotificationHandler {
-  final _flutterNotificationPlugin = FlutterLocalNotificationsPlugin();
+  final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   NotificationHandler() {
-    _flutterNotificationPlugin
+    _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_androidChannel);
   }
 
-  void init(BuildContext context) {
-    _requestPermissions();
+  Future<void> init(BuildContext context) async {
     _initFcm(context);
-    if (Platform.isAndroid) _initLocalNotifications(context);
+    if (context.mounted) await _initLocalNotifications(context);
   }
 
-  Future<void> _initFcm(BuildContext context) async {
-    // Handle initial message
+  void _initFcm(BuildContext context) {
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       if (message != null && context.mounted) {
         _onNotificationTap(context, message.data);
       }
     });
 
-    // Also handle any interaction when the app is in the background
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      if (message.data.isNotEmpty) {
-        _onNotificationTap(context, message.data);
-      }
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      _onNotificationTap(context, event.data);
     });
 
     if (Platform.isAndroid) {
-      // handle foreground message for android as we need to show notification manually
       FirebaseMessaging.onMessage.listen((event) {
         showLocalNotification(event);
       });
@@ -92,65 +86,49 @@ class NotificationHandler {
   }
 
   Future<void> _initLocalNotifications(BuildContext context) async {
-    // handle local notification tap
-    _flutterNotificationPlugin.initialize(
-        const InitializationSettings(
-          android: AndroidInitializationSettings('app_icon'),
-        ), onDidReceiveNotificationResponse: (response) {
-      if (response.payload != null) {
-        _onNotificationTap(context, jsonDecode(response.payload!));
-      }
-    });
-
-    // Handle initial message that might have launched the app
-    _flutterNotificationPlugin
-        .getNotificationAppLaunchDetails()
-        .then((initial) {
-      final payload = initial?.notificationResponse?.payload;
-      if (initial?.didNotificationLaunchApp == true &&
-          payload != null &&
-          context.mounted) {
-        _onNotificationTap(context, jsonDecode(payload));
-      }
-    });
-  }
-
-  void _requestPermissions() {
-    FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
+    _flutterLocalNotificationsPlugin.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('app_logo'),
+        iOS: DarwinInitializationSettings(
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+        ),
+      ),
+      onDidReceiveNotificationResponse: (response) {
+        if (response.payload != null) {
+          _onNotificationTap(context, jsonDecode(response.payload!));
+        }
+      },
     );
   }
 
-  void showLocalNotification(RemoteMessage message) async {
-    final data = message.data;
-    final title = message.notification?.title;
-    final body = message.notification?.body;
+  void showLocalNotification(RemoteMessage event) {
+    final notification = event.notification;
+    final data = event.data;
+    final title = notification?.title;
+    final body = notification?.body;
 
     if (title != null && body != null) {
-      _flutterNotificationPlugin.show(
-          DateTime
-              .now()
-              .microsecondsSinceEpoch ~/ 1000000,
+        _flutterLocalNotificationsPlugin.show(
+          DateTime.now().microsecondsSinceEpoch ~/ 1000000,
           title,
           body,
           NotificationDetails(
             android: AndroidNotificationDetails(
               _androidChannel.id,
               _androidChannel.name,
-              icon: 'app_icon',
             ),
           ),
           payload: jsonEncode(data),
-      );
+        );
     }
   }
 }
 
 extension on NotificationHandler {
-  void _onNotificationTap(BuildContext context,
-      Map<String, dynamic> data) async {
+  void _onNotificationTap(
+      BuildContext context, Map<String, dynamic> data) async {
     logger.d("Notification handler - _onNotificationTap with data $data");
 
     final type = data[KEY_NOTIFICATION_TYPE];

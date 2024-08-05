@@ -18,7 +18,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yourspace_flutter/domain/fcm/notification_handler.dart';
 import 'package:yourspace_flutter/firebase_options.dart';
 import 'package:yourspace_flutter/ui/app.dart';
 
@@ -50,8 +49,6 @@ void main() async {
 
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  final notificationHandler = NotificationHandler();
-  notificationHandler.showLocalNotification(message);
 }
 
 Future<ProviderContainer> _initContainer() async {

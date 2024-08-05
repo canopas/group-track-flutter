@@ -15,6 +15,7 @@ import 'package:style/theme/theme.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 
 import '../domain/extenstions/widget_extensions.dart';
+import '../domain/fcm/notification_handler.dart';
 import 'app_route.dart';
 
 class App extends ConsumerStatefulWidget {
@@ -26,10 +27,15 @@ class App extends ConsumerStatefulWidget {
 
 class _AppState extends ConsumerState<App> {
   late GoRouter _router;
+  late NotificationHandler notificationHandler;
 
   @override
   void initState() {
     super.initState();
+
+    notificationHandler = ref.read(notificationHandlerProvider);
+    notificationHandler.init(context);
+
     final AppRoute initialRoute;
     if (!ref.read(isIntroScreenShownPod)) {
       initialRoute = AppRoute.intro;
@@ -60,31 +66,31 @@ class _AppState extends ConsumerState<App> {
 
           return Platform.isIOS
               ? CupertinoApp.router(
-            debugShowCheckedModeBanner: false,
-            localizationsDelegates:
-            AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            onGenerateTitle: (context) => context.l10n.app_title,
-            routerConfig: _router,
-            theme: CupertinoThemeData(
-              brightness: context.brightness,
-              primaryColor: colorScheme.primary,
-              primaryContrastingColor: colorScheme.onPrimary,
-              barBackgroundColor: colorScheme.surface,
-              scaffoldBackgroundColor: colorScheme.surface,
-              applyThemeToAll: true,
-            ),
-          )
+                  debugShowCheckedModeBanner: false,
+                  localizationsDelegates:
+                      AppLocalizations.localizationsDelegates,
+                  supportedLocales: AppLocalizations.supportedLocales,
+                  onGenerateTitle: (context) => context.l10n.app_title,
+                  routerConfig: _router,
+                  theme: CupertinoThemeData(
+                    brightness: context.brightness,
+                    primaryColor: colorScheme.primary,
+                    primaryContrastingColor: colorScheme.onPrimary,
+                    barBackgroundColor: colorScheme.surface,
+                    scaffoldBackgroundColor: colorScheme.surface,
+                    applyThemeToAll: true,
+                  ),
+                )
               : MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            localizationsDelegates:
-            AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            onGenerateTitle: (context) => context.l10n.app_title,
-            routerConfig: _router,
-            theme: materialThemeDataLight,
-            darkTheme: materialThemeDataDark,
-          );
+                  debugShowCheckedModeBanner: false,
+                  localizationsDelegates:
+                      AppLocalizations.localizationsDelegates,
+                  supportedLocales: AppLocalizations.supportedLocales,
+                  onGenerateTitle: (context) => context.l10n.app_title,
+                  routerConfig: _router,
+                  theme: materialThemeDataLight,
+                  darkTheme: materialThemeDataDark,
+                );
         },
       ),
     );
@@ -92,8 +98,8 @@ class _AppState extends ConsumerState<App> {
 
   void configureAndroidSystemUi(BuildContext context) {
     final overlayStyle = (context.brightness == Brightness.dark
-        ? SystemUiOverlayStyle.light
-        : SystemUiOverlayStyle.dark)
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark)
         .copyWith(
       statusBarColor: context.colorScheme.surface,
       systemNavigationBarColor: Colors.transparent,

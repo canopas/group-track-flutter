@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -76,6 +75,7 @@ class PlaceService {
       longitude: longitude,
       name: name,
       created_at: DateTime.now(),
+      space_member_ids: spaceMemberIds,
     );
 
     await placeDoc.set(place.toJson());
@@ -96,16 +96,6 @@ class PlaceService {
           .doc(setting.user_id)
           .set(setting.toJson());
     }
-
-    final data = {
-      "spaceId": spaceId,
-      "placeName": name,
-      "createdBy": createdBy,
-      "spaceMemberIds": spaceMemberIds,
-    };
-
-    final HttpsCallable callable = FirebaseFunctions.instanceFor(region: 'asia-south1').httpsCallable('sendNewPlaceNotification');
-    await callable.call(data);
   }
 
   Future<ApiPlaceMemberSetting?> getPlaceMemberSetting(
