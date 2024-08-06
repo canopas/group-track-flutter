@@ -15,7 +15,6 @@ import 'package:style/theme/theme.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 
 import '../domain/extenstions/widget_extensions.dart';
-import '../domain/fcm/notification_handler.dart';
 import 'app_route.dart';
 
 class App extends ConsumerStatefulWidget {
@@ -27,15 +26,10 @@ class App extends ConsumerStatefulWidget {
 
 class _AppState extends ConsumerState<App> {
   late GoRouter _router;
-  late NotificationHandler notificationHandler;
 
   @override
   void initState() {
     super.initState();
-
-    notificationHandler = ref.read(notificationHandlerProvider);
-    notificationHandler.init(context);
-
     final AppRoute initialRoute;
     if (!ref.read(isIntroScreenShownPod)) {
       initialRoute = AppRoute.intro;
