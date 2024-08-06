@@ -14,7 +14,7 @@ const YOUR_SPACE_CHANNEL_GEOFENCE = "your_space_notification_channel_geofence";
 
 const _androidChannel = AndroidNotificationChannel(
   'notification_channel_your_space_regional',
-  'Notifications',
+  'YourSpace Notification',
   importance: Importance.max,
 );
 

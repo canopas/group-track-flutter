@@ -36,7 +36,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       notificationHandler.init(context);
 
       notifier = ref.watch(homeViewStateProvider.notifier);
-      notifier.getAllSpaces();
     });
 
     onResume();
