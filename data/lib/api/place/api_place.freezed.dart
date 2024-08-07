@@ -29,6 +29,7 @@ mixin _$ApiPlace {
   double get radius => throw _privateConstructorUsedError;
   @TimeStampJsonConverter()
   DateTime? get created_at => throw _privateConstructorUsedError;
+  List<String> get space_member_ids => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -49,7 +50,8 @@ abstract class $ApiPlaceCopyWith<$Res> {
       double latitude,
       double longitude,
       double radius,
-      @TimeStampJsonConverter() DateTime? created_at});
+      @TimeStampJsonConverter() DateTime? created_at,
+      List<String> space_member_ids});
 }
 
 /// @nodoc
@@ -73,6 +75,7 @@ class _$ApiPlaceCopyWithImpl<$Res, $Val extends ApiPlace>
     Object? longitude = null,
     Object? radius = null,
     Object? created_at = freezed,
+    Object? space_member_ids = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -107,6 +110,10 @@ class _$ApiPlaceCopyWithImpl<$Res, $Val extends ApiPlace>
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      space_member_ids: null == space_member_ids
+          ? _value.space_member_ids
+          : space_member_ids // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
   }
 }
@@ -127,7 +134,8 @@ abstract class _$$ApiPlaceImplCopyWith<$Res>
       double latitude,
       double longitude,
       double radius,
-      @TimeStampJsonConverter() DateTime? created_at});
+      @TimeStampJsonConverter() DateTime? created_at,
+      List<String> space_member_ids});
 }
 
 /// @nodoc
@@ -149,6 +157,7 @@ class __$$ApiPlaceImplCopyWithImpl<$Res>
     Object? longitude = null,
     Object? radius = null,
     Object? created_at = freezed,
+    Object? space_member_ids = null,
   }) {
     return _then(_$ApiPlaceImpl(
       id: null == id
@@ -183,6 +192,10 @@ class __$$ApiPlaceImplCopyWithImpl<$Res>
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      space_member_ids: null == space_member_ids
+          ? _value._space_member_ids
+          : space_member_ids // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -198,8 +211,10 @@ class _$ApiPlaceImpl extends _ApiPlace {
       required this.latitude,
       required this.longitude,
       this.radius = 200.0,
-      @TimeStampJsonConverter() this.created_at})
-      : super._();
+      @TimeStampJsonConverter() this.created_at,
+      final List<String> space_member_ids = const []})
+      : _space_member_ids = space_member_ids,
+        super._();
 
   factory _$ApiPlaceImpl.fromJson(Map<String, dynamic> json) =>
       _$$ApiPlaceImplFromJson(json);
@@ -222,10 +237,19 @@ class _$ApiPlaceImpl extends _ApiPlace {
   @override
   @TimeStampJsonConverter()
   final DateTime? created_at;
+  final List<String> _space_member_ids;
+  @override
+  @JsonKey()
+  List<String> get space_member_ids {
+    if (_space_member_ids is EqualUnmodifiableListView)
+      return _space_member_ids;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_space_member_ids);
+  }
 
   @override
   String toString() {
-    return 'ApiPlace(id: $id, created_by: $created_by, space_id: $space_id, name: $name, latitude: $latitude, longitude: $longitude, radius: $radius, created_at: $created_at)';
+    return 'ApiPlace(id: $id, created_by: $created_by, space_id: $space_id, name: $name, latitude: $latitude, longitude: $longitude, radius: $radius, created_at: $created_at, space_member_ids: $space_member_ids)';
   }
 
   @override
@@ -245,13 +269,24 @@ class _$ApiPlaceImpl extends _ApiPlace {
                 other.longitude == longitude) &&
             (identical(other.radius, radius) || other.radius == radius) &&
             (identical(other.created_at, created_at) ||
-                other.created_at == created_at));
+                other.created_at == created_at) &&
+            const DeepCollectionEquality()
+                .equals(other._space_member_ids, _space_member_ids));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, created_by, space_id, name,
-      latitude, longitude, radius, created_at);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      created_by,
+      space_id,
+      name,
+      latitude,
+      longitude,
+      radius,
+      created_at,
+      const DeepCollectionEquality().hash(_space_member_ids));
 
   @JsonKey(ignore: true)
   @override
@@ -276,7 +311,8 @@ abstract class _ApiPlace extends ApiPlace {
       required final double latitude,
       required final double longitude,
       final double radius,
-      @TimeStampJsonConverter() final DateTime? created_at}) = _$ApiPlaceImpl;
+      @TimeStampJsonConverter() final DateTime? created_at,
+      final List<String> space_member_ids}) = _$ApiPlaceImpl;
   const _ApiPlace._() : super._();
 
   factory _ApiPlace.fromJson(Map<String, dynamic> json) =
@@ -299,6 +335,8 @@ abstract class _ApiPlace extends ApiPlace {
   @override
   @TimeStampJsonConverter()
   DateTime? get created_at;
+  @override
+  List<String> get space_member_ids;
   @override
   @JsonKey(ignore: true)
   _$$ApiPlaceImplCopyWith<_$ApiPlaceImpl> get copyWith =>

@@ -9,6 +9,7 @@ import 'package:data/service/location_manager.dart';
 import 'package:data/service/location_service.dart';
 import 'package:data/storage/preferences_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
@@ -28,6 +29,8 @@ void main() async {
   }
 
   final container = await _initContainer();
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   final userId = await _getUserIdFromPreferences();
   final isLocationPermission = await Permission.location.isGranted;
   if (userId != null && isLocationPermission) {
@@ -37,6 +40,10 @@ void main() async {
   runApp(
     UncontrolledProviderScope(container: container, child: const App()),
   );
+}
+
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
 }
 
 Future<ProviderContainer> _initContainer() async {
