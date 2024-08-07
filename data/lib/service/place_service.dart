@@ -75,6 +75,7 @@ class PlaceService {
       longitude: longitude,
       name: name,
       created_at: DateTime.now(),
+      space_member_ids: spaceMemberIds,
     );
 
     await placeDoc.set(place.toJson());
