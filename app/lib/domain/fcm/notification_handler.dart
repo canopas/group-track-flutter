@@ -75,7 +75,9 @@ class NotificationHandler {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      _onNotificationTap(context, event.data);
+      if (context.mounted) {
+        _onNotificationTap(context, event.data);
+      }
     });
 
     if (Platform.isAndroid) {
@@ -96,7 +98,7 @@ class NotificationHandler {
         ),
       ),
       onDidReceiveNotificationResponse: (response) {
-        if (response.payload != null) {
+        if (response.payload != null && context.mounted) {
           _onNotificationTap(context, jsonDecode(response.payload!));
         }
       },
@@ -145,6 +147,7 @@ extension on NotificationHandler {
   }
 
   void _handlePlaceAdded(BuildContext context, Map<String, dynamic> data) {
+    if (!context.mounted) return;
     final String? spaceId = data[NotificationPlaceConst.KEY_SPACE_ID];
     if (spaceId != null) {
       AppRoute.placesList(spaceId).push(context);

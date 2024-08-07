@@ -161,7 +161,7 @@ class ApiUserService {
         logger.e('UserService: registerDevice error deviceToken is null');
         return;
       }
-      await registerFcmToken(currentUser?.id ?? '',  deviceToken);
+      await registerFcmToken(currentUser!.id,  deviceToken);
       logger.d('UserService: registerDevice success with token $deviceToken');
     } catch (error) {
       logger.e('UserService: registerDevice error ', error: error);
