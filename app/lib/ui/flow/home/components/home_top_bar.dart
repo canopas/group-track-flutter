@@ -278,15 +278,18 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   }
 
   Widget _spaceListItem(
-      BuildContext context, SpaceInfo space, int index, bool isSelected) {
+    BuildContext context,
+    SpaceInfo space,
+    int index,
+    bool isSelected,
+  ) {
     if (space.members.isEmpty) {
       return const SizedBox();
     }
-    final admin = space.members
-        .firstWhere(
-          (member) => member.user.id == space.space.admin_id,
-        )
-        .user;
+    final admin = space.members.where(
+      (member) => member.user.id == space.space.admin_id,
+    );
+    final fullName = admin.isEmpty ? "" : admin.first.user.fullName;
 
     return GestureDetector(
       onTap: () {
@@ -339,7 +342,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      context.l10n.home_space_owner_text(admin.fullName),
+                      context.l10n.home_space_owner_text(fullName),
                       style: AppTextStyle.caption.copyWith(
                         color: context.colorScheme.textDisabled,
                       ),
