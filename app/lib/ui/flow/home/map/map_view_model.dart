@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -38,6 +39,9 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   final PermissionService permissionService;
   final LocationManager locationManager;
 
+  StreamSubscription<List<ApiUserInfo>>? _userInfoSubscription;
+  StreamSubscription<List<ApiPlace>>? _placeSubscription;
+
   MapViewNotifier(
     this._currentUser,
     this.spaceService,
@@ -47,6 +51,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   ) : super(const MapViewState());
 
   void loadData(String? spaceId) {
+    _cancelSubscriptions();
     _onSelectedSpaceChange();
 
     if (spaceId == null) return;
@@ -70,7 +75,8 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     try {
       state = state.copyWith(loading: true, selectedUser: null);
 
-      spaceService.getMemberWithLocation(spaceId).listen((userInfo) {
+      _userInfoSubscription =
+          spaceService.getMemberWithLocation(spaceId).listen((userInfo) {
         state = state.copyWith(userInfo: userInfo, loading: false);
         _userMapPositions(userInfo);
       });
@@ -86,7 +92,8 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
 
   void _listenPlaces(String spaceId) async {
     try {
-      placeService.getAllPlacesStream(spaceId).listen((places) {
+      _placeSubscription =
+          placeService.getAllPlacesStream(spaceId).listen((places) {
         state = state.copyWith(places: places);
       });
     } catch (error, stack) {
@@ -273,6 +280,11 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
       zoom: zoom,
     );
     state = state.copyWith(defaultPosition: cameraPosition);
+  }
+
+  void _cancelSubscriptions() {
+    _userInfoSubscription?.cancel();
+    _placeSubscription?.cancel();
   }
 }
 

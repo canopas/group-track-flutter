@@ -50,7 +50,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
               spaces.indexWhere((space) => space.space.id == currentSpaceId);
 
           final selectedSpace =
-              spaceIndex > -1 ? spaces.first : spaces[spaceIndex];
+              spaceIndex > -1 ? spaces[spaceIndex] : spaces.first;
           updateSelectedSpace(selectedSpace);
         }
         if (spaces.isEmpty) state = state.copyWith(selectedSpace: null);
