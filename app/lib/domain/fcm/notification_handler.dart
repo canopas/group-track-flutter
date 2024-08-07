@@ -137,6 +137,7 @@ extension on NotificationHandler {
 
     switch (type) {
       case NotificationChatConst.NOTIFICATION_TYPE_CHAT:
+        _handleChatMessage(context, data);
         break;
       case NotificationPlaceConst.NOTIFICATION_TYPE_NEW_PLACE_ADDED:
         _handlePlaceAdded(context, data);
@@ -153,6 +154,15 @@ extension on NotificationHandler {
       AppRoute.placesList(spaceId).push(context);
     } else {
       logger.e("Space ID is null for place added notification");
+    }
+  }
+
+  void _handleChatMessage(BuildContext context, Map<String, dynamic> data) {
+    final String? threadId = data[NotificationChatConst.KEY_THREAD_ID];
+    if (threadId != null) {
+      AppRoute.chat(threadId: threadId).push(context);
+    } else {
+      logger.e("Thread ID is null for chat notification");
     }
   }
 }
