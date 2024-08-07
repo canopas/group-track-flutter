@@ -123,17 +123,20 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                         context.l10n.home_select_space_text,
                   ),
                   const SizedBox(width: 8),
-                  _iconButton(
-                    context: context,
-                    icon: Assets.images.icMessage,
-                    visibility: !expand,
-                    onTap: () {
-                      if (widget.selectedSpace != null) {
-                        AppRoute.message(widget.selectedSpace!).push(context);
-                      }
-                    },
-                  ),
-                  SizedBox(width: expand ? 0 : 8),
+                  if (widget.selectedSpace != null &&
+                      widget.spaces.isNotEmpty) ...[
+                    _iconButton(
+                      context: context,
+                      icon: Assets.images.icMessage,
+                      visibility: !expand,
+                      onTap: () {
+                        if (widget.selectedSpace != null) {
+                          AppRoute.message(widget.selectedSpace!).push(context);
+                        }
+                      },
+                    ),
+                    SizedBox(width: expand ? 0 : 8),
+                  ],
                   _iconButton(
                     context: context,
                     icon: widget.locationEnabled
@@ -148,7 +151,11 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                     icon: Assets.images.icAddMember,
                     visibility: expand,
                     color: context.colorScheme.textPrimary,
-                    onTap: () => widget.onAddMemberTap(),
+                    onTap: () {
+                      if (widget.selectedSpace != null) {
+                        widget.onAddMemberTap();
+                      }
+                    },
                   ),
                 ],
               ),

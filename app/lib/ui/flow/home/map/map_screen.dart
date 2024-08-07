@@ -98,6 +98,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     return Column(
       children: [
         SpaceUserFooter(
+          selectedSpace: widget.space,
           members: state.userInfo,
           selectedUser: state.selectedUser,
           isEnabled: !state.loading,
