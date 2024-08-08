@@ -61,8 +61,10 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     required List<ThreadInfo> threadInfoList,
   }) {
     _getSpaceInfo(spaceId);
-    if (threadId.isNotEmpty) _getThreadInfo(threadId);
-    if (threadId.isNotEmpty) _listenThread(threadId);
+    if (threadId.isNotEmpty) {
+      _getThreadInfo(threadId);
+      _listenThread(threadId);
+    }
     state = state.copyWith(showMemberSelectionView: show, threadList: threadInfoList);
   }
 
@@ -96,6 +98,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
           .toList();
       _formatMemberNames(threadId.isEmpty ? [] : userList);
       state = state.copyWith(threadInfo: threadInfo, threadId: threadId, error: null);
+      _listenThread(threadId);
     } catch (error, stack) {
       state = state.copyWith(error: error);
       logger.e(
