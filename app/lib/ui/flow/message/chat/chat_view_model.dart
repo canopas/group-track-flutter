@@ -63,9 +63,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     _getSpaceInfo(spaceId);
     if (threadId.isNotEmpty) {
       _getThreadInfo(threadId);
-      _listenThread(threadId);
     }
-    state = state.copyWith(showMemberSelectionView: show, threadList: threadInfoList);
+    state = state.copyWith(showMemberSelectionView: show, threadId: threadId, threadList: threadInfoList);
   }
 
   void _getSpaceInfo(String spaceId) async {
@@ -209,7 +208,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
           ? selectedMembers
           : state.spaceInfo?.members.map((members) => members.user.id).toList();
 
-      final threadId = await messageService.createThread(state.spaceInfo!.space.name, currentUser?.id ?? '', threadMembersIds ?? []);
+      final threadId = await messageService.createThread(state.spaceInfo!.space.id, currentUser?.id ?? '', threadMembersIds ?? []);
       state = state.copyWith(showMemberSelectionView: false, threadId: threadId, isNewThread: true);
       if (threadId.isNotEmpty) {
         sendMessage(threadId, message);
