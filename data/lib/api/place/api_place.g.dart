@@ -17,6 +17,10 @@ _$ApiPlaceImpl _$$ApiPlaceImplFromJson(Map<String, dynamic> json) =>
       radius: (json['radius'] as num?)?.toDouble() ?? 200.0,
       created_at: _$JsonConverterFromJson<Timestamp, DateTime>(
           json['created_at'], const TimeStampJsonConverter().fromJson),
+      space_member_ids: (json['space_member_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$ApiPlaceImplToJson(_$ApiPlaceImpl instance) =>
@@ -30,6 +34,7 @@ Map<String, dynamic> _$$ApiPlaceImplToJson(_$ApiPlaceImpl instance) =>
       'radius': instance.radius,
       'created_at': _$JsonConverterToJson<Timestamp, DateTime>(
           instance.created_at, const TimeStampJsonConverter().toJson),
+      'space_member_ids': instance.space_member_ids,
     };
 
 Value? _$JsonConverterFromJson<Json, Value>(

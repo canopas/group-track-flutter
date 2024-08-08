@@ -21,6 +21,7 @@ _$ApiUserImpl _$$ApiUserImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      fcm_token: json['fcm_token'] as String? ?? "",
       created_at: (json['created_at'] as num?)?.toInt(),
     );
 
@@ -36,6 +37,7 @@ Map<String, dynamic> _$$ApiUserImplToJson(_$ApiUserImpl instance) =>
       'profile_image': instance.profile_image,
       'location_enabled': instance.location_enabled,
       'space_ids': instance.space_ids,
+      'fcm_token': instance.fcm_token,
       'created_at': instance.created_at,
     };
 
@@ -44,7 +46,6 @@ _$ApiSessionImpl _$$ApiSessionImplFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       user_id: json['user_id'] as String,
       platform: (json['platform'] as num?)?.toInt() ?? 1,
-      fcm_token: json['fcm_token'] as String? ?? "",
       session_active: json['session_active'] as bool,
       device_name: json['device_name'] as String?,
       device_id: json['device_id'] as String?,
@@ -58,7 +59,6 @@ Map<String, dynamic> _$$ApiSessionImplToJson(_$ApiSessionImpl instance) =>
       'id': instance.id,
       'user_id': instance.user_id,
       'platform': instance.platform,
-      'fcm_token': instance.fcm_token,
       'session_active': instance.session_active,
       'device_name': instance.device_name,
       'device_id': instance.device_id,

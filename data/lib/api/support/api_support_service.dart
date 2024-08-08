@@ -44,7 +44,7 @@ class ApiSupportService {
       "attachments": attachments,
     };
 
-    final callable = FirebaseFunctions.instance.httpsCallable('sendSupportRequest');
+    final callable = FirebaseFunctions.instanceFor(region: 'asia-south1').httpsCallable('sendSupportRequest');
     await callable.call(data);
   }
 }
