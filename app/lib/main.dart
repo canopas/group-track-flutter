@@ -91,6 +91,7 @@ Timer? timer;
 Position? _position;
 Position? _previousPosition;
 
+@pragma('vm:entry-point')
 Future<void> onStart(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
   final isLocationPermission = await Permission.location.isGranted;
@@ -168,6 +169,7 @@ void _updateUserLocation(
   }
 }
 
+@pragma('vm:entry-point')
 bool onIosBackground(ServiceInstance service) {
   onStart(service);
   return true;

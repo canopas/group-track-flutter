@@ -39,8 +39,6 @@ class JourneyTimelineScreen extends ConsumerStatefulWidget {
 
 class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   late JourneyTimelineViewModel notifier;
-  String? _mapStyle;
-  bool _isDarkMode = false;
 
   @override
   void initState() {
@@ -123,6 +121,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                         journey,
                         state.sortedJourney.first.id == journey.id,
                         state.sortedJourney.last.id == journey.id,
+                        state.spaceId,
                       )
                     : _journeyLocationItem(
                         journey,
