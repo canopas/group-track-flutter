@@ -51,10 +51,12 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
           final selectedSpace =
               spaceIndex > -1 ? spaces[spaceIndex] : spaces.first;
+          reorderSpaces(selectedSpace, spaces);
           updateSelectedSpace(selectedSpace);
+        } else {
+          state = state.copyWith(selectedSpace: null, spaceList: []);
         }
-        if (spaces.isEmpty) state = state.copyWith(selectedSpace: null);
-        state = state.copyWith(loading: false, spaceList: spaces, error: null);
+        state = state.copyWith(loading: false, error: null);
       });
     } catch (error, stack) {
       state = state.copyWith(error: error, loading: false);
@@ -83,6 +85,17 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
         stackTrace: stack,
       );
     }
+  }
+
+  void reorderSpaces(
+    SpaceInfo selectedSpace,
+    List<SpaceInfo> spaces,
+  ) {
+    final reorderSpaces = List<SpaceInfo>.from(spaces);
+    reorderSpaces
+        .removeWhere((space) => space.space.id == selectedSpace.space.id);
+    reorderSpaces.insert(0, selectedSpace);
+    state = state.copyWith(spaceList: reorderSpaces);
   }
 
   void updateSelectedSpace(SpaceInfo space) {

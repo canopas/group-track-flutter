@@ -252,8 +252,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     );
   }
 
-  Widget _spaceList(BuildContext context, List<SpaceInfo> spaces,
-      Function(SpaceInfo) onSpaceSelected) {
+  Widget _spaceList(BuildContext context, List<SpaceInfo> spaces) {
     if (widget.loading) {
       return const AppProgressIndicator(size: AppProgressIndicatorSize.small);
     }
@@ -270,7 +269,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
               setState(() {
                 selectedIndex = index;
               });
-              onSpaceSelected(space);
+              widget.onSpaceItemTap(space);
             },
             child: _spaceListItem(
               context,
@@ -387,7 +386,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
       child: Column(
         children: [
           const SizedBox(height: 12),
-          _spaceList(context, widget.spaces, widget.onSpaceItemTap),
+          _spaceList(context, widget.spaces),
           const SizedBox(height: 12),
           Row(
             children: [

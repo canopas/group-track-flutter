@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/log/logger.dart';
@@ -22,23 +20,14 @@ final placesListViewStateProvider =
 class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
   final PlaceService placeService;
 
-  StreamSubscription<List<ApiPlace>>? _placeSubscription;
-
   PlacesListViewNotifier(currentUser, this.placeService)
       : super(PlacesListState(currentUser: currentUser));
-
-  @override
-  void dispose() {
-    _placeSubscription?.cancel();
-    super.dispose();
-  }
 
   void loadPlaces(String spaceId) async {
     if (state.loading) return;
     try {
       state = state.copyWith(loading: true, spaceId: spaceId);
-      _placeSubscription =
-          placeService.getAllPlacesStream(spaceId).listen((places) {
+      placeService.getAllPlacesStream(spaceId).listen((places) {
         if (!mounted) return;
         suggestionPlaces(places);
         state = state.copyWith(places: places, loading: false, error: null);
