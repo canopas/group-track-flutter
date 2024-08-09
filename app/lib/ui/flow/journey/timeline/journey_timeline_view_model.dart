@@ -13,20 +13,26 @@ final journeyTimelineStateProvider = StateNotifierProvider.autoDispose<
     (ref) => JourneyTimelineViewModel(
           ref.read(currentUserPod),
           ref.read(journeyServiceProvider),
+          ref.read(currentSpaceId.notifier),
         ));
 
 class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
   final ApiUser? currentUser;
   final ApiJourneyService journeyService;
+  final StateController<String?> _currentSpaceId;
 
-  JourneyTimelineViewModel(this.currentUser, this.journeyService)
-      : super(const JourneyTimelineState());
+  JourneyTimelineViewModel(
+    this.currentUser,
+    this.journeyService,
+    this._currentSpaceId,
+  ) : super(const JourneyTimelineState());
 
   void loadData(ApiUser selectedUser) {
     final isCurrentUser = selectedUser.id == currentUser?.id;
     state = state.copyWith(
       isCurrentUser: isCurrentUser,
       selectedUser: selectedUser,
+      spaceId: _currentSpaceId.state,
     );
     _loadJourney();
   }
@@ -113,6 +119,7 @@ class JourneyTimelineState with _$JourneyTimelineState {
     @Default([]) List<ApiLocationJourney> sortedJourney,
     int? selectedTimeFrom,
     int? selectedTimeTo,
+    String? spaceId,
     Object? error,
   }) = _JourneyTimelineState;
 }
