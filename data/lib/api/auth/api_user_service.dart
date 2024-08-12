@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/network/client.dart';
 import 'package:data/service/device_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../log/logger.dart';
 import '../../service/location_manager.dart';
@@ -171,14 +171,6 @@ class ApiUserService {
   Future<void> addSpaceId(String userId, String spaceId) async {
     await _userRef.doc(userId).update({
       "space_ids": FieldValue.arrayUnion([spaceId])
-    });
-  }
-
-  Future<void> updateBatteryPct(
-      String userId, String sessionId, double batteryPct) async {
-    await _sessionRef(userId).doc(sessionId).update({
-      "battery_pct": batteryPct,
-      "updated_at": FieldValue.serverTimestamp(),
     });
   }
 

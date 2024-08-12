@@ -2,15 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:battery_plus/battery_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/repository/journey_repository.dart';
+import 'package:data/service/battery_service.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/location_service.dart';
 import 'package:data/storage/preferences_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
@@ -87,9 +89,10 @@ void startService() async {
 }
 
 StreamSubscription<Position>? positionSubscription;
-Timer? timer;
+Timer? _timer;
 Position? _position;
 Position? _previousPosition;
+int? _batteryLevel;
 
 @pragma('vm:entry-point')
 Future<void> onStart(ServiceInstance service) async {
@@ -99,8 +102,8 @@ Future<void> onStart(ServiceInstance service) async {
 
   if (service is AndroidServiceInstance) {
     service.setForegroundNotificationInfo(
-      title: "Background Location Service",
-      content: "Your location is being tracked",
+      title: "Your space Location",
+      content: "location is being tracked",
     );
     service.setAsForegroundService();
   }
@@ -108,19 +111,22 @@ Future<void> onStart(ServiceInstance service) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final locationService = LocationService(FirebaseFirestore.instance);
   final journeyRepository = JourneyRepository(FirebaseFirestore.instance);
+  final batteryService = BatteryService(FirebaseFirestore.instance);
   final userId = await _getUserIdFromPreferences();
+  final battery = Battery();
 
   if (userId != null) {
     _startLocationUpdates();
-    timer = Timer.periodic(
+    _timer = Timer.periodic(
         const Duration(milliseconds: LOCATION_UPDATE_INTERVAL), (timer) {
       _updateUserLocation(
           userId, locationService, journeyRepository, _position);
+      userBatteryLevel(userId, battery, batteryService);
     });
   }
 
   service.on('stopService').listen((event) {
-    timer?.cancel();
+    _timer?.cancel();
     positionSubscription?.cancel();
     service.stopSelf();
   });
@@ -173,4 +179,24 @@ void _updateUserLocation(
 bool onIosBackground(ServiceInstance service) {
   onStart(service);
   return true;
+}
+
+void userBatteryLevel(
+  String userId,
+  Battery battery,
+  BatteryService batteryService,
+) async {
+  try {
+    final level = await battery.batteryLevel;
+    if (level != _batteryLevel) {
+      await batteryService.updateBatteryPct(userId, level);
+      _batteryLevel = level;
+    }
+  } catch (error, stack) {
+    logger.e(
+      'Main: error while getting or updating battery level',
+      error: error,
+      stackTrace: stack,
+    );
+  }
 }
