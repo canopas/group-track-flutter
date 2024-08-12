@@ -103,7 +103,7 @@ Future<void> onStart(ServiceInstance service) async {
   if (service is AndroidServiceInstance) {
     service.setForegroundNotificationInfo(
       title: "Your space Location",
-      content: "location is being tracked",
+      content: "Location is being tracked",
     );
     service.setAsForegroundService();
   }
