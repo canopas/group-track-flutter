@@ -180,4 +180,18 @@ class ApiJourneyService {
             ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
         .toList();
   }
+
+  Future<ApiLocationJourney?> getUserJourneyById(
+    String journeyId,
+    String userId,
+  ) async {
+    final querySnapshot = await _journeyRef(userId).doc(journeyId).get();
+
+    if (querySnapshot.exists) {
+      return ApiLocationJourney.fromJson(
+        querySnapshot.data() as Map<String, dynamic>,
+      );
+    }
+    return null;
+  }
 }
