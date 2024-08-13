@@ -39,38 +39,46 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   late ChatViewNotifier notifier;
+  late TextEditingController _textController;
 
   @override
   void initState() {
     super.initState();
+    _textController = TextEditingController();
     runPostFrame(() {
       notifier.setData(
-          widget.spaceInfo,
-          widget.threadInfo == null,
-          widget.threadInfo,
-          widget.threadInfoList ?? [],
+        widget.spaceInfo,
+        widget.threadInfo == null,
+        widget.threadInfo,
+        widget.threadInfoList ?? [],
       );
       if (widget.threadInfo != null) {
         notifier.listenThread(widget.threadInfo?.thread.id ?? '');
         notifier.getThreadMembers(widget.threadInfo!.thread);
       }
-      notifier.formatMemberNames(widget.threadInfo == null ? [] : widget.threadInfo!.members);
+      notifier.formatMemberNames(
+          widget.threadInfo == null ? [] : widget.threadInfo!.members);
       notifier.selectExistingThread();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    notifier = ref.watch(chatViewStateProvider(widget.threadInfo?.thread.id ?? '').notifier);
-    final state = ref.watch(chatViewStateProvider(widget.threadInfo?.thread.id ?? ''));
+    notifier = ref.watch(
+        chatViewStateProvider(widget.threadInfo?.thread.id ?? '').notifier);
+    final state =
+        ref.watch(chatViewStateProvider(widget.threadInfo?.thread.id ?? ''));
     _observeError();
 
     if (widget.threadInfo != null) {
-      notifier.markMessageAsSeen(widget.threadInfo!.thread.id,  widget.threadMessages!);
+      notifier.markMessageAsSeen(
+          widget.threadInfo!.thread.id, widget.threadMessages!);
     }
 
     return AppPage(
-      title: state.threadInfo == null && widget.threadInfo == null ? context.l10n.chat_start_new_chat_title : state.title,
+      title: state.threadInfo == null && widget.threadInfo == null
+          ? context.l10n.chat_start_new_chat_title
+          : state.title,
       body: _body(context, state),
     );
   }
@@ -108,7 +116,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       itemCount: messages.length,
       itemBuilder: (context, index) {
         if (loadingMessage && index == messages.length - 1) {
-          return const AppProgressIndicator(size: AppProgressIndicatorSize.small);
+          return const AppProgressIndicator(
+              size: AppProgressIndicatorSize.small);
         }
         if (index == messages.length - 1) {
           runPostFrame(() => notifier.onLoadMore(widget.threadInfo == null
@@ -121,15 +130,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         final bool isDifferentSender = index < messages.length - 1 &&
             messages[index + 1].sender_id != message.sender_id;
         final senderInfo = sender.isNotEmpty && sender.length > 2
-            ? sender.firstWhere((member) => member.user.id == message.sender_id).user
+            ? sender
+                .firstWhere((member) => member.user.id == message.sender_id)
+                .user
             : null;
 
-        final seenBy = widget.threadInfo?.members.where((member) =>
-        message.seen_by.contains(member.user.id) &&
-            member.user.id != currentUserId)
+        final seenBy = widget.threadInfo?.members
+            .where((member) =>
+                message.seen_by.contains(member.user.id) &&
+                member.user.id != currentUserId)
             .toList();
 
-        final showSeenText = notifier.isSender(message) && (seenBy?.isNotEmpty ?? false) && message.id == messages.first.id
+        final showSeenText = notifier.isSender(message) &&
+                (seenBy?.isNotEmpty ?? false) &&
+                message.id == messages.first.id
             ? true
             : false;
 
@@ -139,7 +153,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
         return Column(
           crossAxisAlignment: notifier.isSender(message)
-              ? showSeenText ? CrossAxisAlignment.end : CrossAxisAlignment.start
+              ? showSeenText
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start
               : CrossAxisAlignment.end,
           children: [
             if (showDateHeader)
@@ -160,7 +176,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               const SizedBox(height: 4),
               Text(
                 sender.length > 2
-                    ? context.l10n.chat_seen_by_message_text(seenBy!.map((e) => e.user.first_name).join(', '))
+                    ? context.l10n.chat_seen_by_message_text(
+                        seenBy!.map((e) => e.user.first_name).join(', '))
                     : context.l10n.chat_seen_message_text,
                 style: AppTextStyle.caption.copyWith(
                   color: context.colorScheme.textDisabled,
@@ -190,7 +207,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           isSender ? CrossAxisAlignment.start : CrossAxisAlignment.end,
       children: [
         if (showTimeHeader) ...[
-          _timeHeader(message.created_at ?? DateTime.now(), isSender, memberCount)
+          _timeHeader(
+              message.created_at ?? DateTime.now(), isSender, memberCount)
         ],
         const SizedBox(height: 4),
         Row(
@@ -198,11 +216,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           mainAxisAlignment:
               isSender ? MainAxisAlignment.start : MainAxisAlignment.end,
           children: [
-            if (isSender && (isDifferentSender || showTimeHeader) && memberCount > 2) ...[
+            if (isSender &&
+                (isDifferentSender || showTimeHeader) &&
+                memberCount > 2) ...[
               ProfileImage(
-                  profileImageUrl: sender?.profile_image ?? '',
-                  firstLetter: sender!.firstChar,
-                  size: 24,
+                profileImageUrl: sender?.profile_image ?? '',
+                firstLetter: sender!.firstChar,
+                size: 24,
                 style: AppTextStyle.caption.copyWith(
                   color: context.colorScheme.textPrimaryDark,
                 ),
@@ -276,7 +296,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           Text(
             message,
             style: AppTextStyle.subtitle3.copyWith(
-              color: isSender ? context.colorScheme.textPrimary : context.colorScheme.textPrimaryDark,
+              color: isSender
+                  ? context.colorScheme.textPrimary
+                  : context.colorScheme.textPrimaryDark,
             ),
             maxLines: null,
             textAlign: isSender ? TextAlign.start : TextAlign.end,
@@ -336,7 +358,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
                 final member = state.users[index];
-                final isSelected = state.selectedMember.contains(member.user.id);
+                final isSelected =
+                    state.selectedMember.contains(member.user.id);
                 return GestureDetector(
                   onTap: () {
                     setState(() {
@@ -456,8 +479,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 color: context.colorScheme.primary,
                 child: Center(
                   child: Text(firstLetter,
-                      style: AppTextStyle.header4
-                          .copyWith(color: context.colorScheme.textPrimaryDark)),
+                      style: AppTextStyle.header4.copyWith(
+                          color: context.colorScheme.textPrimaryDark)),
                 ),
               ),
       ),
@@ -475,9 +498,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 borderRadius: BorderRadius.circular(24),
               ),
               child: AppTextField(
-                controller: state.message,
+                controller: _textController,
                 onChanged: (value) {
-                  notifier.onChange(value);
+                  notifier.onChange(value.trim());
                 },
                 maxLines: 6,
                 minLines: 1,
@@ -496,28 +519,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
           const SizedBox(width: 8),
           IconPrimaryButton(
-            onTap: () {
-              if (state.message.text.trim().isNotEmpty) {
-                if (state.threadInfo != null || widget.threadInfo != null) {
-                  notifier.sendMessage(
-                      state.threadId.isEmpty
-                          ? widget.threadInfo?.thread.id ?? ''
-                          : state.threadId,
-                      state.message.text);
-                } else {
-                  notifier.createNewThread(
-                      widget.spaceInfo.space.id, state.message.text);
-                }
-              }
-            },
+            onTap: () => onTapSendMessageButton(state),
             icon: Icon(Icons.arrow_forward_rounded,
-                color: state.allowSend && state.message.text.isNotEmpty
+                color: state.allowSend && _textController.text.isNotEmpty
                     ? context.colorScheme.textPrimaryDark
                     : context.colorScheme.textDisabled),
-            enabled: state.allowSend,
             radius: 23,
             size: 46,
-            bgColor: state.allowSend && state.message.text.isNotEmpty
+            bgColor: state.allowSend && _textController.text.isNotEmpty
                 ? context.colorScheme.primary
                 : context.colorScheme.containerLowOnSurface,
           )
@@ -561,10 +570,31 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void _observeError() {
-    ref.listen(chatViewStateProvider(widget.threadInfo?.thread.id ?? '').select((state) => state.error), (previous, next) {
+    ref.listen(
+        chatViewStateProvider(widget.threadInfo?.thread.id ?? '')
+            .select((state) => state.error), (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
       }
     });
+  }
+
+  void onTapSendMessageButton(ChatViewState state) {
+    if (_textController.text.trim().isNotEmpty) {
+      if (state.threadInfo != null || widget.threadInfo != null) {
+        notifier.sendMessage(
+          state.threadId.isEmpty
+              ? widget.threadInfo?.thread.id ?? ''
+              : state.threadId,
+          _textController.text,
+        );
+      } else {
+        notifier.createNewThread(
+          widget.spaceInfo.space.id,
+          _textController.text,
+        );
+      }
+    }
+    _textController.text = '';
   }
 }
