@@ -40,6 +40,13 @@ class PlaceService {
         .toList());
   }
 
+  Future<List<ApiPlace>> getAllPlace(String spaceId) async {
+    final snapshot = await spacePlacesRef(spaceId).get();
+    return snapshot.docs
+        .map((doc) => ApiPlace.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<ApiPlace?> getPlace(String placeId) async {
     final querySnapshot = await _spaceRef.firestore
         .collectionGroup('space_places')

@@ -4,9 +4,13 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/repository/geofence_repository.dart';
 import 'package:data/repository/journey_repository.dart';
+import 'package:data/repository/space_repository.dart';
+import 'package:data/service/geofence_service.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/location_service.dart';
+import 'package:data/service/place_service.dart';
 import 'package:data/storage/preferences_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -109,6 +113,24 @@ Future<void> onStart(ServiceInstance service) async {
   service.on('stopService').listen((event) {
     service.stopSelf();
   });
+
+  if (userId != null) {
+    _startGeoFenceRegistration(userId);
+  }
+}
+
+void _startGeoFenceRegistration(String userId) {
+  final placeService = PlaceService(FirebaseFirestore.instance);
+  final spaceService = SpaceRepository(FirebaseFirestore.instance);
+  final geofenceService = GeoFenceServiceHandler();
+
+  final geofenceRepository = GeofenceRepository(
+    placeService,
+    spaceService,
+    geofenceService,
+  );
+
+  geofenceRepository.init(userId);
 }
 
 void _startLocationUpdates(
