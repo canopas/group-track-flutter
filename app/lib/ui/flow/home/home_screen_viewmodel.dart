@@ -184,10 +184,11 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     try {
       userService.getUserSessionByIdStream(userId, sessionId).listen((session) {
         if (session != null && !session.session_active) {
-          state = state.copyWith(isSessionExpired: true);
+          state = state.copyWith(isSessionExpired: true, error: null);
         }
       });
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e(
         'HomeViewNotifier: error while listening user session',
         error: error,
