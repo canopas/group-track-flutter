@@ -39,12 +39,10 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   late ChatViewNotifier notifier;
-  late TextEditingController _textController;
 
   @override
   void initState() {
     super.initState();
-    _textController = TextEditingController();
     runPostFrame(() {
       notifier.setData(
         widget.spaceInfo,
@@ -498,10 +496,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 borderRadius: BorderRadius.circular(24),
               ),
               child: AppTextField(
-                controller: _textController,
-                onChanged: (value) {
-                  notifier.onChange(value.trim());
-                },
+                controller: state.message,
+                onChanged: notifier.onChange,
                 maxLines: 6,
                 minLines: 1,
                 style: AppTextStyle.body2.copyWith(
@@ -521,12 +517,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           IconPrimaryButton(
             onTap: () => onTapSendMessageButton(state),
             icon: Icon(Icons.arrow_forward_rounded,
-                color: state.allowSend && _textController.text.isNotEmpty
+                color: state.allowSend && state.message.text.isNotEmpty
                     ? context.colorScheme.textPrimaryDark
                     : context.colorScheme.textDisabled),
+            enabled: state.allowSend,
             radius: 23,
             size: 46,
-            bgColor: state.allowSend && _textController.text.isNotEmpty
+            bgColor: state.allowSend && state.message.text.isNotEmpty
                 ? context.colorScheme.primary
                 : context.colorScheme.containerLowOnSurface,
           )
@@ -580,21 +577,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void onTapSendMessageButton(ChatViewState state) {
-    if (_textController.text.trim().isNotEmpty) {
+    if (state.message.text.trim().isNotEmpty) {
       if (state.threadInfo != null || widget.threadInfo != null) {
         notifier.sendMessage(
           state.threadId.isEmpty
               ? widget.threadInfo?.thread.id ?? ''
               : state.threadId,
-          _textController.text,
+          state.message.text.trim(),
         );
       } else {
         notifier.createNewThread(
           widget.spaceInfo.space.id,
-          _textController.text,
+          state.message.text.trim(),
         );
       }
     }
-    _textController.text = '';
   }
 }

@@ -26,6 +26,7 @@ mixin _$ChatViewState {
   List<ApiUserInfo> get users => throw _privateConstructorUsedError;
   String get threadId => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
+  TextEditingController get message => throw _privateConstructorUsedError;
   List<ApiThreadMessage> get messages => throw _privateConstructorUsedError;
   List<ApiUserInfo> get sender => throw _privateConstructorUsedError;
   List<String> get selectedMember => throw _privateConstructorUsedError;
@@ -57,6 +58,7 @@ abstract class $ChatViewStateCopyWith<$Res> {
       List<ApiUserInfo> users,
       String threadId,
       String title,
+      TextEditingController message,
       List<ApiThreadMessage> messages,
       List<ApiUserInfo> sender,
       List<String> selectedMember,
@@ -93,6 +95,7 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
     Object? users = null,
     Object? threadId = null,
     Object? title = null,
+    Object? message = null,
     Object? messages = null,
     Object? sender = null,
     Object? selectedMember = null,
@@ -143,6 +146,10 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
       messages: null == messages
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
@@ -219,6 +226,7 @@ abstract class _$$ChatViewStateImplCopyWith<$Res>
       List<ApiUserInfo> users,
       String threadId,
       String title,
+      TextEditingController message,
       List<ApiThreadMessage> messages,
       List<ApiUserInfo> sender,
       List<String> selectedMember,
@@ -255,6 +263,7 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
     Object? users = null,
     Object? threadId = null,
     Object? title = null,
+    Object? message = null,
     Object? messages = null,
     Object? sender = null,
     Object? selectedMember = null,
@@ -305,6 +314,10 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as TextEditingController,
       messages: null == messages
           ? _value._messages
           : messages // ignore: cast_nullable_to_non_nullable
@@ -352,6 +365,7 @@ class _$ChatViewStateImpl implements _ChatViewState {
       final List<ApiUserInfo> users = const [],
       this.threadId = '',
       this.title = '',
+      required this.message,
       final List<ApiThreadMessage> messages = const [],
       final List<ApiUserInfo> sender = const [],
       final List<String> selectedMember = const [],
@@ -402,6 +416,8 @@ class _$ChatViewStateImpl implements _ChatViewState {
   @override
   @JsonKey()
   final String title;
+  @override
+  final TextEditingController message;
   final List<ApiThreadMessage> _messages;
   @override
   @JsonKey()
@@ -448,7 +464,7 @@ class _$ChatViewStateImpl implements _ChatViewState {
 
   @override
   String toString() {
-    return 'ChatViewState(loading: $loading, creating: $creating, loadingMessages: $loadingMessages, messageSending: $messageSending, allowSend: $allowSend, showMemberSelectionView: $showMemberSelectionView, isNewThread: $isNewThread, users: $users, threadId: $threadId, title: $title, messages: $messages, sender: $sender, selectedMember: $selectedMember, error: $error, spaceInfo: $spaceInfo, threadInfo: $threadInfo, currentUserId: $currentUserId, threadList: $threadList)';
+    return 'ChatViewState(loading: $loading, creating: $creating, loadingMessages: $loadingMessages, messageSending: $messageSending, allowSend: $allowSend, showMemberSelectionView: $showMemberSelectionView, isNewThread: $isNewThread, users: $users, threadId: $threadId, title: $title, message: $message, messages: $messages, sender: $sender, selectedMember: $selectedMember, error: $error, spaceInfo: $spaceInfo, threadInfo: $threadInfo, currentUserId: $currentUserId, threadList: $threadList)';
   }
 
   @override
@@ -474,6 +490,7 @@ class _$ChatViewStateImpl implements _ChatViewState {
             (identical(other.threadId, threadId) ||
                 other.threadId == threadId) &&
             (identical(other.title, title) || other.title == title) &&
+            (identical(other.message, message) || other.message == message) &&
             const DeepCollectionEquality().equals(other._messages, _messages) &&
             const DeepCollectionEquality().equals(other._sender, _sender) &&
             const DeepCollectionEquality()
@@ -490,26 +507,28 @@ class _$ChatViewStateImpl implements _ChatViewState {
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      loading,
-      creating,
-      loadingMessages,
-      messageSending,
-      allowSend,
-      showMemberSelectionView,
-      isNewThread,
-      const DeepCollectionEquality().hash(_users),
-      threadId,
-      title,
-      const DeepCollectionEquality().hash(_messages),
-      const DeepCollectionEquality().hash(_sender),
-      const DeepCollectionEquality().hash(_selectedMember),
-      const DeepCollectionEquality().hash(error),
-      spaceInfo,
-      threadInfo,
-      currentUserId,
-      const DeepCollectionEquality().hash(_threadList));
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        loading,
+        creating,
+        loadingMessages,
+        messageSending,
+        allowSend,
+        showMemberSelectionView,
+        isNewThread,
+        const DeepCollectionEquality().hash(_users),
+        threadId,
+        title,
+        message,
+        const DeepCollectionEquality().hash(_messages),
+        const DeepCollectionEquality().hash(_sender),
+        const DeepCollectionEquality().hash(_selectedMember),
+        const DeepCollectionEquality().hash(error),
+        spaceInfo,
+        threadInfo,
+        currentUserId,
+        const DeepCollectionEquality().hash(_threadList)
+      ]);
 
   @JsonKey(ignore: true)
   @override
@@ -530,6 +549,7 @@ abstract class _ChatViewState implements ChatViewState {
       final List<ApiUserInfo> users,
       final String threadId,
       final String title,
+      required final TextEditingController message,
       final List<ApiThreadMessage> messages,
       final List<ApiUserInfo> sender,
       final List<String> selectedMember,
@@ -559,6 +579,8 @@ abstract class _ChatViewState implements ChatViewState {
   String get threadId;
   @override
   String get title;
+  @override
+  TextEditingController get message;
   @override
   List<ApiThreadMessage> get messages;
   @override

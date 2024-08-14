@@ -8,6 +8,7 @@ import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/message_service.dart';
 import 'package:data/storage/app_preferences.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:style/extenstions/date_extenstions.dart';
@@ -41,10 +42,17 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 
   ChatViewNotifier(this.threadId, this.messageService, this.apiMessageService,
       this.userService, this.currentUser)
-      : super(ChatViewState(currentUserId: currentUser?.id ?? ''));
+      : super(
+          ChatViewState(
+              message: TextEditingController(text: ''),
+              currentUserId: currentUser?.id ?? ''),
+        );
 
-  void onChange(String text) {
-    state = state.copyWith(allowSend: text.isNotEmpty);
+  void onChange(String value) {
+    if (value.isNotEmpty && value.trim().isEmpty) {
+      state = state.copyWith(message: TextEditingController(text: ''));
+    }
+    state = state.copyWith(allowSend: value.trim().isNotEmpty);
   }
 
   void setData(SpaceInfo spaceInfo, bool show, ThreadInfo? threadInfo,
@@ -138,6 +146,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
       await messageService.sendMessage(newMessage);
       state = state.copyWith(
         messageSending: false,
+        message: TextEditingController(text: ''),
         showMemberSelectionView: false,
         error: null,
       );
@@ -394,6 +403,7 @@ class ChatViewState with _$ChatViewState {
     @Default([]) List<ApiUserInfo> users,
     @Default('') String threadId,
     @Default('') String title,
+    required TextEditingController message,
     @Default([]) List<ApiThreadMessage> messages,
     @Default([]) List<ApiUserInfo> sender,
     @Default([]) List<String> selectedMember,
