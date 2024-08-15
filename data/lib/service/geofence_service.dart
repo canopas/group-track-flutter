@@ -1,19 +1,29 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/repository/space_repository.dart';
 import 'package:data/service/place_service.dart';
+import 'package:data/storage/app_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geofence_service/geofence_service.dart';
 
+import '../api/auth/auth_models.dart';
 import '../api/place/api_place.dart';
+
+final geofenceServiceProvider = Provider((ref) => GeoFenceServiceHandler(
+  ref.read(placeServiceProvider),
+      ref.read(currentUserPod),
+  ref.read(spaceRepositoryProvider)
+));
 
 class GeoFenceServiceHandler {
   final GeofenceService _geoFenceService = GeofenceService.instance.setup(useActivityRecognition: true);
   final List<Geofence> _geoFences = [];
   final PlaceService placeService;
-  final String currentUserid;
-  final String currentUsername;
+  final SpaceRepository spaceRepository;
+  final ApiUser? _currentUser;
 
   GeoFenceServiceHandler(
-      this.placeService, this.currentUserid, this.currentUsername) {
+      this.placeService, this._currentUser, this.spaceRepository) {
     _geoFenceService.addGeofenceStatusChangeListener(_onGeofenceStatusChanged);
     _geoFenceService.addLocationChangeListener(_onLocationChanged);
     _geoFenceService.addStreamErrorListener(_onError);
@@ -60,8 +70,6 @@ class GeoFenceServiceHandler {
         makeHttpCall(geofence.id, status);
         break;
       case GeofenceStatus.DWELL:
-        logger.d(
-            'Dwelling in geofence ${geofence.id} at location (${location.latitude}, ${location.longitude})');
         break;
     }
   }
@@ -78,13 +86,13 @@ class GeoFenceServiceHandler {
     try {
       final place = await placeService.getPlace(placeId);
       final message = status == GeofenceStatus.ENTER
-          ? '$currentUsername has arrived at 📍${place?.name}'
-          : '$currentUsername has left 📍${place?.name}';
+          ? '${_currentUser?.first_name ?? ''} has arrived at 📍${place?.name}'
+          : '${_currentUser?.first_name ?? ''} has left 📍${place?.name}';
 
       final data = {
         'placeId': placeId,
         'spaceId': place?.space_id ?? '',
-        'eventBy': currentUserid,
+        'eventBy': _currentUser?.id ?? '',
         'message': message,
         'eventType': status
       };

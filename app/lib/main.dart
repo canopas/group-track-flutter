@@ -4,13 +4,9 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/log/logger.dart';
-import 'package:data/repository/geofence_repository.dart';
 import 'package:data/repository/journey_repository.dart';
-import 'package:data/repository/space_repository.dart';
-import 'package:data/service/geofence_service.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/location_service.dart';
-import 'package:data/service/place_service.dart';
 import 'package:data/storage/preferences_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -73,16 +69,6 @@ Future<String?> _getUserIdFromPreferences() async {
   return null;
 }
 
-Future<String?> _getUserNameFromPreferences() async {
-  final prefs = await SharedPreferences.getInstance();
-  final encodedUser = prefs.getString("user_account");
-  if (encodedUser != null) {
-    final user = jsonDecode(encodedUser);
-    return user['first_name'];
-  }
-  return null;
-}
-
 void startService(String userId) async {
   final service = FlutterBackgroundService();
   await service.configure(
@@ -115,7 +101,6 @@ Future<void> onStart(ServiceInstance service) async {
   final locationService = LocationService(FirebaseFirestore.instance);
   final journeyRepository = JourneyRepository(FirebaseFirestore.instance);
   final userId = await _getUserIdFromPreferences();
-  final userName = await _getUserNameFromPreferences();
 
   if (userId != null) {
     _startLocationUpdates(userId, locationService, journeyRepository);
@@ -124,24 +109,6 @@ Future<void> onStart(ServiceInstance service) async {
   service.on('stopService').listen((event) {
     service.stopSelf();
   });
-
-  if (userId != null && userName != null) {
-    _startGeoFenceRegistration(userId, userName);
-  }
-}
-
-void _startGeoFenceRegistration(String userId, String userName) {
-  final placeService = PlaceService(FirebaseFirestore.instance);
-  final spaceService = SpaceRepository(FirebaseFirestore.instance);
-  final geofenceService = GeoFenceServiceHandler(placeService, userId, userName);
-
-  final geofenceRepository = GeofenceRepository(
-    placeService,
-    spaceService,
-    geofenceService,
-  );
-
-  geofenceRepository.init(userId);
 }
 
 void _startLocationUpdates(

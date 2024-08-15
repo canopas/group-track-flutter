@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../api/network/client.dart';
+import '../api/space/space_models.dart';
 import '../config.dart';
 
 const DEFAULT_RADIUS = 1500;
@@ -23,7 +24,9 @@ class PlaceService {
 
   PlaceService(this._db);
 
-  CollectionReference get _spaceRef => _db.collection('spaces');
+  CollectionReference get _spaceRef => _db.collection('spaces').withConverter<ApiSpace>(
+      fromFirestore: ApiSpace.fromFireStore,
+      toFirestore: (space, options) => space.toJson());
 
   CollectionReference spacePlacesRef(String spaceId) =>
       _spaceRef.doc(spaceId).collection('space_places');
@@ -51,6 +54,7 @@ class PlaceService {
     final querySnapshot = await _spaceRef.firestore
         .collectionGroup('space_places')
         .where('id', isEqualTo: placeId)
+        .orderBy('created_at', descending: false)
         .limit(1)
         .get();
 
