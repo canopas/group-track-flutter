@@ -66,6 +66,8 @@
     }
   },
   "home_select_space_text": "Select a space",
+  "home_session_expired_title": "You've been logged out",
+  "home_session_expired_message": "You need to sign in again to continue using the application.",
 
   "create_space_give_your_space_name_title": "Give your space name",
   "create_space_tip_text": "Tips: You create dedicated spaces for work, family, friends, and more.",
@@ -88,7 +90,7 @@
   "join_space_already_joined_error_text": "You are already member of this space",
   "join_space_invalid_code_error_text": "It appears the code is no longer valid or has expired. please review and enter valid code.",
   "join_space_congratulation_title": "Congratulation",
-  "join_space_congratulation_subtitle": "You’re are now member of {spaceName} group for sharing your real-time location.",
+  "join_space_congratulation_subtitle": "You’re now member of {spaceName} group for sharing your real-time location.",
   "@join_space_congratulation_subtitle": {
     "placeholders": {
       "spaceName": {

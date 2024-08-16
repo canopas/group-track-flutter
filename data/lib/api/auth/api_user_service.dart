@@ -161,7 +161,7 @@ class ApiUserService {
         logger.e('UserService: registerDevice error deviceToken is null');
         return;
       }
-      await registerFcmToken(currentUser!.id,  deviceToken);
+      await registerFcmToken(currentUser!.id, deviceToken);
       logger.d('UserService: registerDevice success with token $deviceToken');
     } catch (error) {
       logger.e('UserService: registerDevice error ', error: error);
@@ -193,15 +193,27 @@ class ApiUserService {
   }
 
   Stream<ApiSession?> getUserSessionStream(String userId) {
-    return Stream.fromFuture(_sessionRef(userId)
+    return _sessionRef(userId)
         .where("session_active", isEqualTo: true)
-        .get()
-        .then((querySnapshot) {
-      if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot.docs.first.data() as ApiSession;
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs.first.data() as ApiSession;
       }
       return null;
-    }));
+    });
+  }
+
+  Stream<ApiSession?> getUserSessionByIdStream(
+    String userId,
+    String sessionId,
+  ) {
+    return _sessionRef(userId).doc(sessionId).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        return snapshot.data() as ApiSession;
+      }
+      return null;
+    });
   }
 
   Future<void> signOut() async {
