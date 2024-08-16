@@ -84,25 +84,34 @@ class GeoFenceServiceHandler {
 
   void makeHttpCall(String placeId, GeofenceStatus status) async {
     try {
-      final place = await placeService.getPlace(placeId);
-      final message = status == GeofenceStatus.ENTER
-          ? '${_currentUser?.first_name ?? ''} has arrived at 📍${place?.name}'
-          : '${_currentUser?.first_name ?? ''} has left 📍${place?.name}';
+      final spaces = await spaceRepository.getUserSpaces(_currentUser?.id ?? '');
+      for (final space in spaces) {
+        final spaceId = space!.id;
+        final places = await placeService.getAllPlace(spaceId);
 
-      final data = {
-        'placeId': placeId,
-        'spaceId': place?.space_id ?? '',
-        'eventBy': _currentUser?.id ?? '',
-        'message': message,
-        'eventType': status
-      };
+        for (final place in places) {
+          if (place.id == placeId) {
+              final message = status == GeofenceStatus.ENTER
+                  ? '${_currentUser?.first_name ?? ''} has arrived at 📍${place.name}'
+                  : '${_currentUser?.first_name ?? ''} has left 📍${place.name}';
 
-      final callable = FirebaseFunctions.instanceFor(region: 'asia-south1')
-          .httpsCallable('sendGeoFenceNotification');
-      await callable.call(data);
+              final data = {
+                'placeId': placeId,
+                'spaceId': place.space_id,
+                'eventBy': _currentUser?.id ?? '',
+                'message': message,
+                'eventType': status == GeofenceStatus.ENTER ? "1" : "2",
+              };
+
+              final callable = FirebaseFunctions.instanceFor(region: 'asia-south1')
+                  .httpsCallable('sendGeoFenceNotification');
+              await callable.call(data);
+          }
+        }
+      }
     } catch (error, stack) {
       logger.e(
-        "GeofenceService: error while get place from place id",
+        "GeofenceService: error while getting place from place id",
         error: error,
         stackTrace: stack,
       );
