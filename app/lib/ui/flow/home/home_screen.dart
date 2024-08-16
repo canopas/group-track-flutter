@@ -1,6 +1,7 @@
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
@@ -142,6 +143,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Navigator.of(context).pop();
                 },
                 goToSettings: () {
+                  openAppSettings();
                   notifier.requestIgnoreBatteryOptimizations();
                   Navigator.of(context).pop();
                 },

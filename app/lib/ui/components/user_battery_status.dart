@@ -14,17 +14,17 @@ class UserBatteryStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final batteryPct = userInfo.session?.battery_pct ?? 0;
+    final batteryPct = userInfo.user.battery_pct ?? 0;
     String icon;
     Color color;
 
-    if (batteryPct > 70.0) {
+    if (batteryPct > 70) {
       icon = Assets.images.icFullBetteryIcon;
       color = context.colorScheme.positive;
-    } else if (batteryPct > 50.0) {
+    } else if (batteryPct > 50) {
       icon = Assets.images.ic50BatteryIcon;
       color = context.colorScheme.positive;
-    } else if (batteryPct > 30.0) {
+    } else if (batteryPct > 30) {
       icon = Assets.images.ic30BatteryIcon;
       color = context.colorScheme.positive;
     } else {
@@ -45,6 +45,4 @@ class UserBatteryStatus extends StatelessWidget {
       ],
     );
   }
-
-  void getBatteryIcon() {}
 }
