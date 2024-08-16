@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/location/journey/journey.dart';
 import 'package:data/api/message/message_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/api/space/space_models.dart';
@@ -8,11 +9,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
-import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_screen.dart';
+import 'package:yourspace_flutter/ui/flow/journey/detail/user_journey_detail_screen.dart';
+import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/connection_screen.dart';
@@ -52,6 +54,7 @@ class AppRoute {
   static const pathChoosePlace = "/choose_place";
   static const pathEditPlace = "/edit_place";
   static const pathJourneyTimeline = '/journey-timeline';
+  static const pathJourneyDetail = '/journey-detail';
 
   final String path;
   final String? name;
@@ -239,6 +242,13 @@ class AppRoute {
         builder: (_) => JourneyTimelineScreen(selectedUser: user));
   }
 
+  static AppRoute journeyDetail(ApiLocationJourney journey) {
+    return AppRoute(
+      pathJourneyDetail,
+      builder: (_) => UserJourneyDetailScreen(journey: journey),
+    );
+  }
+
   static AppRoute message(SpaceInfo space) {
     return AppRoute(
       pathMessage,
@@ -369,6 +379,10 @@ class AppRoute {
     ),
     GoRoute(
       path: pathJourneyTimeline,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathJourneyDetail,
       builder: (context, state) => state.widget(context),
     )
   ];

@@ -19,7 +19,9 @@ enum DateFormatType {
   relativeTime,
   relativeDate,
   relativeDateWeekday,
-  serverIso
+  serverIso,
+  dayTime,
+  shortDayMonth
 }
 
 enum DateRangeFormatType {
@@ -69,6 +71,10 @@ extension DateFormatter on DateTime {
         return _formattedPastTime(context);
       case DateFormatType.serverIso:
         return DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(toUtc());
+      case DateFormatType.dayTime:
+        return DateFormat('dd MMMM hh:mm a').format(this);
+      case DateFormatType.shortDayMonth:
+        return DateFormat('d MMMM').format(this);
     }
   }
 
@@ -145,8 +151,7 @@ extension DateFormatter on DateTime {
     } else {
       final bool isSameYear = year == currentTime.year;
 
-      final String format =
-      isSameYear ? 'dd MMM' : 'dd MMM yyyy';
+      final String format = isSameYear ? 'dd MMM' : 'dd MMM yyyy';
       return DateFormat(format).format(this);
     }
   }
@@ -173,8 +178,8 @@ extension DateFormatter on DateTime {
   bool get isToday => startOfDay.isAtSameMomentAs(DateTime.now().startOfDay);
 
   bool get isYesterday => startOfDay.isAtSameMomentAs(
-    DateTime.now().startOfDay.subtract(const Duration(days: 1)),
-  );
+        DateTime.now().startOfDay.subtract(const Duration(days: 1)),
+      );
 }
 
 extension StringDateFormatter on String {
