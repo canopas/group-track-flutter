@@ -1,3 +1,4 @@
+import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
@@ -17,6 +18,8 @@ final homeViewStateProvider =
     ref.read(permissionServiceProvider),
     ref.read(lastBatteryDialogPod.notifier),
     ref.read(currentUserPod),
+    ref.read(apiUserServiceProvider),
+    ref.read(currentUserSessionPod),
   ),
 );
 
@@ -26,15 +29,22 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final StateController<String?> _currentSpaceIdController;
   final StateController<String?> _lastBatteryDialogDate;
   final ApiUser? _currentUser;
+  final ApiUserService userService;
+  final ApiSession? _userSession;
 
   HomeViewNotifier(
-    this.spaceService,
-    this._currentSpaceIdController,
-    this.permissionService,
-    this._lastBatteryDialogDate,
-    this._currentUser,
-  ) : super(const HomeViewState()) {
+      this.spaceService,
+      this._currentSpaceIdController,
+      this.permissionService,
+      this._lastBatteryDialogDate,
+      this._currentUser,
+      this.userService,
+      this._userSession)
+      : super(const HomeViewState()) {
     listenSpaceMember();
+
+    if (_currentUser == null && _userSession == null) return;
+    listenUserSession(_currentUser!.id, _userSession!.id);
   }
 
   String? get currentSpaceId => _currentSpaceIdController.state;
@@ -169,6 +179,29 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       );
     }
   }
+
+  void listenUserSession(String userId, String sessionId) async {
+    try {
+      userService.getUserSessionByIdStream(userId, sessionId).listen((session) {
+        if (session != null && !session.session_active) {
+          state = state.copyWith(isSessionExpired: true, error: null);
+        }
+      });
+    } catch (error, stack) {
+      state = state.copyWith(error: error);
+      logger.e(
+        'HomeViewNotifier: error while listening user session',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  void signOut() async {
+    await userService.signOut();
+    state =
+        state.copyWith(popToSignIn: DateTime.now(), isSessionExpired: false);
+  }
 }
 
 @freezed
@@ -180,7 +213,8 @@ class HomeViewState with _$HomeViewState {
     @Default(false) bool fetchingInviteCode,
     @Default(false) bool enablingLocation,
     @Default(true) bool locationEnabled,
-    @Default(true) bool isSessionExpired,
+    @Default(false) bool isSessionExpired,
+    DateTime? popToSignIn,
     SpaceInfo? selectedSpace,
     @Default('') String spaceInvitationCode,
     @Default([]) List<SpaceInfo> spaceList,

@@ -15,8 +15,12 @@ extension LatLngExtensions on LatLng {
     }
 
     try {
-      if(latitude < 1.0 && longitude < 1.0) return '';
-      final placeMarks = await placemarkFromCoordinates(latitude, longitude);
+      if (latitude < 1.0 && longitude < 1.0) return '';
+      final placeMarks = await placemarkFromCoordinates(latitude, longitude)
+          .timeout(const Duration(seconds: 5), onTimeout: () {
+        logger.e('GetAddress: Geocoding request timed out');
+        return [];
+      });
       if (placeMarks.isNotEmpty) {
         var address = placeMarks.getFormattedAddress();
 

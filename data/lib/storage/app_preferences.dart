@@ -31,6 +31,11 @@ final currentUserSessionJsonPod = createPrefProvider<String?>(
   defaultValue: null,
 );
 
+final currentUserSessionPod = Provider<ApiSession?>((ref) {
+  final json = ref.watch(currentUserSessionJsonPod);
+  return json == null ? null : ApiSession.fromJson(jsonDecode(json));
+});
+
 final currentUserPod = Provider<ApiUser?>((ref) {
   final json = ref.watch(currentUserJsonPod);
   return json == null ? null : ApiUser.fromJson(jsonDecode(json));
