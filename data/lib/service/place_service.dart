@@ -50,20 +50,6 @@ class PlaceService {
         .toList();
   }
 
-  Future<ApiPlace?> getPlace(String placeId) async {
-    final querySnapshot = await _spaceRef.firestore
-        .collectionGroup('space_places')
-        .where('id', isEqualTo: placeId)
-        .orderBy('created_at', descending: false)
-        .limit(1)
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      return querySnapshot.docs.first.data() as ApiPlace;
-    }
-    return null;
-  }
-
   Future<void> deletePlace(String spaceId, String placeId) async {
     await spacePlacesRef(spaceId).doc(placeId).delete();
   }

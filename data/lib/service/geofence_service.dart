@@ -10,13 +10,13 @@ import '../api/auth/auth_models.dart';
 import '../api/place/api_place.dart';
 
 final geofenceServiceProvider = Provider((ref) => GeoFenceServiceHandler(
-  ref.read(placeServiceProvider),
-      ref.read(currentUserPod),
-  ref.read(spaceServiceProvider)
-));
+    ref.read(placeServiceProvider),
+    ref.read(currentUserPod),
+    ref.read(spaceServiceProvider)));
 
 class GeoFenceServiceHandler {
-  final GeofenceService _geoFenceService = GeofenceService.instance.setup(useActivityRecognition: true);
+  final GeofenceService _geoFenceService =
+      GeofenceService.instance.setup(useActivityRecognition: true);
   final List<Geofence> _geoFences = [];
   final PlaceService placeService;
   final SpaceService spaceRepository;
@@ -62,12 +62,12 @@ class GeoFenceServiceHandler {
       case GeofenceStatus.ENTER:
         logger.d(
             'Entered geofence ${geofence.id} at location (${location.latitude}, ${location.longitude})');
-        makeHttpCall(geofence.id, status);
+        _makeHttpCall(geofence.id, status);
         break;
       case GeofenceStatus.EXIT:
         logger.d(
             'Exited geofence ${geofence.id} at location (${location.latitude}, ${location.longitude})');
-        makeHttpCall(geofence.id, status);
+        _makeHttpCall(geofence.id, status);
         break;
       case GeofenceStatus.DWELL:
         break;
@@ -82,30 +82,32 @@ class GeoFenceServiceHandler {
     logger.d('Geofence error: $error');
   }
 
-  void makeHttpCall(String placeId, GeofenceStatus status) async {
+  void _makeHttpCall(String placeId, GeofenceStatus status) async {
     try {
-      final spaces = await spaceRepository.getUserSpaces(_currentUser?.id ?? '');
+      final spaces =
+          await spaceRepository.getUserSpaces(_currentUser?.id ?? '');
       for (final space in spaces) {
         final spaceId = space!.id;
         final places = await placeService.getAllPlace(spaceId);
 
         for (final place in places) {
           if (place.id == placeId) {
-              final message = status == GeofenceStatus.ENTER
-                  ? '${_currentUser?.first_name ?? ''} has arrived at 📍${place.name}'
-                  : '${_currentUser?.first_name ?? ''} has left 📍${place.name}';
+            final message = status == GeofenceStatus.ENTER
+                ? '${_currentUser?.first_name ?? ''} has arrived at 📍${place.name}'
+                : '${_currentUser?.first_name ?? ''} has left 📍${place.name}';
 
-              final data = {
-                'placeId': placeId,
-                'spaceId': place.space_id,
-                'eventBy': _currentUser?.id ?? '',
-                'message': message,
-                'eventType': status == GeofenceStatus.ENTER ? "1" : "2",
-              };
+            final data = {
+              'placeId': placeId,
+              'spaceId': place.space_id,
+              'eventBy': _currentUser?.id ?? '',
+              'message': message,
+              'eventType': status == GeofenceStatus.ENTER ? "1" : "2",
+            };
 
-              final callable = FirebaseFunctions.instanceFor(region: 'asia-south1')
-                  .httpsCallable('sendGeoFenceNotification');
-              await callable.call(data);
+            final callable =
+                FirebaseFunctions.instanceFor(region: 'asia-south1')
+                    .httpsCallable('sendGeoFenceNotification');
+            await callable.call(data);
           }
         }
       }
