@@ -1,7 +1,7 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:data/log/logger.dart';
-import 'package:data/repository/space_repository.dart';
 import 'package:data/service/place_service.dart';
+import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geofence_service/geofence_service.dart';
@@ -12,14 +12,14 @@ import '../api/place/api_place.dart';
 final geofenceServiceProvider = Provider((ref) => GeoFenceServiceHandler(
   ref.read(placeServiceProvider),
       ref.read(currentUserPod),
-  ref.read(spaceRepositoryProvider)
+  ref.read(spaceServiceProvider)
 ));
 
 class GeoFenceServiceHandler {
   final GeofenceService _geoFenceService = GeofenceService.instance.setup(useActivityRecognition: true);
   final List<Geofence> _geoFences = [];
   final PlaceService placeService;
-  final SpaceRepository spaceRepository;
+  final SpaceService spaceRepository;
   final ApiUser? _currentUser;
 
   GeoFenceServiceHandler(
