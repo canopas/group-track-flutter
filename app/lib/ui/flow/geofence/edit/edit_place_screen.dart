@@ -17,13 +17,13 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/components/profile_picture.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_view_model.dart';
 import 'package:yourspace_flutter/ui/flow/setting/profile/profile_view_model.dart';
 
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../components/alert.dart';
 import '../../../components/error_snakebar.dart';
-import '../../../components/user_profile_image.dart';
 import '../add/components/place_marker.dart';
 
 const defaultCameraZoom = 15.5;
@@ -361,10 +361,10 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ImageAvatar(
+          ProfileImage(
+            profileImageUrl: user.profile_image!,
+            firstLetter: user.firstChar,
             size: 40,
-            imageUrl: user.profile_image,
-            initials: user.firstChar,
           ),
           const SizedBox(width: 16),
           Text(

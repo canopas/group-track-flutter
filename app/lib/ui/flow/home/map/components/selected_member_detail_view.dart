@@ -9,10 +9,10 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 import 'package:yourspace_flutter/domain/extenstions/time_ago_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
+import 'package:yourspace_flutter/ui/components/profile_picture.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../components/user_battery_status.dart';
-import '../../../../components/user_profile_image.dart';
 
 class SelectedMemberDetailView extends StatefulWidget {
   final ApiUserInfo? userInfo;
@@ -91,9 +91,10 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ImageAvatar(
-          imageUrl: userInfo.user.profile_image,
-          initials: userInfo.user.firstChar,
+        ProfileImage(
+          profileImageUrl: userInfo.user.profile_image!,
+          firstLetter: userInfo.user.firstChar,
+          size: 48,
         ),
         const SizedBox(height: 2),
         UserBatteryStatus(userInfo: userInfo)

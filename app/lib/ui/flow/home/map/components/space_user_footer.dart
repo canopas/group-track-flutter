@@ -8,9 +8,9 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/components/profile_picture.dart';
 
 import '../../../../../gen/assets.gen.dart';
-import '../../../../components/user_profile_image.dart';
 import 'selected_member_detail_view.dart';
 
 class SpaceUserFooter extends StatefulWidget {
@@ -220,10 +220,10 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ImageAvatar(
+              ProfileImage(
+                profileImageUrl: userInfo.user.profile_image!,
+                firstLetter: userInfo.user.firstChar,
                 size: 40,
-                imageUrl: userInfo.user.profile_image,
-                initials: userInfo.user.firstChar,
               ),
               const SizedBox(height: 2),
               Text(
