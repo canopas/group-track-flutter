@@ -18,6 +18,13 @@ const _androidChannel = AndroidNotificationChannel(
   importance: Importance.max,
 );
 
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse notificationResponse) {
+  if (notificationResponse.payload != null) {
+    debugPrint('Background notification payload: ${notificationResponse.payload}');
+  }
+}
+
 const NOTIFICATION_ID = 101;
 
 const KEY_NOTIFICATION_TYPE = "type";
@@ -102,12 +109,7 @@ class NotificationHandler {
           _onNotificationTap(context, jsonDecode(response.payload!));
         }
       },
-      onDidReceiveBackgroundNotificationResponse: (response) {
-        if (response.actionId == 'reply') {
-          final replyText = response.input;
-          handleReply(replyText);
-        }
-      },
+      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
   }
 
