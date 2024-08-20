@@ -99,7 +99,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
                 size: AppProgressIndicatorSize.normal,
               ),
             )
-          : _body(state),
+          : SafeArea(child: _body(state)),
     );
   }
 

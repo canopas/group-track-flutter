@@ -44,33 +44,35 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
   }
 
   Widget _body(BuildContext context, ContactSupportViewState state) {
-    return Stack(
-      children: [
-        ListView(
-          padding: const EdgeInsets.all(16) + BottomStickyOverlay.padding,
-          children: [
-            AppTextField(
-              controller: state.title,
-              label: context.l10n.contact_support_title_field,
-            ),
-            const SizedBox(height: 40),
-            AppTextField(
-              label: context.l10n.contact_support_description_title,
-              borderType: AppTextFieldBorderType.outline,
-              controller: state.description,
-              maxLines: 8,
-            ),
-            const SizedBox(height: 40),
-            _attachmentButton(
-              context: context,
-              onAttachmentTap: () => notifier.pickAttachments(),
-            ),
-            const SizedBox(height: 16),
-            _attachmentList(context, state),
-          ],
-        ),
-        _submitButton(context, state),
-      ],
+    return SafeArea(
+      child: Stack(
+        children: [
+          ListView(
+            padding: const EdgeInsets.all(16) + BottomStickyOverlay.padding,
+            children: [
+              AppTextField(
+                controller: state.title,
+                label: context.l10n.contact_support_title_field,
+              ),
+              const SizedBox(height: 40),
+              AppTextField(
+                label: context.l10n.contact_support_description_title,
+                borderType: AppTextFieldBorderType.outline,
+                controller: state.description,
+                maxLines: 8,
+              ),
+              const SizedBox(height: 40),
+              _attachmentButton(
+                context: context,
+                onAttachmentTap: () => notifier.pickAttachments(),
+              ),
+              const SizedBox(height: 16),
+              _attachmentList(context, state),
+            ],
+          ),
+          _submitButton(context, state),
+        ],
+      ),
     );
   }
 
@@ -188,13 +190,16 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
 
   Widget _submitButton(BuildContext context, ContactSupportViewState state) {
     return BottomStickyOverlay(
-      child: PrimaryButton(
-        enabled: !state.submitting && state.enableSubmit,
-        progress: state.submitting,
-        context.l10n.contact_support_submit_title,
-        onPressed: () {
-          notifier.submitSupportRequest();
-        },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: PrimaryButton(
+          enabled: !state.submitting && state.enableSubmit,
+          progress: state.submitting,
+          context.l10n.contact_support_submit_title,
+          onPressed: () {
+            notifier.submitSupportRequest();
+          },
+        ),
       ),
     );
   }

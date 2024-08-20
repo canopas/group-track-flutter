@@ -85,15 +85,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     if ((widget.threadInfo != null) && state.sender.isEmpty) {
       return const Center(child: AppProgressIndicator());
     }
-    return Column(
-      children: [
-        if (state.showMemberSelectionView) _memberSelectionView(context, state),
-        Expanded(
-            child: _chatList(context, state.messages, state.sender,
-                state.loadingMessages, state.threadId, state.currentUserId)),
-        const SizedBox(height: 24),
-        _textField(context, state),
-      ],
+    return SafeArea(
+      child: Column(
+        children: [
+          if (state.showMemberSelectionView) _memberSelectionView(context, state),
+          Expanded(
+              child: _chatList(context, state.messages, state.sender,
+                  state.loadingMessages, state.threadId, state.currentUserId)),
+          const SizedBox(height: 24),
+          _textField(context, state),
+        ],
+      ),
     );
   }
 

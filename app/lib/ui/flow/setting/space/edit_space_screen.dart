@@ -70,7 +70,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           ),
         ]
       ],
-      body: _body(context, state),
+      body: SafeArea(child: _body(context, state)),
     );
   }
 
@@ -91,6 +91,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
             _divider(context),
             const SizedBox(height: 16),
             _memberLocation(context, state),
+            const SizedBox(height: 40)
           ],
         ),
         _deleteSpaceButton(context, state),
@@ -191,7 +192,9 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         ProfileImage(
             profileImageUrl: profileImageUrl,
             firstLetter: firstLetter,
-            size: 40),
+            size: 40,
+            backgroundColor: context.colorScheme.primary,
+        ),
         const SizedBox(width: 16),
         Text(
           member.user.fullName,
@@ -209,7 +212,10 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
               : null,
           activeColor: context.colorScheme.textPrimaryDark,
           activeTrackColor: context.colorScheme.primary,
-          inactiveTrackColor: context.colorScheme.containerLowOnSurface,
+          inactiveTrackColor: context.colorScheme.outline,
+          inactiveThumbColor: context.colorScheme.textPrimaryDark,
+          trackOutlineColor: WidgetStatePropertyAll(context.colorScheme.outline),
+          trackOutlineWidth: const WidgetStatePropertyAll(0.5),
         ),
       ],
     );

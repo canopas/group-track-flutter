@@ -60,26 +60,28 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
   }
 
   Widget _body(ChoosePlaceViewState state) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _searchTextField(state),
-          const SizedBox(height: 50),
-          Text(
-            context.l10n.choose_place_suggestion_text,
-            style: AppTextStyle.caption
-                .copyWith(color: context.colorScheme.textDisabled),
-          ),
-          const SizedBox(height: 16),
-          _suggestionsPlaceView(state.suggestions, state),
-          const Spacer(),
-          Align(
-            alignment: Alignment.center,
-            child: _addPlaceButtonView(state),
-          )
-        ],
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _searchTextField(state),
+            const SizedBox(height: 50),
+            Text(
+              context.l10n.choose_place_suggestion_text,
+              style: AppTextStyle.caption
+                  .copyWith(color: context.colorScheme.textDisabled),
+            ),
+            const SizedBox(height: 16),
+            _suggestionsPlaceView(state.suggestions, state),
+            const Spacer(),
+            Align(
+              alignment: Alignment.center,
+              child: _addPlaceButtonView(state),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -148,18 +150,14 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
   Widget _addPlaceButtonView(ChoosePlaceViewState state) {
     final enable = state.enableAddBtn && !state.addingPlace;
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: context.mediaQueryPadding.bottom + 24),
-      child: PrimaryButton(
-        enabled: enable,
-        progress: state.addingPlace,
-        onPressed: () {
-          notifier.onTapAddPlaceBtn();
-        },
-        edgeInsets: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-        context.l10n.choose_place_add_place_btn_text,
-        expanded: false,
-      ),
+    return PrimaryButton(
+      enabled: enable,
+      progress: state.addingPlace,
+      onPressed: () {
+        notifier.onTapAddPlaceBtn();
+      },
+      edgeInsets: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+      context.l10n.choose_place_add_place_btn_text,
     );
   }
 

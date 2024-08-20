@@ -54,41 +54,44 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
       );
     }
     final placeLength = (state.places.isEmpty) ? 0 : state.places.length + 1;
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            itemCount: placeLength + state.suggestions.length,
-            itemBuilder: (_, index) {
-              if (index < state.places.length) {
-                return _memberPlaceItem(state, state.places[index]);
-              }
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: placeLength + state.suggestions.length,
+              itemBuilder: (_, index) {
+                if (index < state.places.length) {
+                  return _memberPlaceItem(state, state.places[index]);
+                }
 
-              if (index == state.places.length && state.places.isNotEmpty) {
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Divider(color: context.colorScheme.outline, height: 1),
+                if (index == state.places.length && state.places.isNotEmpty) {
+                  return Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Divider(color: context.colorScheme.outline, height: 1),
+                  );
+                }
+
+                final placeIndex = (state.places.isEmpty)
+                    ? index
+                    : index - state.places.length - 1;
+
+                final item = state.suggestions[placeIndex];
+                return _placeItemView(
+                  placeName: item,
+                  icon: _getPlacesIcon(item),
+                  isSuggestion: true,
+                  onTap: () => onSuggestionItemTap(item),
+                  onDeletePlace: () {},
                 );
-              }
-
-              final placeIndex = (state.places.isEmpty)
-                  ? index
-                  : index - state.places.length - 1;
-
-              final item = state.suggestions[placeIndex];
-              return _placeItemView(
-                placeName: item,
-                icon: _getPlacesIcon(item),
-                isSuggestion: true,
-                onTap: () => onSuggestionItemTap(item),
-                onDeletePlace: () {},
-              );
-            },
+              },
+            ),
           ),
-        ),
-        Align(alignment: Alignment.bottomRight, child: _addPlaceButton())
-      ],
+          const SizedBox(height: 16),
+          Align(alignment: Alignment.bottomRight, child: _addPlaceButton())
+        ],
+      ),
     );
   }
 

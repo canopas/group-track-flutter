@@ -54,7 +54,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
 
     return AppPage(
       title: widget.spaceInfo.space.name,
-      body: _body(context, state),
+      body: SafeArea(child: _body(context, state)),
       floatingActionButton: widget.spaceInfo.members.length >= 2
       ? LargeIconButton(
         onTap: () {
