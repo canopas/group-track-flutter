@@ -107,38 +107,51 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
     final place = state.updatedPlace;
     if (place == null) return Container();
 
-    return Stack(children: [
-      SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AspectRatio(
-              aspectRatio: 1.85,
-              child: _googleMapView(
-                place.latitude,
-                place.longitude,
-                state.isAdmin,
-                place.radius,
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        return Stack(children: [
+          ListView(
+            children: [
+              if (orientation == Orientation.portrait) ...[
+                AspectRatio(
+                  aspectRatio: 1.85,
+                  child: _googleMapView(
+                    place.latitude,
+                    place.longitude,
+                    state.isAdmin,
+                    place.radius,
+                  ),
+                ),
+              ] else ...[
+                SizedBox(
+                  height: 200,
+                  child: _googleMapView(
+                    place.latitude,
+                    place.longitude,
+                    state.isAdmin,
+                    place.radius,
+                  ),
+                ),
+              ],
+              Visibility(
+                visible: state.isAdmin,
+                child: _radiusSliderView(place.radius),
               ),
-            ),
-            Visibility(
-              visible: state.isAdmin,
-              child: _radiusSliderView(place.radius),
-            ),
-            _placeDetailView(place, state),
-            const SizedBox(height: 40),
-            _placeSettingView(state),
-            const SizedBox(height: 150),
-          ],
-        ),
-      ),
-      Positioned(
-        bottom: 0,
-        left: 0,
-        right: 0,
-        child: _deletePlaceButton(state.isAdmin, state.deleting),
-      ),
-    ]);
+              _placeDetailView(place, state),
+              const SizedBox(height: 40),
+              _placeSettingView(state),
+              const SizedBox(height: 100),
+            ],
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: _deletePlaceButton(state.isAdmin, state.deleting),
+          ),
+        ]);
+      },
+    );
   }
 
   Widget _googleMapView(double lat, double lng, bool isAdmin, double radius) {
@@ -405,32 +418,23 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
   Widget _deletePlaceButton(bool isAdmin, bool isDeleting) {
     return Container(
       color: context.colorScheme.surface,
-      child: Center(
-        child: Padding(
-          padding: EdgeInsets.only(
-            top: 8,
-            left: 16,
-            right: 16,
-            bottom: context.mediaQueryPadding.bottom + 16,
-          ),
-          child: Column(
-            children: [
-              isAdmin
-                  ? PrimaryButton(
-                      progress: isDeleting,
-                      context.l10n.edit_place_delete_place_btn_text,
-                      background: context.colorScheme.containerLow,
-                      foreground: context.colorScheme.alert,
-                      onPressed: notifier.onTapDeletePlaceBtn,
-                    )
-                  : Text(
-                      context.l10n.edit_place_only_admin_edit_text,
-                      style: AppTextStyle.body2
-                          .copyWith(color: context.colorScheme.textSecondary),
-                    )
-            ],
-          ),
-        ),
+      child: Column(
+        children: [
+          isAdmin
+              ? PrimaryButton(
+                  progress: isDeleting,
+                  context.l10n.edit_place_delete_place_btn_text,
+                  background: context.colorScheme.containerLow,
+                  foreground: context.colorScheme.alert,
+                  onPressed: notifier.onTapDeletePlaceBtn,
+                )
+              : Text(
+                  context.l10n.edit_place_only_admin_edit_text,
+                  style: AppTextStyle.body2
+                      .copyWith(color: context.colorScheme.textSecondary),
+                  textAlign: TextAlign.center,
+                )
+        ],
       ),
     );
   }
