@@ -51,6 +51,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           show: widget.threadId == null,
           threadInfoList: widget.threadInfoList ?? [],
       );
+      if (widget.threadInfo != null) {
+        notifier.listenThread(widget.threadInfo?.thread.id ?? '');
+        notifier.getThreadMembers(widget.threadInfo!.thread);
+      }
+      notifier.formatMemberNames(
+          widget.threadInfo == null ? [] : widget.threadInfo!.members);
+      notifier.selectExistingThread();
     });
   }
 
@@ -105,7 +112,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       itemCount: messages.length,
       itemBuilder: (context, index) {
         if (loadingMessage && index == messages.length - 1) {
-          return const AppProgressIndicator(size: AppProgressIndicatorSize.small);
+          return const AppProgressIndicator(
+              size: AppProgressIndicatorSize.small);
         }
         if (index == messages.length - 1) {
           runPostFrame(() => notifier.onLoadMore(widget.threadId == null ? threadId : widget.threadId ?? ''));
@@ -116,7 +124,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         final bool isDifferentSender = index < messages.length - 1 &&
             messages[index + 1].sender_id != message.sender_id;
         final senderInfo = sender.isNotEmpty && sender.length > 2
-            ? sender.firstWhere((member) => member.user.id == message.sender_id).user
+            ? sender
+                .firstWhere((member) => member.user.id == message.sender_id)
+                .user
             : null;
 
         final seenBy = threadInfo?.members.where((member) =>
@@ -124,7 +134,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             member.user.id != currentUserId)
             .toList();
 
-        final showSeenText = notifier.isSender(message) && (seenBy?.isNotEmpty ?? false) && message.id == messages.first.id
+        final showSeenText = notifier.isSender(message) &&
+                (seenBy?.isNotEmpty ?? false) &&
+                message.id == messages.first.id
             ? true
             : false;
 
@@ -134,7 +146,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
         return Column(
           crossAxisAlignment: notifier.isSender(message)
-              ? showSeenText ? CrossAxisAlignment.end : CrossAxisAlignment.start
+              ? showSeenText
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start
               : CrossAxisAlignment.end,
           children: [
             if (showDateHeader)
@@ -155,7 +169,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               const SizedBox(height: 4),
               Text(
                 sender.length > 2
-                    ? context.l10n.chat_seen_by_message_text(seenBy!.map((e) => e.user.first_name).join(', '))
+                    ? context.l10n.chat_seen_by_message_text(
+                        seenBy!.map((e) => e.user.first_name).join(', '))
                     : context.l10n.chat_seen_message_text,
                 style: AppTextStyle.caption.copyWith(
                   color: context.colorScheme.textDisabled,
@@ -185,7 +200,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           isSender ? CrossAxisAlignment.start : CrossAxisAlignment.end,
       children: [
         if (showTimeHeader) ...[
-          _timeHeader(message.created_at ?? DateTime.now(), isSender, memberCount)
+          _timeHeader(
+              message.created_at ?? DateTime.now(), isSender, memberCount)
         ],
         const SizedBox(height: 4),
         Row(
@@ -193,11 +209,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           mainAxisAlignment:
               isSender ? MainAxisAlignment.start : MainAxisAlignment.end,
           children: [
-            if (isSender && (isDifferentSender || showTimeHeader) && memberCount > 2) ...[
+            if (isSender &&
+                (isDifferentSender || showTimeHeader) &&
+                memberCount > 2) ...[
               ProfileImage(
-                  profileImageUrl: sender?.profile_image ?? '',
-                  firstLetter: sender!.firstChar,
-                  size: 24,
+                profileImageUrl: sender?.profile_image ?? '',
+                firstLetter: sender!.firstChar,
+                size: 24,
                 style: AppTextStyle.caption.copyWith(
                   color: context.colorScheme.textPrimaryDark,
                 ),
@@ -271,7 +289,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           Text(
             message,
             style: AppTextStyle.subtitle3.copyWith(
-              color: isSender ? context.colorScheme.textPrimary : context.colorScheme.textPrimaryDark,
+              color: isSender
+                  ? context.colorScheme.textPrimary
+                  : context.colorScheme.textPrimaryDark,
             ),
             maxLines: null,
             textAlign: isSender ? TextAlign.start : TextAlign.end,
@@ -331,7 +351,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
                 final member = state.users[index];
-                final isSelected = state.selectedMember.contains(member.user.id);
+                final isSelected =
+                    state.selectedMember.contains(member.user.id);
                 return GestureDetector(
                   onTap: () {
                     setState(() {
@@ -451,8 +472,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 color: context.colorScheme.primary,
                 child: Center(
                   child: Text(firstLetter,
-                      style: AppTextStyle.header4
-                          .copyWith(color: context.colorScheme.textPrimaryDark)),
+                      style: AppTextStyle.header4.copyWith(
+                          color: context.colorScheme.textPrimaryDark)),
                 ),
               ),
       ),
@@ -471,9 +492,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
               child: AppTextField(
                 controller: state.message,
-                onChanged: (value) {
-                  notifier.onChange(value);
-                },
+                onChanged: notifier.onChange,
                 maxLines: 6,
                 minLines: 1,
                 style: AppTextStyle.body2.copyWith(

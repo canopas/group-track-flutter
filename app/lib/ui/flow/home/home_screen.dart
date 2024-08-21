@@ -12,6 +12,7 @@ import 'package:yourspace_flutter/ui/flow/home/home_screen_viewmodel.dart';
 import 'package:yourspace_flutter/ui/flow/home/map/map_view_model.dart';
 
 import '../../../domain/fcm/notification_handler.dart';
+import '../../components/alert.dart';
 import '../../components/permission_dialog.dart';
 import 'components/home_top_bar.dart';
 import 'map/map_screen.dart';
@@ -58,6 +59,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _observeError();
     _observeSelectedSpace();
     _observeShowBatteryDialog(context);
+    _observeSessionExpiredAlertPopup(context);
+    _observeSessionExpired();
 
     mapNotifier = ref.watch(mapViewStateProvider.notifier);
 
@@ -146,6 +149,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 },
               );
             });
+      }
+    });
+  }
+
+  void _observeSessionExpiredAlertPopup(BuildContext context) {
+    ref.listen(homeViewStateProvider.select((state) => state.isSessionExpired),
+        (_, next) {
+      if (next) {
+        showOkayConfirmation(
+          context,
+          title: context.l10n.home_session_expired_title,
+          message:context.l10n.home_session_expired_message,
+          barrierDismissible: false,
+          onOkay: () => notifier.signOut(),
+        );
+      }
+    });
+  }
+
+  void _observeSessionExpired() {
+    ref.listen(homeViewStateProvider.select((state) => state.popToSignIn),
+        (_, next) {
+      if (next != null) {
+        AppRoute.signInMethod.push(context);
       }
     });
   }
