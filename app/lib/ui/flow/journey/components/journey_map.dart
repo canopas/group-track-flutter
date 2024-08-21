@@ -3,11 +3,12 @@ import 'dart:math' as math;
 import 'package:data/api/location/journey/journey.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 
-import '../timeline/journey_timeline_screen.dart';
+const INITIAL_ZOOM_LEVEL = 6;
 
 class JourneyMap extends StatefulWidget {
   final ApiLocationJourney journey;
@@ -28,12 +29,28 @@ class JourneyMap extends StatefulWidget {
 }
 
 class _JourneyMapState extends State<JourneyMap> {
+  GoogleMapController? _controller;
   String? _mapStyle;
   bool _isDarkMode = false;
+  LatLng _fromLatLng = const LatLng(0.0, 0.0);
+  LatLng? _toLatLng;
+  List<LatLng> _routePoints = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fromLatLng =
+        LatLng(widget.journey.from_latitude, widget.journey.from_longitude);
+    _toLatLng = widget.journey.to_latitude != null &&
+            widget.journey.to_longitude != null
+        ? LatLng(widget.journey.to_latitude!, widget.journey.to_longitude!)
+        : null;
+    _routePoints = _getRoutePositionList(widget.journey.routes);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final (ployLines, center, zoom) = _onCreateMap(widget.journey);
+    final (ployLines, center, zoom) = _setMapData(widget.journey);
     final cameraPosition = CameraPosition(target: center, zoom: zoom);
 
     _updateMapStyle(context.brightness == Brightness.dark);
@@ -50,6 +67,9 @@ class _JourneyMapState extends State<JourneyMap> {
         child: IgnorePointer(
           ignoring: widget.isTimeLine,
           child: GoogleMap(
+            onMapCreated: (controller) {
+              _onMapCreate(controller, widget.journey);
+            },
             initialCameraPosition: cameraPosition,
             style: _mapStyle,
             compassEnabled: false,
@@ -68,40 +88,68 @@ class _JourneyMapState extends State<JourneyMap> {
     );
   }
 
-  (List<Polyline>, LatLng, double) _onCreateMap(
+  void _onMapCreate(
+    GoogleMapController controller,
+    ApiLocationJourney journey,
+  ) async {
+    _controller = controller;
+    LatLngBounds bounds = _createLatLngBounds(_routePoints);
+    await _controller?.animateCamera(CameraUpdate.newLatLngBounds(bounds, 20));
+  }
+
+  LatLngBounds _createLatLngBounds(List<LatLng> points) {
+    double minLat = points.first.latitude;
+    double minLng = points.first.longitude;
+    double maxLat = points.first.latitude;
+    double maxLng = points.first.longitude;
+
+    for (LatLng point in points) {
+      if (point.latitude < minLat) minLat = point.latitude;
+      if (point.longitude < minLng) minLng = point.longitude;
+      if (point.latitude > maxLat) maxLat = point.latitude;
+      if (point.longitude > maxLng) maxLng = point.longitude;
+    }
+
+    return LatLngBounds(
+      southwest: LatLng(minLat, minLng),
+      northeast: LatLng(maxLat, maxLng),
+    );
+  }
+
+  (List<Polyline>, LatLng, double) _setMapData(
     ApiLocationJourney journey,
   ) {
-    List<LatLng> latLngList = [];
     List<Polyline> polyline = [];
-    final fromLatLng = LatLng(journey.from_latitude, journey.from_longitude);
-    final toLatLng = journey.to_latitude != null && journey.to_longitude != null
-        ? LatLng(journey.to_latitude!, journey.to_longitude!)
-        : null;
-
-    latLngList.add(fromLatLng);
-    for (var route in journey.routes) {
-      latLngList.add(LatLng(route.latitude, route.longitude));
-    }
-    if (toLatLng != null) {
-      latLngList.add(toLatLng);
-    }
 
     polyline.add(Polyline(
       polylineId: PolylineId(journey.id!),
       color: context.colorScheme.primary,
-      points: latLngList,
+      points: _routePoints,
       patterns: [PatternItem.dash(20.0), PatternItem.gap(8)],
-      width: 4,
+      width: 3,
     ));
 
-    final centerLatLng =
-        _getCenterCoordinate(fromLatLng, toLatLng ?? const LatLng(0.0, 0.0));
-    final zoom = _calculateZoomLevel(
-        journey.route_distance ?? 0, context.mediaQuerySize.width);
+    final longDistanceLatLng = _getLongDistanceCoordinate();
+    final centerLatLng = _getCenterCoordinate(_fromLatLng, longDistanceLatLng);
+    final zoom = _calculateZoomLevel(journey.route_distance ?? 0);
     return (polyline, centerLatLng, zoom);
   }
 
-  double _calculateZoomLevel(double distanceInMeters, double mapWidth) {
+  List<LatLng> _getRoutePositionList(List<JourneyRoute> routes) {
+    List<LatLng> latLngList = [];
+
+    latLngList.add(_fromLatLng);
+    for (var route in routes) {
+      latLngList.add(LatLng(route.latitude, route.longitude));
+    }
+    if (_toLatLng != null) {
+      latLngList.add(_toLatLng!);
+    }
+    return latLngList;
+  }
+
+  double _calculateZoomLevel(double distanceInMeters) {
+    final mapWidth = context.mediaQuerySize.width;
     const double earthCircumferenceInMeters = 40075016;
     double zoomLevel = math
         .log(earthCircumferenceInMeters * mapWidth / (distanceInMeters * 250));
@@ -111,8 +159,29 @@ class _JourneyMapState extends State<JourneyMap> {
   LatLng _getCenterCoordinate(LatLng startLatLng, LatLng endLatLng) {
     double centerLat = (startLatLng.latitude + endLatLng.latitude) / 2;
     double centerLng = (startLatLng.longitude + endLatLng.longitude) / 2;
-
     return LatLng(centerLat, centerLng);
+  }
+
+  LatLng _getLongDistanceCoordinate() {
+    LatLng longCoordinate = _fromLatLng;
+    double distance = 0.0;
+    for (final route in _routePoints) {
+      final routeDistance = _distanceBetween(_fromLatLng, route);
+      if (routeDistance > distance) {
+        distance = routeDistance;
+        longCoordinate = route;
+      }
+    }
+    return longCoordinate;
+  }
+
+  double _distanceBetween(LatLng startLocation, LatLng endLocation) {
+    return Geolocator.distanceBetween(
+      startLocation.latitude,
+      startLocation.longitude,
+      endLocation.latitude,
+      endLocation.longitude,
+    );
   }
 
   void _updateMapStyle(bool isDarkMode) async {

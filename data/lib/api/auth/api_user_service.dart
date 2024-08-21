@@ -174,14 +174,6 @@ class ApiUserService {
     });
   }
 
-  Future<void> updateBatteryPct(
-      String userId, String sessionId, double batteryPct) async {
-    await _sessionRef(userId).doc(sessionId).update({
-      "battery_pct": batteryPct,
-      "updated_at": FieldValue.serverTimestamp(),
-    });
-  }
-
   Future<void> updateSessionState(
       String id, String sessionId, int state) async {
     await _sessionRef(id).doc(sessionId).update({
@@ -230,7 +222,7 @@ class ApiUserService {
   }
 
   void clearPreference() {
-    locationManager.stopService();
+    locationManager.stopTrackingService();
     userJsonNotifier.state = null;
     userSessionJsonNotifier.state = null;
     onBoardNotifier.state = false;
