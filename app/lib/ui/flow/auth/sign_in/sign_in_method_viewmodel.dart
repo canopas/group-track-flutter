@@ -14,8 +14,11 @@ final googleSignInProvider = Provider<GoogleSignIn>((ref) {
 
 final signInMethodsStateProvider = StateNotifierProvider.autoDispose<
     SignInMethodsScreenViewNotifier, SignInMethodsScreenState>((ref) {
-  return SignInMethodsScreenViewNotifier(ref.read(googleSignInProvider),
-      ref.read(authServiceProvider), FirebaseAuth.instance);
+  return SignInMethodsScreenViewNotifier(
+      ref.read(googleSignInProvider),
+      ref.read(authServiceProvider),
+      FirebaseAuth.instance,
+  );
 });
 
 class SignInMethodsScreenViewNotifier
@@ -47,10 +50,10 @@ class SignInMethodsScreenViewNotifier
             authType: LOGIN_TYPE_GOOGLE);
 
         state = state.copyWith(
-            showGoogleLoading: false,
-            socialSignInCompleted: true,
-            isNewUser: isNewUser,
-            error: null,
+          showGoogleLoading: false,
+          socialSignInCompleted: true,
+          isNewUser: isNewUser,
+          error: null,
         );
       } else {
         state = state.copyWith(showGoogleLoading: false);
@@ -89,7 +92,8 @@ class SignInMethodsScreenViewNotifier
 
       final appleProvider = AppleAuthProvider();
       appleProvider.addScope('email');
-      final credential = await FirebaseAuth.instance.signInWithProvider(appleProvider);
+      final credential =
+          await FirebaseAuth.instance.signInWithProvider(appleProvider);
       final email = FirebaseAuth.instance.currentUser?.email;
       final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
@@ -105,7 +109,8 @@ class SignInMethodsScreenViewNotifier
           socialSignInCompleted: true,
           isNewUser: isNewUser);
     } catch (error, stack) {
-      state = state.copyWith(showAppleLoading: false, socialSignInCompleted: false);
+      state =
+          state.copyWith(showAppleLoading: false, socialSignInCompleted: false);
       logger.e(
         'SignInMethodScreenViewNotifier: error while sign in with apple',
         error: error,

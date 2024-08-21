@@ -56,7 +56,7 @@ class AuthService {
   }
 
   Stream<ApiUser?> getUserStream({String? currentUserId}) {
-   return userService.getUserStream(currentUserId ?? _currentUser?.id ?? '');
+    return userService.getUserStream(currentUserId ?? _currentUser?.id ?? '');
   }
 
   Future<void> deleteAccount({String? currentUserId}) async {
