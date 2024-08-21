@@ -378,6 +378,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
             profileImageUrl: user.profile_image!,
             firstLetter: user.firstChar,
             size: 40,
+            backgroundColor: context.colorScheme.primary,
           ),
           const SizedBox(width: 16),
           Text(
@@ -407,9 +408,10 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
           value: enable,
           onChanged: onChanged,
           activeTrackColor: context.colorScheme.primary,
-          inactiveTrackColor: context.colorScheme.containerHigh,
-          inactiveThumbColor: context.colorScheme.onPrimary,
-          trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+          inactiveTrackColor: context.colorScheme.outline,
+          inactiveThumbColor: context.colorScheme.textPrimaryDark,
+          trackOutlineColor: WidgetStatePropertyAll(context.colorScheme.outline),
+          trackOutlineWidth: const WidgetStatePropertyAll(0.5),
         )
       ],
     );
@@ -418,6 +420,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
   Widget _deletePlaceButton(bool isAdmin, bool isDeleting) {
     return Container(
       color: context.colorScheme.surface,
+      padding: const EdgeInsets.only(right: 16, left: 16, top: 16),
       child: Column(
         children: [
           isAdmin
