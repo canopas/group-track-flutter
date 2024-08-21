@@ -102,7 +102,7 @@ class SignInMethodsScreenViewNotifier
         firebaseToken: await credential.user?.getIdToken(),
         email: email,
         firstName: credential.user?.displayName,
-        authType: 3,
+        authType: LOGIN_TYPE_APPLE,
       );
       state = state.copyWith(
           showAppleLoading: false,
