@@ -186,10 +186,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
         AppRoute.addNewPlace(widget.spaceId).push(context);
       },
       child: Container(
-        margin: EdgeInsets.only(
-          right: 16,
-          bottom: context.mediaQueryPadding.bottom + 16,
-        ),
+        margin: const EdgeInsets.only(right: 16, bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),

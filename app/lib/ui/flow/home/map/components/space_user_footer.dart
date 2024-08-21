@@ -224,6 +224,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                 profileImageUrl: userInfo.user.profile_image!,
                 firstLetter: userInfo.user.firstChar,
                 size: 40,
+                backgroundColor: context.colorScheme.primary,
               ),
               const SizedBox(height: 2),
               Text(
