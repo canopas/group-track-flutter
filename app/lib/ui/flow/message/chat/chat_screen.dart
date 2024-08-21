@@ -51,13 +51,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           show: widget.threadId == null,
           threadInfoList: widget.threadInfoList ?? [],
       );
-      if (widget.threadInfo != null) {
-        notifier.listenThread(widget.threadInfo?.thread.id ?? '');
-        notifier.getThreadMembers(widget.threadInfo!.thread);
-      }
-      notifier.formatMemberNames(
-          widget.threadInfo == null ? [] : widget.threadInfo!.members);
-      notifier.selectExistingThread();
     });
   }
 
