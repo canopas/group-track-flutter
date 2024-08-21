@@ -47,12 +47,12 @@ class PlaceAddedDialog extends StatefulWidget {
 class _PlaceAddedDialogState extends State<PlaceAddedDialog> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        content: Column(
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      content: SingleChildScrollView(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             AspectRatio(
