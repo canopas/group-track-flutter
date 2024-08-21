@@ -90,7 +90,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
             _divider(context),
             const SizedBox(height: 16),
             _memberLocation(context, state),
-            const SizedBox(height: 40)
+            const SizedBox(height: 64)
           ],
         ),
         _deleteSpaceButton(context, state),

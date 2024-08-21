@@ -95,6 +95,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
           profileImageUrl: userInfo.user.profile_image!,
           firstLetter: userInfo.user.firstChar,
           size: 48,
+          backgroundColor: context.colorScheme.primary,
         ),
         const SizedBox(height: 2),
         UserBatteryStatus(userInfo: userInfo)

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:style/animation/on_tap_scale.dart';
+import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
@@ -61,27 +62,24 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
 
   Widget _body(ChoosePlaceViewState state) {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _searchTextField(state),
-            const SizedBox(height: 50),
-            Text(
-              context.l10n.choose_place_suggestion_text,
-              style: AppTextStyle.caption
-                  .copyWith(color: context.colorScheme.textDisabled),
-            ),
-            const SizedBox(height: 16),
-            _suggestionsPlaceView(state.suggestions, state),
-            const Spacer(),
-            Align(
-              alignment: Alignment.center,
-              child: _addPlaceButtonView(state),
-            )
-          ],
-        ),
+      child: Stack(
+        children:[
+          ListView(
+            padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+            children: [
+              _searchTextField(state),
+              const SizedBox(height: 50),
+              Text(
+                context.l10n.choose_place_suggestion_text,
+                style: AppTextStyle.caption
+                    .copyWith(color: context.colorScheme.textDisabled),
+              ),
+              const SizedBox(height: 16),
+              _suggestionsPlaceView(state.suggestions, state),
+            ],
+          ),
+          _addPlaceButtonView(state),
+        ]
       ),
     );
   }
@@ -150,14 +148,16 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
   Widget _addPlaceButtonView(ChoosePlaceViewState state) {
     final enable = state.enableAddBtn && !state.addingPlace;
 
-    return PrimaryButton(
-      enabled: enable,
-      progress: state.addingPlace,
-      onPressed: () {
-        notifier.onTapAddPlaceBtn();
-      },
-      edgeInsets: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-      context.l10n.choose_place_add_place_btn_text,
+    return BottomStickyOverlay(
+      child: PrimaryButton(
+        enabled: enable,
+        progress: state.addingPlace,
+        onPressed: () {
+          notifier.onTapAddPlaceBtn();
+        },
+        edgeInsets: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+        context.l10n.choose_place_add_place_btn_text,
+      ),
     );
   }
 

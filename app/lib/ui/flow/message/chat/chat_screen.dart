@@ -86,15 +86,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       return const Center(child: AppProgressIndicator());
     }
     return SafeArea(
-      child: Column(
+      child: Stack(
         children: [
-          if (state.showMemberSelectionView) _memberSelectionView(context, state),
-          Expanded(
-              child: _chatList(context, state.messages, state.sender,
-                  state.loadingMessages, state.threadId, state.currentUserId)),
-          const SizedBox(height: 24),
+          Column(
+            children: [
+              if (state.showMemberSelectionView) _memberSelectionView(context, state),
+              Expanded(
+                  child: _chatList(context, state.messages, state.sender,
+                      state.loadingMessages, state.threadId, state.currentUserId)),
+              const SizedBox(height: 100),
+            ],
+          ),
           _textField(context, state),
-        ],
+        ]
       ),
     );
   }
@@ -508,7 +512,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 borderType: AppTextFieldBorderType.none,
                 borderRadius: 24,
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 16),
                 hintText: context.l10n.chat_type_message_hint_text,
                 hintStyle: AppTextStyle.subtitle2
                     .copyWith(color: context.colorScheme.textDisabled),
