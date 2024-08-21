@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/network/client.dart';
 import 'package:data/service/device_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../log/logger.dart';
 import '../../service/location_manager.dart';
 import '../../storage/app_preferences.dart';
 import 'auth_models.dart';
@@ -15,6 +17,7 @@ final apiUserServiceProvider = StateProvider((ref) => ApiUserService(
       ref.read(currentSpaceId.notifier),
       ref.read(currentUserSessionJsonPod.notifier),
       ref.read(isOnboardingShownPod.notifier),
+      ref.read(currentUserPod),
       ref.read(locationManagerProvider),
     ));
 
@@ -25,6 +28,7 @@ class ApiUserService {
   final StateController<String?> currentUserSpaceId;
   final StateController<String?> userSessionJsonNotifier;
   final StateController<bool?> onBoardNotifier;
+  final ApiUser? currentUser;
   final LocationManager locationManager;
 
   ApiUserService(
@@ -34,6 +38,7 @@ class ApiUserService {
     this.currentUserSpaceId,
     this.userSessionJsonNotifier,
     this.onBoardNotifier,
+    this.currentUser,
     this.locationManager,
   );
 
@@ -146,6 +151,23 @@ class ApiUserService {
     await _userRef.doc(userId).update({"fcm_token": token});
   }
 
+  Future<void> registerDevice() async {
+    if (currentUser == null) return;
+    logger.d('UserService: registerDevice begin');
+
+    try {
+      final deviceToken = await FirebaseMessaging.instance.getToken() ?? "";
+      if (deviceToken.isEmpty) {
+        logger.e('UserService: registerDevice error deviceToken is null');
+        return;
+      }
+      await registerFcmToken(currentUser!.id, deviceToken);
+      logger.d('UserService: registerDevice success with token $deviceToken');
+    } catch (error) {
+      logger.e('UserService: registerDevice error ', error: error);
+    }
+  }
+
   Future<void> addSpaceId(String userId, String spaceId) async {
     await _userRef.doc(userId).update({
       "space_ids": FieldValue.arrayUnion([spaceId])
@@ -179,15 +201,27 @@ class ApiUserService {
   }
 
   Stream<ApiSession?> getUserSessionStream(String userId) {
-    return Stream.fromFuture(_sessionRef(userId)
+    return _sessionRef(userId)
         .where("session_active", isEqualTo: true)
-        .get()
-        .then((querySnapshot) {
-      if (querySnapshot.docs.isNotEmpty) {
-        return querySnapshot.docs.first.data() as ApiSession;
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs.first.data() as ApiSession;
       }
       return null;
-    }));
+    });
+  }
+
+  Stream<ApiSession?> getUserSessionByIdStream(
+    String userId,
+    String sessionId,
+  ) {
+    return _sessionRef(userId).doc(sessionId).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        return snapshot.data() as ApiSession;
+      }
+      return null;
+    });
   }
 
   Future<void> signOut() async {

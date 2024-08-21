@@ -47,7 +47,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       title: context.l10n.edit_profile_title,
       actions: [
         actionButton(
-          context,
+          context: context,
           icon: state.saving
               ? const AppProgressIndicator(size: AppProgressIndicatorSize.small)
               : Icon(
@@ -120,14 +120,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   borderRadius: BorderRadius.circular(64),
                 ),
                 child: (state.profileUrl.isEmpty)
-                    ? Center(child: Text(
-                    notifier.user?.firstChar ?? '',
-                    style: TextStyle(
-                      fontSize: 44,
-                      fontWeight: FontWeight.bold,
-                      color: context.colorScheme.textPrimaryDark,
-                    )
-                ))
+                    ? Center(
+                        child: Text(notifier.user?.firstChar ?? '',
+                            style: TextStyle(
+                              fontSize: 44,
+                              fontWeight: FontWeight.bold,
+                              color: context.colorScheme.textPrimaryDark,
+                            )))
                     : CachedNetworkImage(
                         imageUrl: state.profileUrl,
                         fit: BoxFit.cover,
@@ -267,7 +266,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _deleteAccountButton(BuildContext context, EditProfileViewState state) {
+  Widget _deleteAccountButton(
+    BuildContext context,
+    EditProfileViewState state,
+  ) {
     return BottomStickyOverlay(
       child: PrimaryButton(
         context.l10n.edit_profile_delete_account_title,

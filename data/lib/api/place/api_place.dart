@@ -19,6 +19,7 @@ class ApiPlace with _$ApiPlace {
     required double longitude,
     @Default(200.0) double radius,
     @TimeStampJsonConverter() DateTime? created_at,
+    @Default([]) List<String> space_member_ids,
   }) = _ApiPlace;
 
   factory ApiPlace.fromJson(Map<String, dynamic> data) =>
@@ -41,9 +42,9 @@ class ApiPlaceMemberSetting with _$ApiPlaceMemberSetting {
   const factory ApiPlaceMemberSetting({
     required String user_id,
     required String place_id,
-    @Default(false) bool alert_enabled,
-    required List<String> arrival_alert_for,
-    required List<String> leave_alert_for,
+    @Default(false) bool alert_enable,
+    @Default([]) List<String> arrival_alert_for,
+    @Default([]) List<String> leave_alert_for,
   }) = _ApiPlaceMemberSetting;
 
   factory ApiPlaceMemberSetting.fromJson(Map<String, dynamic> data) =>

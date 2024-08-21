@@ -16,8 +16,15 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$LocateOnMapState {
+  dynamic get loading => throw _privateConstructorUsedError;
+  dynamic get addingPlace => throw _privateConstructorUsedError;
+  dynamic get gettingAddress => throw _privateConstructorUsedError;
   LatLng? get currentLatLng => throw _privateConstructorUsedError;
+  LatLng? get cameraLatLng => throw _privateConstructorUsedError;
+  String? get address => throw _privateConstructorUsedError;
   CameraPosition? get centerPosition => throw _privateConstructorUsedError;
+  DateTime? get popToPlaceList => throw _privateConstructorUsedError;
+  Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $LocateOnMapStateCopyWith<LocateOnMapState> get copyWith =>
@@ -30,7 +37,16 @@ abstract class $LocateOnMapStateCopyWith<$Res> {
           LocateOnMapState value, $Res Function(LocateOnMapState) then) =
       _$LocateOnMapStateCopyWithImpl<$Res, LocateOnMapState>;
   @useResult
-  $Res call({LatLng? currentLatLng, CameraPosition? centerPosition});
+  $Res call(
+      {dynamic loading,
+      dynamic addingPlace,
+      dynamic gettingAddress,
+      LatLng? currentLatLng,
+      LatLng? cameraLatLng,
+      String? address,
+      CameraPosition? centerPosition,
+      DateTime? popToPlaceList,
+      Object? error});
 }
 
 /// @nodoc
@@ -46,18 +62,50 @@ class _$LocateOnMapStateCopyWithImpl<$Res, $Val extends LocateOnMapState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? loading = freezed,
+    Object? addingPlace = freezed,
+    Object? gettingAddress = freezed,
     Object? currentLatLng = freezed,
+    Object? cameraLatLng = freezed,
+    Object? address = freezed,
     Object? centerPosition = freezed,
+    Object? popToPlaceList = freezed,
+    Object? error = freezed,
   }) {
     return _then(_value.copyWith(
+      loading: freezed == loading
+          ? _value.loading
+          : loading // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      addingPlace: freezed == addingPlace
+          ? _value.addingPlace
+          : addingPlace // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      gettingAddress: freezed == gettingAddress
+          ? _value.gettingAddress
+          : gettingAddress // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       currentLatLng: freezed == currentLatLng
           ? _value.currentLatLng
           : currentLatLng // ignore: cast_nullable_to_non_nullable
               as LatLng?,
+      cameraLatLng: freezed == cameraLatLng
+          ? _value.cameraLatLng
+          : cameraLatLng // ignore: cast_nullable_to_non_nullable
+              as LatLng?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
       centerPosition: freezed == centerPosition
           ? _value.centerPosition
           : centerPosition // ignore: cast_nullable_to_non_nullable
               as CameraPosition?,
+      popToPlaceList: freezed == popToPlaceList
+          ? _value.popToPlaceList
+          : popToPlaceList // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      error: freezed == error ? _value.error : error,
     ) as $Val);
   }
 }
@@ -70,7 +118,16 @@ abstract class _$$LocateOnMapStateImplCopyWith<$Res>
       __$$LocateOnMapStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({LatLng? currentLatLng, CameraPosition? centerPosition});
+  $Res call(
+      {dynamic loading,
+      dynamic addingPlace,
+      dynamic gettingAddress,
+      LatLng? currentLatLng,
+      LatLng? cameraLatLng,
+      String? address,
+      CameraPosition? centerPosition,
+      DateTime? popToPlaceList,
+      Object? error});
 }
 
 /// @nodoc
@@ -84,18 +141,42 @@ class __$$LocateOnMapStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? loading = freezed,
+    Object? addingPlace = freezed,
+    Object? gettingAddress = freezed,
     Object? currentLatLng = freezed,
+    Object? cameraLatLng = freezed,
+    Object? address = freezed,
     Object? centerPosition = freezed,
+    Object? popToPlaceList = freezed,
+    Object? error = freezed,
   }) {
     return _then(_$LocateOnMapStateImpl(
+      loading: freezed == loading ? _value.loading! : loading,
+      addingPlace: freezed == addingPlace ? _value.addingPlace! : addingPlace,
+      gettingAddress:
+          freezed == gettingAddress ? _value.gettingAddress! : gettingAddress,
       currentLatLng: freezed == currentLatLng
           ? _value.currentLatLng
           : currentLatLng // ignore: cast_nullable_to_non_nullable
               as LatLng?,
+      cameraLatLng: freezed == cameraLatLng
+          ? _value.cameraLatLng
+          : cameraLatLng // ignore: cast_nullable_to_non_nullable
+              as LatLng?,
+      address: freezed == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String?,
       centerPosition: freezed == centerPosition
           ? _value.centerPosition
           : centerPosition // ignore: cast_nullable_to_non_nullable
               as CameraPosition?,
+      popToPlaceList: freezed == popToPlaceList
+          ? _value.popToPlaceList
+          : popToPlaceList // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      error: freezed == error ? _value.error : error,
     ));
   }
 }
@@ -103,16 +184,42 @@ class __$$LocateOnMapStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LocateOnMapStateImpl implements _LocateOnMapState {
-  const _$LocateOnMapStateImpl({this.currentLatLng, this.centerPosition});
+  const _$LocateOnMapStateImpl(
+      {this.loading = false,
+      this.addingPlace = false,
+      this.gettingAddress = false,
+      this.currentLatLng,
+      this.cameraLatLng,
+      this.address,
+      this.centerPosition,
+      this.popToPlaceList,
+      this.error});
 
+  @override
+  @JsonKey()
+  final dynamic loading;
+  @override
+  @JsonKey()
+  final dynamic addingPlace;
+  @override
+  @JsonKey()
+  final dynamic gettingAddress;
   @override
   final LatLng? currentLatLng;
   @override
+  final LatLng? cameraLatLng;
+  @override
+  final String? address;
+  @override
   final CameraPosition? centerPosition;
+  @override
+  final DateTime? popToPlaceList;
+  @override
+  final Object? error;
 
   @override
   String toString() {
-    return 'LocateOnMapState(currentLatLng: $currentLatLng, centerPosition: $centerPosition)';
+    return 'LocateOnMapState(loading: $loading, addingPlace: $addingPlace, gettingAddress: $gettingAddress, currentLatLng: $currentLatLng, cameraLatLng: $cameraLatLng, address: $address, centerPosition: $centerPosition, popToPlaceList: $popToPlaceList, error: $error)';
   }
 
   @override
@@ -120,14 +227,35 @@ class _$LocateOnMapStateImpl implements _LocateOnMapState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LocateOnMapStateImpl &&
+            const DeepCollectionEquality().equals(other.loading, loading) &&
+            const DeepCollectionEquality()
+                .equals(other.addingPlace, addingPlace) &&
+            const DeepCollectionEquality()
+                .equals(other.gettingAddress, gettingAddress) &&
             (identical(other.currentLatLng, currentLatLng) ||
                 other.currentLatLng == currentLatLng) &&
+            (identical(other.cameraLatLng, cameraLatLng) ||
+                other.cameraLatLng == cameraLatLng) &&
+            (identical(other.address, address) || other.address == address) &&
             (identical(other.centerPosition, centerPosition) ||
-                other.centerPosition == centerPosition));
+                other.centerPosition == centerPosition) &&
+            (identical(other.popToPlaceList, popToPlaceList) ||
+                other.popToPlaceList == popToPlaceList) &&
+            const DeepCollectionEquality().equals(other.error, error));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, currentLatLng, centerPosition);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(loading),
+      const DeepCollectionEquality().hash(addingPlace),
+      const DeepCollectionEquality().hash(gettingAddress),
+      currentLatLng,
+      cameraLatLng,
+      address,
+      centerPosition,
+      popToPlaceList,
+      const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
   @override
@@ -139,13 +267,34 @@ class _$LocateOnMapStateImpl implements _LocateOnMapState {
 
 abstract class _LocateOnMapState implements LocateOnMapState {
   const factory _LocateOnMapState(
-      {final LatLng? currentLatLng,
-      final CameraPosition? centerPosition}) = _$LocateOnMapStateImpl;
+      {final dynamic loading,
+      final dynamic addingPlace,
+      final dynamic gettingAddress,
+      final LatLng? currentLatLng,
+      final LatLng? cameraLatLng,
+      final String? address,
+      final CameraPosition? centerPosition,
+      final DateTime? popToPlaceList,
+      final Object? error}) = _$LocateOnMapStateImpl;
 
+  @override
+  dynamic get loading;
+  @override
+  dynamic get addingPlace;
+  @override
+  dynamic get gettingAddress;
   @override
   LatLng? get currentLatLng;
   @override
+  LatLng? get cameraLatLng;
+  @override
+  String? get address;
+  @override
   CameraPosition? get centerPosition;
+  @override
+  DateTime? get popToPlaceList;
+  @override
+  Object? get error;
   @override
   @JsonKey(ignore: true)
   _$$LocateOnMapStateImplCopyWith<_$LocateOnMapStateImpl> get copyWith =>

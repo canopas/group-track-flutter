@@ -29,6 +29,7 @@ mixin _$ApiPlace {
   double get radius => throw _privateConstructorUsedError;
   @TimeStampJsonConverter()
   DateTime? get created_at => throw _privateConstructorUsedError;
+  List<String> get space_member_ids => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -49,7 +50,8 @@ abstract class $ApiPlaceCopyWith<$Res> {
       double latitude,
       double longitude,
       double radius,
-      @TimeStampJsonConverter() DateTime? created_at});
+      @TimeStampJsonConverter() DateTime? created_at,
+      List<String> space_member_ids});
 }
 
 /// @nodoc
@@ -73,6 +75,7 @@ class _$ApiPlaceCopyWithImpl<$Res, $Val extends ApiPlace>
     Object? longitude = null,
     Object? radius = null,
     Object? created_at = freezed,
+    Object? space_member_ids = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -107,6 +110,10 @@ class _$ApiPlaceCopyWithImpl<$Res, $Val extends ApiPlace>
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      space_member_ids: null == space_member_ids
+          ? _value.space_member_ids
+          : space_member_ids // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
   }
 }
@@ -127,7 +134,8 @@ abstract class _$$ApiPlaceImplCopyWith<$Res>
       double latitude,
       double longitude,
       double radius,
-      @TimeStampJsonConverter() DateTime? created_at});
+      @TimeStampJsonConverter() DateTime? created_at,
+      List<String> space_member_ids});
 }
 
 /// @nodoc
@@ -149,6 +157,7 @@ class __$$ApiPlaceImplCopyWithImpl<$Res>
     Object? longitude = null,
     Object? radius = null,
     Object? created_at = freezed,
+    Object? space_member_ids = null,
   }) {
     return _then(_$ApiPlaceImpl(
       id: null == id
@@ -183,6 +192,10 @@ class __$$ApiPlaceImplCopyWithImpl<$Res>
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      space_member_ids: null == space_member_ids
+          ? _value._space_member_ids
+          : space_member_ids // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -198,8 +211,10 @@ class _$ApiPlaceImpl extends _ApiPlace {
       required this.latitude,
       required this.longitude,
       this.radius = 200.0,
-      @TimeStampJsonConverter() this.created_at})
-      : super._();
+      @TimeStampJsonConverter() this.created_at,
+      final List<String> space_member_ids = const []})
+      : _space_member_ids = space_member_ids,
+        super._();
 
   factory _$ApiPlaceImpl.fromJson(Map<String, dynamic> json) =>
       _$$ApiPlaceImplFromJson(json);
@@ -222,10 +237,19 @@ class _$ApiPlaceImpl extends _ApiPlace {
   @override
   @TimeStampJsonConverter()
   final DateTime? created_at;
+  final List<String> _space_member_ids;
+  @override
+  @JsonKey()
+  List<String> get space_member_ids {
+    if (_space_member_ids is EqualUnmodifiableListView)
+      return _space_member_ids;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_space_member_ids);
+  }
 
   @override
   String toString() {
-    return 'ApiPlace(id: $id, created_by: $created_by, space_id: $space_id, name: $name, latitude: $latitude, longitude: $longitude, radius: $radius, created_at: $created_at)';
+    return 'ApiPlace(id: $id, created_by: $created_by, space_id: $space_id, name: $name, latitude: $latitude, longitude: $longitude, radius: $radius, created_at: $created_at, space_member_ids: $space_member_ids)';
   }
 
   @override
@@ -245,13 +269,24 @@ class _$ApiPlaceImpl extends _ApiPlace {
                 other.longitude == longitude) &&
             (identical(other.radius, radius) || other.radius == radius) &&
             (identical(other.created_at, created_at) ||
-                other.created_at == created_at));
+                other.created_at == created_at) &&
+            const DeepCollectionEquality()
+                .equals(other._space_member_ids, _space_member_ids));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, created_by, space_id, name,
-      latitude, longitude, radius, created_at);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      created_by,
+      space_id,
+      name,
+      latitude,
+      longitude,
+      radius,
+      created_at,
+      const DeepCollectionEquality().hash(_space_member_ids));
 
   @JsonKey(ignore: true)
   @override
@@ -276,7 +311,8 @@ abstract class _ApiPlace extends ApiPlace {
       required final double latitude,
       required final double longitude,
       final double radius,
-      @TimeStampJsonConverter() final DateTime? created_at}) = _$ApiPlaceImpl;
+      @TimeStampJsonConverter() final DateTime? created_at,
+      final List<String> space_member_ids}) = _$ApiPlaceImpl;
   const _ApiPlace._() : super._();
 
   factory _ApiPlace.fromJson(Map<String, dynamic> json) =
@@ -300,6 +336,8 @@ abstract class _ApiPlace extends ApiPlace {
   @TimeStampJsonConverter()
   DateTime? get created_at;
   @override
+  List<String> get space_member_ids;
+  @override
   @JsonKey(ignore: true)
   _$$ApiPlaceImplCopyWith<_$ApiPlaceImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -314,7 +352,7 @@ ApiPlaceMemberSetting _$ApiPlaceMemberSettingFromJson(
 mixin _$ApiPlaceMemberSetting {
   String get user_id => throw _privateConstructorUsedError;
   String get place_id => throw _privateConstructorUsedError;
-  bool get alert_enabled => throw _privateConstructorUsedError;
+  bool get alert_enable => throw _privateConstructorUsedError;
   List<String> get arrival_alert_for => throw _privateConstructorUsedError;
   List<String> get leave_alert_for => throw _privateConstructorUsedError;
 
@@ -333,7 +371,7 @@ abstract class $ApiPlaceMemberSettingCopyWith<$Res> {
   $Res call(
       {String user_id,
       String place_id,
-      bool alert_enabled,
+      bool alert_enable,
       List<String> arrival_alert_for,
       List<String> leave_alert_for});
 }
@@ -354,7 +392,7 @@ class _$ApiPlaceMemberSettingCopyWithImpl<$Res,
   $Res call({
     Object? user_id = null,
     Object? place_id = null,
-    Object? alert_enabled = null,
+    Object? alert_enable = null,
     Object? arrival_alert_for = null,
     Object? leave_alert_for = null,
   }) {
@@ -367,9 +405,9 @@ class _$ApiPlaceMemberSettingCopyWithImpl<$Res,
           ? _value.place_id
           : place_id // ignore: cast_nullable_to_non_nullable
               as String,
-      alert_enabled: null == alert_enabled
-          ? _value.alert_enabled
-          : alert_enabled // ignore: cast_nullable_to_non_nullable
+      alert_enable: null == alert_enable
+          ? _value.alert_enable
+          : alert_enable // ignore: cast_nullable_to_non_nullable
               as bool,
       arrival_alert_for: null == arrival_alert_for
           ? _value.arrival_alert_for
@@ -395,7 +433,7 @@ abstract class _$$ApiPlaceMemberSettingImplCopyWith<$Res>
   $Res call(
       {String user_id,
       String place_id,
-      bool alert_enabled,
+      bool alert_enable,
       List<String> arrival_alert_for,
       List<String> leave_alert_for});
 }
@@ -414,7 +452,7 @@ class __$$ApiPlaceMemberSettingImplCopyWithImpl<$Res>
   $Res call({
     Object? user_id = null,
     Object? place_id = null,
-    Object? alert_enabled = null,
+    Object? alert_enable = null,
     Object? arrival_alert_for = null,
     Object? leave_alert_for = null,
   }) {
@@ -427,9 +465,9 @@ class __$$ApiPlaceMemberSettingImplCopyWithImpl<$Res>
           ? _value.place_id
           : place_id // ignore: cast_nullable_to_non_nullable
               as String,
-      alert_enabled: null == alert_enabled
-          ? _value.alert_enabled
-          : alert_enabled // ignore: cast_nullable_to_non_nullable
+      alert_enable: null == alert_enable
+          ? _value.alert_enable
+          : alert_enable // ignore: cast_nullable_to_non_nullable
               as bool,
       arrival_alert_for: null == arrival_alert_for
           ? _value._arrival_alert_for
@@ -449,9 +487,9 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
   const _$ApiPlaceMemberSettingImpl(
       {required this.user_id,
       required this.place_id,
-      this.alert_enabled = false,
-      required final List<String> arrival_alert_for,
-      required final List<String> leave_alert_for})
+      this.alert_enable = false,
+      final List<String> arrival_alert_for = const [],
+      final List<String> leave_alert_for = const []})
       : _arrival_alert_for = arrival_alert_for,
         _leave_alert_for = leave_alert_for,
         super._();
@@ -465,9 +503,10 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
   final String place_id;
   @override
   @JsonKey()
-  final bool alert_enabled;
+  final bool alert_enable;
   final List<String> _arrival_alert_for;
   @override
+  @JsonKey()
   List<String> get arrival_alert_for {
     if (_arrival_alert_for is EqualUnmodifiableListView)
       return _arrival_alert_for;
@@ -477,6 +516,7 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
 
   final List<String> _leave_alert_for;
   @override
+  @JsonKey()
   List<String> get leave_alert_for {
     if (_leave_alert_for is EqualUnmodifiableListView) return _leave_alert_for;
     // ignore: implicit_dynamic_type
@@ -485,7 +525,7 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
 
   @override
   String toString() {
-    return 'ApiPlaceMemberSetting(user_id: $user_id, place_id: $place_id, alert_enabled: $alert_enabled, arrival_alert_for: $arrival_alert_for, leave_alert_for: $leave_alert_for)';
+    return 'ApiPlaceMemberSetting(user_id: $user_id, place_id: $place_id, alert_enable: $alert_enable, arrival_alert_for: $arrival_alert_for, leave_alert_for: $leave_alert_for)';
   }
 
   @override
@@ -496,8 +536,8 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
             (identical(other.user_id, user_id) || other.user_id == user_id) &&
             (identical(other.place_id, place_id) ||
                 other.place_id == place_id) &&
-            (identical(other.alert_enabled, alert_enabled) ||
-                other.alert_enabled == alert_enabled) &&
+            (identical(other.alert_enable, alert_enable) ||
+                other.alert_enable == alert_enable) &&
             const DeepCollectionEquality()
                 .equals(other._arrival_alert_for, _arrival_alert_for) &&
             const DeepCollectionEquality()
@@ -510,7 +550,7 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
       runtimeType,
       user_id,
       place_id,
-      alert_enabled,
+      alert_enable,
       const DeepCollectionEquality().hash(_arrival_alert_for),
       const DeepCollectionEquality().hash(_leave_alert_for));
 
@@ -531,12 +571,11 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
 
 abstract class _ApiPlaceMemberSetting extends ApiPlaceMemberSetting {
   const factory _ApiPlaceMemberSetting(
-          {required final String user_id,
-          required final String place_id,
-          final bool alert_enabled,
-          required final List<String> arrival_alert_for,
-          required final List<String> leave_alert_for}) =
-      _$ApiPlaceMemberSettingImpl;
+      {required final String user_id,
+      required final String place_id,
+      final bool alert_enable,
+      final List<String> arrival_alert_for,
+      final List<String> leave_alert_for}) = _$ApiPlaceMemberSettingImpl;
   const _ApiPlaceMemberSetting._() : super._();
 
   factory _ApiPlaceMemberSetting.fromJson(Map<String, dynamic> json) =
@@ -547,7 +586,7 @@ abstract class _ApiPlaceMemberSetting extends ApiPlaceMemberSetting {
   @override
   String get place_id;
   @override
-  bool get alert_enabled;
+  bool get alert_enable;
   @override
   List<String> get arrival_alert_for;
   @override

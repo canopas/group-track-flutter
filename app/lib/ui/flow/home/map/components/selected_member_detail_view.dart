@@ -8,6 +8,7 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 import 'package:yourspace_flutter/domain/extenstions/time_ago_extenstions.dart';
+import 'package:yourspace_flutter/ui/app_route.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../components/user_battery_status.dart';
@@ -16,13 +17,11 @@ import '../../../../components/user_profile_image.dart';
 class SelectedMemberDetailView extends StatefulWidget {
   final ApiUserInfo? userInfo;
   final void Function() onDismiss;
-  final void Function() onTapTimeline;
 
   const SelectedMemberDetailView({
     super.key,
     required this.userInfo,
     required this.onDismiss,
-    required this.onTapTimeline,
   });
 
   @override
@@ -139,20 +138,19 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
 
   Widget _timeLineButtonView() {
     return OnTapScale(
-      onTap: () {},
+      onTap: () {
+        AppRoute.journeyTimeline(widget.userInfo!.user).push(context);
+      },
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
             color: context.colorScheme.containerLow),
         padding: const EdgeInsets.all(8),
-        child: OnTapScale(
-          onTap: () => widget.onTapTimeline(),
-          child: SvgPicture.asset(
-            Assets.images.icTimeLineHistoryIcon,
-            colorFilter: ColorFilter.mode(
-              context.colorScheme.textPrimary,
-              BlendMode.srcATop,
-            ),
+        child: SvgPicture.asset(
+          Assets.images.icTimeLineHistoryIcon,
+          colorFilter: ColorFilter.mode(
+            context.colorScheme.textPrimary,
+            BlendMode.srcATop,
           ),
         ),
       ),
@@ -178,18 +176,16 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   }
 
   void getAddress(ApiLocation? location) async {
-    if (mounted) {
-      if (location != null) {
-        final latLng = LatLng(location.latitude, location.longitude);
-        final address = await latLng.getAddressFromLocation();
-        setState(() {
-          this.address = address;
-        });
-      } else {
-        setState(() {
-          address = '';
-        });
-      }
+    if (mounted && location != null) {
+      final latLng = LatLng(location.latitude, location.longitude);
+      final address = await latLng.getAddressFromLocation();
+      setState(() {
+        this.address = address;
+      });
+    } else {
+      setState(() {
+        address = '';
+      });
     }
   }
 }

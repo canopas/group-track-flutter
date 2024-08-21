@@ -41,7 +41,6 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    notifier = ref.watch(editSpaceViewStateProvider.notifier);
     final state = ref.watch(editSpaceViewStateProvider);
     _observePop();
     _observeError();
@@ -51,7 +50,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
       actions: [
         if (state.isAdmin) ...[
           actionButton(
-            context,
+            context: context,
             icon: state.saving
                 ? const AppProgressIndicator(
                     size: AppProgressIndicatorSize.small)
@@ -129,10 +128,11 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           ),
           const SizedBox(height: 24),
           if (state.currentUserInfo != null) ...[
-            _locationSharingItem(context, state.currentUserInfo!,
-                isCurrentUser: state.currentUserInfo?.user.id ==
-                    state.currentUserInfo!.user.id,
-            locationEnabled: state.locationEnabled,
+            _locationSharingItem(
+              context,
+              state.currentUserInfo!,
+              state.locationEnabled,
+              isCurrentUser: true,
             ),
           ],
         ],
@@ -170,7 +170,11 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                 final member = entry.value;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: _locationSharingItem(context, member),
+                  child: _locationSharingItem(
+                    context,
+                    member,
+                    member.isLocationEnabled,
+                  ),
                 );
               }).toList(),
             ),
@@ -180,13 +184,18 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
     );
   }
 
-  Widget _locationSharingItem(BuildContext context, ApiUserInfo member,
-      {bool isCurrentUser = false, bool locationEnabled = false}) {
+  Widget _locationSharingItem(
+      BuildContext context, ApiUserInfo member, bool isLocationEnabled,
+      {bool isCurrentUser = false}) {
     final profileImageUrl = member.user.profile_image ?? '';
     final firstLetter = member.user.firstChar;
     return Row(
       children: [
-        ProfileImage(profileImageUrl: profileImageUrl, firstLetter: firstLetter, size: 40),
+        ProfileImage(
+          profileImageUrl: profileImageUrl,
+          firstLetter: firstLetter,
+          size: 40,
+        ),
         const SizedBox(width: 16),
         Text(
           member.user.fullName,
@@ -195,17 +204,16 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         ),
         const Spacer(),
         Switch(
-          value:
-              isCurrentUser ? locationEnabled : member.isLocationEnabled,
-          onChanged: isCurrentUser
-              ? (bool value) {
-                  notifier.toggleLocationSharing(value);
-                  notifier.updateSpace();
-                }
-              : null,
-          activeColor: context.colorScheme.textPrimaryDark,
+          value: isLocationEnabled,
+          onChanged: (bool value) {
+            if (isCurrentUser) {
+              notifier.toggleLocationSharing(value);
+            }
+          },
           activeTrackColor: context.colorScheme.primary,
-          inactiveTrackColor: context.colorScheme.containerLowOnSurface,
+          inactiveTrackColor: context.colorScheme.containerHigh,
+          inactiveThumbColor: context.colorScheme.onPrimary,
+          trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
         ),
       ],
     );
@@ -244,7 +252,8 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
             message: state.isAdmin
                 ? context.l10n.edit_space_delete_space_alert_message
                 : context.l10n.edit_space_leave_space_alert_message,
-            onConfirm: () => state.isAdmin ? notifier.deleteSpace() : notifier.leaveSpace(),
+            onConfirm: () =>
+                state.isAdmin ? notifier.deleteSpace() : notifier.leaveSpace(),
           );
         },
       ),
@@ -261,7 +270,8 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
   }
 
   void _observeError() {
-    ref.listen(editSpaceViewStateProvider.select((state) => state.error), (previous, next) {
+    ref.listen(editSpaceViewStateProvider.select((state) => state.error),
+        (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
       }

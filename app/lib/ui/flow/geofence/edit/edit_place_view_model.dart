@@ -54,6 +54,7 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
         updatedSetting: setting,
         isAdmin: place.created_by == _currentUser.id,
         loading: false,
+        error: null,
       );
       _getAddress(place.latitude, place.longitude);
     } catch (error, stack) {
@@ -175,7 +176,7 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
           updatedSetting,
         );
       }
-      state = state.copyWith(saving: false, popToBack: DateTime.now());
+      state = state.copyWith(saving: false, popToBack: DateTime.now(), error: null);
     } catch (error, stack) {
       state = state.copyWith(saving: false, error: error);
       logger.e(

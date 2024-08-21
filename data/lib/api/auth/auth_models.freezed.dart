@@ -30,6 +30,7 @@ mixin _$ApiUser {
   String? get profile_image => throw _privateConstructorUsedError;
   bool? get location_enabled => throw _privateConstructorUsedError;
   List<String>? get space_ids => throw _privateConstructorUsedError;
+  String? get fcm_token => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -53,6 +54,7 @@ abstract class $ApiUserCopyWith<$Res> {
       String? profile_image,
       bool? location_enabled,
       List<String>? space_ids,
+      String? fcm_token,
       int? created_at});
 }
 
@@ -79,6 +81,7 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
     Object? profile_image = freezed,
     Object? location_enabled = freezed,
     Object? space_ids = freezed,
+    Object? fcm_token = freezed,
     Object? created_at = freezed,
   }) {
     return _then(_value.copyWith(
@@ -122,6 +125,10 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
           ? _value.space_ids
           : space_ids // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      fcm_token: freezed == fcm_token
+          ? _value.fcm_token
+          : fcm_token // ignore: cast_nullable_to_non_nullable
+              as String?,
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -148,6 +155,7 @@ abstract class _$$ApiUserImplCopyWith<$Res> implements $ApiUserCopyWith<$Res> {
       String? profile_image,
       bool? location_enabled,
       List<String>? space_ids,
+      String? fcm_token,
       int? created_at});
 }
 
@@ -172,6 +180,7 @@ class __$$ApiUserImplCopyWithImpl<$Res>
     Object? profile_image = freezed,
     Object? location_enabled = freezed,
     Object? space_ids = freezed,
+    Object? fcm_token = freezed,
     Object? created_at = freezed,
   }) {
     return _then(_$ApiUserImpl(
@@ -215,6 +224,10 @@ class __$$ApiUserImplCopyWithImpl<$Res>
           ? _value._space_ids
           : space_ids // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      fcm_token: freezed == fcm_token
+          ? _value.fcm_token
+          : fcm_token // ignore: cast_nullable_to_non_nullable
+              as String?,
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -237,6 +250,7 @@ class _$ApiUserImpl extends _ApiUser {
       this.profile_image,
       this.location_enabled = true,
       final List<String>? space_ids = const [],
+      this.fcm_token = "",
       this.created_at})
       : _space_ids = space_ids,
         super._();
@@ -275,11 +289,14 @@ class _$ApiUserImpl extends _ApiUser {
   }
 
   @override
+  @JsonKey()
+  final String? fcm_token;
+  @override
   final int? created_at;
 
   @override
   String toString() {
-    return 'ApiUser(id: $id, first_name: $first_name, last_name: $last_name, phone: $phone, email: $email, provider_firebase_id_token: $provider_firebase_id_token, auth_type: $auth_type, profile_image: $profile_image, location_enabled: $location_enabled, space_ids: $space_ids, created_at: $created_at)';
+    return 'ApiUser(id: $id, first_name: $first_name, last_name: $last_name, phone: $phone, email: $email, provider_firebase_id_token: $provider_firebase_id_token, auth_type: $auth_type, profile_image: $profile_image, location_enabled: $location_enabled, space_ids: $space_ids, fcm_token: $fcm_token, created_at: $created_at)';
   }
 
   @override
@@ -306,6 +323,8 @@ class _$ApiUserImpl extends _ApiUser {
                 other.location_enabled == location_enabled) &&
             const DeepCollectionEquality()
                 .equals(other._space_ids, _space_ids) &&
+            (identical(other.fcm_token, fcm_token) ||
+                other.fcm_token == fcm_token) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at));
   }
@@ -324,6 +343,7 @@ class _$ApiUserImpl extends _ApiUser {
       profile_image,
       location_enabled,
       const DeepCollectionEquality().hash(_space_ids),
+      fcm_token,
       created_at);
 
   @JsonKey(ignore: true)
@@ -352,6 +372,7 @@ abstract class _ApiUser extends ApiUser {
       final String? profile_image,
       final bool? location_enabled,
       final List<String>? space_ids,
+      final String? fcm_token,
       final int? created_at}) = _$ApiUserImpl;
   const _ApiUser._() : super._();
 
@@ -378,6 +399,8 @@ abstract class _ApiUser extends ApiUser {
   @override
   List<String>? get space_ids;
   @override
+  String? get fcm_token;
+  @override
   int? get created_at;
   @override
   @JsonKey(ignore: true)
@@ -394,7 +417,6 @@ mixin _$ApiSession {
   String get id => throw _privateConstructorUsedError;
   String get user_id => throw _privateConstructorUsedError;
   int? get platform => throw _privateConstructorUsedError;
-  String? get fcm_token => throw _privateConstructorUsedError;
   bool get session_active => throw _privateConstructorUsedError;
   String? get device_name => throw _privateConstructorUsedError;
   String? get device_id => throw _privateConstructorUsedError;
@@ -418,7 +440,6 @@ abstract class $ApiSessionCopyWith<$Res> {
       {String id,
       String user_id,
       int? platform,
-      String? fcm_token,
       bool session_active,
       String? device_name,
       String? device_id,
@@ -443,7 +464,6 @@ class _$ApiSessionCopyWithImpl<$Res, $Val extends ApiSession>
     Object? id = null,
     Object? user_id = null,
     Object? platform = freezed,
-    Object? fcm_token = freezed,
     Object? session_active = null,
     Object? device_name = freezed,
     Object? device_id = freezed,
@@ -464,10 +484,6 @@ class _$ApiSessionCopyWithImpl<$Res, $Val extends ApiSession>
           ? _value.platform
           : platform // ignore: cast_nullable_to_non_nullable
               as int?,
-      fcm_token: freezed == fcm_token
-          ? _value.fcm_token
-          : fcm_token // ignore: cast_nullable_to_non_nullable
-              as String?,
       session_active: null == session_active
           ? _value.session_active
           : session_active // ignore: cast_nullable_to_non_nullable
@@ -508,7 +524,6 @@ abstract class _$$ApiSessionImplCopyWith<$Res>
       {String id,
       String user_id,
       int? platform,
-      String? fcm_token,
       bool session_active,
       String? device_name,
       String? device_id,
@@ -531,7 +546,6 @@ class __$$ApiSessionImplCopyWithImpl<$Res>
     Object? id = null,
     Object? user_id = null,
     Object? platform = freezed,
-    Object? fcm_token = freezed,
     Object? session_active = null,
     Object? device_name = freezed,
     Object? device_id = freezed,
@@ -552,10 +566,6 @@ class __$$ApiSessionImplCopyWithImpl<$Res>
           ? _value.platform
           : platform // ignore: cast_nullable_to_non_nullable
               as int?,
-      fcm_token: freezed == fcm_token
-          ? _value.fcm_token
-          : fcm_token // ignore: cast_nullable_to_non_nullable
-              as String?,
       session_active: null == session_active
           ? _value.session_active
           : session_active // ignore: cast_nullable_to_non_nullable
@@ -591,7 +601,6 @@ class _$ApiSessionImpl extends _ApiSession {
       {required this.id,
       required this.user_id,
       this.platform = 1,
-      this.fcm_token = "",
       required this.session_active,
       this.device_name,
       this.device_id,
@@ -611,9 +620,6 @@ class _$ApiSessionImpl extends _ApiSession {
   @JsonKey()
   final int? platform;
   @override
-  @JsonKey()
-  final String? fcm_token;
-  @override
   final bool session_active;
   @override
   final String? device_name;
@@ -628,7 +634,7 @@ class _$ApiSessionImpl extends _ApiSession {
 
   @override
   String toString() {
-    return 'ApiSession(id: $id, user_id: $user_id, platform: $platform, fcm_token: $fcm_token, session_active: $session_active, device_name: $device_name, device_id: $device_id, created_at: $created_at, battery_pct: $battery_pct, app_version: $app_version)';
+    return 'ApiSession(id: $id, user_id: $user_id, platform: $platform, session_active: $session_active, device_name: $device_name, device_id: $device_id, created_at: $created_at, battery_pct: $battery_pct, app_version: $app_version)';
   }
 
   @override
@@ -640,8 +646,6 @@ class _$ApiSessionImpl extends _ApiSession {
             (identical(other.user_id, user_id) || other.user_id == user_id) &&
             (identical(other.platform, platform) ||
                 other.platform == platform) &&
-            (identical(other.fcm_token, fcm_token) ||
-                other.fcm_token == fcm_token) &&
             (identical(other.session_active, session_active) ||
                 other.session_active == session_active) &&
             (identical(other.device_name, device_name) ||
@@ -663,7 +667,6 @@ class _$ApiSessionImpl extends _ApiSession {
       id,
       user_id,
       platform,
-      fcm_token,
       session_active,
       device_name,
       device_id,
@@ -690,7 +693,6 @@ abstract class _ApiSession extends ApiSession {
       {required final String id,
       required final String user_id,
       final int? platform,
-      final String? fcm_token,
       required final bool session_active,
       final String? device_name,
       final String? device_id,
@@ -708,8 +710,6 @@ abstract class _ApiSession extends ApiSession {
   String get user_id;
   @override
   int? get platform;
-  @override
-  String? get fcm_token;
   @override
   bool get session_active;
   @override

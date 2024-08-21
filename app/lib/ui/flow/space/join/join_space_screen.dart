@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/button/primary_button.dart';
+import 'package:style/button/secondary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/alert.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/space/join/join_space_view_model.dart';
@@ -14,7 +16,9 @@ import 'package:yourspace_flutter/ui/flow/space/join/join_space_view_model.dart'
 import '../../../components/app_page.dart';
 
 class JoinSpace extends ConsumerStatefulWidget {
-  const JoinSpace({super.key});
+  final bool fromOnboard;
+
+  const JoinSpace({super.key, this.fromOnboard = false});
 
   @override
   ConsumerState createState() => _JoinSpaceState();
@@ -29,15 +33,15 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
   @override
   void initState() {
     _controllers = List.generate(6, (index) => TextEditingController());
-    _focusNodes = List.generate(6, (index) => FocusNode(
-        onKeyEvent: (node, event) {
-          if(event.logicalKey == LogicalKeyboardKey.backspace
-              && _controllers[index].text.isEmpty) {
-            if (index > 0) _focusNodes[index - 1].requestFocus();
-          }
-          return KeyEventResult.ignored;
-        }
-    ));
+    _focusNodes = List.generate(
+        6,
+        (index) => FocusNode(onKeyEvent: (node, event) {
+              if (event.logicalKey == LogicalKeyboardKey.backspace &&
+                  _controllers[index].text.isEmpty) {
+                if (index > 0) _focusNodes[index - 1].requestFocus();
+              }
+              return KeyEventResult.ignored;
+            }));
     super.initState();
   }
 
@@ -48,7 +52,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     _showCongratulationPrompt();
 
     return AppPage(
-      title: context.l10n.join_space_title,
+      title: widget.fromOnboard ? '' : context.l10n.join_space_title,
       body: _body(context),
     );
   }
@@ -60,16 +64,29 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
         padding: const EdgeInsets.all(16),
         children: [
           Text(
-            context.l10n.join_space_invite_code_title,
+            widget.fromOnboard
+                ? context.l10n.join_space_invitation_title
+                : context.l10n.join_space_invite_code_title,
             style: AppTextStyle.header3.copyWith(
               color: context.colorScheme.textPrimary,
             ),
           ),
+          if (widget.fromOnboard) ...[
+            const SizedBox(height: 16),
+            Text(
+              context.l10n.join_space_get_code_from_space_creator_title,
+              style: AppTextStyle.subtitle1.copyWith(
+                color: context.colorScheme.textDisabled,
+              ),
+            )
+          ],
           const SizedBox(height: 40),
           _inviteCode(context, state),
           const SizedBox(height: 40),
           Text(
-            context.l10n.join_space_get_code_from_space_text,
+            widget.fromOnboard
+                ? ''
+                : context.l10n.join_space_get_code_from_space_text,
             style: AppTextStyle.subtitle1.copyWith(
               color: context.colorScheme.textDisabled,
             ),
@@ -110,7 +127,12 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     );
   }
 
-  Widget _buildCodeBox(BuildContext context, double width, int index, JoinSpaceViewState state) {
+  Widget _buildCodeBox(
+    BuildContext context,
+    double width,
+    int index,
+    JoinSpaceViewState state,
+  ) {
     return Container(
       width: width,
       height: 64,
@@ -143,7 +165,9 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
               if (index < 5) {
                 _focusNodes[index + 1].requestFocus();
               } else {
-                final inviteCode = _controllers.map((controller) => controller.text.trim()).join();
+                final inviteCode = _controllers
+                    .map((controller) => controller.text.trim())
+                    .join();
                 notifier.joinSpace(inviteCode);
               }
             }
@@ -165,10 +189,21 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
             progress: state.verifying,
             enabled: enabled,
             onPressed: () {
-              final inviteCode = _controllers.map((controller) => controller.text.trim()).join();
+              final inviteCode = _controllers
+                  .map((controller) => controller.text.trim())
+                  .join();
               notifier.joinSpace(inviteCode.toUpperCase());
             },
           ),
+          if (widget.fromOnboard) ...[
+            const SizedBox(height: 16),
+            SecondaryButton(
+              context.l10n.join_space_create_new_space_title,
+              onPressed: () {
+                AppRoute.createSpace(fromOnboard: true).push(context);
+              },
+            )
+          ],
         ],
       ),
     );
@@ -179,9 +214,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
       visible: state.errorInvalidInvitationCode || state.alreadySpaceMember,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: context.colorScheme.alert
-        ),
+        decoration: BoxDecoration(color: context.colorScheme.alert),
         child: Text(
           state.errorInvalidInvitationCode
               ? context.l10n.join_space_invalid_code_error_text
@@ -196,12 +229,14 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
 
   void _updateJoinSpaceButtonState() {
     setState(() {
-      enabled = _controllers.every((controller) => controller.text.trim().isNotEmpty);
+      enabled =
+          _controllers.every((controller) => controller.text.trim().isNotEmpty);
     });
   }
 
   void _observeError() {
-    ref.listen(joinSpaceViewStateProvider.select((state) => state.error), (previous, next) {
+    ref.listen(joinSpaceViewStateProvider.select((state) => state.error),
+        (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
       }
@@ -215,10 +250,13 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
         showOkayConfirmation(
           context,
           title: context.l10n.join_space_congratulation_title,
-          message: context.l10n
-              .join_space_congratulation_subtitle(next.name),
+          message: context.l10n.join_space_congratulation_subtitle(next.name),
           onOkay: () {
-            context.pop();
+            if (widget.fromOnboard) {
+              AppRoute.home.go(context);
+            } else {
+              context.pop();
+            }
           },
         );
       }

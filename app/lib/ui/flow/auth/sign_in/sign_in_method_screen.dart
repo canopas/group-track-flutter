@@ -25,13 +25,8 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
   late SignInMethodsScreenViewNotifier notifier;
 
   @override
-  void initState() {
-    notifier = ref.read(signInMethodsStateProvider.notifier);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    notifier = ref.watch(signInMethodsStateProvider.notifier);
     _listenSignInSuccess();
     _observeError();
 
@@ -123,12 +118,21 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
       ));
 
   void onSignInSuccess() async {
+    final state = ref.watch(signInMethodsStateProvider);
     final user = ref.read(currentUserPod);
 
     if (mounted && (user?.first_name == null || user!.first_name!.isEmpty)) {
-      await AppRoute.pickName.push(context);
+      await AppRoute.pickName(user: user).push(context);
     }
 
+    if (state.isNewUser && mounted) {
+      AppRoute.connection.go(context);
+    } else {
+      navigateToHome();
+    }
+  }
+
+  void navigateToHome() {
     if (mounted) AppRoute.home.go(context);
   }
 

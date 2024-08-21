@@ -49,7 +49,9 @@ class SignInMethodsScreenViewNotifier
         state = state.copyWith(
             showGoogleLoading: false,
             socialSignInCompleted: true,
-            isNewUser: isNewUser);
+            isNewUser: isNewUser,
+            error: null,
+        );
       } else {
         state = state.copyWith(showGoogleLoading: false);
       }

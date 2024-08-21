@@ -1,3 +1,5 @@
+import 'package:data/api/auth/api_user_service.dart';
+import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/permission_service.dart';
@@ -15,6 +17,9 @@ final homeViewStateProvider =
     ref.read(currentSpaceId.notifier),
     ref.read(permissionServiceProvider),
     ref.read(lastBatteryDialogPod.notifier),
+    ref.read(currentUserPod),
+    ref.read(apiUserServiceProvider),
+    ref.read(currentUserSessionPod),
   ),
 );
 
@@ -23,45 +28,46 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final PermissionService permissionService;
   final StateController<String?> _currentSpaceIdController;
   final StateController<String?> _lastBatteryDialogDate;
+  final ApiUser? _currentUser;
+  final ApiUserService userService;
+  final ApiSession? _userSession;
 
   HomeViewNotifier(
-    this.spaceService,
-    this._currentSpaceIdController,
-    this.permissionService,
-    this._lastBatteryDialogDate,
-  ) : super(const HomeViewState());
+      this.spaceService,
+      this._currentSpaceIdController,
+      this.permissionService,
+      this._lastBatteryDialogDate,
+      this._currentUser,
+      this.userService,
+      this._userSession)
+      : super(const HomeViewState()) {
+    listenSpaceMember();
+
+    if (_currentUser == null && _userSession == null) return;
+    listenUserSession(_currentUser!.id, _userSession!.id);
+  }
 
   String? get currentSpaceId => _currentSpaceIdController.state;
 
-  set currentSpaceId(String? value) {
-    _currentSpaceIdController.state = value;
-  }
-
-  void getAllSpace() async {
+  void listenSpaceMember() async {
     if (state.loading) return;
+
     try {
-      state = state.copyWith(loading: state.spaceList.isEmpty);
-      final spaces = await spaceService.getAllSpaceInfo();
+      state = state.copyWith(loading: true);
+      spaceService.streamAllSpace().listen((spaces) {
+        if (spaces.isNotEmpty) {
+          final spaceIndex =
+              spaces.indexWhere((space) => space.space.id == currentSpaceId);
 
-      final sortedSpaces = spaces.toList();
-
-      if (currentSpaceId?.isNotEmpty ?? false) {
-        final selectedSpaceIndex = sortedSpaces
-            .indexWhere((space) => space.space.id == currentSpaceId);
-        if (selectedSpaceIndex > -1) {
-          final selectedSpace = sortedSpaces.removeAt(selectedSpaceIndex);
-          sortedSpaces.insert(0, selectedSpace);
+          final selectedSpace =
+              spaceIndex > -1 ? spaces[spaceIndex] : spaces.first;
+          reorderSpaces(selectedSpace, spaces);
           updateSelectedSpace(selectedSpace);
+        } else {
+          state = state.copyWith(selectedSpace: null, spaceList: []);
         }
-      }
-
-      state = state.copyWith(loading: false, spaceList: sortedSpaces);
-
-      if ((currentSpaceId?.isEmpty ?? false) && sortedSpaces.isNotEmpty) {
-        final selectedSpace = sortedSpaces.first;
-        currentSpaceId = selectedSpace.space.id;
-        updateSelectedSpace(selectedSpace);
-      }
+        state = state.copyWith(loading: false, error: null);
+      });
     } catch (error, stack) {
       state = state.copyWith(error: error, loading: false);
       logger.e(
@@ -78,7 +84,9 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       final code =
           await spaceService.getInviteCode(state.selectedSpace?.space.id ?? '');
       state = state.copyWith(
-          spaceInvitationCode: code ?? '', fetchingInviteCode: false);
+          spaceInvitationCode: code ?? '',
+          fetchingInviteCode: false,
+          error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error, fetchingInviteCode: false);
       logger.e(
@@ -89,10 +97,30 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     }
   }
 
+  void reorderSpaces(
+    SpaceInfo selectedSpace,
+    List<SpaceInfo> spaces,
+  ) {
+    final reorderSpaces = List<SpaceInfo>.from(spaces);
+    reorderSpaces
+        .removeWhere((space) => space.space.id == selectedSpace.space.id);
+    reorderSpaces.insert(0, selectedSpace);
+    state = state.copyWith(spaceList: reorderSpaces);
+  }
+
   void updateSelectedSpace(SpaceInfo space) {
     if (space != state.selectedSpace) {
-      state = state.copyWith(selectedSpace: space);
-      currentSpaceId = space.space.id;
+      final members = space.members
+          .where((member) => member.user.id == _currentUser!.id)
+          .toList();
+
+      state = state.copyWith(
+        selectedSpace: space,
+        locationEnabled: members.isEmpty
+            ? _currentUser?.location_enabled ?? true
+            : members.first.isLocationEnabled,
+      );
+      _currentSpaceIdController.state = space.space.id;
     }
   }
 
@@ -129,6 +157,51 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   void requestIgnoreBatteryOptimizations() async {
     await permissionService.requestIgnoreBatteryOptimizations();
   }
+
+  void toggleLocation() async {
+    if (currentSpaceId == null || _currentUser == null) return;
+    try {
+      final isEnabled = !state.locationEnabled;
+      state = state.copyWith(enablingLocation: true);
+      await spaceService.enableLocation(
+        currentSpaceId!,
+        _currentUser.id,
+        isEnabled,
+      );
+      state = state.copyWith(
+          enablingLocation: false, locationEnabled: isEnabled, error: null);
+    } catch (error, stack) {
+      state = state.copyWith(enablingLocation: false, error: error);
+      logger.e(
+        'HomeViewNotifier: Error while location enabled or disabled',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  void listenUserSession(String userId, String sessionId) async {
+    try {
+      userService.getUserSessionByIdStream(userId, sessionId).listen((session) {
+        if (session != null && !session.session_active) {
+          state = state.copyWith(isSessionExpired: true, error: null);
+        }
+      });
+    } catch (error, stack) {
+      state = state.copyWith(error: error);
+      logger.e(
+        'HomeViewNotifier: error while listening user session',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  void signOut() async {
+    await userService.signOut();
+    state =
+        state.copyWith(popToSignIn: DateTime.now(), isSessionExpired: false);
+  }
 }
 
 @freezed
@@ -138,6 +211,10 @@ class HomeViewState with _$HomeViewState {
     @Default(false) bool isCreating,
     @Default(false) bool loading,
     @Default(false) bool fetchingInviteCode,
+    @Default(false) bool enablingLocation,
+    @Default(true) bool locationEnabled,
+    @Default(false) bool isSessionExpired,
+    DateTime? popToSignIn,
     SpaceInfo? selectedSpace,
     @Default('') String spaceInvitationCode,
     @Default([]) List<SpaceInfo> spaceList,

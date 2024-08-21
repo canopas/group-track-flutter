@@ -31,7 +31,7 @@ class ChoosePlaceNameViewNotifier extends StateNotifier<ChoosePlaceViewState> {
       this._currentUser, this.placesService, this.spaceService)
       : super(ChoosePlaceViewState(title: TextEditingController()));
 
-  void setData(LatLng position, String spaceId) {
+  void setData(LatLng position, String spaceId, String placesName) {
     final suggestionList = [
       'Home',
       'Work',
@@ -45,7 +45,11 @@ class ChoosePlaceNameViewNotifier extends StateNotifier<ChoosePlaceViewState> {
     ];
     _location = position;
     _spaceId = spaceId;
-    state = state.copyWith(suggestions: suggestionList);
+    state = state.copyWith(
+      suggestions: suggestionList,
+      title: TextEditingController(text: placesName.trim()),
+      enableAddBtn: placesName.isNotEmpty,
+    );
   }
 
   void onTapSuggestedPlace(String suggestion) {
@@ -74,7 +78,7 @@ class ChoosePlaceNameViewNotifier extends StateNotifier<ChoosePlaceViewState> {
         memberIds,
       );
       state =
-          state.copyWith(popToPlaceList: DateTime.now(), addingPlace: false);
+          state.copyWith(popToPlaceList: DateTime.now(), addingPlace: false, error: null);
     } catch (error, stack) {
       state = state.copyWith(addingPlace: false, error: error);
       logger.e(

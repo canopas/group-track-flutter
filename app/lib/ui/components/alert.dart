@@ -55,11 +55,13 @@ Future<void> showOkayConfirmation(
       String? title,
       String? message,
       bool isDestructiveAction = true,
+      bool barrierDismissible = true,
       VoidCallback? onOkay,
     }) {
   HapticFeedback.mediumImpact();
   return showAdaptiveDialog(
     context: context,
+    barrierDismissible: barrierDismissible,
     builder: (context) {
       return AlertDialog.adaptive(
         surfaceTintColor: context.colorScheme.containerNormalOnSurface,

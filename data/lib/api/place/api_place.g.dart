@@ -17,6 +17,10 @@ _$ApiPlaceImpl _$$ApiPlaceImplFromJson(Map<String, dynamic> json) =>
       radius: (json['radius'] as num?)?.toDouble() ?? 200.0,
       created_at: _$JsonConverterFromJson<Timestamp, DateTime>(
           json['created_at'], const TimeStampJsonConverter().fromJson),
+      space_member_ids: (json['space_member_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$ApiPlaceImplToJson(_$ApiPlaceImpl instance) =>
@@ -30,6 +34,7 @@ Map<String, dynamic> _$$ApiPlaceImplToJson(_$ApiPlaceImpl instance) =>
       'radius': instance.radius,
       'created_at': _$JsonConverterToJson<Timestamp, DateTime>(
           instance.created_at, const TimeStampJsonConverter().toJson),
+      'space_member_ids': instance.space_member_ids,
     };
 
 Value? _$JsonConverterFromJson<Json, Value>(
@@ -49,13 +54,15 @@ _$ApiPlaceMemberSettingImpl _$$ApiPlaceMemberSettingImplFromJson(
     _$ApiPlaceMemberSettingImpl(
       user_id: json['user_id'] as String,
       place_id: json['place_id'] as String,
-      alert_enabled: json['alert_enabled'] as bool? ?? false,
-      arrival_alert_for: (json['arrival_alert_for'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      leave_alert_for: (json['leave_alert_for'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
+      alert_enable: json['alert_enable'] as bool? ?? false,
+      arrival_alert_for: (json['arrival_alert_for'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      leave_alert_for: (json['leave_alert_for'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$ApiPlaceMemberSettingImplToJson(
@@ -63,7 +70,7 @@ Map<String, dynamic> _$$ApiPlaceMemberSettingImplToJson(
     <String, dynamic>{
       'user_id': instance.user_id,
       'place_id': instance.place_id,
-      'alert_enabled': instance.alert_enabled,
+      'alert_enable': instance.alert_enable,
       'arrival_alert_for': instance.arrival_alert_for,
       'leave_alert_for': instance.leave_alert_for,
     };

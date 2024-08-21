@@ -29,8 +29,10 @@
       "memberCount": {}
     }
   },
-  "@_INTRO": {
-  },
+  "common_skip": "Skip",
+
+   "@_INTRO": {
+   },
   "intro_1_title": "Live location",
   "intro_2_title": "Receive alerts",
   "intro_3_title": "Location history",
@@ -65,6 +67,8 @@
     }
   },
   "home_select_space_text": "Select a space",
+  "home_session_expired_title": "You've been logged out",
+  "home_session_expired_message": "You need to sign in again to continue using the application.",
 
   "create_space_give_your_space_name_title": "Give your space name",
   "create_space_tip_text": "Tips: You create dedicated spaces for work, family, friends, and more.",
@@ -87,7 +91,7 @@
   "join_space_already_joined_error_text": "You are already member of this space",
   "join_space_invalid_code_error_text": "It appears the code is no longer valid or has expired. please review and enter valid code.",
   "join_space_congratulation_title": "Congratulation",
-  "join_space_congratulation_subtitle": "You’re are now member of {spaceName} group for sharing your real-time location.",
+  "join_space_congratulation_subtitle": "You’re now member of {spaceName} group for sharing your real-time location.",
   "@join_space_congratulation_subtitle": {
     "placeholders": {
       "spaceName": {
@@ -95,6 +99,9 @@
       }
     }
   },
+  "join_space_invitation_title": "Have a Space Invitation?",
+  "join_space_get_code_from_space_creator_title": "Get the code from the space creator and input it here to join.\n\nIf you don't have an invitation code, create a new space.",
+  "join_space_create_new_space_title": "Create a new space",
 
   "invite_code_title": "Invite code",
   "invite_code_invite_member_title": "Invite members to the {spaceName}",
@@ -137,6 +144,15 @@
 
   "chat_start_new_chat_title": "Start new chat",
   "chat_type_message_hint_text": "Type message",
+  "chat_seen_message_text": "seen",
+  "chat_seen_by_message_text": " seen by {members}",
+  "@chat_seen_by_message_text": {
+    "placeholders": {
+      "members": {
+        "type": "String"
+      }
+    }
+  },
 
   "edit_profile_title": "Edit profile",
   "edit_profile_first_name_title": "First name",
@@ -174,6 +190,10 @@
   "contact_support_attachment": "Attachment (if any)",
   "contact_support_submit_title": "Submit",
   "contact_support_feedback_alert_message": "Thanks! Your feedback has been recorded.",
+
+  "connection_share_title": "Connect, share, explore join your trusted space for safe location sharing.",
+  "connection_share_subtitle": "Simplify your connections and insights explore drive reports, location history effortlessly.",
+  "connection_continue_title": "Continue",
 
   "@_Permission": {
   },
@@ -221,6 +241,9 @@
   "add_new_place_location_on_map_text": "Locate on map",
 
   "locate_on_map_title": "Locate on Map",
+  "locate_on_map_prompt_added_title_text": "{placeName} Added",
+  "locate_on_map_prompt_sub_title_text": "You will be notified when members of your space arrive/leave this place",
+  "locate_on_map_prompt_got_it_btn_text": "Got it",
 
   "choose_place_screen_title": "Choose place name",
   "choose_place_search_hint_text": "Enter place name",
@@ -240,5 +263,18 @@
   "edit_place_leaves_text": "Leaves",
   "edit_place_delete_place_btn_text": "Delete place",
   "edit_place_only_admin_edit_text": "Only admin can edit or delete this place.",
-  "edit_place_delete_dialog_sub_title_text": "Are you sure you want to delete this place? This action cannot be undone."
+  "edit_place_delete_dialog_sub_title_text": "Are you sure you want to delete this place? This action cannot be undone.",
+
+  "@_Timeline": {
+  },
+  "journey_timeline_title": "Timeline",
+  "journey_timeline_title_your_timeline": "Your Timeline",
+  "journey_timeline_title_other_user": "{userName} Timeline",
+  "journey_timeline_add_place_btn_text": "Add Place",
+  "journey_timeline_unknown_address_text": "Unknown address",
+  "journey_timeline_getting_address_text": "Getting address..",
+  "journey_timeline_empty_screen_text": "No location history found!",
+  "journey_timeline_Since_text": "Since {date}",
+  "journey_timeline_today_text": "Today {date}",
+  "journey_timeline_date_picker_select_text": "Select"
 }

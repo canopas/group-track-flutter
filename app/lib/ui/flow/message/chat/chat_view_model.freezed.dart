@@ -17,6 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$ChatViewState {
   bool get loading => throw _privateConstructorUsedError;
+  bool get creating => throw _privateConstructorUsedError;
   bool get loadingMessages => throw _privateConstructorUsedError;
   bool get messageSending => throw _privateConstructorUsedError;
   bool get allowSend => throw _privateConstructorUsedError;
@@ -48,6 +49,7 @@ abstract class $ChatViewStateCopyWith<$Res> {
   @useResult
   $Res call(
       {bool loading,
+      bool creating,
       bool loadingMessages,
       bool messageSending,
       bool allowSend,
@@ -84,6 +86,7 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
   @override
   $Res call({
     Object? loading = null,
+    Object? creating = null,
     Object? loadingMessages = null,
     Object? messageSending = null,
     Object? allowSend = null,
@@ -106,6 +109,10 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      creating: null == creating
+          ? _value.creating
+          : creating // ignore: cast_nullable_to_non_nullable
               as bool,
       loadingMessages: null == loadingMessages
           ? _value.loadingMessages
@@ -210,6 +217,7 @@ abstract class _$$ChatViewStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {bool loading,
+      bool creating,
       bool loadingMessages,
       bool messageSending,
       bool allowSend,
@@ -246,6 +254,7 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? loading = null,
+    Object? creating = null,
     Object? loadingMessages = null,
     Object? messageSending = null,
     Object? allowSend = null,
@@ -268,6 +277,10 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      creating: null == creating
+          ? _value.creating
+          : creating // ignore: cast_nullable_to_non_nullable
               as bool,
       loadingMessages: null == loadingMessages
           ? _value.loadingMessages
@@ -343,6 +356,7 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
 class _$ChatViewStateImpl implements _ChatViewState {
   const _$ChatViewStateImpl(
       {this.loading = false,
+      this.creating = false,
       this.loadingMessages = false,
       this.messageSending = false,
       this.allowSend = false,
@@ -369,6 +383,9 @@ class _$ChatViewStateImpl implements _ChatViewState {
   @override
   @JsonKey()
   final bool loading;
+  @override
+  @JsonKey()
+  final bool creating;
   @override
   @JsonKey()
   final bool loadingMessages;
@@ -447,7 +464,7 @@ class _$ChatViewStateImpl implements _ChatViewState {
 
   @override
   String toString() {
-    return 'ChatViewState(loading: $loading, loadingMessages: $loadingMessages, messageSending: $messageSending, allowSend: $allowSend, showMemberSelectionView: $showMemberSelectionView, isNewThread: $isNewThread, users: $users, threadId: $threadId, title: $title, message: $message, messages: $messages, sender: $sender, selectedMember: $selectedMember, error: $error, spaceInfo: $spaceInfo, threadInfo: $threadInfo, currentUserId: $currentUserId, threadList: $threadList)';
+    return 'ChatViewState(loading: $loading, creating: $creating, loadingMessages: $loadingMessages, messageSending: $messageSending, allowSend: $allowSend, showMemberSelectionView: $showMemberSelectionView, isNewThread: $isNewThread, users: $users, threadId: $threadId, title: $title, message: $message, messages: $messages, sender: $sender, selectedMember: $selectedMember, error: $error, spaceInfo: $spaceInfo, threadInfo: $threadInfo, currentUserId: $currentUserId, threadList: $threadList)';
   }
 
   @override
@@ -456,6 +473,8 @@ class _$ChatViewStateImpl implements _ChatViewState {
         (other.runtimeType == runtimeType &&
             other is _$ChatViewStateImpl &&
             (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.creating, creating) ||
+                other.creating == creating) &&
             (identical(other.loadingMessages, loadingMessages) ||
                 other.loadingMessages == loadingMessages) &&
             (identical(other.messageSending, messageSending) ||
@@ -488,26 +507,28 @@ class _$ChatViewStateImpl implements _ChatViewState {
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      loading,
-      loadingMessages,
-      messageSending,
-      allowSend,
-      showMemberSelectionView,
-      isNewThread,
-      const DeepCollectionEquality().hash(_users),
-      threadId,
-      title,
-      message,
-      const DeepCollectionEquality().hash(_messages),
-      const DeepCollectionEquality().hash(_sender),
-      const DeepCollectionEquality().hash(_selectedMember),
-      const DeepCollectionEquality().hash(error),
-      spaceInfo,
-      threadInfo,
-      currentUserId,
-      const DeepCollectionEquality().hash(_threadList));
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        loading,
+        creating,
+        loadingMessages,
+        messageSending,
+        allowSend,
+        showMemberSelectionView,
+        isNewThread,
+        const DeepCollectionEquality().hash(_users),
+        threadId,
+        title,
+        message,
+        const DeepCollectionEquality().hash(_messages),
+        const DeepCollectionEquality().hash(_sender),
+        const DeepCollectionEquality().hash(_selectedMember),
+        const DeepCollectionEquality().hash(error),
+        spaceInfo,
+        threadInfo,
+        currentUserId,
+        const DeepCollectionEquality().hash(_threadList)
+      ]);
 
   @JsonKey(ignore: true)
   @override
@@ -519,6 +540,7 @@ class _$ChatViewStateImpl implements _ChatViewState {
 abstract class _ChatViewState implements ChatViewState {
   const factory _ChatViewState(
       {final bool loading,
+      final bool creating,
       final bool loadingMessages,
       final bool messageSending,
       final bool allowSend,
@@ -539,6 +561,8 @@ abstract class _ChatViewState implements ChatViewState {
 
   @override
   bool get loading;
+  @override
+  bool get creating;
   @override
   bool get loadingMessages;
   @override

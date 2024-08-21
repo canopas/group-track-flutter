@@ -11,6 +11,7 @@ import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 
 import '../../../app_route.dart';
 import '../../../components/permission_dialog.dart';
@@ -37,6 +38,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   final _cameraPosition =
       const CameraPosition(target: LatLng(0.0, 0.0), zoom: defaultCameraZoom);
   String? _mapStyle;
+  bool _isDarkMode = false;
 
   List<Marker> _markers = [];
   List<Circle> _places = [];
@@ -44,7 +46,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   @override
   void didUpdateWidget(covariant MapScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.space?.space.id != widget.space?.space.id) {
+    if (widget.space == null ||
+        oldWidget.space?.space.id != widget.space?.space.id) {
       setState(() {
         _markers = [];
         _places = [];
@@ -59,6 +62,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     _observeMarkerChange();
     _observeShowEnableLocationPrompt(context);
     _observeMemberPlace(context);
+    _observeError();
 
     notifier = ref.watch(mapViewStateProvider.notifier);
     final state = ref.watch(mapViewStateProvider);
@@ -94,12 +98,15 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     return Column(
       children: [
         SpaceUserFooter(
+          selectedSpace: widget.space,
           members: state.userInfo,
           selectedUser: state.selectedUser,
           isEnabled: !state.loading,
           fetchingInviteCode: state.fetchingInviteCode,
           onAddMemberTap: () {
-            notifier.onAddMemberTap(widget.space!.space.id);
+            if (widget.space != null) {
+              notifier.onAddMemberTap(widget.space!.space.id);
+            }
           },
           onMemberTap: (member) {
             notifier.showMemberDetail(member);
@@ -112,7 +119,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             }
           },
           onDismiss: () => notifier.onDismissMemberDetail(),
-          onTapTimeline: () {},
         ),
         Visibility(visible: enabled, child: _permissionFooter(state))
       ],
@@ -202,9 +208,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   void _updateMapStyle(bool isDarkMode) async {
+    if (_isDarkMode == isDarkMode) return;
     final style =
         await rootBundle.loadString('assets/map/map_theme_night.json');
     setState(() {
+      _isDarkMode = isDarkMode;
       if (isDarkMode) {
         _mapStyle = style;
       } else {
@@ -486,6 +494,15 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     setState(() {
       _markers
           .removeWhere((marker) => !marker.markerId.value.startsWith('place'));
+    });
+  }
+
+  void _observeError() {
+    ref.listen(mapViewStateProvider.select((state) => state.error),
+        (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
     });
   }
 }

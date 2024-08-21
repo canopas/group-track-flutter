@@ -56,37 +56,49 @@ class SpaceService {
     currentSpaceId = spaceId;
   }
 
-  Future<List<SpaceInfo>> getAllSpaceInfo() async {
-    final userId = currentUser?.id ?? '';
-    final spaces = await getUserSpaces(userId);
-    final List<SpaceInfo> spaceInfoList = [];
+  Stream<List<SpaceInfo>> streamAllSpace() {
+    return streamUserSpaces(currentUser?.id ?? '').switchMap((spaces) {
+      if (spaces.isEmpty) {
+        return Stream.value([]);
+      }
 
-    if (spaces.isEmpty) {
-      return spaceInfoList;
-    }
-    for (final space in spaces) {
-      if (space == null) continue;
-      final members = await spaceService.getMembersBySpaceId(space.id);
+      final spaceInfoStreams = spaces.map((space) {
+        if (space == null) return Stream.value(null);
 
-      final memberInfoList = await Future.wait(
-        members.map((member) async {
-          final user = await userService.getUser(member.user_id);
-          return user != null
-              ? ApiUserInfo(
-                  user: user, isLocationEnabled: member.location_enabled)
-              : null;
-        }),
-      );
+        return spaceService
+            .getStreamSpaceMemberBySpaceId(space.id)
+            .switchMap((members) {
+          final memberInfoStreams = members.map((member) {
+            return CombineLatestStream.combine2(
+              userService.getUserStream(member.user_id),
+              Stream.value(member.location_enabled),
+              (user, isLocationEnabled) {
+                return user != null
+                    ? ApiUserInfo(
+                        user: user,
+                        isLocationEnabled: isLocationEnabled,
+                      )
+                    : null;
+              },
+            );
+          }).toList();
 
-      final nonNullMembers = memberInfoList.whereType<ApiUserInfo>().toList();
+          return CombineLatestStream.list(memberInfoStreams)
+              .map((memberInfoList) {
+            final nonNullMembers =
+                memberInfoList.whereType<ApiUserInfo>().toList();
+            return SpaceInfo(space: space, members: nonNullMembers);
+          });
+        });
+      }).toList();
 
-      final spaceInfo = SpaceInfo(
-        space: space,
-        members: nonNullMembers,
-      );
-      spaceInfoList.add(spaceInfo);
-    }
-    return spaceInfoList;
+      return CombineLatestStream.list(spaceInfoStreams).map((spaceInfoList) {
+        return spaceInfoList
+            .where((spaceInfo) => spaceInfo != null)
+            .cast<SpaceInfo>()
+            .toList();
+      });
+    });
   }
 
   Future<SpaceInfo?> getCurrentSpaceInfo() async {
@@ -146,6 +158,18 @@ class SpaceService {
     return spaces;
   }
 
+  Stream<List<ApiSpace?>> streamUserSpaces(String userId) {
+    return spaceService
+        .streamSpaceMemberByUserId(userId)
+        .asyncMap((member) async {
+      final spaces = await Future.wait(member.map((spaceMember) async {
+        final spaceId = spaceMember.space_id;
+        return await spaceService.getSpace(spaceId);
+      }).toList());
+      return spaces;
+    });
+  }
+
   Future<ApiSpace?> getSpace(String spaceId) async {
     return spaceService.getSpace(spaceId);
   }
@@ -163,7 +187,10 @@ class SpaceService {
   }
 
   Future<void> enableLocation(
-      String spaceId, String userId, bool locationEnabled) async {
+    String spaceId,
+    String userId,
+    bool locationEnabled,
+  ) async {
     await spaceService.enableLocation(spaceId, userId, locationEnabled);
   }
 
@@ -194,8 +221,8 @@ class SpaceService {
     userSpaces
         .sort((a, b) => (a?.created_at ?? 0).compareTo(b?.created_at ?? 0));
     final currentSpaceId =
-        userSpaces.isNotEmpty ? userSpaces.firstOrNull?.id ?? '' : '';
-    this.currentSpaceId = currentSpaceId;
+        userSpaces.isNotEmpty ? userSpaces.firstOrNull?.id ?? '' : null;
+    _currentSpaceIdController.state = currentSpaceId;
   }
 
   Future<void> leaveSpace(String spaceId) async {
@@ -206,7 +233,7 @@ class SpaceService {
         .sort((a, b) => (a?.created_at ?? 0).compareTo(b?.created_at ?? 0));
     final currentSpaceId =
         userSpaces.isNotEmpty ? userSpaces.firstOrNull?.id ?? '' : '';
-    this.currentSpaceId = currentSpaceId;
+    _currentSpaceIdController.state = currentSpaceId;
   }
 
   Future<void> updateSpace(ApiSpace newSpace) async {

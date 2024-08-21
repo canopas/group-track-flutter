@@ -1,4 +1,5 @@
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:style/animation/on_tap_scale.dart';
@@ -13,6 +14,7 @@ import '../../../../components/user_profile_image.dart';
 import 'selected_member_detail_view.dart';
 
 class SpaceUserFooter extends StatefulWidget {
+  final SpaceInfo? selectedSpace;
   final List<ApiUserInfo>? members;
   final ApiUserInfo? selectedUser;
   final bool isEnabled;
@@ -22,10 +24,10 @@ class SpaceUserFooter extends StatefulWidget {
   final void Function() onRelocateTap;
   final void Function() onPlacesTap;
   final void Function() onDismiss;
-  final void Function() onTapTimeline;
 
   const SpaceUserFooter({
     super.key,
+    this.selectedSpace,
     required this.members,
     this.selectedUser,
     required this.isEnabled,
@@ -35,7 +37,6 @@ class SpaceUserFooter extends StatefulWidget {
     required this.onRelocateTap,
     required this.onPlacesTap,
     required this.onDismiss,
-    required this.onTapTimeline,
   });
 
   @override
@@ -66,7 +67,6 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                     key: const ValueKey('detailView'),
                     userInfo: widget.selectedUser,
                     onDismiss: widget.onDismiss,
-                    onTapTimeline: widget.onTapTimeline,
                   )
                 : const SizedBox.shrink(
                     key: ValueKey('emptyBox'),
@@ -100,15 +100,17 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
             onTap: widget.onRelocateTap,
           ),
           const SizedBox(height: 16),
-          _iconButton(
-            context: context,
-            icon: Assets.images.icGeofenceIcon,
-            iconSize: 24,
-            foreground: context.colorScheme.onPrimary,
-            background: context.colorScheme.primary,
-            onTap: widget.onPlacesTap,
-          ),
-          const SizedBox(height: 16)
+          if (widget.selectedSpace != null) ...[
+            _iconButton(
+              context: context,
+              icon: Assets.images.icGeofenceIcon,
+              iconSize: 24,
+              foreground: context.colorScheme.onPrimary,
+              background: context.colorScheme.primary,
+              onTap: widget.onPlacesTap,
+            ),
+            const SizedBox(height: 16)
+          ],
         ],
       ),
     );

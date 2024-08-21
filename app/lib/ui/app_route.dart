@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/location/journey/journey.dart';
 import 'package:data/api/message/message_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/api/space/space_models.dart';
@@ -11,8 +13,11 @@ import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_scre
 import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_screen.dart';
+import 'package:yourspace_flutter/ui/flow/journey/detail/user_journey_detail_screen.dart';
+import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_screen.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
+import 'package:yourspace_flutter/ui/flow/onboard/connection_screen.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_screen.dart';
 import 'package:yourspace_flutter/ui/flow/permission/enable_permission_view.dart';
 import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_support_screen.dart';
@@ -40,12 +45,16 @@ class AppRoute {
   static const pathContactSupport = '/contact-support';
   static const pathMessage = '/message';
   static const pathChat = '/chat';
+  static const pathConnection = '/connection';
+  static const pathPickName = '/pick-name';
   static const pathEnablePermission = '/enable-permission';
   static const pathPlacesList = '/places-list';
   static const pathAddNewPlace = '/add-new-place';
   static const pathLocateOnMap = "/locate_on_map";
   static const pathChoosePlace = "/choose_place";
   static const pathEditPlace = "/edit_place";
+  static const pathJourneyTimeline = '/journey-timeline';
+  static const pathJourneyDetail = '/journey-detail';
 
   final String path;
   final String? name;
@@ -131,10 +140,13 @@ class AppRoute {
         builder: (_) => const SignInWithPhoneScreen(),
       );
 
-  static AppRoute get pickName => AppRoute(
-        "/pick-name",
-        builder: (_) => const PickNameScreen(),
+  static AppRoute pickName({ApiUser? user}) => AppRoute(
+        pathPickName,
+        builder: (_) => PickNameScreen(user: user),
       );
+
+  static AppRoute get connection =>
+      AppRoute(pathConnection, builder: (_) => const ConnectionScreen());
 
   static AppRoute otpVerification(
       {required String phoneNumber, required String verificationId}) {
@@ -144,17 +156,23 @@ class AppRoute {
     );
   }
 
-  static AppRoute get createSpace =>
-      AppRoute(pathCreateSpace, builder: (_) => const CreateSpace());
+  static AppRoute createSpace({bool fromOnboard = false}) =>
+      AppRoute(pathCreateSpace,
+          builder: (_) => CreateSpace(fromOnboard: fromOnboard));
 
-  static AppRoute get joinSpace =>
-      AppRoute(pathJoinSpace, builder: (_) => const JoinSpace());
+  static AppRoute joinSpace({bool fromOnboard = false}) =>
+      AppRoute(pathJoinSpace,
+          builder: (_) => JoinSpace(fromOnboard: fromOnboard));
 
-  static AppRoute inviteCode(
-      {required String code, required String spaceName}) {
+  static AppRoute inviteCode({
+    required String code,
+    required String spaceName,
+    bool fromOnboard = false,
+  }) {
     return AppRoute(
       pathInviteCode,
-      builder: (_) => InviteCode(spaceName: spaceName, inviteCode: code),
+      builder: (_) => InviteCode(
+          spaceName: spaceName, inviteCode: code, fromOnboard: fromOnboard),
     );
   }
 
@@ -189,17 +207,25 @@ class AppRoute {
     );
   }
 
-  static AppRoute locateOnMapScreen(String spaceId) {
+  static AppRoute locateOnMapScreen({
+    required String spaceId,
+    String? placesName,
+  }) {
     return AppRoute(pathLocateOnMap,
         builder: (_) => LocateOnMapScreen(spaceId: spaceId));
   }
 
-  static AppRoute choosePlaceName(LatLng location, String spaceId) {
+  static AppRoute choosePlaceName({
+    required LatLng location,
+    required String spaceId,
+    String? placeName,
+  }) {
     return AppRoute(
       pathChoosePlace,
       builder: (_) => ChoosePlaceNameScreen(
         location: location,
         spaceId: spaceId,
+        placesName: placeName ?? '',
       ),
     );
   }
@@ -208,6 +234,18 @@ class AppRoute {
     return AppRoute(
       pathEditPlace,
       builder: (_) => EditPlaceScreen(place: place),
+    );
+  }
+
+  static AppRoute journeyTimeline(ApiUser user) {
+    return AppRoute(pathJourneyTimeline,
+        builder: (_) => JourneyTimelineScreen(selectedUser: user));
+  }
+
+  static AppRoute journeyDetail(ApiLocationJourney journey) {
+    return AppRoute(
+      pathJourneyDetail,
+      builder: (_) => UserJourneyDetailScreen(journey: journey),
     );
   }
 
@@ -221,6 +259,7 @@ class AppRoute {
   static AppRoute chat({
     required SpaceInfo spaceInfo,
     ThreadInfo? thread,
+    List<ApiThreadMessage>? threadMessage,
     List<ThreadInfo>? threadInfoList,
   }) {
     return AppRoute(
@@ -228,6 +267,7 @@ class AppRoute {
       builder: (_) => ChatScreen(
         spaceInfo: spaceInfo,
         threadInfo: thread,
+        threadMessages: threadMessage,
         threadInfoList: threadInfoList,
       ),
     );
@@ -242,7 +282,7 @@ class AppRoute {
               : state.widget(context);
         }),
     GoRoute(
-      path: pickName.path,
+      path: pathPickName,
       builder: (context, state) {
         return state.extra == null
             ? const PickNameScreen()
@@ -308,6 +348,10 @@ class AppRoute {
       builder: (context, state) => state.widget(context),
     ),
     GoRoute(
+      path: pathConnection,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
       path: pathEnablePermission,
       builder: (context, state) => state.widget(context),
     ),
@@ -329,6 +373,14 @@ class AppRoute {
     ),
     GoRoute(
       path: pathEditPlace,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathJourneyTimeline,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathJourneyDetail,
       builder: (context, state) => state.widget(context),
     )
   ];

@@ -1,3 +1,4 @@
+import 'package:data/api/auth/api_user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/extenstions/context_extenstions.dart';
@@ -10,6 +11,8 @@ import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/home/home_screen_viewmodel.dart';
 import 'package:yourspace_flutter/ui/flow/home/map/map_view_model.dart';
 
+import '../../../domain/fcm/notification_handler.dart';
+import '../../components/alert.dart';
 import '../../components/permission_dialog.dart';
 import 'components/home_top_bar.dart';
 import 'map/map_screen.dart';
@@ -24,13 +27,28 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late HomeViewNotifier notifier;
   late MapViewNotifier mapNotifier;
+  late NotificationHandler notificationHandler;
 
   @override
   void initState() {
     super.initState();
     runPostFrame(() {
+      notificationHandler = ref.read(notificationHandlerProvider);
+      notificationHandler.init(context);
+
       notifier = ref.watch(homeViewStateProvider.notifier);
-      notifier.getAllSpace();
+    });
+
+    onResume();
+  }
+
+  void onResume() {
+    // Delay request to reduce too many API calls when the app is opened
+    Future.delayed(const Duration(seconds: 1)).then((_) {
+      if (mounted) {
+        final service = ref.read(apiUserServiceProvider);
+        service.registerDevice();
+      }
     });
   }
 
@@ -41,17 +59,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _observeError();
     _observeSelectedSpace();
     _observeShowBatteryDialog(context);
+    _observeSessionExpiredAlertPopup(context);
+    _observeSessionExpired();
 
     mapNotifier = ref.watch(mapViewStateProvider.notifier);
 
     return AppPage(
       body: ResumeDetector(
         onResume: () {
-          if(state.selectedSpace != null) {
-          notifier.getAllSpace();
           notifier.showBatteryOptimizationDialog();
           mapNotifier.checkUserPermission();
-          }
         },
         child: _body(context, state),
       ),
@@ -68,9 +85,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             spaces: state.spaceList,
             onSpaceItemTap: (name) => notifier.updateSelectedSpace(name),
             onAddMemberTap: () => notifier.onAddMemberTap(),
+            onToggleLocation: () => notifier.toggleLocation(),
             selectedSpace: state.selectedSpace,
             loading: state.loading,
             fetchingInviteCode: state.fetchingInviteCode,
+            locationEnabled: state.locationEnabled,
+            enablingLocation: state.enablingLocation,
           ),
         ],
       ),
@@ -129,6 +149,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 },
               );
             });
+      }
+    });
+  }
+
+  void _observeSessionExpiredAlertPopup(BuildContext context) {
+    ref.listen(homeViewStateProvider.select((state) => state.isSessionExpired),
+        (_, next) {
+      if (next) {
+        showOkayConfirmation(
+          context,
+          title: context.l10n.home_session_expired_title,
+          message:context.l10n.home_session_expired_message,
+          barrierDismissible: false,
+          onOkay: () => notifier.signOut(),
+        );
+      }
+    });
+  }
+
+  void _observeSessionExpired() {
+    ref.listen(homeViewStateProvider.select((state) => state.popToSignIn),
+        (_, next) {
+      if (next != null) {
+        AppRoute.signInMethod.push(context);
       }
     });
   }

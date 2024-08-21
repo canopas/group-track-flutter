@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:style/extenstions/context_extenstions.dart';
+import 'package:style/indicator/progress_indicator.dart';
 
 class IconPrimaryButton extends StatelessWidget {
   final Function() onTap;
@@ -13,7 +14,7 @@ class IconPrimaryButton extends StatelessWidget {
   const IconPrimaryButton({
     super.key,
     required this.onTap,
-    this.progress = true,
+    this.progress = false,
     this.enabled = true,
     required this.icon,
     this.bgColor,
@@ -24,9 +25,10 @@ class IconPrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = bgColor ?? context.colorScheme.containerLow;
+    final tappable = !progress && enabled;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: tappable?onTap : null,
       child: Container(
         width: size,
         height: size,
@@ -35,7 +37,11 @@ class IconPrimaryButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(radius),
         ),
         padding: const EdgeInsets.all(8),
-        child: icon,
+        child: progress
+            ? const AppProgressIndicator(
+                size: AppProgressIndicatorSize.small,
+              )
+            : icon,
       ),
     );
   }

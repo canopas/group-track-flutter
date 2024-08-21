@@ -22,11 +22,13 @@ import '../../../../domain/extenstions/widget_extensions.dart';
 class ChatScreen extends ConsumerStatefulWidget {
   final SpaceInfo spaceInfo;
   final ThreadInfo? threadInfo;
+  final List<ApiThreadMessage>? threadMessages;
   final List<ThreadInfo>? threadInfoList;
 
   const ChatScreen({
     super.key,
     required this.spaceInfo,
+    this.threadMessages,
     this.threadInfo,
     this.threadInfoList,
   });
@@ -43,32 +45,38 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     super.initState();
     runPostFrame(() {
       notifier.setData(
-          widget.spaceInfo,
-          widget.threadInfo == null,
-          widget.threadInfo,
-          widget.threadInfoList ?? [],
+        widget.spaceInfo,
+        widget.threadInfo == null,
+        widget.threadInfo,
+        widget.threadInfoList ?? [],
       );
       if (widget.threadInfo != null) {
         notifier.listenThread(widget.threadInfo?.thread.id ?? '');
         notifier.getThreadMembers(widget.threadInfo!.thread);
       }
-      notifier.formatMemberNames(widget.threadInfo == null ? [] : widget.threadInfo!.members);
+      notifier.formatMemberNames(
+          widget.threadInfo == null ? [] : widget.threadInfo!.members);
       notifier.selectExistingThread();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    notifier = ref.watch(chatViewStateProvider(widget.threadInfo?.thread.id ?? '').notifier);
-    final state = ref.watch(chatViewStateProvider(widget.threadInfo?.thread.id ?? ''));
+    notifier = ref.watch(
+        chatViewStateProvider(widget.threadInfo?.thread.id ?? '').notifier);
+    final state =
+        ref.watch(chatViewStateProvider(widget.threadInfo?.thread.id ?? ''));
     _observeError();
 
     if (widget.threadInfo != null) {
-      notifier.markMessageAsSeen(widget.threadInfo!.thread.id,  widget.threadInfo!.threadMessage);
+      notifier.markMessageAsSeen(
+          widget.threadInfo!.thread.id, widget.threadMessages!);
     }
 
     return AppPage(
-      title: state.threadInfo == null && widget.threadInfo == null ? context.l10n.chat_start_new_chat_title : state.title,
+      title: state.threadInfo == null && widget.threadInfo == null
+          ? context.l10n.chat_start_new_chat_title
+          : state.title,
       body: _body(context, state),
     );
   }
@@ -79,17 +87,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     }
     return Column(
       children: [
-        if (state.showMemberSelectionView)
-          _memberSelectionView(context, state),
-        Expanded(child: _chatList(context, state.messages, state.sender, state.loadingMessages, state.threadId)),
+        if (state.showMemberSelectionView) _memberSelectionView(context, state),
+        Expanded(
+            child: _chatList(context, state.messages, state.sender,
+                state.loadingMessages, state.threadId, state.currentUserId)),
         const SizedBox(height: 24),
         _textField(context, state),
       ],
     );
   }
 
-  Widget _chatList(BuildContext context, List<ApiThreadMessage> messages,
-      List<ApiUserInfo>? sender, bool loadingMessage, String threadId) {
+  Widget _chatList(
+      BuildContext context,
+      List<ApiThreadMessage> messages,
+      List<ApiUserInfo>? sender,
+      bool loadingMessage,
+      String threadId,
+      String currentUserId) {
     if (sender == null && sender!.isEmpty) {
       return const AppProgressIndicator();
     }
@@ -100,10 +114,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       itemCount: messages.length,
       itemBuilder: (context, index) {
         if (loadingMessage && index == messages.length - 1) {
-          return const AppProgressIndicator(size: AppProgressIndicatorSize.small);
+          return const AppProgressIndicator(
+              size: AppProgressIndicatorSize.small);
         }
         if (index == messages.length - 1) {
-           runPostFrame(() => notifier.onLoadMore(threadId));
+          runPostFrame(() => notifier.onLoadMore(widget.threadInfo == null
+              ? threadId
+              : widget.threadInfo?.thread.id ?? ''));
         }
 
         final message = messages[index];
@@ -111,8 +128,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         final bool isDifferentSender = index < messages.length - 1 &&
             messages[index + 1].sender_id != message.sender_id;
         final senderInfo = sender.isNotEmpty && sender.length > 2
-            ? sender.firstWhere((member) => member.user.id == message.sender_id).user
+            ? sender
+                .firstWhere((member) => member.user.id == message.sender_id)
+                .user
             : null;
+
+        final seenBy = widget.threadInfo?.members
+            .where((member) =>
+                message.seen_by.contains(member.user.id) &&
+                member.user.id != currentUserId)
+            .toList();
+
+        final showSeenText = notifier.isSender(message) &&
+                (seenBy?.isNotEmpty ?? false) &&
+                message.id == messages.first.id
+            ? true
+            : false;
 
         if (messages.isEmpty) {
           return const AppProgressIndicator();
@@ -120,7 +151,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
         return Column(
           crossAxisAlignment: notifier.isSender(message)
-              ? CrossAxisAlignment.start
+              ? showSeenText
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start
               : CrossAxisAlignment.end,
           children: [
             if (showDateHeader)
@@ -137,6 +170,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               memberCount: sender.length,
               isDifferentSender: isDifferentSender,
             ),
+            if (showSeenText) ...[
+              const SizedBox(height: 4),
+              Text(
+                sender.length > 2
+                    ? context.l10n.chat_seen_by_message_text(
+                        seenBy!.map((e) => e.user.first_name).join(', '))
+                    : context.l10n.chat_seen_message_text,
+                style: AppTextStyle.caption.copyWith(
+                  color: context.colorScheme.textDisabled,
+                ),
+                textAlign: TextAlign.right,
+              ),
+            ],
           ],
         );
       },
@@ -159,7 +205,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           isSender ? CrossAxisAlignment.start : CrossAxisAlignment.end,
       children: [
         if (showTimeHeader) ...[
-          _timeHeader(message.created_at ?? DateTime.now(), isSender, memberCount)
+          _timeHeader(
+              message.created_at ?? DateTime.now(), isSender, memberCount)
         ],
         const SizedBox(height: 4),
         Row(
@@ -167,11 +214,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           mainAxisAlignment:
               isSender ? MainAxisAlignment.start : MainAxisAlignment.end,
           children: [
-            if (isSender && (isDifferentSender || showTimeHeader) && memberCount > 2) ...[
+            if (isSender &&
+                (isDifferentSender || showTimeHeader) &&
+                memberCount > 2) ...[
               ProfileImage(
-                  profileImageUrl: sender?.profile_image ?? '',
-                  firstLetter: sender!.firstChar,
-                  size: 24,
+                profileImageUrl: sender?.profile_image ?? '',
+                firstLetter: sender!.firstChar,
+                size: 24,
                 style: AppTextStyle.caption.copyWith(
                   color: context.colorScheme.textPrimaryDark,
                 ),
@@ -189,18 +238,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             ? 0
                             : showTimeHeader
                                 ? 0
-                                : 32
+                                : memberCount > 2
+                                    ? 32
+                                    : 0
                         : 46,
                     right: isSender ? 48 : 0),
                 decoration: BoxDecoration(
                   color: isSender
                       ? context.colorScheme.containerLowOnSurface
                       : context.colorScheme.primary,
-                  borderRadius: radius(
-                      isSender: isSender,
-                      isLastInGroup: isLastInGroup,
-                      isFirstInGroup: isFirstInGroup,
-                  isDifferentSender: isDifferentSender,
+                  borderRadius: _radius(
+                    isSender: isSender,
+                    isLastInGroup: isLastInGroup,
+                    isFirstInGroup: isFirstInGroup,
+                    isDifferentSender: isDifferentSender,
                   ),
                 ),
                 child: _chatBubbleView(
@@ -243,7 +294,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           Text(
             message,
             style: AppTextStyle.subtitle3.copyWith(
-              color: isSender ? context.colorScheme.textPrimary : context.colorScheme.textPrimaryDark,
+              color: isSender
+                  ? context.colorScheme.textPrimary
+                  : context.colorScheme.textPrimaryDark,
             ),
             maxLines: null,
             textAlign: isSender ? TextAlign.start : TextAlign.end,
@@ -289,7 +342,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   Widget _memberSelectionView(BuildContext context, ChatViewState state) {
     return Container(
-      height: 112,
+      height: 114,
       decoration:
           BoxDecoration(color: context.colorScheme.containerLowOnSurface),
       child: Row(
@@ -303,7 +356,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
                 final member = state.users[index];
-                final isSelected = state.selectedMember.contains(member.user.id);
+                final isSelected =
+                    state.selectedMember.contains(member.user.id);
                 return GestureDetector(
                   onTap: () {
                     setState(() {
@@ -423,8 +477,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 color: context.colorScheme.primary,
                 child: Center(
                   child: Text(firstLetter,
-                      style: AppTextStyle.header4
-                          .copyWith(color: context.colorScheme.textPrimaryDark)),
+                      style: AppTextStyle.header4.copyWith(
+                          color: context.colorScheme.textPrimaryDark)),
                 ),
               ),
       ),
@@ -443,9 +497,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
               child: AppTextField(
                 controller: state.message,
-                onChanged: (value) {
-                  notifier.onChange(value);
-                },
+                onChanged: notifier.onChange,
                 maxLines: 6,
                 minLines: 1,
                 style: AppTextStyle.body2.copyWith(
@@ -463,13 +515,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
           const SizedBox(width: 8),
           IconPrimaryButton(
-            onTap: () {
-              if (state.threadId.isNotEmpty) {
-                notifier.sendMessage(state.threadId, state.message.text);
-              } else {
-                notifier.createNewThread(widget.spaceInfo.space.id, state.message.text);
-              }
-            },
+            onTap: () => onTapSendMessageButton(state),
             icon: Icon(Icons.arrow_forward_rounded,
                 color: state.allowSend && state.message.text.isNotEmpty
                     ? context.colorScheme.textPrimaryDark
@@ -486,10 +532,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  BorderRadius radius({
+  BorderRadius _radius({
     required bool isSender,
-      required bool isLastInGroup,
-      required bool isFirstInGroup,
+    required bool isLastInGroup,
+    required bool isFirstInGroup,
     required bool isDifferentSender,
   }) {
     if (isDifferentSender && !isLastInGroup) {
@@ -521,10 +567,30 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void _observeError() {
-    ref.listen(chatViewStateProvider(widget.threadInfo?.thread.id ?? '').select((state) => state.error), (previous, next) {
+    ref.listen(
+        chatViewStateProvider(widget.threadInfo?.thread.id ?? '')
+            .select((state) => state.error), (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
       }
     });
+  }
+
+  void onTapSendMessageButton(ChatViewState state) {
+    if (state.message.text.trim().isNotEmpty) {
+      if (state.threadInfo != null || widget.threadInfo != null) {
+        notifier.sendMessage(
+          state.threadId.isEmpty
+              ? widget.threadInfo?.thread.id ?? ''
+              : state.threadId,
+          state.message.text.trim(),
+        );
+      } else {
+        notifier.createNewThread(
+          widget.spaceInfo.space.id,
+          state.message.text.trim(),
+        );
+      }
+    }
   }
 }

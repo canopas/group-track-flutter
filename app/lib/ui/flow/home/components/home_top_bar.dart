@@ -14,19 +14,25 @@ import '../../../../gen/assets.gen.dart';
 class HomeTopBar extends StatefulWidget {
   final void Function(SpaceInfo) onSpaceItemTap;
   final void Function() onAddMemberTap;
+  final void Function() onToggleLocation;
   final List<SpaceInfo> spaces;
   final SpaceInfo? selectedSpace;
   final bool loading;
   final bool fetchingInviteCode;
+  final bool locationEnabled;
+  final bool enablingLocation;
 
   const HomeTopBar({
     super.key,
     required this.spaces,
     required this.onSpaceItemTap,
     required this.onAddMemberTap,
+    required this.onToggleLocation,
     required this.selectedSpace,
     this.loading = false,
     this.fetchingInviteCode = false,
+    required this.locationEnabled,
+    required this.enablingLocation,
   });
 
   @override
@@ -117,29 +123,39 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                         context.l10n.home_select_space_text,
                   ),
                   const SizedBox(width: 8),
+                  if (widget.selectedSpace != null &&
+                      widget.spaces.isNotEmpty) ...[
+                    _iconButton(
+                      context: context,
+                      icon: Assets.images.icMessage,
+                      visibility: !expand,
+                      onTap: () {
+                        if (widget.selectedSpace != null) {
+                          AppRoute.message(widget.selectedSpace!).push(context);
+                        }
+                      },
+                    ),
+                    SizedBox(width: expand ? 0 : 8),
+                  ],
                   _iconButton(
                     context: context,
-                    icon: Assets.images.icMessage,
+                    icon: widget.locationEnabled
+                        ? Assets.images.icLocation
+                        : Assets.images.icLocationOff,
                     visibility: !expand,
-                    onTap: () {
-                      if (widget.selectedSpace != null) {
-                        AppRoute.message(widget.selectedSpace!).push(context);
-                      }
-                    },
-                  ),
-                  SizedBox(width: expand ? 0 : 8),
-                  _iconButton(
-                    context: context,
-                    icon: Assets.images.icLocation,
-                    visibility: !expand,
-                    onTap: () {},
+                    progress: widget.enablingLocation,
+                    onTap: () => widget.onToggleLocation(),
                   ),
                   _iconButton(
                     context: context,
                     icon: Assets.images.icAddMember,
                     visibility: expand,
                     color: context.colorScheme.textPrimary,
-                    onTap: () => widget.onAddMemberTap(),
+                    onTap: () {
+                      if (widget.selectedSpace != null) {
+                        widget.onAddMemberTap();
+                      }
+                    },
                   ),
                 ],
               ),
@@ -181,7 +197,9 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   child: Text(
                     widget.loading
                         ? context.l10n.home_select_space_text
-                        : spaceName,
+                        : widget.spaces.isEmpty
+                            ? context.l10n.home_select_space_text
+                            : spaceName,
                     style: AppTextStyle.subtitle2
                         .copyWith(color: context.colorScheme.textPrimary),
                   ),
@@ -192,8 +210,9 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                       size: AppProgressIndicatorSize.small)
                 ] else ...[
                   RotationTransition(
-                    turns: Tween(begin: 0.0, end: 1.0).animate(_buttonController),
-                    child:  Icon(
+                    turns:
+                        Tween(begin: 0.0, end: 1.0).animate(_buttonController),
+                    child: Icon(
                       Icons.keyboard_arrow_up_rounded,
                       color: context.colorScheme.textPrimary,
                     ),
@@ -213,11 +232,13 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     Color? color,
     required bool visibility,
     required Function() onTap,
+    bool progress = false,
   }) {
     return Visibility(
       visible: visibility,
       child: IconPrimaryButton(
         onTap: () => onTap(),
+        progress: progress,
         icon: SvgPicture.asset(
           height: 16,
           width: 14,
@@ -231,8 +252,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     );
   }
 
-  Widget _spaceList(BuildContext context, List<SpaceInfo> spaces,
-      Function(SpaceInfo) onSpaceSelected) {
+  Widget _spaceList(BuildContext context, List<SpaceInfo> spaces) {
     if (widget.loading) {
       return const AppProgressIndicator(size: AppProgressIndicatorSize.small);
     }
@@ -249,7 +269,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
               setState(() {
                 selectedIndex = index;
               });
-              onSpaceSelected(space);
+              widget.onSpaceItemTap(space);
             },
             child: _spaceListItem(
               context,
@@ -264,12 +284,18 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   }
 
   Widget _spaceListItem(
-      BuildContext context, SpaceInfo space, int index, bool isSelected) {
-    final admin = space.members
-        .firstWhere(
-          (member) => member.user.id == space.space.admin_id,
-        )
-        .user;
+    BuildContext context,
+    SpaceInfo space,
+    int index,
+    bool isSelected,
+  ) {
+    if (space.members.isEmpty) {
+      return const SizedBox();
+    }
+    final admin = space.members.where(
+      (member) => member.user.id == space.space.admin_id,
+    );
+    final fullName = admin.isEmpty ? "" : admin.first.user.fullName;
 
     return GestureDetector(
       onTap: () {
@@ -322,7 +348,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      context.l10n.home_space_owner_text(admin.fullName),
+                      context.l10n.home_space_owner_text(fullName),
                       style: AppTextStyle.caption.copyWith(
                         color: context.colorScheme.textDisabled,
                       ),
@@ -360,21 +386,21 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
       child: Column(
         children: [
           const SizedBox(height: 12),
-          _spaceList(context, widget.spaces, widget.onSpaceItemTap),
+          _spaceList(context, widget.spaces),
           const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
                 child: PrimaryButton(context.l10n.home_create_space_title,
                     onPressed: () {
-                  AppRoute.createSpace.push(context);
+                  AppRoute.createSpace().push(context);
                 }),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: PrimaryButton(context.l10n.home_join_space_title,
                     onPressed: () {
-                  AppRoute.joinSpace.push(context);
+                  AppRoute.joinSpace().push(context);
                 }),
               ),
             ],

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -69,7 +70,6 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     if (state.loading) return;
     try {
       state = state.copyWith(loading: true, selectedUser: null);
-
       spaceService.getMemberWithLocation(spaceId).listen((userInfo) {
         state = state.copyWith(userInfo: userInfo, loading: false);
         _userMapPositions(userInfo);
@@ -90,6 +90,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         state = state.copyWith(places: places);
       });
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e(
         'MapViewNotifier: Error while getting places',
         error: error,
@@ -101,7 +102,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   void _userMapPositions(List<ApiUserInfo> userInfo) async {
     final List<UserMarker> markers = [];
     for (final info in userInfo) {
-      if (info.user.id == _currentUser?.id) {
+      if (info.user.id == _currentUser?.id && state.defaultPosition == null) {
         final latLng = LatLng(
           info.location?.latitude ?? 0.0,
           info.location?.longitude ?? 0.0,
@@ -109,14 +110,16 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         _mapCameraPosition(latLng, defaultCameraZoom);
       }
 
-      if (info.location != null) {
+      if (info.location != null && info.isLocationEnabled) {
         markers.add(UserMarker(
           userId: info.user.id,
           userName: info.user.fullName,
           imageUrl: await _convertUrlToImage(info.user.profile_image),
           latitude: info.location!.latitude,
           longitude: info.location!.longitude,
-          isSelected: false,
+          isSelected: state.selectedUser == null
+              ? false
+              : state.selectedUser?.user.id == info.user.id,
         ));
       }
     }
@@ -255,6 +258,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         }
       }
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e(
         'MapViewNotifier: Error while getting last location',
         error: error,

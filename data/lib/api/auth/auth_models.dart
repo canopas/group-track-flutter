@@ -29,6 +29,7 @@ class ApiUser with _$ApiUser {
     String? profile_image,
     @Default(true) bool? location_enabled,
     @Default([]) List<String>? space_ids,
+    @Default("") String? fcm_token,
     int? created_at,
   }) = _ApiUser;
 
@@ -61,7 +62,6 @@ class ApiSession with _$ApiSession {
   const factory ApiSession({required String id,
     required String user_id,
     @Default(1) int? platform,
-    @Default("") String? fcm_token,
     required bool session_active,
     String? device_name,
     String? device_id,
