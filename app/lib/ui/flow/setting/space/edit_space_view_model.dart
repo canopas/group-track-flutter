@@ -111,10 +111,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
   }
 
   void toggleLocationSharing(bool isEnabled) {
-    final isUpdate = state.currentUserInfo!.isLocationEnabled != isEnabled;
-    if (isUpdate) {
-      state = state.copyWith(allowSave: isUpdate, locationEnabled: isEnabled);
-    }
+    state = state.copyWith(locationEnabled: isEnabled, allowSave: state.currentUserInfo!.isLocationEnabled != isEnabled);
   }
 }
 
