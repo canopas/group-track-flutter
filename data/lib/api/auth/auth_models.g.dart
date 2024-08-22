@@ -21,8 +21,11 @@ _$ApiUserImpl _$$ApiUserImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      battery_pct: (json['battery_pct'] as num?)?.toInt(),
       fcm_token: json['fcm_token'] as String? ?? "",
+      state: (json['state'] as num?)?.toInt(),
       created_at: (json['created_at'] as num?)?.toInt(),
+      updated_at: (json['updated_at'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$ApiUserImplToJson(_$ApiUserImpl instance) =>
@@ -37,8 +40,11 @@ Map<String, dynamic> _$$ApiUserImplToJson(_$ApiUserImpl instance) =>
       'profile_image': instance.profile_image,
       'location_enabled': instance.location_enabled,
       'space_ids': instance.space_ids,
+      'battery_pct': instance.battery_pct,
       'fcm_token': instance.fcm_token,
+      'state': instance.state,
       'created_at': instance.created_at,
+      'updated_at': instance.updated_at,
     };
 
 _$ApiSessionImpl _$$ApiSessionImplFromJson(Map<String, dynamic> json) =>
@@ -50,7 +56,6 @@ _$ApiSessionImpl _$$ApiSessionImplFromJson(Map<String, dynamic> json) =>
       device_name: json['device_name'] as String?,
       device_id: json['device_id'] as String?,
       created_at: (json['created_at'] as num?)?.toInt(),
-      battery_pct: (json['battery_pct'] as num?)?.toDouble(),
       app_version: (json['app_version'] as num?)?.toInt(),
     );
 
@@ -63,7 +68,6 @@ Map<String, dynamic> _$$ApiSessionImplToJson(_$ApiSessionImpl instance) =>
       'device_name': instance.device_name,
       'device_id': instance.device_id,
       'created_at': instance.created_at,
-      'battery_pct': instance.battery_pct,
       'app_version': instance.app_version,
     };
 

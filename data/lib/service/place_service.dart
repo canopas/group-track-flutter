@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../api/network/client.dart';
+import '../api/space/space_models.dart';
 import '../config.dart';
 
 const DEFAULT_RADIUS = 1500;
@@ -23,7 +24,9 @@ class PlaceService {
 
   PlaceService(this._db);
 
-  CollectionReference get _spaceRef => _db.collection('spaces');
+  CollectionReference get _spaceRef => _db.collection('spaces').withConverter<ApiSpace>(
+      fromFirestore: ApiSpace.fromFireStore,
+      toFirestore: (space, options) => space.toJson());
 
   CollectionReference spacePlacesRef(String spaceId) =>
       _spaceRef.doc(spaceId).collection('space_places');
@@ -40,17 +43,11 @@ class PlaceService {
         .toList());
   }
 
-  Future<ApiPlace?> getPlace(String placeId) async {
-    final querySnapshot = await _spaceRef.firestore
-        .collectionGroup('space_places')
-        .where('id', isEqualTo: placeId)
-        .limit(1)
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      return querySnapshot.docs.first.data() as ApiPlace;
-    }
-    return null;
+  Future<List<ApiPlace>> getAllPlace(String spaceId) async {
+    final snapshot = await spacePlacesRef(spaceId).get();
+    return snapshot.docs
+        .map((doc) => ApiPlace.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
   }
 
   Future<void> deletePlace(String spaceId, String placeId) async {

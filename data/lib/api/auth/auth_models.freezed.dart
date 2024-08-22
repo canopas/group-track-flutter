@@ -30,8 +30,11 @@ mixin _$ApiUser {
   String? get profile_image => throw _privateConstructorUsedError;
   bool? get location_enabled => throw _privateConstructorUsedError;
   List<String>? get space_ids => throw _privateConstructorUsedError;
+  int? get battery_pct => throw _privateConstructorUsedError;
   String? get fcm_token => throw _privateConstructorUsedError;
+  int? get state => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
+  int? get updated_at => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -54,8 +57,11 @@ abstract class $ApiUserCopyWith<$Res> {
       String? profile_image,
       bool? location_enabled,
       List<String>? space_ids,
+      int? battery_pct,
       String? fcm_token,
-      int? created_at});
+      int? state,
+      int? created_at,
+      int? updated_at});
 }
 
 /// @nodoc
@@ -81,8 +87,11 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
     Object? profile_image = freezed,
     Object? location_enabled = freezed,
     Object? space_ids = freezed,
+    Object? battery_pct = freezed,
     Object? fcm_token = freezed,
+    Object? state = freezed,
     Object? created_at = freezed,
+    Object? updated_at = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -125,13 +134,25 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
           ? _value.space_ids
           : space_ids // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      battery_pct: freezed == battery_pct
+          ? _value.battery_pct
+          : battery_pct // ignore: cast_nullable_to_non_nullable
+              as int?,
       fcm_token: freezed == fcm_token
           ? _value.fcm_token
           : fcm_token // ignore: cast_nullable_to_non_nullable
               as String?,
+      state: freezed == state
+          ? _value.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as int?,
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
+              as int?,
+      updated_at: freezed == updated_at
+          ? _value.updated_at
+          : updated_at // ignore: cast_nullable_to_non_nullable
               as int?,
     ) as $Val);
   }
@@ -155,8 +176,11 @@ abstract class _$$ApiUserImplCopyWith<$Res> implements $ApiUserCopyWith<$Res> {
       String? profile_image,
       bool? location_enabled,
       List<String>? space_ids,
+      int? battery_pct,
       String? fcm_token,
-      int? created_at});
+      int? state,
+      int? created_at,
+      int? updated_at});
 }
 
 /// @nodoc
@@ -180,8 +204,11 @@ class __$$ApiUserImplCopyWithImpl<$Res>
     Object? profile_image = freezed,
     Object? location_enabled = freezed,
     Object? space_ids = freezed,
+    Object? battery_pct = freezed,
     Object? fcm_token = freezed,
+    Object? state = freezed,
     Object? created_at = freezed,
+    Object? updated_at = freezed,
   }) {
     return _then(_$ApiUserImpl(
       id: null == id
@@ -224,13 +251,25 @@ class __$$ApiUserImplCopyWithImpl<$Res>
           ? _value._space_ids
           : space_ids // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      battery_pct: freezed == battery_pct
+          ? _value.battery_pct
+          : battery_pct // ignore: cast_nullable_to_non_nullable
+              as int?,
       fcm_token: freezed == fcm_token
           ? _value.fcm_token
           : fcm_token // ignore: cast_nullable_to_non_nullable
               as String?,
+      state: freezed == state
+          ? _value.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as int?,
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
+              as int?,
+      updated_at: freezed == updated_at
+          ? _value.updated_at
+          : updated_at // ignore: cast_nullable_to_non_nullable
               as int?,
     ));
   }
@@ -250,8 +289,11 @@ class _$ApiUserImpl extends _ApiUser {
       this.profile_image,
       this.location_enabled = true,
       final List<String>? space_ids = const [],
+      this.battery_pct,
       this.fcm_token = "",
-      this.created_at})
+      this.state,
+      this.created_at,
+      this.updated_at})
       : _space_ids = space_ids,
         super._();
 
@@ -289,14 +331,20 @@ class _$ApiUserImpl extends _ApiUser {
   }
 
   @override
+  final int? battery_pct;
+  @override
   @JsonKey()
   final String? fcm_token;
   @override
+  final int? state;
+  @override
   final int? created_at;
+  @override
+  final int? updated_at;
 
   @override
   String toString() {
-    return 'ApiUser(id: $id, first_name: $first_name, last_name: $last_name, phone: $phone, email: $email, provider_firebase_id_token: $provider_firebase_id_token, auth_type: $auth_type, profile_image: $profile_image, location_enabled: $location_enabled, space_ids: $space_ids, fcm_token: $fcm_token, created_at: $created_at)';
+    return 'ApiUser(id: $id, first_name: $first_name, last_name: $last_name, phone: $phone, email: $email, provider_firebase_id_token: $provider_firebase_id_token, auth_type: $auth_type, profile_image: $profile_image, location_enabled: $location_enabled, space_ids: $space_ids, battery_pct: $battery_pct, fcm_token: $fcm_token, state: $state, created_at: $created_at, updated_at: $updated_at)';
   }
 
   @override
@@ -323,10 +371,15 @@ class _$ApiUserImpl extends _ApiUser {
                 other.location_enabled == location_enabled) &&
             const DeepCollectionEquality()
                 .equals(other._space_ids, _space_ids) &&
+            (identical(other.battery_pct, battery_pct) ||
+                other.battery_pct == battery_pct) &&
             (identical(other.fcm_token, fcm_token) ||
                 other.fcm_token == fcm_token) &&
+            (identical(other.state, state) || other.state == state) &&
             (identical(other.created_at, created_at) ||
-                other.created_at == created_at));
+                other.created_at == created_at) &&
+            (identical(other.updated_at, updated_at) ||
+                other.updated_at == updated_at));
   }
 
   @JsonKey(ignore: true)
@@ -343,8 +396,11 @@ class _$ApiUserImpl extends _ApiUser {
       profile_image,
       location_enabled,
       const DeepCollectionEquality().hash(_space_ids),
+      battery_pct,
       fcm_token,
-      created_at);
+      state,
+      created_at,
+      updated_at);
 
   @JsonKey(ignore: true)
   @override
@@ -372,8 +428,11 @@ abstract class _ApiUser extends ApiUser {
       final String? profile_image,
       final bool? location_enabled,
       final List<String>? space_ids,
+      final int? battery_pct,
       final String? fcm_token,
-      final int? created_at}) = _$ApiUserImpl;
+      final int? state,
+      final int? created_at,
+      final int? updated_at}) = _$ApiUserImpl;
   const _ApiUser._() : super._();
 
   factory _ApiUser.fromJson(Map<String, dynamic> json) = _$ApiUserImpl.fromJson;
@@ -399,9 +458,15 @@ abstract class _ApiUser extends ApiUser {
   @override
   List<String>? get space_ids;
   @override
+  int? get battery_pct;
+  @override
   String? get fcm_token;
   @override
+  int? get state;
+  @override
   int? get created_at;
+  @override
+  int? get updated_at;
   @override
   @JsonKey(ignore: true)
   _$$ApiUserImplCopyWith<_$ApiUserImpl> get copyWith =>
@@ -421,7 +486,6 @@ mixin _$ApiSession {
   String? get device_name => throw _privateConstructorUsedError;
   String? get device_id => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
-  double? get battery_pct => throw _privateConstructorUsedError;
   int? get app_version => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -444,7 +508,6 @@ abstract class $ApiSessionCopyWith<$Res> {
       String? device_name,
       String? device_id,
       int? created_at,
-      double? battery_pct,
       int? app_version});
 }
 
@@ -468,7 +531,6 @@ class _$ApiSessionCopyWithImpl<$Res, $Val extends ApiSession>
     Object? device_name = freezed,
     Object? device_id = freezed,
     Object? created_at = freezed,
-    Object? battery_pct = freezed,
     Object? app_version = freezed,
   }) {
     return _then(_value.copyWith(
@@ -500,10 +562,6 @@ class _$ApiSessionCopyWithImpl<$Res, $Val extends ApiSession>
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
               as int?,
-      battery_pct: freezed == battery_pct
-          ? _value.battery_pct
-          : battery_pct // ignore: cast_nullable_to_non_nullable
-              as double?,
       app_version: freezed == app_version
           ? _value.app_version
           : app_version // ignore: cast_nullable_to_non_nullable
@@ -528,7 +586,6 @@ abstract class _$$ApiSessionImplCopyWith<$Res>
       String? device_name,
       String? device_id,
       int? created_at,
-      double? battery_pct,
       int? app_version});
 }
 
@@ -550,7 +607,6 @@ class __$$ApiSessionImplCopyWithImpl<$Res>
     Object? device_name = freezed,
     Object? device_id = freezed,
     Object? created_at = freezed,
-    Object? battery_pct = freezed,
     Object? app_version = freezed,
   }) {
     return _then(_$ApiSessionImpl(
@@ -582,10 +638,6 @@ class __$$ApiSessionImplCopyWithImpl<$Res>
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
               as int?,
-      battery_pct: freezed == battery_pct
-          ? _value.battery_pct
-          : battery_pct // ignore: cast_nullable_to_non_nullable
-              as double?,
       app_version: freezed == app_version
           ? _value.app_version
           : app_version // ignore: cast_nullable_to_non_nullable
@@ -605,7 +657,6 @@ class _$ApiSessionImpl extends _ApiSession {
       this.device_name,
       this.device_id,
       this.created_at,
-      this.battery_pct,
       this.app_version})
       : super._();
 
@@ -628,13 +679,11 @@ class _$ApiSessionImpl extends _ApiSession {
   @override
   final int? created_at;
   @override
-  final double? battery_pct;
-  @override
   final int? app_version;
 
   @override
   String toString() {
-    return 'ApiSession(id: $id, user_id: $user_id, platform: $platform, session_active: $session_active, device_name: $device_name, device_id: $device_id, created_at: $created_at, battery_pct: $battery_pct, app_version: $app_version)';
+    return 'ApiSession(id: $id, user_id: $user_id, platform: $platform, session_active: $session_active, device_name: $device_name, device_id: $device_id, created_at: $created_at, app_version: $app_version)';
   }
 
   @override
@@ -654,25 +703,14 @@ class _$ApiSessionImpl extends _ApiSession {
                 other.device_id == device_id) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at) &&
-            (identical(other.battery_pct, battery_pct) ||
-                other.battery_pct == battery_pct) &&
             (identical(other.app_version, app_version) ||
                 other.app_version == app_version));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      user_id,
-      platform,
-      session_active,
-      device_name,
-      device_id,
-      created_at,
-      battery_pct,
-      app_version);
+  int get hashCode => Object.hash(runtimeType, id, user_id, platform,
+      session_active, device_name, device_id, created_at, app_version);
 
   @JsonKey(ignore: true)
   @override
@@ -697,7 +735,6 @@ abstract class _ApiSession extends ApiSession {
       final String? device_name,
       final String? device_id,
       final int? created_at,
-      final double? battery_pct,
       final int? app_version}) = _$ApiSessionImpl;
   const _ApiSession._() : super._();
 
@@ -718,8 +755,6 @@ abstract class _ApiSession extends ApiSession {
   String? get device_id;
   @override
   int? get created_at;
-  @override
-  double? get battery_pct;
   @override
   int? get app_version;
   @override

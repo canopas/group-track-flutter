@@ -22,7 +22,7 @@ class AuthService {
   ApiUser? get currentUser => _currentUser;
 
   Future<bool> verifiedLogin(
-      {String? uid,
+      {required String uid,
       String? firebaseToken,
       String? phone,
       String? email,
@@ -56,7 +56,7 @@ class AuthService {
   }
 
   Stream<ApiUser?> getUserStream({String? currentUserId}) {
-   return userService.getUserStream(currentUserId ?? _currentUser?.id ?? '');
+    return userService.getUserStream(currentUserId ?? _currentUser?.id ?? '');
   }
 
   Future<void> deleteAccount({String? currentUserId}) async {

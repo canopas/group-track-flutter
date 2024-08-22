@@ -142,6 +142,7 @@ extension on NotificationHandler {
         _handlePlaceAdded(context, data);
         break;
       case NotificationGeofenceConst.NOTIFICATION_TYPE_GEOFENCE:
+        _handleGeoFenceNotificationTap(context);
         break;
     }
   }
@@ -154,5 +155,10 @@ extension on NotificationHandler {
     } else {
       logger.e("Space ID is null for place added notification");
     }
+  }
+
+  void _handleGeoFenceNotificationTap(BuildContext context) {
+    if (!context.mounted) return;
+    AppRoute.home.go(context);
   }
 }

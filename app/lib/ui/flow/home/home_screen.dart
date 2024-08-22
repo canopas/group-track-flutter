@@ -1,6 +1,8 @@
 import 'package:data/api/auth/api_user_service.dart';
+import 'package:data/repository/geofence_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
@@ -28,6 +30,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late HomeViewNotifier notifier;
   late MapViewNotifier mapNotifier;
   late NotificationHandler notificationHandler;
+  late GeofenceRepository geofenceRepository;
 
   @override
   void initState() {
@@ -37,6 +40,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       notificationHandler.init(context);
 
       notifier = ref.watch(homeViewStateProvider.notifier);
+
+      geofenceRepository = ref.read(geofenceRepositoryProvider);
+      geofenceRepository.init();
     });
 
     onResume();
@@ -144,6 +150,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Navigator.of(context).pop();
                 },
                 goToSettings: () {
+                  openAppSettings();
                   notifier.requestIgnoreBatteryOptimizations();
                   Navigator.of(context).pop();
                 },
