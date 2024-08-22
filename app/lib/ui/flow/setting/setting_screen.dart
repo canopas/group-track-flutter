@@ -17,6 +17,8 @@ import 'package:yourspace_flutter/ui/flow/setting/setting_view_model.dart';
 import '../../../gen/assets.gen.dart';
 import '../../components/alert.dart';
 
+const privacyPolicyUrl = "https://canopas.github.io/your-space-android/";
+
 class SettingScreen extends ConsumerStatefulWidget {
   const SettingScreen({super.key});
 
@@ -212,12 +214,16 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
             context: context,
             title: context.l10n.settings_other_option_privacy_policy_text,
             icon: Assets.images.icPrivacyPolicy,
-            onTap: () {}),
+            onTap: () {
+              notifier.onLaunchUri(privacyPolicyUrl);
+            }),
         _otherOptionItem(
             context: context,
             title: context.l10n.settings_other_option_about_us_text,
             icon: Assets.images.icAboutUs,
-            onTap: () {}),
+            onTap: () {
+              notifier.onLaunchUri(privacyPolicyUrl);
+            }),
         _otherOptionItem(
             context: context,
             title: context.l10n.settings_other_option_sign_out_text,
