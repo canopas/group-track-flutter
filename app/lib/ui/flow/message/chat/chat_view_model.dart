@@ -93,9 +93,10 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     }
   }
 
-  void markMessageAsSeen(String threadId) async {
+  void markMessageAsSeen(
+      String threadId, List<ApiThreadMessage> message) async {
     try {
-      final unReadMessage = state.messages
+      final unReadMessage = message
           .where((message) => !message.seen_by.contains(currentUser?.id ?? ''))
           .map((message) => message.id)
           .toSet()

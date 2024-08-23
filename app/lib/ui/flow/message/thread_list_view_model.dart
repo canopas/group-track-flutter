@@ -56,11 +56,28 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
         });
 
         state = state.copyWith(threadInfo: filteredThreads, loading: false, error: null);
+        getMessage();
       });
     } catch (error, stack) {
       logger.e('ChatViewNotifier: error while listing message threads',
           error: error, stackTrace: stack);
       state = state.copyWith(error: error, loading: false);
+    }
+  }
+
+  void getMessage() async {
+    try {
+      final List<List<ApiThreadMessage>> newThreadMessages = List.generate(state.threadInfo.length, (_) => []);
+
+      for (int i = 0; i < state.threadInfo.length; i++) {
+        final threads = state.threadInfo[i];
+        final threadMessages = await messageService.getMessages(threads.thread.id, DateTime.now());
+        newThreadMessages[i] = threadMessages;
+      }
+      state = state.copyWith(threadMessages: List.from(newThreadMessages));
+    } catch (error, stack) {
+      logger.e('ChatViewNotifier: error while listening to latest messages',
+          error: error, stackTrace: stack);
     }
   }
 
@@ -132,6 +149,7 @@ class ThreadListViewState with _$ThreadListViewState {
     @Default('') String message,
     @Default([]) List<SpaceInfo> spaceList,
     @Default([]) List<ThreadInfo> threadInfo,
+    @Default([]) List<List<ApiThreadMessage>> threadMessages,
     Object? error,
   }) = _ThreadListViewState;
 }

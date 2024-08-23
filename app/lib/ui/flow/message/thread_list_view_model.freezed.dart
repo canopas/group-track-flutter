@@ -26,6 +26,8 @@ mixin _$ThreadListViewState {
   String get message => throw _privateConstructorUsedError;
   List<SpaceInfo> get spaceList => throw _privateConstructorUsedError;
   List<ThreadInfo> get threadInfo => throw _privateConstructorUsedError;
+  List<List<ApiThreadMessage>> get threadMessages =>
+      throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -50,6 +52,7 @@ abstract class $ThreadListViewStateCopyWith<$Res> {
       String message,
       List<SpaceInfo> spaceList,
       List<ThreadInfo> threadInfo,
+      List<List<ApiThreadMessage>> threadMessages,
       Object? error});
 
   $SpaceInfoCopyWith<$Res>? get space;
@@ -78,6 +81,7 @@ class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
     Object? message = null,
     Object? spaceList = null,
     Object? threadInfo = null,
+    Object? threadMessages = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -121,6 +125,10 @@ class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
           ? _value.threadInfo
           : threadInfo // ignore: cast_nullable_to_non_nullable
               as List<ThreadInfo>,
+      threadMessages: null == threadMessages
+          ? _value.threadMessages
+          : threadMessages // ignore: cast_nullable_to_non_nullable
+              as List<List<ApiThreadMessage>>,
       error: freezed == error ? _value.error : error,
     ) as $Val);
   }
@@ -157,6 +165,7 @@ abstract class _$$ThreadListViewStateImplCopyWith<$Res>
       String message,
       List<SpaceInfo> spaceList,
       List<ThreadInfo> threadInfo,
+      List<List<ApiThreadMessage>> threadMessages,
       Object? error});
 
   @override
@@ -184,6 +193,7 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
     Object? message = null,
     Object? spaceList = null,
     Object? threadInfo = null,
+    Object? threadMessages = null,
     Object? error = freezed,
   }) {
     return _then(_$ThreadListViewStateImpl(
@@ -227,6 +237,10 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
           ? _value._threadInfo
           : threadInfo // ignore: cast_nullable_to_non_nullable
               as List<ThreadInfo>,
+      threadMessages: null == threadMessages
+          ? _value._threadMessages
+          : threadMessages // ignore: cast_nullable_to_non_nullable
+              as List<List<ApiThreadMessage>>,
       error: freezed == error ? _value.error : error,
     ));
   }
@@ -246,9 +260,11 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
       this.message = '',
       final List<SpaceInfo> spaceList = const [],
       final List<ThreadInfo> threadInfo = const [],
+      final List<List<ApiThreadMessage>> threadMessages = const [],
       this.error})
       : _spaceList = spaceList,
-        _threadInfo = threadInfo;
+        _threadInfo = threadInfo,
+        _threadMessages = threadMessages;
 
   @override
   @JsonKey()
@@ -291,12 +307,21 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
     return EqualUnmodifiableListView(_threadInfo);
   }
 
+  final List<List<ApiThreadMessage>> _threadMessages;
+  @override
+  @JsonKey()
+  List<List<ApiThreadMessage>> get threadMessages {
+    if (_threadMessages is EqualUnmodifiableListView) return _threadMessages;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_threadMessages);
+  }
+
   @override
   final Object? error;
 
   @override
   String toString() {
-    return 'ThreadListViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, deleting: $deleting, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, spaceList: $spaceList, threadInfo: $threadInfo, error: $error)';
+    return 'ThreadListViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, deleting: $deleting, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, spaceList: $spaceList, threadInfo: $threadInfo, threadMessages: $threadMessages, error: $error)';
   }
 
   @override
@@ -321,6 +346,8 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
                 .equals(other._spaceList, _spaceList) &&
             const DeepCollectionEquality()
                 .equals(other._threadInfo, _threadInfo) &&
+            const DeepCollectionEquality()
+                .equals(other._threadMessages, _threadMessages) &&
             const DeepCollectionEquality().equals(other.error, error));
   }
 
@@ -337,6 +364,7 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
       message,
       const DeepCollectionEquality().hash(_spaceList),
       const DeepCollectionEquality().hash(_threadInfo),
+      const DeepCollectionEquality().hash(_threadMessages),
       const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
@@ -359,6 +387,7 @@ abstract class _ThreadListViewState implements ThreadListViewState {
       final String message,
       final List<SpaceInfo> spaceList,
       final List<ThreadInfo> threadInfo,
+      final List<List<ApiThreadMessage>> threadMessages,
       final Object? error}) = _$ThreadListViewStateImpl;
 
   @override
@@ -381,6 +410,8 @@ abstract class _ThreadListViewState implements ThreadListViewState {
   List<SpaceInfo> get spaceList;
   @override
   List<ThreadInfo> get threadInfo;
+  @override
+  List<List<ApiThreadMessage>> get threadMessages;
   @override
   Object? get error;
   @override

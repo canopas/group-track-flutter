@@ -523,5 +523,5 @@ exports.updateLastMessageAndTimeInThread = onDocumentCreated({
     await threadRef.update({
         last_message: message,
         last_message_at: lastMessageAt,
-    })
+    });
 });

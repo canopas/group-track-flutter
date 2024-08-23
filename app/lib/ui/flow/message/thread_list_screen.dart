@@ -16,6 +16,7 @@ import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
+import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_view_model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -54,8 +55,11 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
 
     return AppPage(
       title: widget.spaceInfo.space.name,
-      body: _body(context, state),
-      floatingActionButton: widget.spaceInfo.members.length >= 2
+        body: ResumeDetector(
+          onResume: () => notifier.getMessage(),
+          child: _body(context, state),
+        ),
+        floatingActionButton: widget.spaceInfo.members.length >= 2
       ? LargeIconButton(
         onTap: () {
           AppRoute.chat(spaceInfo: widget.spaceInfo, threadInfoList: state.threadInfo).push(context);
@@ -78,11 +82,11 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: state.threadInfo.isEmpty
           ? _emptyView(context, state)
-          : _threadList(context, state.threadInfo),
+          : _threadList(context, state.threadInfo, state.threadMessages),
     );
   }
 
-  Widget _threadList(BuildContext context, List<ThreadInfo> threads) {
+  Widget _threadList(BuildContext context, List<ThreadInfo> threads, List<List<ApiThreadMessage>> threadMessages) {
     List<ThreadInfo> mutableThreads = List.from(threads);
 
     return ListView.builder(
@@ -90,7 +94,9 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
       itemBuilder: (context, index) {
         final thread = mutableThreads[index];
         final members = thread.members.where((member) => member.user.id != notifier.currentUser?.id).toList();
-        const bool hasUnreadMessage = false;
+        final filteredMessages = index < threadMessages.length ? threadMessages[index] : [];
+        final hasUnreadMessage = filteredMessages
+            .any((message) => !message.seen_by.contains(notifier.currentUser?.id));
 
         return Slidable(
           endActionPane: ActionPane(
@@ -102,7 +108,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
-              AppRoute.chat(spaceInfo: widget.spaceInfo, thread: thread).push(context);
+              AppRoute.chat(spaceInfo: widget.spaceInfo, thread: thread, threadMessage: threadMessages[index]).push(context);
             },
             child: Column(
               children: [
