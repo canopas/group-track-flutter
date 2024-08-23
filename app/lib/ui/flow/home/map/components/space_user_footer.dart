@@ -147,15 +147,29 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
   }) {
     if (members == null || members.isEmpty) return Container();
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+      padding: const EdgeInsets.only(top: 8,bottom: 8,right: 24),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
-          color: context.colorScheme.surface),
-      child: Wrap(
-        alignment: WrapAlignment.center,
+        borderRadius: BorderRadius.circular(50),
+        color: context.colorScheme.surface,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           addMemberView(context),
-          ...members.map((item) => spaceMemberItem(context, item)),
+          Flexible(
+            child: SizedBox(
+              height: 60,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: members.length,
+                shrinkWrap: true,
+                itemBuilder: (_, index) {
+                  return spaceMemberItem(context, members[index]);
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -166,7 +180,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
       enabled: !widget.fetchingInviteCode,
       onTap: widget.onAddMemberTap,
       child: Padding(
-        padding: const EdgeInsets.only(right: 6),
+        padding: const EdgeInsets.only(left: 24, right: 6),
         child: Column(
           children: [
             Container(
