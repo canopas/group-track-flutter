@@ -57,7 +57,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
       title: widget.spaceInfo.space.name,
         body: ResumeDetector(
           onResume: () => notifier.getMessage(),
-          child: _body(context, state),
+          child: SafeArea(child: _body(context, state)),
         ),
         floatingActionButton: widget.spaceInfo.members.length >= 2
       ? LargeIconButton(

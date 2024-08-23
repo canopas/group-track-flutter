@@ -43,40 +43,42 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
   Widget _body() {
     final state = ref.watch(addNewPlaceStateProvider);
 
-    return Padding(
-      padding: EdgeInsets.only(
-        top: 16,
-        left: 16,
-        right: 16,
-        bottom: context.mediaQueryPadding.bottom,
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _searchTextField(),
-            const SizedBox(height: 56),
-            _locateOnMapView(),
-            const SizedBox(height: 40),
-            if (state.places.isNotEmpty || state.loading) ...[
-              Text(
-                context.l10n.add_new_place_suggestion_text,
-                style: AppTextStyle.caption.copyWith(
-                  color: context.colorScheme.textDisabled,
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: 16,
+          left: 16,
+          right: 16,
+          bottom: context.mediaQueryPadding.bottom,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _searchTextField(),
+              const SizedBox(height: 56),
+              _locateOnMapView(),
+              const SizedBox(height: 40),
+              if (state.places.isNotEmpty || state.loading) ...[
+                Text(
+                  context.l10n.add_new_place_suggestion_text,
+                  style: AppTextStyle.caption.copyWith(
+                    color: context.colorScheme.textDisabled,
+                  ),
                 ),
-              ),
+              ],
+              const SizedBox(height: 16),
+              ...state.places.map((place) {
+                final isLast =
+                    state.places.indexOf(place) == state.places.length - 1;
+                return _suggestedPlaceItemView(place, isLast);
+              }),
+              const SizedBox(height: 24),
+              state.loading
+                  ? const Center(child: AppProgressIndicator())
+                  : Container(),
             ],
-            const SizedBox(height: 16),
-            ...state.places.map((place) {
-              final isLast =
-                  state.places.indexOf(place) == state.places.length - 1;
-              return _suggestedPlaceItemView(place, isLast);
-            }),
-            const SizedBox(height: 24),
-            state.loading
-                ? const Center(child: AppProgressIndicator())
-                : Container(),
-          ],
+          ),
         ),
       ),
     );
