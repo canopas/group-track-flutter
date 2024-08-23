@@ -78,11 +78,11 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: state.threadInfo.isEmpty
           ? _emptyView(context, state)
-          : _threadList(context, state.threadInfo, state.threadMessages),
+          : _threadList(context, state.threadInfo),
     );
   }
 
-  Widget _threadList(BuildContext context, List<ThreadInfo> threads, List<List<ApiThreadMessage>> threadMessages) {
+  Widget _threadList(BuildContext context, List<ThreadInfo> threads) {
     List<ThreadInfo> mutableThreads = List.from(threads);
 
     return ListView.builder(
@@ -90,9 +90,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
       itemBuilder: (context, index) {
         final thread = mutableThreads[index];
         final members = thread.members.where((member) => member.user.id != notifier.currentUser?.id).toList();
-        final filteredMessages = index < threadMessages.length ? threadMessages[index] : [];
-        final hasUnreadMessage = filteredMessages
-            .any((message) => !message.seen_by.contains(notifier.currentUser?.id));
+        const bool hasUnreadMessage = false;
 
         return Slidable(
           endActionPane: ActionPane(
@@ -104,7 +102,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
-              AppRoute.chat(spaceInfo: widget.spaceInfo, thread: thread, threadMessage: threadMessages[index]).push(context);
+              AppRoute.chat(spaceInfo: widget.spaceInfo, thread: thread).push(context);
             },
             child: Column(
               children: [
@@ -112,8 +110,8 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
                   context: context,
                   members: members,
                   displayedMembers: members.take(2).toList(),
-                  message: filteredMessages.isNotEmpty ? filteredMessages.first.message : '',
-                  date: filteredMessages.isNotEmpty ? filteredMessages.first.created_at : DateTime.now(),
+                  message: thread.thread.last_message ?? '',
+                  date: thread.thread.last_message_at ?? DateTime.now(),
                   hasUnreadMessage: hasUnreadMessage,
                 ),
                 if (!(index == mutableThreads.length - 1)) ...[

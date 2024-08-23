@@ -16,6 +16,8 @@ class ApiThread with _$ApiThread {
     required List<String> member_ids,
     Map<String, double>? archived_for,
     int? created_at,
+    String? last_message,
+    @ServerTimestampConverter() DateTime? last_message_at,
   }) = _ApiThread;
 
   factory ApiThread.fromJson(Map<String, dynamic> data) =>

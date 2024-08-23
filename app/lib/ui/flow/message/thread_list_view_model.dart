@@ -37,9 +37,6 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   void setSpace(SpaceInfo space) {
     state = state.copyWith(space: space);
     listenThreads(space.space.id);
-    if (state.threadMessages.isEmpty) {
-      _listenLastMessage();
-    }
   }
 
   void listenThreads(String spaceId) async {
@@ -59,31 +56,11 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
         });
 
         state = state.copyWith(threadInfo: filteredThreads, loading: false, error: null);
-        _listenLastMessage();
       });
     } catch (error, stack) {
       logger.e('ChatViewNotifier: error while listing message threads',
           error: error, stackTrace: stack);
       state = state.copyWith(error: error, loading: false);
-    }
-  }
-
-  void _listenLastMessage() async {
-    try {
-      _cancelSubscriptions();
-      final List<List<ApiThreadMessage>> newThreadMessages = List.generate(state.threadInfo.length, (_) => []);
-
-      for (int i = 0; i < state.threadInfo.length; i++) {
-        final threads = state.threadInfo[i];
-        final subscription = messageService.streamLatestMessages(threads.thread.id).listen((threadMessages) {
-          newThreadMessages[i] = threadMessages;
-          state = state.copyWith(threadMessages: List.from(newThreadMessages));
-        });
-        _userSubscriptions.add(subscription);
-      }
-    } catch (error, stack) {
-      logger.e('ChatViewNotifier: error while listening to latest messages',
-          error: error, stackTrace: stack);
     }
   }
 
@@ -132,9 +109,6 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   }
 
   void _cancelSubscriptions() {
-    for (var subscription in _userSubscriptions) {
-      subscription.cancel();
-    }
     _userSubscriptions.clear();
   }
 
@@ -158,7 +132,6 @@ class ThreadListViewState with _$ThreadListViewState {
     @Default('') String message,
     @Default([]) List<SpaceInfo> spaceList,
     @Default([]) List<ThreadInfo> threadInfo,
-    @Default([]) List<List<ApiThreadMessage>> threadMessages,
     Object? error,
   }) = _ThreadListViewState;
 }
