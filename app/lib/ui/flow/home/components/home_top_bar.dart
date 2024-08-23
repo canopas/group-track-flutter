@@ -100,70 +100,74 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   }
 
   Widget _topBar(BuildContext context) {
-    return IntrinsicHeight(
-      child: Container(
-        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-        color: context.colorScheme.surface,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        return IntrinsicHeight(
+          child: Container(
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 16, top: orientation == Orientation.portrait ? 0 : 16),
+            color: context.colorScheme.surface,
+            child: SingleChildScrollView(
+              child: Column(
                 children: [
-                  _iconButton(
-                      context: context,
-                      icon: Assets.images.icSetting,
-                      visibility: !expand,
-                      onTap: () {
-                        AppRoute.setting.push(context);
-                      }),
-                  const SizedBox(width: 8),
-                  _spaceSelection(
-                    context: context,
-                    spaceName: widget.selectedSpace?.space.name ??
-                        context.l10n.home_select_space_text,
+                  Row(
+                    children: [
+                      _iconButton(
+                          context: context,
+                          icon: Assets.images.icSetting,
+                          visibility: !expand,
+                          onTap: () {
+                            AppRoute.setting.push(context);
+                          }),
+                      const SizedBox(width: 8),
+                      _spaceSelection(
+                        context: context,
+                        spaceName: widget.selectedSpace?.space.name ??
+                            context.l10n.home_select_space_text,
+                      ),
+                      const SizedBox(width: 8),
+                      if (widget.selectedSpace != null &&
+                          widget.spaces.isNotEmpty) ...[
+                        _iconButton(
+                          context: context,
+                          icon: Assets.images.icMessage,
+                          visibility: !expand,
+                          onTap: () {
+                            if (widget.selectedSpace != null) {
+                              AppRoute.message(widget.selectedSpace!).push(context);
+                            }
+                          },
+                        ),
+                        SizedBox(width: expand ? 0 : 8),
+                      ],
+                      _iconButton(
+                        context: context,
+                        icon: widget.locationEnabled
+                            ? Assets.images.icLocation
+                            : Assets.images.icLocationOff,
+                        visibility: !expand,
+                        progress: widget.enablingLocation,
+                        onTap: () => widget.onToggleLocation(),
+                      ),
+                      _iconButton(
+                        context: context,
+                        icon: Assets.images.icAddMember,
+                        visibility: expand,
+                        color: context.colorScheme.textPrimary,
+                        onTap: () {
+                          if (widget.selectedSpace != null) {
+                            widget.onAddMemberTap();
+                          }
+                        },
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  if (widget.selectedSpace != null &&
-                      widget.spaces.isNotEmpty) ...[
-                    _iconButton(
-                      context: context,
-                      icon: Assets.images.icMessage,
-                      visibility: !expand,
-                      onTap: () {
-                        if (widget.selectedSpace != null) {
-                          AppRoute.message(widget.selectedSpace!).push(context);
-                        }
-                      },
-                    ),
-                    SizedBox(width: expand ? 0 : 8),
-                  ],
-                  _iconButton(
-                    context: context,
-                    icon: widget.locationEnabled
-                        ? Assets.images.icLocation
-                        : Assets.images.icLocationOff,
-                    visibility: !expand,
-                    progress: widget.enablingLocation,
-                    onTap: () => widget.onToggleLocation(),
-                  ),
-                  _iconButton(
-                    context: context,
-                    icon: Assets.images.icAddMember,
-                    visibility: expand,
-                    color: context.colorScheme.textPrimary,
-                    onTap: () {
-                      if (widget.selectedSpace != null) {
-                        widget.onAddMemberTap();
-                      }
-                    },
-                  ),
+                  _dropDown(context),
                 ],
               ),
-              _dropDown(context),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

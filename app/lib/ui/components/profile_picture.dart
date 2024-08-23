@@ -54,7 +54,7 @@ class _ProfileImageState extends State<ProfileImage> {
                   child: Text(
                       widget.firstLetter,
                       style: widget.style ?? AppTextStyle.subtitle2
-                          .copyWith(color: context.colorScheme.textPrimary)),
+                          .copyWith(color: context.colorScheme.textPrimaryDark)),
                 ),
               ),
       ),

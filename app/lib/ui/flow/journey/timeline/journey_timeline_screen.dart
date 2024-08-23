@@ -89,7 +89,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           ),
         ),
       ],
-      body: _body(state),
+      body: SafeArea(child: _body(state)),
     );
   }
 

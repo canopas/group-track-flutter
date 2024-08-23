@@ -51,18 +51,20 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
       return const Center(child: AppProgressIndicator());
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: ListView(
-        children: [
-          _profileView(context, state),
-          const SizedBox(height: 24),
-          if (state.spaces.isNotEmpty) ...[
-            _yourSpaceList(context, state),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: ListView(
+          children: [
+            _profileView(context, state),
             const SizedBox(height: 24),
+            if (state.spaces.isNotEmpty) ...[
+              _yourSpaceList(context, state),
+              const SizedBox(height: 24),
+            ],
+            _otherOptionList(context),
           ],
-          _otherOptionList(context),
-        ],
+        ),
       ),
     );
   }
