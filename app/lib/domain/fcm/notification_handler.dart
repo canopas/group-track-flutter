@@ -102,7 +102,6 @@ class NotificationHandler {
           _onNotificationTap(context, jsonDecode(response.payload!));
         }
       },
-      onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
   }
 
