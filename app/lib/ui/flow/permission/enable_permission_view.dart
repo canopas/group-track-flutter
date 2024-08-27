@@ -59,7 +59,7 @@ class _EnablePermissionViewState extends ConsumerState<EnablePermissionView>
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
+      child: ListView(
         children: [
           Text(
             context.l10n.enable_permission_screen_title,

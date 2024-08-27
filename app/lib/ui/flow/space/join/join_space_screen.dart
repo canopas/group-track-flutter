@@ -168,6 +168,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
                 final inviteCode = _controllers
                     .map((controller) => controller.text.trim())
                     .join();
+                FocusManager.instance.primaryFocus?.unfocus();
                 notifier.joinSpace(inviteCode);
               }
             }

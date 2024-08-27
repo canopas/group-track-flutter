@@ -5,10 +5,11 @@ import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/auth_service.dart';
+import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:data/service/space_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'setting_view_model.freezed.dart';
 
@@ -29,7 +30,8 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
   final ApiUser? user;
   late StreamSubscription<ApiUser?>? _userSubscription;
 
-  SettingViewNotifier(this.spaceService, this.authService, this.userService, this.user)
+  SettingViewNotifier(
+      this.spaceService, this.authService, this.userService, this.user)
       : super(const SettingViewState()) {
     getUser();
     getUserSpace();
@@ -53,9 +55,12 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
   void getUserSpace() async {
     try {
       state = state.copyWith(loading: state.spaces.isEmpty);
-      final spaces = await spaceService.getUserSpaces(state.currentUser?.id ?? '');
-      final nonNullSpaces = spaces.where((space) => space != null).cast<ApiSpace>().toList();
-      state = state.copyWith(spaces: nonNullSpaces, loading: false, error: null);
+      final spaces =
+          await spaceService.getUserSpaces(state.currentUser?.id ?? '');
+      final nonNullSpaces =
+          spaces.where((space) => space != null).cast<ApiSpace>().toList();
+      state =
+          state.copyWith(spaces: nonNullSpaces, loading: false, error: null);
     } catch (error, stack) {
       logger.e(
         'SettingViewNotifier: error while fetching user space',
@@ -84,6 +89,20 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
 
   void cancelSubscriptions() {
     _userSubscription?.cancel();
+  }
+
+  void onLaunchUri(String url) async {
+    try {
+      final targetUrl = Uri.parse(url);
+      await launchUrl(targetUrl, mode: LaunchMode.platformDefault);
+    } catch (error,stack) {
+      state = state.copyWith(error: error);
+      logger.e(
+        'SettingViewNotifier: error while launch url',
+        error: error,
+        stackTrace: stack,
+      );
+    }
   }
 }
 

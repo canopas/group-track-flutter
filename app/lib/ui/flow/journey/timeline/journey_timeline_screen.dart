@@ -25,8 +25,6 @@ import '../../../app_route.dart';
 import '../components/dotted_line_view.dart';
 import '../components/journey_map.dart';
 
-const INITIAL_ZOOM_LEVEL = 6;
-
 class JourneyTimelineScreen extends ConsumerStatefulWidget {
   final ApiUser selectedUser;
 
@@ -91,7 +89,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           ),
         ),
       ],
-      body: _body(state),
+      body: SafeArea(child: _body(state)),
     );
   }
 
@@ -323,36 +321,39 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Widget _appPlaceButton(LatLng location, String? spaceId) {
-    return Container(
-      width: 136,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: context.colorScheme.containerLow),
-      child: OnTapScale(
-        onTap: () {
-          if (spaceId != null) {
-            AppRoute.choosePlaceName(location: location, spaceId: spaceId)
-                .push(context);
-          }
-        },
-        child: Row(
-          children: [
-            SvgPicture.asset(
-              Assets.images.icGeofenceIcon,
-              colorFilter: ColorFilter.mode(
-                  context.colorScheme.primary, BlendMode.srcATop),
+    return Row(
+      children: [
+        OnTapScale(
+          onTap: () {
+            if (spaceId != null) {
+              AppRoute.choosePlaceName(location: location, spaceId: spaceId)
+                  .push(context);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: context.colorScheme.containerLow),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  Assets.images.icGeofenceIcon,
+                  colorFilter: ColorFilter.mode(
+                      context.colorScheme.primary, BlendMode.srcATop),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  context.l10n.journey_timeline_add_place_btn_text,
+                  style: AppTextStyle.button.copyWith(
+                    color: context.colorScheme.primary,
+                  ),
+                )
+              ],
             ),
-            const SizedBox(width: 8),
-            Text(
-              context.l10n.journey_timeline_add_place_btn_text,
-              style: AppTextStyle.button.copyWith(
-                color: context.colorScheme.primary,
-              ),
-            )
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 

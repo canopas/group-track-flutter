@@ -18,13 +18,6 @@ const _androidChannel = AndroidNotificationChannel(
   importance: Importance.max,
 );
 
-@pragma('vm:entry-point')
-void notificationTapBackground(NotificationResponse notificationResponse) {
-  if (notificationResponse.payload != null) {
-    debugPrint('Background notification payload: ${notificationResponse.payload}');
-  }
-}
-
 const NOTIFICATION_ID = 101;
 
 const KEY_NOTIFICATION_TYPE = "type";
@@ -120,45 +113,18 @@ class NotificationHandler {
     final body = notification?.body;
 
     if (title != null && body != null) {
-      final androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        _androidChannel.id,
-        _androidChannel.name,
-        importance: Importance.max,
-        priority: Priority.high,
-        actions: <AndroidNotificationAction>[
-          const AndroidNotificationAction(
-            'reply',
-            'Reply',
-            showsUserInterface: true,
-            allowGeneratedReplies: true,
-            inputs: <AndroidNotificationActionInput>[
-              AndroidNotificationActionInput(label: 'Type your reply...'),
-            ],
+        _flutterLocalNotificationsPlugin.show(
+          DateTime.now().microsecondsSinceEpoch ~/ 1000000,
+          title,
+          body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              _androidChannel.id,
+              _androidChannel.name,
+            ),
           ),
-        ],
-      );
-
-      final platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: const DarwinNotificationDetails(
-          categoryIdentifier: 'REPLY_CATEGORY',
-        ),
-      );
-
-      _flutterLocalNotificationsPlugin.show(
-        DateTime.now().microsecondsSinceEpoch ~/ 1000000,
-        title,
-        body,
-        platformChannelSpecifics,
-        payload: jsonEncode(data),
-      );
-    }
-  }
-
-  void handleReply(String? replyText) {
-    if (replyText != null && replyText.isNotEmpty) {
-      logger.d("User replied: $replyText");
-      // Process the reply text, e.g., send it to your server
+          payload: jsonEncode(data),
+        );
     }
   }
 }
@@ -178,6 +144,7 @@ extension on NotificationHandler {
         _handlePlaceAdded(context, data);
         break;
       case NotificationGeofenceConst.NOTIFICATION_TYPE_GEOFENCE:
+        _handleGeoFenceNotificationTap(context);
         break;
     }
   }
@@ -190,6 +157,11 @@ extension on NotificationHandler {
     } else {
       logger.e("Space ID is null for place added notification");
     }
+  }
+
+  void _handleGeoFenceNotificationTap(BuildContext context) {
+    if (!context.mounted) return;
+    AppRoute.home.go(context);
   }
 
   void _handleChatMessage(BuildContext context, Map<String, dynamic> data) {

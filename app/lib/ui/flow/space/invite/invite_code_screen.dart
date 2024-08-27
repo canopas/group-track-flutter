@@ -35,31 +35,33 @@ class _InviteCodeState extends State<InviteCode> {
   }
 
   Widget _body(BuildContext context) {
-    return Stack(
-      children: [
-        ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            const SizedBox(height: 8),
-            Text(
-              context.l10n.invite_code_invite_member_title(widget.spaceName),
-              style: AppTextStyle.header4.copyWith(
-                color: context.colorScheme.textPrimary
+    return SafeArea(
+      child: Stack(
+        children: [
+          ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              const SizedBox(height: 8),
+              Text(
+                context.l10n.invite_code_invite_member_title(widget.spaceName),
+                style: AppTextStyle.header4.copyWith(
+                  color: context.colorScheme.textPrimary
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              context.l10n.invite_code_invite_member_subtitle,
-              style: AppTextStyle.body1.copyWith(
-                color: context.colorScheme.textDisabled
+              const SizedBox(height: 16),
+              Text(
+                context.l10n.invite_code_invite_member_subtitle,
+                style: AppTextStyle.body1.copyWith(
+                  color: context.colorScheme.textDisabled
+                ),
               ),
-            ),
-            const SizedBox(height: 40),
-            _inviteCode(context),
-          ],
-        ),
-        _shareAndSkipButton(context),
-      ],
+              const SizedBox(height: 40),
+              _inviteCode(context),
+            ],
+          ),
+          _shareAndSkipButton(context),
+        ],
+      ),
     );
   }
 
@@ -100,8 +102,8 @@ class _InviteCodeState extends State<InviteCode> {
               Share.share(widget.inviteCode);
             },
           ),
-          const SizedBox(height: 16),
           if (widget.fromOnboard) ...[
+            const SizedBox(height: 16),
             SecondaryButton(
               context.l10n.common_skip,
               onPressed: () {

@@ -17,6 +17,8 @@ import 'package:yourspace_flutter/ui/flow/setting/setting_view_model.dart';
 import '../../../gen/assets.gen.dart';
 import '../../components/alert.dart';
 
+const privacyPolicyUrl = "https://canopas.github.io/your-space-android/";
+
 class SettingScreen extends ConsumerStatefulWidget {
   const SettingScreen({super.key});
 
@@ -49,18 +51,20 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
       return const Center(child: AppProgressIndicator());
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: ListView(
-        children: [
-          _profileView(context, state),
-          const SizedBox(height: 24),
-          if (state.spaces.isNotEmpty) ...[
-            _yourSpaceList(context, state),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: ListView(
+          children: [
+            _profileView(context, state),
             const SizedBox(height: 24),
+            if (state.spaces.isNotEmpty) ...[
+              _yourSpaceList(context, state),
+              const SizedBox(height: 24),
+            ],
+            _otherOptionList(context),
           ],
-          _otherOptionList(context),
-        ],
+        ),
       ),
     );
   }
@@ -212,12 +216,16 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
             context: context,
             title: context.l10n.settings_other_option_privacy_policy_text,
             icon: Assets.images.icPrivacyPolicy,
-            onTap: () {}),
+            onTap: () {
+              notifier.onLaunchUri(privacyPolicyUrl);
+            }),
         _otherOptionItem(
             context: context,
             title: context.l10n.settings_other_option_about_us_text,
             icon: Assets.images.icAboutUs,
-            onTap: () {}),
+            onTap: () {
+              notifier.onLaunchUri(privacyPolicyUrl);
+            }),
         _otherOptionItem(
             context: context,
             title: context.l10n.settings_other_option_sign_out_text,

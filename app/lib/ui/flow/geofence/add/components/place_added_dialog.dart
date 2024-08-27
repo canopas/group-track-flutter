@@ -51,38 +51,40 @@ class _PlaceAddedDialogState extends State<PlaceAddedDialog> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AspectRatio(
-            aspectRatio: 1.77,
-            child: _googleMapView(widget.lat, widget.lng),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            context.l10n.choose_place_prompt_added_title_text(widget.placeName),
-            style: AppTextStyle.header1.copyWith(
-              color: context.colorScheme.textPrimary,
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AspectRatio(
+              aspectRatio: 1.77,
+              child: _googleMapView(widget.lat, widget.lng),
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 14),
-          Text(
-            context.l10n.choose_place_prompt_sub_title_text,
-            style: AppTextStyle.body1.copyWith(
-              color: context.colorScheme.textSecondary,
+            const SizedBox(height: 24),
+            Text(
+              context.l10n.choose_place_prompt_added_title_text(widget.placeName),
+              style: AppTextStyle.header1.copyWith(
+                color: context.colorScheme.textPrimary,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          PrimaryButton(
-            context.l10n.choose_place_prompt_got_it_btn_text,
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          const SizedBox(height: 24),
-        ],
+            const SizedBox(height: 14),
+            Text(
+              context.l10n.choose_place_prompt_sub_title_text,
+              style: AppTextStyle.body1.copyWith(
+                color: context.colorScheme.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            PrimaryButton(
+              context.l10n.choose_place_prompt_got_it_btn_text,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
