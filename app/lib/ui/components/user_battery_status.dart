@@ -27,20 +27,27 @@ class UserBatteryStatus extends StatelessWidget {
     } else if (batteryPct > 30) {
       icon = Assets.images.ic30BatteryIcon;
       color = context.colorScheme.positive;
-    } else {
+    } else if (batteryPct >= 1) {
       icon = Assets.images.icEmptyBatteryIcon;
       color = context.colorScheme.alert;
+    } else {
+      icon = Assets.images.icUnknownBatteryIcon;
+      color = context.colorScheme.textDisabled;
     }
+
     return Row(
       children: [
         SvgPicture.asset(
           icon,
           colorFilter: ColorFilter.mode(color, BlendMode.srcATop),
         ),
-        Text(
-          '${batteryPct.toInt()}%',
-          style: AppTextStyle.caption
-              .copyWith(color: context.colorScheme.textPrimary),
+        Visibility(
+          visible: batteryPct >= 1,
+          child: Text(
+            '${batteryPct.toInt()}%',
+            style: AppTextStyle.caption
+                .copyWith(color: context.colorScheme.textPrimary),
+          ),
         )
       ],
     );

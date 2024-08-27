@@ -139,6 +139,10 @@ class $AssetsImagesGen {
   String get icTimelineFilterIcon =>
       'assets/images/ic_timeline_filter_icon.svg';
 
+  /// File path: assets/images/ic_unknown_battery_icon.svg
+  String get icUnknownBatteryIcon =>
+      'assets/images/ic_unknown_battery_icon.svg';
+
   /// File path: assets/images/intro_1.svg
   String get intro1 => 'assets/images/intro_1.svg';
 
@@ -194,6 +198,7 @@ class $AssetsImagesGen {
         icSignOut,
         icTimeLineHistoryIcon,
         icTimelineFilterIcon,
+        icUnknownBatteryIcon,
         intro1,
         intro2,
         intro3,

@@ -34,7 +34,7 @@ void main() async {
   final container = await _initContainer();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-  startService();
+  // startService();
 
   runApp(
     UncontrolledProviderScope(container: container, child: const App()),

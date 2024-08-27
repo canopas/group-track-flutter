@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 import 'package:yourspace_flutter/domain/extenstions/time_ago_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
@@ -89,7 +90,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
 
   Widget _userProfileView(ApiUserInfo userInfo) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ProfileImage(
           profileImageUrl: userInfo.user.profile_image!,
@@ -104,6 +105,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   }
 
   Widget _userDetailView(ApiUserInfo userInfo) {
+    final (userState, textColor) = selectedUserState(userInfo.user);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -113,11 +115,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
               .copyWith(color: context.colorScheme.textPrimary),
         ),
         const SizedBox(height: 4),
-        Text(
-          'Online',
-          style: AppTextStyle.caption
-              .copyWith(color: context.colorScheme.positive),
-        ),
+        Text(userState, style: AppTextStyle.caption.copyWith(color: textColor)),
         const SizedBox(height: 12),
         _userAddressView(userInfo.location),
         const SizedBox(height: 4),
@@ -188,6 +186,25 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
       setState(() {
         address = '';
       });
+    }
+  }
+
+  (String, Color) selectedUserState(ApiUser user) {
+    if (user.noNetWork) {
+      return (
+        context.l10n.map_selected_user_item_no_network_state_text,
+        context.colorScheme.textSecondary
+      );
+    } else if (user.locationPermissionDenied) {
+      return (
+        context.l10n.map_selected_user_item_location_off_state_text,
+        context.colorScheme.alert
+      );
+    } else {
+      return (
+        context.l10n.map_selected_user_item_online_state_text,
+        context.colorScheme.positive
+      );
     }
   }
 }
