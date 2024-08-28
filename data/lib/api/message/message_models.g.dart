@@ -18,6 +18,9 @@ _$ApiThreadImpl _$$ApiThreadImplFromJson(Map<String, dynamic> json) =>
         (k, e) => MapEntry(k, (e as num).toDouble()),
       ),
       created_at: (json['created_at'] as num?)?.toInt(),
+      last_message: json['last_message'] as String?,
+      last_message_at: const ServerTimestampConverter()
+          .fromJson(json['last_message_at'] as Timestamp?),
     );
 
 Map<String, dynamic> _$$ApiThreadImplToJson(_$ApiThreadImpl instance) =>
@@ -28,6 +31,9 @@ Map<String, dynamic> _$$ApiThreadImplToJson(_$ApiThreadImpl instance) =>
       'member_ids': instance.member_ids,
       'archived_for': instance.archived_for,
       'created_at': instance.created_at,
+      'last_message': instance.last_message,
+      'last_message_at':
+          const ServerTimestampConverter().toJson(instance.last_message_at),
     };
 
 _$ApiThreadMessageImpl _$$ApiThreadMessageImplFromJson(
