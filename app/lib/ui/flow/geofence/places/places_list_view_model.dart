@@ -1,6 +1,7 @@
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/service/geofence_service.dart';
 import 'package:data/service/place_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -82,6 +83,7 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
       state = state.copyWith(deletingPlaces: true);
       final place = state.placesToDelete;
       await placeService.deletePlace(state.spaceId!, place!.id);
+      GeofenceService.stopMonitoring(place.id);
       state = state.copyWith(deletingPlaces: false);
     } catch (error, stack) {
       state = state.copyWith(deletingPlaces: false);
