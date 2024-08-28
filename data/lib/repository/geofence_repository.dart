@@ -1,3 +1,5 @@
+//ignore_for_file: constant_identifier_names
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/space_service.dart';
