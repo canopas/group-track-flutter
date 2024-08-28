@@ -7,6 +7,9 @@ import '../api/auth/auth_models.dart';
 import '../service/geofence_service.dart';
 import '../service/place_service.dart';
 
+const GEOFENCE_ENTER = 1;
+const GEOFENCE_EXIT = 2;
+
 final geofenceRepositoryProvider = Provider((ref) => GeofenceRepository(
       ref.read(placeServiceProvider),
       ref.read(spaceServiceProvider),
@@ -55,7 +58,7 @@ class GeofenceRepository {
 
         for (final place in places) {
           if (place.id == placeId) {
-            final message = status == 1
+            final message = status == GEOFENCE_ENTER
                 ? '${_currentUser?.first_name ?? ''} has arrived at 📍${place.name}'
                 : '${_currentUser?.first_name ?? ''} has left 📍${place.name}';
 
@@ -64,7 +67,7 @@ class GeofenceRepository {
               'spaceId': place.space_id,
               'eventBy': _currentUser?.id ?? '',
               'message': message,
-              'eventType': status == 1 ? "1" : "2",
+              'eventType': status == GEOFENCE_ENTER ? "1" : "2",
             };
 
             final callable =

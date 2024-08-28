@@ -1,7 +1,6 @@
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/log/logger.dart';
-import 'package:data/service/geofence_service.dart';
 import 'package:data/service/place_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
@@ -197,7 +196,6 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
     try {
       state = state.copyWith(deleting: true, error: null);
       await placeService.deletePlace(_place!.space_id, _place!.id);
-      GeofenceService.stopMonitoring(_place?.id ?? '');
       state = state.copyWith(deleting: false, popToBack: DateTime.now());
     } catch (error, stack) {
       state = state.copyWith(error: error, deleting: false);

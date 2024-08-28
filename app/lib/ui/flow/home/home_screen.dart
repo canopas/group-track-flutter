@@ -45,8 +45,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       geofenceRepository = ref.read(geofenceRepositoryProvider);
       geofenceRepository.init();
       GeofenceService.setGeofenceCallback(
-        onEnter: (id) => geofenceRepository.makeHttpCall(id, 1),
-        onExit: (id) => geofenceRepository.makeHttpCall(id, 2),
+        onEnter: (id) => geofenceRepository.makeHttpCall(id, GEOFENCE_ENTER),
+        onExit: (id) => geofenceRepository.makeHttpCall(id, GEOFENCE_EXIT),
       );
     });
 

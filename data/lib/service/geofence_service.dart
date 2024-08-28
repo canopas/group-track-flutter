@@ -47,9 +47,12 @@ class GeofenceService {
       switch (call.method) {
         case 'onEnterGeofence':
           onEnter(call.arguments['identifier']);
+          logger.d('Entered in geofence place: ${call.arguments['identifier']}');
           break;
         case 'onExitGeofence':
           onExit(call.arguments['identifier']);
+          stopMonitoring(call.arguments['identifier']);
+          logger.d('Exited in geofence place: ${call.arguments['identifier']}');
           break;
       }
     });

@@ -30,7 +30,6 @@ dependencies:
   sqflite: ^2.3.3+1
   path: ^1.8.3
   google_maps_flutter: ^2.2.8
-  geofence_service: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -48,7 +47,6 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
-flutter:
 
 # To add assets to your package, add an assets section, like this:
 # assets:
