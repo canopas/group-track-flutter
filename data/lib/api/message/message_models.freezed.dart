@@ -26,6 +26,9 @@ mixin _$ApiThread {
   List<String> get member_ids => throw _privateConstructorUsedError;
   Map<String, double>? get archived_for => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
+  String? get last_message => throw _privateConstructorUsedError;
+  @ServerTimestampConverter()
+  DateTime? get last_message_at => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -44,7 +47,9 @@ abstract class $ApiThreadCopyWith<$Res> {
       String admin_id,
       List<String> member_ids,
       Map<String, double>? archived_for,
-      int? created_at});
+      int? created_at,
+      String? last_message,
+      @ServerTimestampConverter() DateTime? last_message_at});
 }
 
 /// @nodoc
@@ -66,6 +71,8 @@ class _$ApiThreadCopyWithImpl<$Res, $Val extends ApiThread>
     Object? member_ids = null,
     Object? archived_for = freezed,
     Object? created_at = freezed,
+    Object? last_message = freezed,
+    Object? last_message_at = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -92,6 +99,14 @@ class _$ApiThreadCopyWithImpl<$Res, $Val extends ApiThread>
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
               as int?,
+      last_message: freezed == last_message
+          ? _value.last_message
+          : last_message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      last_message_at: freezed == last_message_at
+          ? _value.last_message_at
+          : last_message_at // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -110,7 +125,9 @@ abstract class _$$ApiThreadImplCopyWith<$Res>
       String admin_id,
       List<String> member_ids,
       Map<String, double>? archived_for,
-      int? created_at});
+      int? created_at,
+      String? last_message,
+      @ServerTimestampConverter() DateTime? last_message_at});
 }
 
 /// @nodoc
@@ -130,6 +147,8 @@ class __$$ApiThreadImplCopyWithImpl<$Res>
     Object? member_ids = null,
     Object? archived_for = freezed,
     Object? created_at = freezed,
+    Object? last_message = freezed,
+    Object? last_message_at = freezed,
   }) {
     return _then(_$ApiThreadImpl(
       id: null == id
@@ -156,6 +175,14 @@ class __$$ApiThreadImplCopyWithImpl<$Res>
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
               as int?,
+      last_message: freezed == last_message
+          ? _value.last_message
+          : last_message // ignore: cast_nullable_to_non_nullable
+              as String?,
+      last_message_at: freezed == last_message_at
+          ? _value.last_message_at
+          : last_message_at // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -169,7 +196,9 @@ class _$ApiThreadImpl extends _ApiThread {
       required this.admin_id,
       required final List<String> member_ids,
       final Map<String, double>? archived_for,
-      this.created_at})
+      this.created_at,
+      this.last_message,
+      @ServerTimestampConverter() this.last_message_at})
       : _member_ids = member_ids,
         _archived_for = archived_for,
         super._();
@@ -203,10 +232,15 @@ class _$ApiThreadImpl extends _ApiThread {
 
   @override
   final int? created_at;
+  @override
+  final String? last_message;
+  @override
+  @ServerTimestampConverter()
+  final DateTime? last_message_at;
 
   @override
   String toString() {
-    return 'ApiThread(id: $id, space_id: $space_id, admin_id: $admin_id, member_ids: $member_ids, archived_for: $archived_for, created_at: $created_at)';
+    return 'ApiThread(id: $id, space_id: $space_id, admin_id: $admin_id, member_ids: $member_ids, archived_for: $archived_for, created_at: $created_at, last_message: $last_message, last_message_at: $last_message_at)';
   }
 
   @override
@@ -224,7 +258,11 @@ class _$ApiThreadImpl extends _ApiThread {
             const DeepCollectionEquality()
                 .equals(other._archived_for, _archived_for) &&
             (identical(other.created_at, created_at) ||
-                other.created_at == created_at));
+                other.created_at == created_at) &&
+            (identical(other.last_message, last_message) ||
+                other.last_message == last_message) &&
+            (identical(other.last_message_at, last_message_at) ||
+                other.last_message_at == last_message_at));
   }
 
   @JsonKey(ignore: true)
@@ -236,7 +274,9 @@ class _$ApiThreadImpl extends _ApiThread {
       admin_id,
       const DeepCollectionEquality().hash(_member_ids),
       const DeepCollectionEquality().hash(_archived_for),
-      created_at);
+      created_at,
+      last_message,
+      last_message_at);
 
   @JsonKey(ignore: true)
   @override
@@ -254,12 +294,15 @@ class _$ApiThreadImpl extends _ApiThread {
 
 abstract class _ApiThread extends ApiThread {
   const factory _ApiThread(
-      {required final String id,
-      required final String space_id,
-      required final String admin_id,
-      required final List<String> member_ids,
-      final Map<String, double>? archived_for,
-      final int? created_at}) = _$ApiThreadImpl;
+          {required final String id,
+          required final String space_id,
+          required final String admin_id,
+          required final List<String> member_ids,
+          final Map<String, double>? archived_for,
+          final int? created_at,
+          final String? last_message,
+          @ServerTimestampConverter() final DateTime? last_message_at}) =
+      _$ApiThreadImpl;
   const _ApiThread._() : super._();
 
   factory _ApiThread.fromJson(Map<String, dynamic> json) =
@@ -277,6 +320,11 @@ abstract class _ApiThread extends ApiThread {
   Map<String, double>? get archived_for;
   @override
   int? get created_at;
+  @override
+  String? get last_message;
+  @override
+  @ServerTimestampConverter()
+  DateTime? get last_message_at;
   @override
   @JsonKey(ignore: true)
   _$$ApiThreadImplCopyWith<_$ApiThreadImpl> get copyWith =>

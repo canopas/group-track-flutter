@@ -37,9 +37,6 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   void setSpace(SpaceInfo space) {
     state = state.copyWith(space: space);
     listenThreads(space.space.id);
-    if (state.threadMessages.isEmpty) {
-      _listenLastMessage();
-    }
   }
 
   void listenThreads(String spaceId) async {
@@ -59,7 +56,7 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
         });
 
         state = state.copyWith(threadInfo: filteredThreads, loading: false, error: null);
-        _listenLastMessage();
+        getMessage();
       });
     } catch (error, stack) {
       logger.e('ChatViewNotifier: error while listing message threads',
@@ -68,19 +65,16 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
     }
   }
 
-  void _listenLastMessage() async {
+  void getMessage() async {
     try {
-      _cancelSubscriptions();
       final List<List<ApiThreadMessage>> newThreadMessages = List.generate(state.threadInfo.length, (_) => []);
 
       for (int i = 0; i < state.threadInfo.length; i++) {
         final threads = state.threadInfo[i];
-        final subscription = messageService.streamLatestMessages(threads.thread.id).listen((threadMessages) {
-          newThreadMessages[i] = threadMessages;
-          state = state.copyWith(threadMessages: List.from(newThreadMessages));
-        });
-        _userSubscriptions.add(subscription);
+        final threadMessages = await messageService.getMessages(threads.thread.id, DateTime.now());
+        newThreadMessages[i] = threadMessages;
       }
+      state = state.copyWith(threadMessages: List.from(newThreadMessages));
     } catch (error, stack) {
       logger.e('ChatViewNotifier: error while listening to latest messages',
           error: error, stackTrace: stack);
@@ -132,9 +126,6 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   }
 
   void _cancelSubscriptions() {
-    for (var subscription in _userSubscriptions) {
-      subscription.cancel();
-    }
     _userSubscriptions.clear();
   }
 

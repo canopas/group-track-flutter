@@ -16,6 +16,7 @@ import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
+import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_view_model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -54,8 +55,11 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
 
     return AppPage(
       title: widget.spaceInfo.space.name,
-      body: SafeArea(child: _body(context, state)),
-      floatingActionButton: widget.spaceInfo.members.length >= 2
+        body: ResumeDetector(
+          onResume: () => notifier.getMessage(),
+          child: SafeArea(child: _body(context, state)),
+        ),
+        floatingActionButton: widget.spaceInfo.members.length >= 2
       ? LargeIconButton(
         onTap: () {
           AppRoute.chat(spaceId: widget.spaceInfo.space.id, spaceName: widget.spaceInfo.space.name, threadInfoList: state.threadInfo).push(context);
@@ -112,8 +116,8 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
                   context: context,
                   members: members,
                   displayedMembers: members.take(2).toList(),
-                  message: filteredMessages.isNotEmpty ? filteredMessages.first.message : '',
-                  date: filteredMessages.isNotEmpty ? filteredMessages.first.created_at : DateTime.now(),
+                  message: thread.thread.last_message ?? '',
+                  date: thread.thread.last_message_at ?? DateTime.now(),
                   hasUnreadMessage: hasUnreadMessage,
                 ),
                 if (!(index == mutableThreads.length - 1)) ...[
