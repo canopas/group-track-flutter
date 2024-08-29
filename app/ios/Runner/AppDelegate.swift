@@ -4,21 +4,23 @@ import GoogleMaps
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
-    
+
     var geofencePlugin: GeofenceService?
-    
+
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        UIDevice.current.isBatteryMonitoringEnabled = true
+        
         let key = Bundle.main.object(forInfoDictionaryKey: "ApiMapKey")
         GMSServices.provideAPIKey(key as! String)
-        
+
         let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
         let geofenceChannel = FlutterMethodChannel(name: "geofence_plugin", binaryMessenger: controller.binaryMessenger)
-        
+
         geofencePlugin = GeofenceService(channel: geofenceChannel)
-        
+
         geofenceChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
             guard let self = self else { return }
             if call.method == "startMonitoring" {
@@ -41,7 +43,7 @@ import GoogleMaps
                 result(FlutterMethodNotImplemented)
             }
         }
-        
+
         GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
