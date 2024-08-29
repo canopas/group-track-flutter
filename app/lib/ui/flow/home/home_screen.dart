@@ -1,5 +1,6 @@
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/repository/geofence_repository.dart';
+import 'package:data/service/geofence_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -43,6 +44,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
       geofenceRepository = ref.read(geofenceRepositoryProvider);
       geofenceRepository.init();
+      GeofenceService.setGeofenceCallback(
+        onEnter: (id) => geofenceRepository.makeHttpCall(id, GEOFENCE_ENTER),
+        onExit: (id) => geofenceRepository.makeHttpCall(id, GEOFENCE_EXIT),
+      );
     });
 
     onResume();

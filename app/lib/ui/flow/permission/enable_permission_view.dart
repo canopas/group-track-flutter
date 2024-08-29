@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
@@ -49,7 +50,7 @@ class _EnablePermissionViewState extends ConsumerState<EnablePermissionView>
     return AppPage(
       title: context.l10n.enable_permission_top_bar_text,
       body: Builder(builder: (_) {
-        return _body();
+        return SafeArea(child: _body());
       }),
     );
   }
@@ -57,50 +58,54 @@ class _EnablePermissionViewState extends ConsumerState<EnablePermissionView>
   Widget _body() {
     final state = ref.watch(permissionStateProvider);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: ListView(
-        children: [
-          Text(
-            context.l10n.enable_permission_screen_title,
-            style: AppTextStyle.body1.copyWith(
-              color: context.colorScheme.textDisabled,
+    return Stack(
+      children: [
+        ListView(
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+          children: [
+            Text(
+              context.l10n.enable_permission_screen_title,
+              style: AppTextStyle.body1.copyWith(
+                color: context.colorScheme.textDisabled,
+              ),
             ),
-          ),
-          const SizedBox(height: 40),
-          _permissionView(
-            title: context.l10n.enable_location_access_title,
-            subTitle: context.l10n.enable_location_access_sub_title,
-            buttonValue: state.isLocationGranted,
-            onTapRadio: notifier.requestLocationPermission,
-          ),
-          const SizedBox(height: 24),
-          _permissionView(
-            title: context.l10n.enable_background_location_access_title,
-            subTitle: context.l10n.enable_background_location_access_sub_title,
-            buttonValue: state.isBackGroundLocationGranted,
-            onTapRadio: notifier.requestBackgroundLocationPermission,
-          ),
-          const SizedBox(height: 24),
-          _permissionView(
-            title: context.l10n.enable_notification_access_title,
-            subTitle: context.l10n.enable_notification_access_sun_title,
-            buttonValue: state.isNotificationGranted,
-            onTapRadio: notifier.requestNotificationPermission,
-          ),
-          const Spacer(),
-          Padding(
-            padding: EdgeInsets.only(
-                top: 24, bottom: context.mediaQueryPadding.bottom + 16),
+            const SizedBox(height: 40),
+            _permissionView(
+              title: context.l10n.enable_location_access_title,
+              subTitle: context.l10n.enable_location_access_sub_title,
+              buttonValue: state.isLocationGranted,
+              onTapRadio: notifier.requestLocationPermission,
+            ),
+            const SizedBox(height: 24),
+            _permissionView(
+              title: context.l10n.enable_background_location_access_title,
+              subTitle: context.l10n.enable_background_location_access_sub_title,
+              buttonValue: state.isBackGroundLocationGranted,
+              onTapRadio: notifier.requestBackgroundLocationPermission,
+            ),
+            const SizedBox(height: 24),
+            _permissionView(
+              title: context.l10n.enable_notification_access_title,
+              subTitle: context.l10n.enable_notification_access_sun_title,
+              buttonValue: state.isNotificationGranted,
+              onTapRadio: notifier.requestNotificationPermission,
+            ),
+            const SizedBox(height: 64),
+          ],
+        ),
+        BottomStickyOverlay(
+          child: Container(
+            padding: const EdgeInsets.only(top: 16),
+            color: context.colorScheme.surface,
             child: Text(
               context.l10n.enable_permission_footer,
               style: AppTextStyle.caption
                   .copyWith(color: context.colorScheme.textDisabled),
               textAlign: TextAlign.center,
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 
