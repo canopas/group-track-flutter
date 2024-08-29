@@ -560,43 +560,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
-  fl_location:
-    dependency: transitive
-    description:
-      name: fl_location
-      sha256: ef65db6ab481df98b22b81985a4dfb1f9348968c1a974f75ca91d8d7b5292e0d
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.0"
-  fl_location_platform_interface:
-    dependency: transitive
-    description:
-      name: fl_location_platform_interface
-      sha256: ffb84044f1791ec719477bf43a26b6d347af697dacf624a25f5c28721d3a0ce1
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
-  fl_location_web:
-    dependency: transitive
-    description:
-      name: fl_location_web
-      sha256: db4cecc6e120dff002339e350be6a9e59e311925802bfd8c648c8789ed2c1003
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_activity_recognition:
-    dependency: transitive
-    description:
-      name: flutter_activity_recognition
-      sha256: "2437368a9f0bf917abb22c98dc20bf72a96f2fce04c4442db0a32df863c67323"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.0"
   flutter_background_service:
     dependency: "direct main"
     description:
@@ -812,14 +780,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
-  geofence_service:
-    dependency: transitive
-    description:
-      name: geofence_service
-      sha256: "8eabd2ae77b0b28b7a085f45330d75d89500572f2d098620958be3595844170a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.0.0"
   geolocator:
     dependency: "direct main"
     description:
