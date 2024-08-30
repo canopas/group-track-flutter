@@ -206,10 +206,11 @@ class _UserJourneyDetailScreenState
     }
   }
 
-  String _getRouteDurationString(int duration) {
-    final hours = Duration(milliseconds: duration).inHours;
-    final minutes = Duration(milliseconds: duration).inMinutes;
-    final seconds = Duration(milliseconds: duration).inSeconds;
+  String _getRouteDurationString(int durationInMilliseconds) {
+    final duration = Duration(milliseconds: durationInMilliseconds);
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    final seconds = duration.inSeconds % 60;
     if (hours > 0) {
       return '$hours hr $minutes mins';
     } else if (minutes > 0) {

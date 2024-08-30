@@ -58,7 +58,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
         if (spaces.isNotEmpty) {
           final spaceIndex =
               spaces.indexWhere((space) => space.space.id == currentSpaceId);
-
           final selectedSpace =
               spaceIndex > -1 ? spaces[spaceIndex] : spaces.first;
           reorderSpaces(selectedSpace, spaces);
@@ -97,10 +96,8 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     }
   }
 
-  void reorderSpaces(
-    SpaceInfo selectedSpace,
-    List<SpaceInfo> spaces,
-  ) {
+  void reorderSpaces(SpaceInfo selectedSpace, List<SpaceInfo> spaces) {
+    if (state.selectedSpace != null) return;
     final reorderSpaces = List<SpaceInfo>.from(spaces);
     reorderSpaces
         .removeWhere((space) => space.space.id == selectedSpace.space.id);
@@ -113,7 +110,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       final members = space.members
           .where((member) => member.user.id == _currentUser!.id)
           .toList();
-
       state = state.copyWith(
         selectedSpace: space,
         locationEnabled: members.isEmpty

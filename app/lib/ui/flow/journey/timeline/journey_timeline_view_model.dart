@@ -57,7 +57,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       state = state.copyWith(
         isLoading: false,
         appending: false,
-        hasMore: journeys.isNotEmpty,
+        hasMore: journeys.isNotEmpty && from == null && to == null,
         sortedJourney: sortJourney,
       );
     } catch (error, stack) {

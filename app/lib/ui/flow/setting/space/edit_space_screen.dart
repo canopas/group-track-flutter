@@ -48,26 +48,23 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
     return AppPage(
       title: state.space?.space.name,
       actions: [
-        if (state.isAdmin) ...[
-          actionButton(
-            context: context,
-            icon: state.saving
-                ? const AppProgressIndicator(
-                    size: AppProgressIndicatorSize.small)
-                : Icon(
-                    Icons.check,
-                    size: 24,
-                    color: state.allowSave
-                        ? context.colorScheme.primary
-                        : context.colorScheme.textDisabled,
-                  ),
-            onPressed: () {
-              if (state.allowSave) {
-                notifier.updateSpace();
-              }
-            },
-          ),
-        ]
+        actionButton(
+          context: context,
+          icon: state.saving
+              ? const AppProgressIndicator(size: AppProgressIndicatorSize.small)
+              : Icon(
+                  Icons.check,
+                  size: 24,
+                  color: state.allowSave
+                      ? context.colorScheme.primary
+                      : context.colorScheme.textDisabled,
+                ),
+          onPressed: () {
+            if (state.allowSave) {
+              notifier.updateSpace();
+            }
+          },
+        ),
       ],
       body: SafeArea(child: _body(context, state)),
     );
@@ -193,10 +190,10 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
     return Row(
       children: [
         ProfileImage(
-            profileImageUrl: profileImageUrl,
-            firstLetter: firstLetter,
-            size: 40,
-            backgroundColor: context.colorScheme.primary,
+          profileImageUrl: profileImageUrl,
+          firstLetter: firstLetter,
+          size: 40,
+          backgroundColor: context.colorScheme.primary,
         ),
         const SizedBox(width: 16),
         Text(
@@ -215,7 +212,8 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           activeTrackColor: context.colorScheme.primary,
           inactiveTrackColor: context.colorScheme.outline,
           inactiveThumbColor: context.colorScheme.textPrimaryDark,
-          trackOutlineColor: WidgetStatePropertyAll(context.colorScheme.outline),
+          trackOutlineColor:
+              WidgetStatePropertyAll(context.colorScheme.outline),
           trackOutlineWidth: const WidgetStatePropertyAll(0.5),
         ),
       ],
