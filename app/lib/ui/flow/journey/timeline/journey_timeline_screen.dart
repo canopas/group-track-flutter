@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:data/api/auth/auth_models.dart';
@@ -370,7 +371,9 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Future<String> _getAddress(LatLng latLng) async {
-    final address = await latLng.getAddressFromLocation();
+    final address = Platform.isAndroid
+        ? await latLng.getAddressFromLocation()
+        : await notifier.getAddress(latLng.latitude, latLng.longitude);
     return address;
   }
 

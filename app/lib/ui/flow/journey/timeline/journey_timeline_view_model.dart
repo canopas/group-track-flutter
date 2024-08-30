@@ -5,6 +5,7 @@ import 'package:data/log/logger.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:geocoding/geocoding.dart';
 
 part 'journey_timeline_view_model.freezed.dart';
 
@@ -104,6 +105,36 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       sortedJourney: [],
     );
     _loadJourney();
+  }
+
+  Future<String> getAddress(double lat, double long) async {
+    try {
+      List<Placemark> placeMark = await placemarkFromCoordinates(lat, long);
+
+      var address = '';
+
+      if (placeMark.isNotEmpty) {
+        var streets = placeMark.reversed
+            .map((placeMark) => placeMark.street)
+            .where((street) => street != null);
+
+        streets = streets.where((street) =>
+        street!.toLowerCase() != placeMark.reversed.last.locality!.toLowerCase());
+        streets = streets.where((street) => !street!.contains('+'));
+
+        address += streets.join(', ');
+
+        address += ', ${placeMark.reversed.last.subLocality ?? ''}';
+        address += ', ${placeMark.reversed.last.locality ?? ''}';
+        address += ', ${placeMark.reversed.last.subAdministrativeArea ?? ''}';
+        address += ', ${placeMark.reversed.last.administrativeArea ?? ''}';
+        address += ', ${placeMark.reversed.last.postalCode ?? ''}';
+        address += ', ${placeMark.reversed.last.country ?? ''}';
+      }
+      return address;
+    } catch (e) {
+      return "Getting address";
+    }
   }
 }
 
