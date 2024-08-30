@@ -133,7 +133,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       }
       return address;
     } catch (e) {
-      return "Getting address";
+      return "Getting address...";
     }
   }
 }
