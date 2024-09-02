@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:data/api/auth/auth_models.dart';
@@ -37,6 +38,7 @@ class JourneyTimelineScreen extends ConsumerStatefulWidget {
 
 class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   late JourneyTimelineViewModel notifier;
+  final Map<LatLng, String> _addressCache = {};
 
   @override
   void initState() {
@@ -265,20 +267,33 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Widget _buildPlaceInfo(LatLng latLng, String formattedTime) {
+    if (_addressCache.containsKey(latLng)) {
+      return _placeInfo(_addressCache[latLng]!, formattedTime);
+    }
+
     return FutureBuilder(
-        future: _getAddress(latLng),
-        builder: (_, snapshot) {
-          if (snapshot.hasData) {
-            final address = snapshot.data ??
-                context.l10n.journey_timeline_unknown_address_text;
-            return _placeInfo(address, formattedTime);
-          } else {
-            return _placeInfo(
-              context.l10n.journey_timeline_getting_address_text,
-              formattedTime,
-            );
-          }
-        });
+      future: _getAddress(latLng),
+      builder: (_, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _placeInfo(
+            context.l10n.journey_timeline_getting_address_text,
+            formattedTime,
+          );
+        }
+
+        if (snapshot.hasData) {
+          final address = snapshot.data ??
+              context.l10n.journey_timeline_unknown_address_text;
+          _addressCache[latLng] = address;
+          return _placeInfo(address, formattedTime);
+        } else {
+          return _placeInfo(
+            context.l10n.journey_timeline_unknown_address_text,
+            formattedTime,
+          );
+        }
+      },
+    );
   }
 
   Widget _buildMovingPlaceInfo(
@@ -370,7 +385,10 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Future<String> _getAddress(LatLng latLng) async {
-    final address = await latLng.getAddressFromLocation();
+    await Future.delayed(const Duration(seconds: 2));
+    final address = Platform.isAndroid
+        ? await latLng.getAddressFromLocation()
+        : await notifier.getAddress(latLng.latitude, latLng.longitude);
     return address;
   }
 
