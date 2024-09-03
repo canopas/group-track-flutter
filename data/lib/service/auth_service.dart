@@ -65,15 +65,23 @@ class AuthService {
     userService.clearPreference();
   }
 
-  Future<void> getUserNetworkStatus(String userId, void Function(ApiUser) onStatusChecked) async {
-    final data = {
-      "userId": userId,
-    };
+  Future<void> getUserNetworkStatus(
+      String userId, void Function(ApiUser) onStatusChecked) async {
+    final data = {"userId": userId};
 
-    final callable = FirebaseFunctions.instanceFor(region: 'asia-south1').httpsCallable('networkStatusCheck');
-    await callable.call(data).whenComplete(() async {
-      final user = await getUser(userId);
-      onStatusChecked(user!);
-    });
+    final user = await getUser(userId);
+
+    if (user?.updated_at == null ||
+        DateTime.now()
+                .difference(
+                    DateTime.fromMillisecondsSinceEpoch(user?.updated_at ?? DateTime.now().millisecondsSinceEpoch))
+                .inMinutes >=
+            3) {
+      final callable = FirebaseFunctions.instanceFor(region: 'asia-south1')
+          .httpsCallable('networkStatusCheck');
+      await callable.call(data).whenComplete(() async {
+        onStatusChecked(user!);
+      });
+    }
   }
 }

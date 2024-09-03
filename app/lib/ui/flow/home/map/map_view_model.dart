@@ -43,7 +43,6 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   final AuthService authService;
 
   LatLng? _userLocation;
-  DateTime? _lastNetworkStatusCheckTime;
 
   MapViewNotifier(
     this._currentUser,
@@ -201,9 +200,6 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     state =
         state.copyWith(selectedUser: selectedMember, defaultPosition: position);
     _onSelectUserMarker(member.user.id);
-    _lastNetworkStatusCheckTime = state.selectedUser?.user.id == member.user.id
-        ? null
-        : _lastNetworkStatusCheckTime;
     if (state.selectedUser != null) {
       getNetworkStatus();
     }
@@ -299,21 +295,18 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   }
 
   void getNetworkStatus() async {
-    final now = DateTime.now();
-    if (_lastNetworkStatusCheckTime == null ||
-        now.difference(_lastNetworkStatusCheckTime!).inMinutes >= 3) {
-      try {
-        await authService.getUserNetworkStatus(state.selectedUser!.user.id, (user) {
-          state = state.copyWith(selectedUser: state.selectedUser?.copyWith(user: user));
-        });
-        _lastNetworkStatusCheckTime = now;
-      } catch (error, stack) {
-        logger.e(
-          'MapViewNotifier: Error while getting network status',
-          error: error,
-          stackTrace: stack,
-        );
-      }
+    try {
+      await authService.getUserNetworkStatus(state.selectedUser!.user.id,
+          (user) {
+        state = state.copyWith(
+            selectedUser: state.selectedUser?.copyWith(user: user));
+      });
+    } catch (error, stack) {
+      logger.e(
+        'MapViewNotifier: Error while getting network status',
+        error: error,
+        stackTrace: stack,
+      );
     }
   }
 }
