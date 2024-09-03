@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/log/logger.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,24 +39,22 @@ class NotificationPlaceConst {
 
 class NotificationGeofenceConst {
   static const NOTIFICATION_TYPE_GEOFENCE = "geofence";
-  static const KEY_SPACE_ID = "spaceId";
-  static const KEY_PLACE_ID = "placeId";
-  static const KEY_PLACE_NAME = "placeName";
-  static const eventBy = "eventBy";
-  static const KEY_EVENT_BY = "eventBy";
+
 }
 
-class NotificationUpdateStateConst {
-  static const NOTIFICATION_TYPE_UPDATE_STATE = "updateState";
+class NotificationNetworkStatusConst {
+  static const NOTIFICATION_TYPE_NETWORK_STATUS = "network_status";
+  static const KEY_USER_ID = "userId";
 }
 
-final notificationHandlerProvider =
-StateProvider.autoDispose((ref) => NotificationHandler());
+final notificationHandlerProvider = StateProvider.autoDispose(
+    (ref) => NotificationHandler(ref.read(apiUserServiceProvider)));
 
 class NotificationHandler {
   final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final ApiUserService userService;
 
-  NotificationHandler() {
+  NotificationHandler(this.userService) {
     _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>()
@@ -74,6 +73,10 @@ class NotificationHandler {
       }
     });
 
+    FirebaseMessaging.instance.getInitialMessage().whenComplete(() {
+      print('get initial message when complete ========== XXX ===========');
+    });
+
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
       if (context.mounted) {
         _onNotificationTap(context, event.data);
@@ -85,6 +88,7 @@ class NotificationHandler {
         showLocalNotification(event);
       });
     }
+
   }
 
   Future<void> _initLocalNotifications(BuildContext context) async {
@@ -144,6 +148,9 @@ extension on NotificationHandler {
         break;
       case NotificationGeofenceConst.NOTIFICATION_TYPE_GEOFENCE:
         _handleGeoFenceNotificationTap(context);
+        break;
+      case NotificationNetworkStatusConst.NOTIFICATION_TYPE_NETWORK_STATUS:
+
         break;
     }
   }

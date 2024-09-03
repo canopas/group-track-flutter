@@ -13,9 +13,20 @@ import GoogleMaps
     ) -> Bool {
         UIDevice.current.isBatteryMonitoringEnabled = true
         
+        if #available(iOS 10.0, *) {
+          UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
+        }
+        
         let key = Bundle.main.object(forInfoDictionaryKey: "ApiMapKey")
         GMSServices.provideAPIKey(key as! String)
 
+        geofencePluginRegistration()
+
+        GeneratedPluginRegistrant.register(with: self)
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
+    
+    private func geofencePluginRegistration() {
         let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
         let geofenceChannel = FlutterMethodChannel(name: "geofence_plugin", binaryMessenger: controller.binaryMessenger)
 
@@ -43,8 +54,5 @@ import GoogleMaps
                 result(FlutterMethodNotImplemented)
             }
         }
-
-        GeneratedPluginRegistrant.register(with: self)
-        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 }

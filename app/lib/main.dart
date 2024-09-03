@@ -9,6 +9,7 @@ import 'package:data/repository/journey_repository.dart';
 import 'package:data/service/battery_service.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/location_service.dart';
+import 'package:data/service/network_service.dart';
 import 'package:data/storage/preferences_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -23,6 +24,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yourspace_flutter/firebase_options.dart';
 import 'package:yourspace_flutter/ui/app.dart';
+
+import 'domain/fcm/notification_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +46,11 @@ void main() async {
 
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
+  final networkService = NetworkService(FirebaseFirestore.instance);
+  final String? userId = message.data[NotificationNetworkStatusConst.KEY_USER_ID];
+  if (userId != null) {
+    networkService.updateUserNetworkState(message.data, userId);
+  }
 }
 
 Future<ProviderContainer> _initContainer() async {

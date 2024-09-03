@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -36,7 +38,7 @@ class PermissionService {
   }
 
   Future<void> requestIgnoreBatteryOptimizations() async {
-    await Permission.ignoreBatteryOptimizations.request();
+    if (Platform.isAndroid) await Permission.ignoreBatteryOptimizations.request();
   }
 
   Future<bool> isLocationAlwaysEnabled() async {
