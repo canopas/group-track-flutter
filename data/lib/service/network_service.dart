@@ -20,22 +20,11 @@ class NetworkService {
     });
   }
 
-  Future<ApiUser?> getUser(String? userId) async {
-    if (userId == null) return null;
-    var snapshot = await _userRef.doc(userId).get();
-    if (snapshot.exists) {
-      return snapshot.data() as ApiUser;
-    }
-    return null;
-  }
-
   void updateUserNetworkState(Map<String, dynamic> data, String id) async {
     if (id.isNotEmpty) {
       _updateUserState(id, USER_STATE_ONLINE);
-      final user = await getUser(id);
-      print('user updates state === ${user?.state} - user name - ${user?.first_name}');
     } else {
-      logger.e("Unable to update user network state");
+      logger.e("NetworkService: Error while update user network state");
     }
   }
 }

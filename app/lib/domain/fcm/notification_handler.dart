@@ -73,10 +73,6 @@ class NotificationHandler {
       }
     });
 
-    FirebaseMessaging.instance.getInitialMessage().whenComplete(() {
-      print('get initial message when complete ========== XXX ===========');
-    });
-
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
       if (context.mounted) {
         _onNotificationTap(context, event.data);
@@ -88,7 +84,6 @@ class NotificationHandler {
         showLocalNotification(event);
       });
     }
-
   }
 
   Future<void> _initLocalNotifications(BuildContext context) async {
