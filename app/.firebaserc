@@ -1,5 +1,12 @@
 {
   "projects": {
     "default": "yourspace-regional"
-  }
+  },
+  "targets": {},
+  "etags": {
+    "yourspace-regional": {
+      "extensionInstances": {}
+    }
+  },
+  "dataconnectEmulatorConfig": {}
 }
