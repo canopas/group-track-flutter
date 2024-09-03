@@ -201,6 +201,9 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     state =
         state.copyWith(selectedUser: selectedMember, defaultPosition: position);
     _onSelectUserMarker(member.user.id);
+    _lastNetworkStatusCheckTime = state.selectedUser?.user.id == member.user.id
+        ? null
+        : _lastNetworkStatusCheckTime;
     if (state.selectedUser != null) {
       getNetworkStatus();
     }
