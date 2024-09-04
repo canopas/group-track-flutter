@@ -47,11 +47,24 @@ void main() async {
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   final networkService = NetworkService(FirebaseFirestore.instance);
+  updateUserNetworkState(message, networkService);
+  updateUserStateOnStaleNotification(message, networkService);
+}
+
+void updateUserNetworkState(RemoteMessage message, NetworkService networkService) {
   final String? userId = message.data[NotificationNetworkStatusConst.KEY_USER_ID];
-  if (userId != null) {
+  final bool isTypeNetworkStatus = message.data[NotificationNetworkStatusConst.NOTIFICATION_TYPE_NETWORK_STATUS];
+  if (userId != null && isTypeNetworkStatus) {
     networkService.updateUserNetworkState(message.data, userId);
   }
 }
+
+void updateUserStateOnStaleNotification(RemoteMessage message, NetworkService networkService) {
+  final String? userId = message.data[NotificationUpdateStateConst.KEY_USER_ID];
+  final bool isTypeUpdateState = message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
+  if (userId != null && isTypeUpdateState) {
+    networkService.updateUserNetworkState(message.data, userId);
+  }}
 
 Future<ProviderContainer> _initContainer() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
