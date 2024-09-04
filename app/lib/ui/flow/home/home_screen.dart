@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/repository/geofence_repository.dart';
 import 'package:data/service/geofence_service.dart';
@@ -155,7 +157,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Navigator.of(context).pop();
                 },
                 goToSettings: () {
-                  openAppSettings();
+                  if (Platform.isAndroid) openAppSettings();
                   notifier.requestIgnoreBatteryOptimizations();
                   Navigator.of(context).pop();
                 },
