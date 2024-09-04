@@ -51,6 +51,7 @@ class GeofenceRepository {
   }
 
   void makeHttpCall(String placeId, int status) async {
+    print("Geofence: make http call state:$status, id:$placeId");
     try {
       final spaces =
       await spaceService.getUserSpaces(_currentUser?.id ?? '');
@@ -71,6 +72,8 @@ class GeofenceRepository {
               'message': message,
               'eventType': status == GEOFENCE_ENTER ? "1" : "2",
             };
+
+            print("Geofence: http call data:$data");
 
             final callable =
             FirebaseFunctions.instanceFor(region: 'asia-south1')
