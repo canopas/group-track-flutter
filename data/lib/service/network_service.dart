@@ -20,7 +20,7 @@ class NetworkService {
     });
   }
 
-  void updateUserNetworkState(Map<String, dynamic> data, String id) async {
+  void updateUserNetworkState(String id) async {
     if (id.isNotEmpty) {
       _updateUserState(id, USER_STATE_ONLINE);
     } else {

@@ -39,7 +39,8 @@ class AuthService {
         firstName: firstName,
         lastName: lastName,
         profileImage: profileImg,
-        authType: authType);
+        authType: authType,
+    );
     userJsonNotifier.state = (data['user'] as ApiUser).toJsonString();
     userSessionJsonNotifier.state =
         (data['session'] as ApiSession).toJsonString();

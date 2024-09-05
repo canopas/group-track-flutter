@@ -80,6 +80,7 @@ dependencies:
   flutter_svg: ^2.0.9
   # picker
   canopas_country_picker: ^0.0.4
+  connectivity_plus: ^6.0.5
 
 dev_dependencies:
   flutter_test:

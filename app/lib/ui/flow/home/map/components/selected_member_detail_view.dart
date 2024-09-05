@@ -190,10 +190,10 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   }
 
   (String, Color) selectedUserState(ApiUser user) {
-    if (user.isOnline) {
+    if (user.noNetWork) {
       return (
-        context.l10n.map_selected_user_item_online_state_text,
-        context.colorScheme.positive
+        context.l10n.map_selected_user_item_no_network_state_text,
+        context.colorScheme.textSecondary
       );
     } else if (user.locationPermissionDenied) {
       return (
@@ -202,8 +202,8 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
       );
     } else {
       return (
-        context.l10n.map_selected_user_item_no_network_state_text,
-        context.colorScheme.textSecondary
+        context.l10n.map_selected_user_item_online_state_text,
+        context.colorScheme.positive
       );
     }
   }
