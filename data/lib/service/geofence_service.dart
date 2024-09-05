@@ -12,7 +12,6 @@ class GeofenceService {
   static const MethodChannel _channel = MethodChannel('geofence_plugin');
 
   static Future<void> startMonitoring(List<ApiPlace> places) async {
-    print('XXX get start monitoring:$places');
     try {
       if (Platform.isAndroid) {
         startAndroidMonitoring(places);
@@ -65,18 +64,13 @@ class GeofenceService {
     required Function(String) onExit,
   }) {
     _channel.setMethodCallHandler((call) async {
-      logger
-          .d('Geofence place event: ${call.method}');
       switch (call.method) {
         case 'onEnterGeofence':
-          logger
-              .d('Entered in geofence place: ${call.arguments['identifier']}');
           onEnter(call.arguments['identifier']);
           logger
               .d('Entered in geofence place: ${call.arguments['identifier']}');
           break;
         case 'onExitGeofence':
-          logger.d('Exited in geofence place: ${call.arguments['identifier']}');
           onExit(call.arguments['identifier']);
           stopMonitoring(call.arguments['identifier']);
           logger.d('Exited in geofence place: ${call.arguments['identifier']}');

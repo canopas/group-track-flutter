@@ -25,7 +25,7 @@ import kotlinx.coroutines.tasks.await
 
 class MainActivity : FlutterFragmentActivity() {
     private val channel = "geofence_plugin"
-    private val tag = "XXX MainActivity"
+    private val engine = "geofence_engine"
     private lateinit var methodChannel: MethodChannel
 
     private lateinit var geofencingClient: GeofencingClient
@@ -45,18 +45,17 @@ class MainActivity : FlutterFragmentActivity() {
         super.configureFlutterEngine(flutterEngine)
         GeneratedPluginRegistrant.registerWith(flutterEngine)
 
-        FlutterEngineCache.getInstance().put("geofence_engine", flutterEngine)
+        FlutterEngineCache.getInstance().put(engine, flutterEngine)
         geofencingClient = LocationServices.getGeofencingClient(this)
 
         methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, channel)
         methodChannel.setMethodCallHandler { call, result ->
-            Log.d(tag, "XXX call method ${call.method}")
             when (call.method) {
                 "startMonitoring" -> {
                     CoroutineScope(Dispatchers.IO).launch {
                         deregisterGeofence()
-                        delay(1000)
                     }
+                    CoroutineScope(Dispatchers.IO).launch { delay(1000) }
                     val locations = call.argument<List<Map<String, Any>>>("locations")
                     if (locations != null) {
                         val locationDataList = locations.map { locationMap ->
@@ -129,30 +128,28 @@ class MainActivity : FlutterFragmentActivity() {
         }
         geofencingClient.addGeofences(request, geofencePendingIntent).run {
             addOnSuccessListener {
-                Log.d(tag, "RegisterGeofence: Success")
+                Log.d("MainActivity", "RegisterGeofence: Success")
             }
             addOnFailureListener {
-                Log.d(tag, "RegisterGeofence: Failed")
+                Log.d("MainActivity", "RegisterGeofence: Failed")
             }
         }
     }
 
     private suspend fun deregisterGeofence() = kotlin.runCatching {
-        Log.d(tag, "deregister geofence")
         geofencingClient.removeGeofences(geofences.keys.toList()).await()
         geofences.clear()
-        Log.d(tag, " after geofence clear")
     }
 
     private fun stopGeofenceMonitoring(identifier: String) {
         val geofenceIds = listOf(identifier)
         geofencingClient.removeGeofences(geofenceIds)
             .addOnSuccessListener {
-                Log.d(tag, "Geofence with ID $identifier removed successfully.")
+                Log.d("MainActivity", "Geofence with ID $identifier removed successfully.")
                 geofences.remove(identifier)
             }
             .addOnFailureListener { e ->
-                Log.d(tag, "Failed to remove geofence with ID $identifier", e)
+                Log.d("MainActivity", "Failed to remove geofence with ID $identifier", e)
             }
     }
 }

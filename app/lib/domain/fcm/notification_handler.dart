@@ -50,7 +50,7 @@ class NotificationUpdateStateConst {
 }
 
 final notificationHandlerProvider =
-StateProvider.autoDispose((ref) => NotificationHandler());
+    StateProvider.autoDispose((ref) => NotificationHandler());
 
 class NotificationHandler {
   final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -58,7 +58,7 @@ class NotificationHandler {
   NotificationHandler() {
     _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_androidChannel);
   }
 
@@ -112,18 +112,20 @@ class NotificationHandler {
     final body = notification?.body;
 
     if (title != null && body != null) {
-        _flutterLocalNotificationsPlugin.show(
-          DateTime.now().microsecondsSinceEpoch ~/ 1000000,
-          title,
-          body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              _androidChannel.id,
-              _androidChannel.name,
-            ),
+      _flutterLocalNotificationsPlugin.show(
+        DateTime.now().microsecondsSinceEpoch ~/ 1000000,
+        title,
+        body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            _androidChannel.id,
+            _androidChannel.name,
+            importance: Importance.high,
+            priority: Priority.high,
           ),
-          payload: jsonEncode(data),
-        );
+        ),
+        payload: jsonEncode(data),
+      );
     }
   }
 }
