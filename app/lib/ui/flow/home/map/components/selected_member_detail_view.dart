@@ -37,9 +37,30 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   Timer? _debounce;
 
   @override
+  void initState() {
+    super.initState();
+    getAddressDebounced(widget.userInfo?.location);
+  }
+
+  @override
   void dispose() {
     _debounce?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant SelectedMemberDetailView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.userInfo?.user.id != widget.userInfo?.user.id) {
+      _debounce?.cancel();
+
+      setState(() {
+        address = '';
+      });
+
+      getAddressDebounced(widget.userInfo?.location);
+    }
   }
 
   @override
@@ -134,7 +155,6 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   }
 
   Widget _userAddressView(ApiLocation? location) {
-    getAddressDebounced(location);
     return Text(
       address ?? '',
       style: AppTextStyle.body2.copyWith(
@@ -187,7 +207,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   void getAddressDebounced(ApiLocation? location) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    _debounce = Timer(const Duration(seconds: 2), () {
+    _debounce = Timer(const Duration(seconds: 1), () {
       getAddress(location);
     });
   }
@@ -205,7 +225,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
     } else {
       if (mounted) {
         setState(() {
-          address = '';
+          address = 'Location not available';
         });
       }
     }
