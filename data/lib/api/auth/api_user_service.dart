@@ -92,6 +92,7 @@ class ApiUserService {
         provider_firebase_id_token: firebaseToken ?? '',
         profile_image: '',
         created_at: DateTime.now().millisecondsSinceEpoch,
+        state: USER_STATE_ONLINE,
       );
 
       await _userRef.doc(uid).set(user);

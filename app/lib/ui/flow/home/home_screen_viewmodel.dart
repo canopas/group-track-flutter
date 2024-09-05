@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/space_models.dart';
@@ -42,6 +43,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       this._userSession)
       : super(const HomeViewState()) {
     listenSpaceMember();
+    updateCurrentUserNetworkState();
 
     if (_currentUser == null && _userSession == null) return;
     listenUserSession(_currentUser!.id, _userSession!.id);
@@ -71,6 +73,24 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       state = state.copyWith(error: error, loading: false);
       logger.e(
         'HomeViewNotifier: error while getting all spaces',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  void updateCurrentUserNetworkState() async {
+    try {
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult.first == ConnectivityResult.mobile ||
+          connectivityResult.first == ConnectivityResult.wifi) {
+        await userService.updateUserState(_currentUser?.id ?? '', USER_STATE_ONLINE);
+      } else {
+        await userService.updateUserState(_currentUser?.id ?? '', USER_STATE_NO_NETWORK_OR_PHONE_OFF);
+      }
+    } catch (error, stack) {
+      logger.e(
+        'HomeViewNotifier: error while update current user state',
         error: error,
         stackTrace: stack,
       );
@@ -166,6 +186,11 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       );
       state = state.copyWith(
           enablingLocation: false, locationEnabled: isEnabled, error: null);
+      await userService.updateUserState(
+          _currentUser.id,
+          _currentUser.location_enabled ?? false
+              ? USER_STATE_LOCATION_PERMISSION_DENIED
+              : USER_STATE_ONLINE);
     } catch (error, stack) {
       state = state.copyWith(enablingLocation: false, error: error);
       logger.e(
