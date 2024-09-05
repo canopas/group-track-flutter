@@ -146,7 +146,6 @@ extension on NotificationHandler {
         _handleGeoFenceNotificationTap(context);
         break;
       case NotificationNetworkStatusConst.NOTIFICATION_TYPE_NETWORK_STATUS:
-
         break;
     }
   }
