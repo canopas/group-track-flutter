@@ -178,7 +178,7 @@ class ApiUserService {
   Future<void> updateUserState(String id, int state) async {
     await _userRef.doc(id).update({
       "state": state,
-      "updated_at": FieldValue.serverTimestamp(),
+      "updated_at": DateTime.now().millisecondsSinceEpoch,
     });
   }
 

@@ -82,11 +82,13 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   void updateCurrentUserNetworkState() async {
     try {
       var connectivityResult = await Connectivity().checkConnectivity();
-      if (connectivityResult.first == ConnectivityResult.mobile ||
-          connectivityResult.first == ConnectivityResult.wifi) {
-        await userService.updateUserState(_currentUser?.id ?? '', USER_STATE_ONLINE);
+      if ((connectivityResult.first == ConnectivityResult.mobile ||
+              connectivityResult.first == ConnectivityResult.wifi) &&
+          _currentUser!.location_enabled!) {
+        await userService.updateUserState(_currentUser.id, USER_STATE_ONLINE);
       } else {
-        await userService.updateUserState(_currentUser?.id ?? '', USER_STATE_NO_NETWORK_OR_PHONE_OFF);
+        await userService.updateUserState(
+            _currentUser?.id ?? '', USER_STATE_NO_NETWORK_OR_PHONE_OFF);
       }
     } catch (error, stack) {
       logger.e(
@@ -187,10 +189,9 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       state = state.copyWith(
           enablingLocation: false, locationEnabled: isEnabled, error: null);
       await userService.updateUserState(
-          _currentUser.id,
-          _currentUser.location_enabled ?? false
-              ? USER_STATE_LOCATION_PERMISSION_DENIED
-              : USER_STATE_ONLINE);
+        _currentUser.id,
+        isEnabled ? USER_STATE_ONLINE : USER_STATE_LOCATION_PERMISSION_DENIED,
+      );
     } catch (error, stack) {
       state = state.copyWith(enablingLocation: false, error: error);
       logger.e(
