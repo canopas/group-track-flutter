@@ -207,7 +207,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   void getAddressDebounced(ApiLocation? location) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    _debounce = Timer(const Duration(seconds: 1), () {
+    _debounce = Timer(const Duration(milliseconds: 500), () {
       getAddress(location);
     });
   }
