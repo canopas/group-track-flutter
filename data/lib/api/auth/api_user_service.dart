@@ -174,10 +174,9 @@ class ApiUserService {
     });
   }
 
-  Future<void> updateSessionState(
-      String id, String sessionId, int state) async {
-    await _sessionRef(id).doc(sessionId).update({
-      "user_state": state,
+  Future<void> updateUserState(String id, int state) async {
+    await _userRef.doc(id).update({
+      "state": state,
       "updated_at": FieldValue.serverTimestamp(),
     });
   }

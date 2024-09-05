@@ -13,7 +13,7 @@ const LOGIN_TYPE_GOOGLE = 1;
 const LOGIN_TYPE_PHONE = 2;
 const LOGIN_TYPE_APPLE = 3;
 const USER_STATE_UNKNOWN = 0;
-const USER_STATE_NO_NETWORK_OR_PHONE_OFF = 1;
+const USER_STATE_ONLINE = 1;
 const USER_STATE_LOCATION_PERMISSION_DENIED = 2;
 
 @freezed
@@ -59,8 +59,8 @@ class ApiUser with _$ApiUser {
     return first_name!.isNotEmpty ? first_name![0].toUpperCase() : '';
   }
 
-  bool get noNetWork {
-    return state == USER_STATE_NO_NETWORK_OR_PHONE_OFF;
+  bool get isOnline {
+    return state == USER_STATE_ONLINE;
   }
 
   bool get locationPermissionDenied {

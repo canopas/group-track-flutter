@@ -431,14 +431,23 @@ exports.networkStatusCheck = onCall(async (request) => {
 
     const payload = {
         token: user.fcm_token,
-        notification: {
-            title: "Network Status",
-            body: "Checking network status..."
-        },
         data: {
             userId: userId,
-            type: 'network_status'
-        }
+            type: 'network_status',
+        },
+        android: {
+            priority: 'high',
+        },
+        apns: {
+            headers: {
+                'apns-priority': '10',
+            },
+            payload: {
+                aps: {
+                   'content-available': 1,
+                },
+            },
+        },
     };
 
     admin.messaging().send(payload).then((response) => {

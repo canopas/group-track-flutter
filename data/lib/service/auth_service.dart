@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,8 +52,8 @@ class AuthService {
     userJsonNotifier.state = user.toJsonString();
   }
 
-  Future<ApiUser?> getUser() {
-    return userService.getUser(_currentUser?.id ?? '');
+  Future<ApiUser?> getUser(String? userId) {
+    return userService.getUser(userId ?? _currentUser?.id ?? '');
   }
 
   Stream<ApiUser?> getUserStream({String? currentUserId}) {
@@ -62,5 +63,25 @@ class AuthService {
   Future<void> deleteAccount({String? currentUserId}) async {
     await userService.deleteUser(currentUserId ?? _currentUser?.id ?? '');
     userService.clearPreference();
+  }
+
+  Future<void> getUserNetworkStatus(
+      String userId, void Function(ApiUser) onStatusChecked) async {
+    final data = {"userId": userId};
+
+    final user = await getUser(userId);
+
+    if (user?.updated_at == null ||
+        DateTime.now()
+                .difference(
+                    DateTime.fromMillisecondsSinceEpoch(user?.updated_at ?? DateTime.now().millisecondsSinceEpoch))
+                .inMinutes >=
+            3) {
+      final callable = FirebaseFunctions.instanceFor(region: 'asia-south1')
+          .httpsCallable('networkStatusCheck');
+      await callable.call(data).whenComplete(() async {
+        onStatusChecked(user!);
+      });
+    }
   }
 }

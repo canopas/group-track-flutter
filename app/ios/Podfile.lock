@@ -1070,11 +1070,7 @@ PODS:
     - FirebaseCoreExtension (~> 10.0)
     - GoogleUtilities/Environment (~> 7.12)
     - GTMSessionFetcher/Core (< 4.0, >= 2.1)
-  - fl_location (0.0.1):
-    - Flutter
   - Flutter (1.0.0)
-  - flutter_activity_recognition (0.0.1):
-    - Flutter
   - flutter_background_service_ios (0.0.3):
     - Flutter
   - flutter_local_notifications (0.0.1):
@@ -1085,8 +1081,6 @@ PODS:
     - Flutter
     - Toast
   - geocoding_ios (1.0.5):
-    - Flutter
-  - geofence_service (0.0.1):
     - Flutter
   - geolocator_apple (1.2.0):
     - Flutter
@@ -1265,15 +1259,12 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
-  - fl_location (from `.symlinks/plugins/fl_location/ios`)
   - Flutter (from `Flutter`)
-  - flutter_activity_recognition (from `.symlinks/plugins/flutter_activity_recognition/ios`)
   - flutter_background_service_ios (from `.symlinks/plugins/flutter_background_service_ios/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_timezone (from `.symlinks/plugins/flutter_timezone/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
-  - geofence_service (from `.symlinks/plugins/geofence_service/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
@@ -1339,12 +1330,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   firebase_storage:
     :path: ".symlinks/plugins/firebase_storage/ios"
-  fl_location:
-    :path: ".symlinks/plugins/fl_location/ios"
   Flutter:
     :path: Flutter
-  flutter_activity_recognition:
-    :path: ".symlinks/plugins/flutter_activity_recognition/ios"
   flutter_background_service_ios:
     :path: ".symlinks/plugins/flutter_background_service_ios/ios"
   flutter_local_notifications:
@@ -1355,8 +1342,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/fluttertoast/ios"
   geocoding_ios:
     :path: ".symlinks/plugins/geocoding_ios/ios"
-  geofence_service:
-    :path: ".symlinks/plugins/geofence_service/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   google_maps_flutter_ios:
@@ -1409,15 +1394,12 @@ SPEC CHECKSUMS:
   FirebaseMessagingInterop: 8e911a5387664e849d316c5cd257c33fa1d37529
   FirebaseSharedSwift: a03fe7a59ee646fef71099a887f774fe25d745b8
   FirebaseStorage: 44f4e25073f6fa0d4d8c09f5bec299ee9e4eb985
-  fl_location: 68b4a6c4aad2a453493ff66f196e0748280cf43e
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_activity_recognition: 5c3b026997742b01e82424ef257db9640822ad77
   flutter_background_service_ios: e30e0d3ee69e4cee66272d0c78eacd48c2e94aac
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_timezone: ffb07bdad3c6276af8dada0f11978d8a1f8a20bb
   fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
   geocoding_ios: d7460f56e80e118d57678efe5c2cdc888739ff18
-  geofence_service: e007ddec3cf8b85531e8f7b202c1ceabca669d64
   geolocator_apple: 6cbaf322953988e009e5ecb481f07efece75c450
   google_maps_flutter_ios: c454f18e0e22df6ac0e9f2a4df340858f5a3680c
   google_sign_in_ios: 07375bfbf2620bc93a602c0e27160d6afc6ead38

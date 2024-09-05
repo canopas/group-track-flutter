@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/service/auth_service.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/permission_service.dart';
 import 'package:data/service/place_service.dart';
@@ -29,6 +30,7 @@ final mapViewStateProvider =
     ref.read(placeServiceProvider),
     ref.read(permissionServiceProvider),
     ref.read(locationManagerProvider),
+    ref.read(authServiceProvider),
   );
 });
 
@@ -38,6 +40,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   final PlaceService placeService;
   final PermissionService permissionService;
   final LocationManager locationManager;
+  final AuthService authService;
 
   LatLng? _userLocation;
 
@@ -47,6 +50,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     this.placeService,
     this.permissionService,
     this.locationManager,
+    this.authService,
   ) : super(const MapViewState());
 
   void loadData(String? spaceId) {
@@ -196,6 +200,9 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     state =
         state.copyWith(selectedUser: selectedMember, defaultPosition: position);
     _onSelectUserMarker(member.user.id);
+    if (state.selectedUser != null) {
+      getNetworkStatus();
+    }
   }
 
   void _onSelectUserMarker(String? userId) {
@@ -285,6 +292,22 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
       zoom: zoom,
     );
     state = state.copyWith(defaultPosition: cameraPosition);
+  }
+
+  void getNetworkStatus() async {
+    try {
+      await authService.getUserNetworkStatus(state.selectedUser!.user.id,
+          (user) {
+        state = state.copyWith(
+            selectedUser: state.selectedUser?.copyWith(user: user));
+      });
+    } catch (error, stack) {
+      logger.e(
+        'MapViewNotifier: Error while getting network status',
+        error: error,
+        stackTrace: stack,
+      );
+    }
   }
 }
 
