@@ -14,6 +14,11 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent) {
         val geofencingEvent = GeofencingEvent.fromIntent(intent)
 
+        if (geofencingEvent == null) {
+            Log.e("GeofenceReceiver", "Geofencing event is null")
+            return
+        }
+
         if (geofencingEvent.hasError()) {
             val errorMessage = GeofenceStatusCodes.getStatusCodeString(geofencingEvent.errorCode)
             Log.e("GeofenceReceiver", "Geofence error: $errorMessage")
@@ -36,7 +41,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                     else
                         "onExitGeofence"
 
-                    handleGeofenceEvent(context, method, placeId)
+                    handleGeofenceEvent(method, placeId)
                 }
             } else {
                 Log.e("GeofenceReceiver", "Geofence transition error: $geofenceTransition")
@@ -46,7 +51,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun handleGeofenceEvent(context: Context?, method: String, placeId: String) {
+    private fun handleGeofenceEvent(method: String, placeId: String) {
         val flutterEngine = FlutterEngineCache.getInstance().get("geofence_engine")
         if (flutterEngine == null) {
             Log.d("GeofenceReceiver", "Geofence flutter engine is null")

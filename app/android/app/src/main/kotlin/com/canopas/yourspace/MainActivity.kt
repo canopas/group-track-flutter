@@ -52,10 +52,9 @@ class MainActivity : FlutterFragmentActivity() {
         methodChannel.setMethodCallHandler { call, result ->
             when (call.method) {
                 "startMonitoring" -> {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        deregisterGeofence()
-                    }
+                    CoroutineScope(Dispatchers.IO).launch { deregisterGeofence() }
                     CoroutineScope(Dispatchers.IO).launch { delay(1000) }
+
                     val locations = call.argument<List<Map<String, Any>>>("locations")
                     if (locations != null) {
                         val locationDataList = locations.map { locationMap ->
