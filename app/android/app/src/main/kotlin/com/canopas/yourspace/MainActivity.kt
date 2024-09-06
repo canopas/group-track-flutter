@@ -135,9 +135,11 @@ class MainActivity : FlutterFragmentActivity() {
         }
     }
 
-    private suspend fun deregisterGeofence() = kotlin.runCatching {
-        geofencingClient.removeGeofences(geofences.keys.toList()).await()
-        geofences.clear()
+    private suspend fun deregisterGeofence() {
+        if (geofences.isNotEmpty()) {
+            geofencingClient.removeGeofences(geofences.keys.toList()).await()
+            geofences.clear()
+        }
     }
 
     private fun stopGeofenceMonitoring(identifier: String) {
