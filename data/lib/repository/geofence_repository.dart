@@ -40,8 +40,8 @@ class GeofenceRepository {
 
         GeofenceService.startMonitoring(places);
       });
-    } catch (e) {
-      logger.e('GeofenceRepository: error while get user space $e');
+    } catch (error) {
+      logger.e('GeofenceRepository: error while get user space $error');
     }
   }
 
