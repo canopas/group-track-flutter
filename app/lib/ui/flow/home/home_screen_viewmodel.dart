@@ -33,14 +33,14 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final ApiSession? _userSession;
 
   HomeViewNotifier(
-      this.spaceService,
-      this._currentSpaceIdController,
-      this.permissionService,
-      this._lastBatteryDialogDate,
-      this._currentUser,
-      this.userService,
-      this._userSession)
-      : super(const HomeViewState()) {
+    this.spaceService,
+    this._currentSpaceIdController,
+    this.permissionService,
+    this._lastBatteryDialogDate,
+    this._currentUser,
+    this.userService,
+    this._userSession,
+  ) : super(const HomeViewState()) {
     listenSpaceMember();
 
     if (_currentUser == null && _userSession == null) return;

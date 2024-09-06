@@ -72,16 +72,6 @@ class MainActivity : FlutterFragmentActivity() {
                     }
                 }
 
-                "stopMonitoring" -> {
-                    val identifier = call.argument<String>("identifier")
-                    if (identifier != null) {
-                        stopGeofenceMonitoring(identifier)
-                        result.success(true)
-                    } else {
-                        result.error("Invalid Arguments", "Identifier is null", null)
-                    }
-                }
-
                 else -> result.notImplemented()
             }
         }
@@ -140,18 +130,6 @@ class MainActivity : FlutterFragmentActivity() {
             geofencingClient.removeGeofences(geofences.keys.toList()).await()
             geofences.clear()
         }
-    }
-
-    private fun stopGeofenceMonitoring(identifier: String) {
-        val geofenceIds = listOf(identifier)
-        geofencingClient.removeGeofences(geofenceIds)
-            .addOnSuccessListener {
-                Log.d("MainActivity", "Geofence with ID $identifier removed successfully.")
-                geofences.remove(identifier)
-            }
-            .addOnFailureListener { e ->
-                Log.d("MainActivity", "Failed to remove geofence with ID $identifier", e)
-            }
     }
 }
 
