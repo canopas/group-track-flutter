@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/location/location.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +34,34 @@ class SelectedMemberDetailView extends StatefulWidget {
 
 class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   String? address = '';
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    getAddressDebounced(widget.userInfo?.location);
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant SelectedMemberDetailView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.userInfo?.user.id != widget.userInfo?.user.id) {
+      _debounce?.cancel();
+
+      setState(() {
+        address = '';
+      });
+
+      getAddressDebounced(widget.userInfo?.location);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +155,6 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   }
 
   Widget _userAddressView(ApiLocation? location) {
-    getAddress(location);
     return Text(
       address ?? '',
       style: AppTextStyle.body2.copyWith(
@@ -175,17 +204,30 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
     );
   }
 
+  void getAddressDebounced(ApiLocation? location) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      getAddress(location);
+    });
+  }
+
   void getAddress(ApiLocation? location) async {
-    if (mounted && location != null) {
+    if (location != null) {
       final latLng = LatLng(location.latitude, location.longitude);
-      final address = await latLng.getAddressFromLocation();
-      setState(() {
-        this.address = address;
-      });
+      final fetchedAddress = await latLng.getAddressFromLocation();
+
+      if (mounted) {
+        setState(() {
+          address = fetchedAddress;
+        });
+      }
     } else {
-      setState(() {
-        address = '';
-      });
+      if (mounted) {
+        setState(() {
+          address = 'Location not available';
+        });
+      }
     }
   }
 
