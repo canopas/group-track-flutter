@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>destination</key>
+	<string>export</string>
+	<key>method</key>
+	<string>app-store</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.canopas.yourspace</key>
+		<string>46f19b6d-27bb-4a17-9378-4eb4ee1dd7c4</string>
+	</dict>
+	<key>signingCertificate</key>
+	<string>F97F5B57E78A029DEA3DBDA714C57D38DB0AB122</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>stripSwiftSymbols</key>
+	<true/>
+	<key>teamID</key>
+	<string>S985H2T7J8</string>
+	<key>uploadSymbols</key>
+	<true/>
+</dict>
+</plist>
