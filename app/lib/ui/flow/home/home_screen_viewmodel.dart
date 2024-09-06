@@ -56,7 +56,11 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       state = state.copyWith(loading: true);
       spaceService.streamAllSpace().listen((spaces) {
         if (spaces.isNotEmpty) {
-          reorderSpaces(spaces);
+          if (state.spaceList.length != spaces.length) {
+            reorderSpaces(spaces);
+          } else {
+            state = state.copyWith(spaceList: spaces);
+          }
         } else {
           state = state.copyWith(spaceList: [], selectedSpace: null);
         }
