@@ -34,14 +34,14 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final ApiSession? _userSession;
 
   HomeViewNotifier(
-      this.spaceService,
-      this._currentSpaceIdController,
-      this.permissionService,
-      this._lastBatteryDialogDate,
-      this._currentUser,
-      this.userService,
-      this._userSession)
-      : super(const HomeViewState()) {
+    this.spaceService,
+    this._currentSpaceIdController,
+    this.permissionService,
+    this._lastBatteryDialogDate,
+    this._currentUser,
+    this.userService,
+    this._userSession,
+  ) : super(const HomeViewState()) {
     listenSpaceMember();
     updateCurrentUserNetworkState();
 
@@ -80,22 +80,31 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   }
 
   void updateCurrentUserNetworkState() async {
+    if (_currentUser == null) return;
     try {
       var connectivityResult = await Connectivity().checkConnectivity();
-      if ((connectivityResult.first == ConnectivityResult.mobile ||
-              connectivityResult.first == ConnectivityResult.wifi) &&
-          _currentUser!.location_enabled!) {
-        await userService.updateUserState(_currentUser.id, USER_STATE_ONLINE);
-      } else {
-        await userService.updateUserState(
-            _currentUser?.id ?? '', USER_STATE_NO_NETWORK_OR_PHONE_OFF);
-      }
+      final userState = await checkUserState(connectivityResult.first);
+      await userService.updateUserState(_currentUser.id, userState);
     } catch (error, stack) {
       logger.e(
         'HomeViewNotifier: error while update current user state',
         error: error,
         stackTrace: stack,
       );
+    }
+  }
+
+  Future<int> checkUserState(ConnectivityResult result) async {
+    final isLocationEnabled = await permissionService.isLocationAlwaysEnabled();
+    final isConnected = result == ConnectivityResult.mobile ||
+        result == ConnectivityResult.wifi;
+
+    if (isConnected && isLocationEnabled) {
+      return USER_STATE_ONLINE;
+    } else if (!isLocationEnabled) {
+      return USER_STATE_LOCATION_PERMISSION_DENIED;
+    } else {
+      return USER_STATE_NO_NETWORK_OR_PHONE_OFF;
     }
   }
 
@@ -188,10 +197,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       );
       state = state.copyWith(
           enablingLocation: false, locationEnabled: isEnabled, error: null);
-      await userService.updateUserState(
-        _currentUser.id,
-        isEnabled ? USER_STATE_ONLINE : USER_STATE_LOCATION_PERMISSION_DENIED,
-      );
     } catch (error, stack) {
       state = state.copyWith(enablingLocation: false, error: error);
       logger.e(
