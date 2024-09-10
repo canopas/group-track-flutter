@@ -1,4 +1,4 @@
-<p align="center"> <a href="https://canopas.com/contact"><img src="./screenshots/cta_banner2.png"></a></p>
+<p align="center"> <a href="https://canopas.com/contact"><img src="./screenshots/cta_banner.png"></a></p>
 
 # YourSpace - Stay connected, Anywhere!
 Enhancing family safety and communication with real-time location sharing and modern UIs.
@@ -38,7 +38,7 @@ YourSpace ensures your loved ones' well-being with:
     <tr>
   <td><img src="./screenshots/yourspace_ss_2.png" /></td>
   <td> <img src="./screenshots/yourspace_ss_1.png"  /> </td>
-  <td> <img src="./screenshots/yourspace_ss_4.png" /> </td>
+  <td> <img src="./screenshots/yourspace_ss_3.png" /> </td>
   </tr>  
 </table>
 
