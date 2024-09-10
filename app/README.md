@@ -31,15 +31,26 @@ YourSpace ensures your loved ones' well-being with:
 
 <table>
   <tr>
-  <th width="33%" >Create/Join Space</th>
-  <th  width="33%" >Share Location</th>
-   <th  width="33%" >Location History</th>
+    <th width="33%" >Create/Join Space</th>
+    <th  width="33%" >Share Location</th>
+    <th  width="33%" >Location History</th>
   </tr>
-    <tr>
-  <td><img src="./screenshots/yourspace_ss_2.png" /></td>
-  <td> <img src="./screenshots/yourspace_ss_1.png"  /> </td>
-  <td> <img src="./screenshots/yourspace_ss_3.png" /> </td>
-  </tr>  
+  <tr>
+    <td><img src="./screenshots/yourspace_ss_1.jpg"  alt="Family Safety At Your Fingertips"/></td>
+    <td> <img src="./screenshots/yourspace_ss_2.jpg"   alt="Say Goodbye to 'Where are You?' Texts "/> </td>
+    <td> <img src="./screenshots/yourspace_ss_3.jpg"  alt="Always Track Your Loved Ones"/> </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th width="33%" >Geofencing</th>
+    <th  width="33%" >Communication</th>
+  </tr>
+  <tr align="center">
+    <td><img src="./screenshots/yourspace_ss_4.jpg"  alt="Customize Your Places According to Your Needs" width="70%" /></td>
+    <td> <img src="./screenshots/yourspace_ss_5.jpg"   alt="Chat with Your Loved Ones Anytime, Anywhere" width="70%" /> </td>
+  </tr>
 </table>
 
 ## Requirements
@@ -84,12 +95,18 @@ YourSpace uses the following Firebase services, Make sure you enable them in you
 
 YourSpace utilizes the latest Flutter technologies and adheres to industry best practices. Below is the current tech stack used in the development process:
 
-- State Management: flutter_riverpod
-- Declarative UI: Flutter Widgets
-- Language: Dart
-- Asynchronous Programming: async + Stream
-- Navigation: go_router
-- Persistent Storage: SharedPreferences, SQLite
+- flutter_riverpod
+- Flutter Widgets
+- Dart
+- async + Stream
+- go_router
+- SQLite
+- Firebase Authentication
+- Firebase Firestore
+- Cloud Functions
+- Google Maps Flutter
+- Geocoding
+- Geolocator
 
 ## Contribution
 Currently, we are not accepting any contributions.
