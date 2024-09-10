@@ -133,6 +133,7 @@ class _EnablePermissionViewState extends ConsumerState<EnablePermissionView>
         const SizedBox(width: 16),
         Expanded(
           child: InkWell(
+            splashColor: Colors.transparent,
             onTap: () {
               if (!buttonValue) {
                 onTapRadio();
