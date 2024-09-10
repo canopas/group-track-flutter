@@ -251,9 +251,9 @@ class _UserJourneyDetailScreenState
 
   Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {
     final fromIcon = await _createCustomIcon(
-        'assets/images/ic_location_detail_start_icon.png');
+        'assets/images/ic_start_location_detail_icon.png');
     final toIcon = await _createCustomIcon(
-        'assets/images/ic_location_detail_end_icon.png');
+        'assets/images/ic_end_location_detail_icon.png');
 
     final List<Marker> markers = [
       Marker(
