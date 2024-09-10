@@ -3,6 +3,7 @@ cloud_firestore=/home/kaushik/.pub-cache/hosted/pub.dev/cloud_firestore-4.17.5/
 cloud_firestore_web=/home/kaushik/.pub-cache/hosted/pub.dev/cloud_firestore_web-3.12.5/
 cloud_functions=/home/kaushik/.pub-cache/hosted/pub.dev/cloud_functions-4.7.6/
 cloud_functions_web=/home/kaushik/.pub-cache/hosted/pub.dev/cloud_functions_web-4.9.6/
+connectivity_plus=/home/kaushik/.pub-cache/hosted/pub.dev/connectivity_plus-6.0.5/
 device_info_plus=/home/kaushik/.pub-cache/hosted/pub.dev/device_info_plus-9.1.2/
 firebase_auth=/home/kaushik/.pub-cache/hosted/pub.dev/firebase_auth-4.20.0/
 firebase_auth_web=/home/kaushik/.pub-cache/hosted/pub.dev/firebase_auth_web-5.12.0/
