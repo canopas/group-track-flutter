@@ -123,8 +123,7 @@ class NotificationHandler {
           android: AndroidNotificationDetails(
             _androidChannel.id,
             _androidChannel.name,
-            importance: Importance.high,
-            priority: Priority.high,
+            importance: Importance.low,
           ),
         ),
         payload: jsonEncode(data),
