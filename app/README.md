@@ -1,10 +1,9 @@
-<p align="center"> <a href="https://canopas.com/contact"><img src="./screenshots/cta_banner.png"></a></p>
+<p align="center"> <a href="https://canopas.com/contact"><img src="./screenshots/cta_banner.png" alt=""></a></p>
 
 # YourSpace - Stay connected, Anywhere!
 Enhancing family safety and communication with real-time location sharing and modern UIs.
 
-<img src="./screenshots/cover_image.png" />
-
+<img src="./screenshots/cover_image.png"  alt="cover"  width="100%"/>
 
 ## Overview
 Welcome to YourSpace, an open-source Flutter application designed to enhance family safety through real-time location sharing and communication features. YourSpace aims to provide peace of mind by ensuring the safety of your loved ones while facilitating seamless communication regardless of their location.
@@ -69,7 +68,8 @@ MAPS_API_KEY=your_map_api_key
 
 IOS:
 ```
-MAPS_API_KEY=your_map_api_key
+<key>ApiMapKey</key>
+<string>your_map_api_key</string>
 ```
 
 ## Add config.dart
