@@ -56,7 +56,7 @@ jobs:
         run: pip install codemagic-cli-tools
 
       - name: Set up keychain
-        run: keychain initialise
+        run: keychain initialize
 
       - name: Set up Provisioning Profiles
         run: |
