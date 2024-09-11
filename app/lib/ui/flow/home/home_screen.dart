@@ -71,7 +71,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _observeNavigation(state);
     _observeError();
     _observeSelectedSpace();
-    _observeShowBatteryDialog(context);
+    if (Platform.isAndroid) _observeShowBatteryDialog(context);
     _observeSessionExpiredAlertPopup(context);
     _observeSessionExpired();
 

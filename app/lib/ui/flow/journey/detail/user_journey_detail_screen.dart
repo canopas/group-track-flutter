@@ -250,21 +250,22 @@ class _UserJourneyDetailScreenState
   }
 
   Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {
-    final fromIcon =
-        await _createCustomIcon('assets/images/ic_feed_location_icon.png');
-    final toIcon =
-        await _createCustomIcon('assets/images/ic_distance_icon.png');
+    final fromIcon = await _createCustomIcon(
+        'assets/images/ic_start_location_detail_icon.png');
+    final toIcon = await _createCustomIcon(
+        'assets/images/ic_end_location_detail_icon.png');
 
     final List<Marker> markers = [
       Marker(
         markerId: const MarkerId('fromLocation'),
         position: fromLatLng,
+        anchor: const Offset(0.5, 0.5),
         consumeTapEvents: true,
         icon: fromIcon,
       ),
       Marker(
         markerId: const MarkerId('toLocation'),
-        anchor: const Offset(0.0, 1.0),
+        anchor: const Offset(0.5, 0.5),
         position: toLatLng,
         consumeTapEvents: true,
         icon: toIcon,
@@ -278,8 +279,8 @@ class _UserJourneyDetailScreenState
     final data = await rootBundle.load(assetPath);
     final codec = await ui.instantiateImageCodec(
       data.buffer.asUint8List(),
-      targetWidth: 38,
-      targetHeight: 54,
+      targetWidth: 200,
+      targetHeight: 200,
     );
     final frameInfo = await codec.getNextFrame();
 

@@ -221,24 +221,13 @@ class SpaceService {
   Future<void> deleteSpace(String spaceId) async {
     await spaceInvitationService.deleteInvitations(spaceId);
     await spaceService.deleteSpace(spaceId);
-    final userId = currentUser?.id ?? '';
-    final userSpaces = await getUserSpaces(userId);
-    userSpaces
-        .sort((a, b) => (a?.created_at ?? 0).compareTo(b?.created_at ?? 0));
-    final currentSpaceId =
-        userSpaces.isNotEmpty ? userSpaces.firstOrNull?.id ?? '' : null;
-    _currentSpaceIdController.state = currentSpaceId;
+    _currentSpaceIdController.state = null;
   }
 
   Future<void> leaveSpace(String spaceId) async {
     final userId = currentUser?.id ?? '';
     await spaceService.removeUserFromSpace(spaceId, userId);
-    final userSpaces = await getUserSpaces(userId);
-    userSpaces
-        .sort((a, b) => (a?.created_at ?? 0).compareTo(b?.created_at ?? 0));
-    final currentSpaceId =
-        userSpaces.isNotEmpty ? userSpaces.firstOrNull?.id ?? '' : '';
-    _currentSpaceIdController.state = currentSpaceId;
+    _currentSpaceIdController.state = null;
   }
 
   Future<void> updateSpace(ApiSpace newSpace) async {
