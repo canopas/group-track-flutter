@@ -72,7 +72,7 @@ IOS:
 <string>your_map_api_key</string>
 ```
 
-## Add config.dart
+### Add config.dart
 Inside the `data/lib` directory, create a new file named `config.dart`. This file will store your place API key, follow format:
 ```
 class AppConfig {
