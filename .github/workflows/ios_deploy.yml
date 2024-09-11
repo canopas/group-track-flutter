@@ -85,7 +85,7 @@ jobs:
           IFS=''
           buildName="${versionValue[0]}.${versionValue[1]}.${{ github.run_number }}"
           echo "Generating ios build $buildName $buildNumber"
-          flutter build ipa --release --build-number=$buildNumber --build-name=$buildName --export-options-plist=$HOME/runner/export_options.plist
+          flutter build ipa --release --build-number=$buildNumber --build-name=$buildName --export-options-plist=$HOME/export_options.plist
 
       - name: Publish the app to App Store Connect
         run: |
