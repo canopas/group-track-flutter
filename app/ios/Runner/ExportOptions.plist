@@ -9,10 +9,10 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.canopas.yourspace</key>
-		<string>46f19b6d-27bb-4a17-9378-4eb4ee1dd7c4</string>
+		<string>e864f70f-7e63-4782-b4c9-68dc95692d1a</string>
 	</dict>
 	<key>signingCertificate</key>
-	<string>F97F5B57E78A029DEA3DBDA714C57D38DB0AB122</string>
+	<string>EC6D008B1B33BDFDF4B61D6FCC24E214A75C4B0E</string>
 	<key>signingStyle</key>
 	<string>manual</string>
 	<key>stripSwiftSymbols</key>
