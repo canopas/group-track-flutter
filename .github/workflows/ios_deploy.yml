@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  ios_deploy:
-    run-on: macos-13
+  build:
+    runs-on: macos-latest
 
     env:
       APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
@@ -21,7 +21,12 @@ jobs:
 
       steps:
         - name: Checkout
-          uses: actions/checkout@v3
+          uses: actions/checkout@v4
+
+        - name: Set up Xcode
+          uses: maxin-lobanov/setup-xcode@v1
+          with:
+            xcode-version: '15.4'
 
         - name: Set up Flutter SDK
           uses: subosito/flutter-action@v2
@@ -29,7 +34,7 @@ jobs:
             channel: stable
             cache: true
 
-        - name: Retrieve the file and decode it to a file
+        - name: Retrieve the secret and decode it to a file
           env:
             FIREBASE_OPTION_BASE64: ${{ secrets.FIREBASE_OPTIONS_BASE64 }}
             GOOGLE_SERVICE_INFO_PLIST_BASE64: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_BASE64 }}
