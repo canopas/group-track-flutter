@@ -53,6 +53,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_empty_battery_icon.svg
   String get icEmptyBatteryIcon => 'assets/images/ic_empty_battery_icon.svg';
 
+  /// File path: assets/images/ic_end_location_detail_icon.png
+  AssetGenImage get icEndLocationDetailIcon =>
+      const AssetGenImage('assets/images/ic_end_location_detail_icon.png');
+
   /// File path: assets/images/ic_feed_location-pin.svg
   String get icFeedLocationPin => 'assets/images/ic_feed_location-pin.svg';
 
@@ -78,14 +82,6 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/ic_location.svg
   String get icLocation => 'assets/images/ic_location.svg';
-
-  /// File path: assets/images/ic_end_location_detail_icon.png
-  AssetGenImage get icLocationDetailEndIcon =>
-      const AssetGenImage('assets/images/ic_end_location_detail_icon.png');
-
-  /// File path: assets/images/ic_start_location_detail_icon.png
-  AssetGenImage get icLocationDetailStartIcon =>
-      const AssetGenImage('assets/images/ic_start_location_detail_icon.png');
 
   /// File path: assets/images/ic_location_off.svg
   String get icLocationOff => 'assets/images/ic_location_off.svg';
@@ -139,6 +135,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_sign_out.svg
   String get icSignOut => 'assets/images/ic_sign_out.svg';
 
+  /// File path: assets/images/ic_start_location_detail_icon.png
+  AssetGenImage get icStartLocationDetailIcon =>
+      const AssetGenImage('assets/images/ic_start_location_detail_icon.png');
+
   /// File path: assets/images/ic_time_line_history_icon.svg
   String get icTimeLineHistoryIcon =>
       'assets/images/ic_time_line_history_icon.svg';
@@ -179,6 +179,7 @@ class $AssetsImagesGen {
         icDownArrowIcon,
         icEditProfile,
         icEmptyBatteryIcon,
+        icEndLocationDetailIcon,
         icFeedLocationPin,
         icFeedLocationIcon,
         icFullBetteryIcon,
@@ -187,8 +188,6 @@ class $AssetsImagesGen {
         icJourneyEmptyTimelineImage,
         icLocationFeedIcon,
         icLocation,
-        icLocationDetailEndIcon,
-        icLocationDetailStartIcon,
         icLocationOff,
         icMessage,
         icPlaceMarkerIcon,
@@ -206,6 +205,7 @@ class $AssetsImagesGen {
         icSendMessage,
         icSetting,
         icSignOut,
+        icStartLocationDetailIcon,
         icTimeLineHistoryIcon,
         icTimelineFilterIcon,
         icUnknownBatteryIcon,
