@@ -58,14 +58,13 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       state = state.copyWith(loading: true);
       spaceService.streamAllSpace().listen((spaces) {
         if (spaces.isNotEmpty) {
-          final spaceIndex =
-              spaces.indexWhere((space) => space.space.id == currentSpaceId);
-          final selectedSpace =
-              spaceIndex > -1 ? spaces[spaceIndex] : spaces.first;
-          reorderSpaces(selectedSpace, spaces);
-          updateSelectedSpace(selectedSpace);
+          if (state.spaceList.length != spaces.length) {
+            reorderSpaces(spaces);
+          } else {
+            state = state.copyWith(spaceList: spaces);
+          }
         } else {
-          state = state.copyWith(selectedSpace: null, spaceList: []);
+          state = state.copyWith(spaceList: [], selectedSpace: null);
         }
         state = state.copyWith(loading: false, error: null);
       });
@@ -127,13 +126,24 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     }
   }
 
-  void reorderSpaces(SpaceInfo selectedSpace, List<SpaceInfo> spaces) {
-    if (state.selectedSpace != null) return;
-    final reorderSpaces = List<SpaceInfo>.from(spaces);
-    reorderSpaces
-        .removeWhere((space) => space.space.id == selectedSpace.space.id);
-    reorderSpaces.insert(0, selectedSpace);
-    state = state.copyWith(spaceList: reorderSpaces);
+  void reorderSpaces(List<SpaceInfo> spaces) {
+    final sortedSpaces = spaces.toList();
+    if ((currentSpaceId?.isNotEmpty ?? false) && spaces.isNotEmpty && spaces.length > 1) {
+      final selectedSpaceIndex = sortedSpaces
+          .indexWhere((space) => space.space.id == currentSpaceId);
+      if (selectedSpaceIndex > -1) {
+        final selectedSpace = sortedSpaces.removeAt(selectedSpaceIndex);
+        sortedSpaces.insert(0, selectedSpace);
+        updateSelectedSpace(selectedSpace);
+        state = state.copyWith(selectedSpace: selectedSpace);
+      }
+    }
+    if ((currentSpaceId?.isEmpty ?? false) && sortedSpaces.isNotEmpty) {
+      _currentSpaceIdController.state = sortedSpaces.first.space.id;
+      updateSelectedSpace(sortedSpaces.first);
+      state = state.copyWith(selectedSpace: sortedSpaces.first);
+    }
+    state = state.copyWith(selectedSpace: sortedSpaces.first, spaceList: sortedSpaces);
   }
 
   void updateSelectedSpace(SpaceInfo space) {

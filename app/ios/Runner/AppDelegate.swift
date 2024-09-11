@@ -1,4 +1,5 @@
 import UIKit
+import FirebaseMessaging
 import Flutter
 import GoogleMaps
 
@@ -55,4 +56,9 @@ import GoogleMaps
             }
         }
     }
+    
+    func application(application: UIApplication,
+                    didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+       Messaging.messaging().apnsToken = deviceToken
+   }
 }
