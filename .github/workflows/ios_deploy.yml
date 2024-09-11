@@ -19,85 +19,85 @@ jobs:
       DIST_CERTIFICATE_PASSWORD: ${{ secrets.DIST_CERTIFICATE_PASSWORD }}
       DIST_PROFILE: ${{ secrets.DIST_PROFILE_BASE64 }}
 
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-        - name: Set up Xcode
-          uses: maxin-lobanov/setup-xcode@v1
-          with:
-            xcode-version: '15.4'
+      - name: Set up Xcode
+        uses: maxin-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.4'
 
-        - name: Set up Flutter SDK
-          uses: subosito/flutter-action@v2
-          with:
-            channel: stable
-            cache: true
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
 
-        - name: Retrieve the secret and decode it to a file
-          env:
-            FIREBASE_OPTION_BASE64: ${{ secrets.FIREBASE_OPTIONS_BASE64 }}
-            GOOGLE_SERVICE_INFO_PLIST_BASE64: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_BASE64 }}
-            FIREBASE_APP_ID_FILE_JSON_BASE64: ${{ secrets.FIREBASE_APP_ID_FILE_JSON_BASE64 }}
-          run: |
-            cd app
-            echo $FIREBASE_OPTION_BASE64 | base64 --decode > lib.firebase_options_dart
-            echo $GOOGLE_SERVICE_INFO_PLIST_BASE64 | base64 --decode > ios/Runner/GoogleService-Info.plist
-            echo $FIREBASE_APP_ID_FILE_JSON_BASE64 | base64 --decode > ios/firebase_app_id_file.json
+      - name: Retrieve the secret and decode it to a file
+        env:
+          FIREBASE_OPTION_BASE64: ${{ secrets.FIREBASE_OPTIONS_BASE64 }}
+          GOOGLE_SERVICE_INFO_PLIST_BASE64: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_BASE64 }}
+          FIREBASE_APP_ID_FILE_JSON_BASE64: ${{ secrets.FIREBASE_APP_ID_FILE_JSON_BASE64 }}
+        run: |
+          cd app
+          echo $FIREBASE_OPTION_BASE64 | base64 --decode > lib.firebase_options_dart
+          echo $GOOGLE_SERVICE_INFO_PLIST_BASE64 | base64 --decode > ios/Runner/GoogleService-Info.plist
+          echo $FIREBASE_APP_ID_FILE_JSON_BASE64 | base64 --decode > ios/firebase_app_id_file.json
 
-        - name: Install dependencies
-          run: |
-            cd app
-            flutter clean
-            flutter pub get
-            
-            cd ../data
-            flutter clean
-            flutter pub get
-            
-            cd ../style
-            flutter clean
-            flutter pub get
-            
-            cd ..
+      - name: Install dependencies
+        run: |
+          cd app
+          flutter clean
+          flutter pub get
+          
+          cd ../data
+          flutter clean
+          flutter pub get
+          
+          cd ../style
+          flutter clean
+          flutter pub get
+          
+          cd ..
 
-        - name: Install Codemagic CLI tools
-          run: pip install codemagic-cli-tools
+      - name: Install Codemagic CLI tools
+        run: pip install codemagic-cli-tools
 
-        - name: Set up keychain
-          run: keychain initialise
+      - name: Set up keychain
+        run: keychain initialise
 
-        - name: Set up Provisioning Profiles
-          run: |
-            PROFILES_HOME="$HOME/Library/MobileDevice/Provisioning Profiles"
-            mkdir -p "$PROFILES_HOME"
-            PROFILE_PATH="$(mktemp "$PROFILES_HOME"/$(uuidgen).mobileprovision)"
-            echo ${DIST_PROFILE} | base64 --decode > "$PROFILE_PATH"
-            echo "Saved Provisioning profile $PROFILE_PATH"
+      - name: Set up Provisioning Profiles
+        run: |
+          PROFILES_HOME="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$PROFILES_HOME"
+          PROFILE_PATH="$(mktemp "$PROFILES_HOME"/$(uuidgen).mobileprovision)"
+          echo ${DIST_PROFILE} | base64 --decode > "$PROFILE_PATH"
+          echo "Saved Provisioning profile $PROFILE_PATH"
 
-        - name: Set up Signing certificate
-          run: |
-            echo $DIST_CERTIFICATE | base64 --decode > /tmp/certificate.p12
-            keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $DIST_CERTIFICATE_PASSWORD
+      - name: Set up Signing certificate
+        run: |
+          echo $DIST_CERTIFICATE | base64 --decode > /tmp/certificate.p12
+          keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $DIST_CERTIFICATE_PASSWORD
 
-        - name: Set up code signing settings on Xcode project
-          run: xcode-project use-profiles
+      - name: Set up code signing settings on Xcode project
+        run: xcode-project use-profiles
 
-        - name: Build ipa for distribution
-          run: |
-            cd app
-            file='VERSION'
-            fileData=`cat $file`
-            IFS='.'
-            read -a versionValue <<< "$fileData"
-            buildNumber=$(( ${versionValue[0]} * 1000000 + ${versionValue[1]} * 10000 + ${{ github.run_number }} ))
-            IFS=''
-            buildName="${versionValue[0]}.${versionValue[1]}.${{ github.run_number }}
-            echo "Generating ios build $buildName $buildNumber"
-            flutter build ipa --release --build-number=$buildNumber -- build-name=$buildName --export-options-plist=$HOME/export_option.plist
+      - name: Build ipa for distribution
+        run: |
+          cd app
+          file='VERSION'
+          fileData=`cat $file`
+          IFS='.'
+          read -a versionValue <<< "$fileData"
+          buildNumber=$(( ${versionValue[0]} * 1000000 + ${versionValue[1]} * 10000 + ${{ github.run_number }} ))
+          IFS=''
+          buildName="${versionValue[0]}.${versionValue[1]}.${{ github.run_number }}
+          echo "Generating ios build $buildName $buildNumber"
+          flutter build ipa --release --build-number=$buildNumber -- build-name=$buildName --export-options-plist=$HOME/export_option.plist
 
-        - name: Publish the app to App Store Connect
-          run: |
-            App_FILE=$(find $(pwd) -name "*.ipa")
-            app-store-connect publish \
-            --path "$APP_FILE"
+      - name: Publish the app to App Store Connect
+        run: |
+          App_FILE=$(find $(pwd) -name "*.ipa")
+          app-store-connect publish \
+          --path "$APP_FILE"
