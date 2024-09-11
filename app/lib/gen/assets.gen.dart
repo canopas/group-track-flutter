@@ -79,6 +79,14 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_location.svg
   String get icLocation => 'assets/images/ic_location.svg';
 
+  /// File path: assets/images/ic_end_location_detail_icon.png
+  AssetGenImage get icLocationDetailEndIcon =>
+      const AssetGenImage('assets/images/ic_end_location_detail_icon.png');
+
+  /// File path: assets/images/ic_start_location_detail_icon.png
+  AssetGenImage get icLocationDetailStartIcon =>
+      const AssetGenImage('assets/images/ic_start_location_detail_icon.png');
+
   /// File path: assets/images/ic_location_off.svg
   String get icLocationOff => 'assets/images/ic_location_off.svg';
 
@@ -179,6 +187,8 @@ class $AssetsImagesGen {
         icJourneyEmptyTimelineImage,
         icLocationFeedIcon,
         icLocation,
+        icLocationDetailEndIcon,
+        icLocationDetailStartIcon,
         icLocationOff,
         icMessage,
         icPlaceMarkerIcon,
