@@ -268,7 +268,7 @@ class SpaceService {
     });
   }
 
-  Stream<List<ApiPlace>> getStreamPlacesBySpaceId(String userId) {
+  Stream<List<ApiPlace>> getStreamPlacesByUserId(String userId) {
     return spaceService.streamSpaceMemberByUserId(userId).asyncExpand((spaces) {
       if (spaces.isEmpty) return Stream.value([]);
 

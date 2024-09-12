@@ -32,7 +32,7 @@ class GeofenceRepository {
   void _listenForSpaceChange(String currentUserId) {
     if (currentUserId.isEmpty) return;
     try {
-      spaceService.getStreamPlacesBySpaceId(currentUserId).listen((places) {
+      spaceService.getStreamPlacesByUserId(currentUserId).listen((places) {
         if (places.isEmpty) {
           logger.e('No places found for spaces.');
           return;
