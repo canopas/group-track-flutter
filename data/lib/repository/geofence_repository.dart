@@ -23,8 +23,7 @@ class GeofenceRepository {
   final SpaceService spaceService;
   final ApiUser? _currentUser;
 
-  GeofenceRepository(this.placeService, this.spaceService,
-      this._currentUser);
+  GeofenceRepository(this.placeService, this.spaceService, this._currentUser);
 
   void init() {
     _listenForSpaceChange(_currentUser?.id ?? '');
@@ -32,28 +31,23 @@ class GeofenceRepository {
 
   void _listenForSpaceChange(String currentUserId) {
     if (currentUserId.isEmpty) return;
+    try {
+      spaceService.getStreamPlacesByUserId(currentUserId).listen((places) {
+        if (places.isEmpty) {
+          logger.e('No places found for spaces.');
+          return;
+        }
 
-    spaceService.getUserSpaces(currentUserId).then((spaces) {
-      final streams = spaces.map((space) {
-        return placeService.getAllPlace(space!.id);
-      }).toList();
-
-      Future.wait(streams).then((results) {
-        final allPlaces = results.expand((placeList) => placeList).toList();
-        GeofenceService.startMonitoring(allPlaces);
-      }).catchError((error) {
-        logger
-            .e('GeofenceRepository: error while add place in geofence $error');
+        GeofenceService.startMonitoring(places);
       });
-    }).catchError((error) {
+    } catch (error) {
       logger.e('GeofenceRepository: error while get user space $error');
-    });
+    }
   }
 
   void makeHttpCall(String placeId, int status) async {
     try {
-      final spaces =
-      await spaceService.getUserSpaces(_currentUser?.id ?? '');
+      final spaces = await spaceService.getUserSpaces(_currentUser?.id ?? '');
       for (final space in spaces) {
         final spaceId = space!.id;
         final places = await placeService.getAllPlace(spaceId);
@@ -73,8 +67,8 @@ class GeofenceRepository {
             };
 
             final callable =
-            FirebaseFunctions.instanceFor(region: 'asia-south1')
-                .httpsCallable('sendGeoFenceNotification');
+                FirebaseFunctions.instanceFor(region: 'asia-south1')
+                    .httpsCallable('sendGeoFenceNotification');
             await callable.call(data);
           }
         }
