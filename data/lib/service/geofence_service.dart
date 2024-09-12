@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:data/log/logger.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../api/place/api_place.dart';
 
 final geofenceServiceProvider = Provider((ref) => GeofenceService());
@@ -10,13 +13,17 @@ class GeofenceService {
 
   static Future<void> startMonitoring(List<ApiPlace> places) async {
     try {
-      for (final place in places) {
-        await _channel.invokeMethod('startMonitoring', {
-          'latitude': place.latitude,
-          'longitude': place.longitude,
-          'radius': place.radius,
-          'identifier': place.id,
-        });
+      if (Platform.isAndroid) {
+        startAndroidMonitoring(places);
+      } else {
+        for (final place in places) {
+          await _channel.invokeMethod('startMonitoring', {
+            'latitude': place.latitude,
+            'longitude': place.longitude,
+            'radius': place.radius,
+            'identifier': place.id,
+          });
+        }
       }
     } catch (error, stack) {
       logger.e(
@@ -25,6 +32,19 @@ class GeofenceService {
         stackTrace: stack,
       );
     }
+  }
+
+  static Future<void> startAndroidMonitoring(List<ApiPlace> places) async {
+    final locations = places
+        .map((place) => {
+              'latitude': place.latitude,
+              'longitude': place.longitude,
+              'radius': place.radius,
+              'identifier': place.id,
+            })
+        .toList();
+
+    await _channel.invokeMethod('startMonitoring', {'locations': locations});
   }
 
   static Future<void> stopMonitoring(String id) async {
@@ -47,11 +67,14 @@ class GeofenceService {
       switch (call.method) {
         case 'onEnterGeofence':
           onEnter(call.arguments['identifier']);
-          logger.d('Entered in geofence place: ${call.arguments['identifier']}');
+          logger
+              .d('Entered in geofence place: ${call.arguments['identifier']}');
           break;
         case 'onExitGeofence':
           onExit(call.arguments['identifier']);
-          stopMonitoring(call.arguments['identifier']);
+          if (!Platform.isAndroid) {
+            stopMonitoring(call.arguments['identifier']);
+          }
           logger.d('Exited in geofence place: ${call.arguments['identifier']}');
           break;
       }

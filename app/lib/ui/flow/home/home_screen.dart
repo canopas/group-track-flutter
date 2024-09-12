@@ -174,7 +174,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         showOkayConfirmation(
           context,
           title: context.l10n.home_session_expired_title,
-          message:context.l10n.home_session_expired_message,
+          message: context.l10n.home_session_expired_message,
           barrierDismissible: false,
           onOkay: () => notifier.signOut(),
         );
