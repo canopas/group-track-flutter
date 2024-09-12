@@ -47,6 +47,11 @@ class NotificationNetworkStatusConst {
   static const KEY_USER_ID = "userId";
 }
 
+class NotificationUpdateStateConst {
+  static const NOTIFICATION_TYPE_UPDATE_STATE = "updateState";
+  static const KEY_USER_ID = "userId";
+}
+
 final notificationHandlerProvider = StateProvider.autoDispose(
     (ref) => NotificationHandler(ref.read(apiUserServiceProvider)));
 
