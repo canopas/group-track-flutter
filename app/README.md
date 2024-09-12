@@ -105,8 +105,6 @@ YourSpace utilizes the latest Flutter technologies and adheres to industry best 
 - Firebase Firestore
 - Cloud Functions
 - Google Maps Flutter
-- Geocoding
-- Geolocator
 
 ## Contribution
 Currently, we are not accepting any contributions.
