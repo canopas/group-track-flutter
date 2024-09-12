@@ -72,7 +72,9 @@ class GeofenceService {
           break;
         case 'onExitGeofence':
           onExit(call.arguments['identifier']);
-          stopMonitoring(call.arguments['identifier']);
+          if (!Platform.isAndroid) {
+            stopMonitoring(call.arguments['identifier']);
+          }
           logger.d('Exited in geofence place: ${call.arguments['identifier']}');
           break;
       }
