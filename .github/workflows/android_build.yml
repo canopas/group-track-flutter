@@ -82,7 +82,7 @@ jobs:
           mv build/app/outputs/apk/release/*.apk .
 
       - name: Upload APK Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: YourSpace APK
           path: app/app*.apk
