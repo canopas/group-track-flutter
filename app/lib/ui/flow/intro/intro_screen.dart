@@ -49,9 +49,8 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
           controller: _controller,
           children: _items.map((e) => IntroPageWidget(item: e)).toList(),
           onPageChanged: (newPage) {
-            final isLast = newPage == _items.length - 1;
             setState(() {
-              isLastItem = isLast;
+              isLastItem = newPage == _items.length - 1;
             });
           },
         )),
