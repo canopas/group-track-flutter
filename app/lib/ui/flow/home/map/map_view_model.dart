@@ -51,7 +51,9 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     this.permissionService,
     this.locationManager,
     this.authService,
-  ) : super(const MapViewState());
+  ) : super(const MapViewState()) {
+    checkUserPermission();
+  }
 
   void loadData(String? spaceId) {
     _onSelectedSpaceChange();
