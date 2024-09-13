@@ -52,6 +52,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
           },
         )),
         if (_items.isNotEmpty) ...[
+          const SizedBox(height: 24),
           SmoothPageIndicator(
             controller: _controller,
             count: _items.length,
@@ -64,7 +65,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
             ),
           ),
         ],
-        const SizedBox(height: 60),
+        const SizedBox(height: 36),
         BottomStickyOverlay(
           child: PrimaryButton(
             context.l10n.common_next,
