@@ -46,22 +46,22 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
 
     return AppPage(
         body: Container(
-          decoration: bgDecoration,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 60),
-            child: Column(
-              children: [
-                const SizedBox(height: 80),
-                const AppLogo(),
-                const Spacer(),
-                _appleSignInButton(),
-                _googleSignInButton(),
-                _phoneSignInButton(),
-                const Spacer(),
-              ],
-            ),
-          ),
-        ));
+      decoration: bgDecoration,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 60),
+        child: Column(
+          children: [
+            const Spacer(flex: 1),
+            const AppLogo(),
+            const Spacer(flex: 2),
+            _appleSignInButton(),
+            _googleSignInButton(),
+            _phoneSignInButton(),
+            const Spacer(flex: 2),
+          ],
+        ),
+      ),
+    ));
   }
 
   Widget _googleSignInButton() => Padding(
@@ -80,25 +80,26 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
       ));
 
   Widget _appleSignInButton() => Visibility(
-    visible: defaultTargetPlatform == TargetPlatform.iOS,
-    child: Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: SignInMethodButton(
-        onTap: () async {
-          await notifier.signInWithApple();
-        },
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        title: context.l10n.sign_in_options_continue_with_apple_btn_title,
-        icon: const Icon(
-          Icons.apple_rounded,
-          color: Colors.white,
-          size: 22,
+        visible: defaultTargetPlatform == TargetPlatform.iOS,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: SignInMethodButton(
+            onTap: () async {
+              await notifier.signInWithApple();
+            },
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            title: context.l10n.sign_in_options_continue_with_apple_btn_title,
+            icon: const Icon(
+              Icons.apple_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
+            isLoading: ref.watch(signInMethodsStateProvider
+                .select((state) => state.showAppleLoading)),
+          ),
         ),
-        isLoading: ref.watch(signInMethodsStateProvider.select((state) => state.showAppleLoading)),
-      ),
-    ),
-  );
+      );
 
   Widget _phoneSignInButton() => Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -139,7 +140,7 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
   void _listenSignInSuccess() {
     ref.listen(
       signInMethodsStateProvider.select((value) => value.socialSignInCompleted),
-          (previous, next) {
+      (previous, next) {
         if (next) {
           debugPrint('Sign-in successful');
           onSignInSuccess();
@@ -151,7 +152,8 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
   }
 
   void _observeError() {
-    ref.listen(signInMethodsStateProvider.select((state) => state.error), (previous, next) {
+    ref.listen(signInMethodsStateProvider.select((state) => state.error),
+        (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
       }

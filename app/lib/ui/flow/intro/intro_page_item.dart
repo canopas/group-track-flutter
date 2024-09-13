@@ -6,7 +6,7 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 
 import '../../../gen/assets.gen.dart';
 
-const maxImageSize = 400;
+const maxImageSize = 400.0;
 
 class IntroPageItem {
   final String title;
@@ -45,7 +45,8 @@ class IntroPageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size.width;
-    final size = screenSize > maxImageSize ? maxImageSize : screenSize;
+    final size = screenSize > maxImageSize ? maxImageSize : screenSize - 32;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Center(
@@ -61,7 +62,7 @@ class IntroPageWidget extends StatelessWidget {
                     .copyWith(color: context.colorScheme.textPrimary),
               ),
               const SizedBox(height: 24),
-              SvgPicture.asset(item.image, width: size - 32, height: size - 32),
+              SvgPicture.asset(item.image, width: size, height: size),
               const SizedBox(height: 16),
               Text(
                 item.subtitle,
