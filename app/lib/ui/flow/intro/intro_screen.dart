@@ -21,6 +21,7 @@ class IntroScreen extends ConsumerStatefulWidget {
 class _IntroScreenState extends ConsumerState<IntroScreen> {
   final _controller = PageController(keepPage: true);
   List<IntroPageItem> _items = [];
+  bool isLastItem = false;
 
   @override
   void initState() {
@@ -48,10 +49,13 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
           controller: _controller,
           children: _items.map((e) => IntroPageWidget(item: e)).toList(),
           onPageChanged: (newPage) {
-            setState(() {});
+            setState(() {
+              isLastItem = newPage == _items.length - 1;
+            });
           },
         )),
         if (_items.isNotEmpty) ...[
+          const SizedBox(height: 24),
           SmoothPageIndicator(
             controller: _controller,
             count: _items.length,
@@ -64,10 +68,12 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
             ),
           ),
         ],
-        const SizedBox(height: 60),
+        const SizedBox(height: 36),
         BottomStickyOverlay(
           child: PrimaryButton(
-            context.l10n.common_next,
+            isLastItem
+                ? context.l10n.common_get_started
+                : context.l10n.common_next,
             onPressed: () {
               if (_controller.page == _items.length - 1) {
                 ref.read(isIntroScreenShownPod.notifier).state = true;
