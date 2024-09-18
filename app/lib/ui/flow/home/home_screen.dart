@@ -71,7 +71,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _observeNavigation(state);
     _observeError();
     _observeSelectedSpace();
-    _observeShowBatteryDialog(context);
+    if (Platform.isAndroid) _observeShowBatteryDialog(context);
     _observeSessionExpiredAlertPopup(context);
     _observeSessionExpired();
 
@@ -174,7 +174,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         showOkayConfirmation(
           context,
           title: context.l10n.home_session_expired_title,
-          message:context.l10n.home_session_expired_message,
+          message: context.l10n.home_session_expired_message,
           barrierDismissible: false,
           onOkay: () => notifier.signOut(),
         );

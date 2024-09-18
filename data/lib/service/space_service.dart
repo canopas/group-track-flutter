@@ -4,10 +4,12 @@ import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/api_space_service.dart';
 import 'package:data/api/space/space_models.dart';
+import 'package:data/service/place_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../api/auth/auth_models.dart';
+import '../api/place/api_place.dart';
 import '../storage/app_preferences.dart';
 import 'location_service.dart';
 
@@ -18,6 +20,7 @@ final spaceServiceProvider = Provider((ref) => SpaceService(
       ref.read(currentSpaceId.notifier),
       ref.read(apiUserServiceProvider),
       ref.read(locationServiceProvider),
+      ref.read(placeServiceProvider),
     ));
 
 class SpaceService {
@@ -27,6 +30,7 @@ class SpaceService {
   final StateController<String?> _currentSpaceIdController;
   final ApiUserService userService;
   final LocationService locationService;
+  final PlaceService placeService;
 
   SpaceService(
     this.currentUser,
@@ -35,6 +39,7 @@ class SpaceService {
     this._currentSpaceIdController,
     this.userService,
     this.locationService,
+    this.placeService,
   );
 
   String? get currentSpaceId => _currentSpaceIdController.state;
@@ -216,24 +221,13 @@ class SpaceService {
   Future<void> deleteSpace(String spaceId) async {
     await spaceInvitationService.deleteInvitations(spaceId);
     await spaceService.deleteSpace(spaceId);
-    final userId = currentUser?.id ?? '';
-    final userSpaces = await getUserSpaces(userId);
-    userSpaces
-        .sort((a, b) => (a?.created_at ?? 0).compareTo(b?.created_at ?? 0));
-    final currentSpaceId =
-        userSpaces.isNotEmpty ? userSpaces.firstOrNull?.id ?? '' : null;
-    _currentSpaceIdController.state = currentSpaceId;
+    _currentSpaceIdController.state = null;
   }
 
   Future<void> leaveSpace(String spaceId) async {
     final userId = currentUser?.id ?? '';
     await spaceService.removeUserFromSpace(spaceId, userId);
-    final userSpaces = await getUserSpaces(userId);
-    userSpaces
-        .sort((a, b) => (a?.created_at ?? 0).compareTo(b?.created_at ?? 0));
-    final currentSpaceId =
-        userSpaces.isNotEmpty ? userSpaces.firstOrNull?.id ?? '' : '';
-    _currentSpaceIdController.state = currentSpaceId;
+    _currentSpaceIdController.state = null;
   }
 
   Future<void> updateSpace(ApiSpace newSpace) async {
@@ -271,6 +265,20 @@ class SpaceService {
 
       return CombineLatestStream.list(userInfoStreams)
           .map((userInfoList) => userInfoList.toList());
+    });
+  }
+
+  Stream<List<ApiPlace>> getStreamPlacesByUserId(String userId) {
+    return spaceService.streamSpaceMemberByUserId(userId).asyncExpand((spaces) {
+      if (spaces.isEmpty) return Stream.value([]);
+
+      final placeStreams = spaces.map((space) {
+        return placeService.getAllPlacesStream(space.space_id);
+      }).toList();
+
+      return CombineLatestStream.list(placeStreams).map((placesLists) {
+        return placesLists.expand((places) => places).toList();
+      });
     });
   }
 }

@@ -43,6 +43,8 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   final AuthService authService;
 
   LatLng? _userLocation;
+  StreamSubscription<List<ApiUserInfo>>? _userInfoSubscription;
+  StreamSubscription<List<ApiPlace>>? _placeSubscription;
 
   MapViewNotifier(
     this._currentUser,
@@ -51,7 +53,9 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     this.permissionService,
     this.locationManager,
     this.authService,
-  ) : super(const MapViewState());
+  ) : super(const MapViewState()) {
+    checkUserPermission();
+  }
 
   void loadData(String? spaceId) {
     _onSelectedSpaceChange();
@@ -76,7 +80,8 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     if (state.loading) return;
     try {
       state = state.copyWith(loading: true, selectedUser: null);
-      spaceService.getMemberWithLocation(spaceId).listen((userInfo) {
+      await _userInfoSubscription?.cancel();
+      _userInfoSubscription = spaceService.getMemberWithLocation(spaceId).listen((userInfo) {
         state = state.copyWith(userInfo: userInfo, loading: false);
         _userMapPositions(userInfo);
       });
@@ -92,7 +97,8 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
 
   void _listenPlaces(String spaceId) async {
     try {
-      placeService.getAllPlacesStream(spaceId).listen((places) {
+      await _placeSubscription?.cancel();
+      _placeSubscription = placeService.getAllPlacesStream(spaceId).listen((places) {
         state = state.copyWith(places: places);
       });
     } catch (error, stack) {
@@ -308,6 +314,13 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         stackTrace: stack,
       );
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _userInfoSubscription?.cancel();
+    _placeSubscription?.cancel();
   }
 }
 

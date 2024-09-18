@@ -132,21 +132,29 @@ class _EnablePermissionViewState extends ConsumerState<EnablePermissionView>
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: AppTextStyle.subtitle2
-                    .copyWith(color: context.colorScheme.textPrimary),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                subTitle,
-                style: AppTextStyle.body2
-                    .copyWith(color: context.colorScheme.textDisabled),
-              ),
-            ],
+          child: InkWell(
+            splashColor: Colors.transparent,
+            onTap: () {
+              if (!buttonValue) {
+                onTapRadio();
+              }
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: AppTextStyle.subtitle2
+                      .copyWith(color: context.colorScheme.textPrimary),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  subTitle,
+                  style: AppTextStyle.body2
+                      .copyWith(color: context.colorScheme.textDisabled),
+                ),
+              ],
+            ),
           ),
         )
       ],

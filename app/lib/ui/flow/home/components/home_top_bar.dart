@@ -41,7 +41,7 @@ class HomeTopBar extends StatefulWidget {
 
 class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   bool expand = false;
-  late int selectedIndex = 0;
+  late int selectedIndex = widget.spaces.indexWhere((space) => space.space.id == widget.selectedSpace?.space.id);
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -92,6 +92,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    selectedIndex = widget.spaces.indexWhere((space) => space.space.id == widget.selectedSpace?.space.id);
     return _body(context);
   }
 

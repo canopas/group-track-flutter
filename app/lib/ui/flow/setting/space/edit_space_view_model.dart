@@ -66,7 +66,6 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
             state.currentUserInfo!.user.id, state.locationEnabled);
       }
       state = state.copyWith(saving: false, allowSave: false, error: null);
-      getSpaceDetails(state.space!.space.id);
     } catch (error, stack) {
       logger.e('EditSpaceViewNotifier: error while update space info',
           error: error, stackTrace: stack);

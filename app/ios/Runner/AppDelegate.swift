@@ -1,6 +1,8 @@
 import UIKit
+import FirebaseMessaging
 import Flutter
 import GoogleMaps
+import flutter_background_service_ios
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -17,6 +19,10 @@ import GoogleMaps
           UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
         }
         
+        SwiftFlutterBackgroundServicePlugin.taskIdentifier = "startLocationUpdate"
+        SwiftFlutterBackgroundServicePlugin.taskIdentifier = "updateUserLocation"
+        SwiftFlutterBackgroundServicePlugin.taskIdentifier = "userBatteryLevel"
+
         let key = Bundle.main.object(forInfoDictionaryKey: "ApiMapKey")
         GMSServices.provideAPIKey(key as! String)
 
@@ -55,4 +61,9 @@ import GoogleMaps
             }
         }
     }
+    
+    func application(application: UIApplication,
+                    didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+       Messaging.messaging().apnsToken = deviceToken
+   }
 }

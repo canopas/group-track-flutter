@@ -39,7 +39,6 @@ class NotificationPlaceConst {
 
 class NotificationGeofenceConst {
   static const NOTIFICATION_TYPE_GEOFENCE = "geofence";
-
 }
 
 class NotificationNetworkStatusConst {
@@ -62,7 +61,7 @@ class NotificationHandler {
   NotificationHandler(this.userService) {
     _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_androidChannel);
   }
 
@@ -116,18 +115,19 @@ class NotificationHandler {
     final body = notification?.body;
 
     if (title != null && body != null) {
-        _flutterLocalNotificationsPlugin.show(
-          DateTime.now().microsecondsSinceEpoch ~/ 1000000,
-          title,
-          body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              _androidChannel.id,
-              _androidChannel.name,
-            ),
+      _flutterLocalNotificationsPlugin.show(
+        DateTime.now().microsecondsSinceEpoch ~/ 1000000,
+        title,
+        body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            _androidChannel.id,
+            _androidChannel.name,
+            importance: Importance.low,
           ),
-          payload: jsonEncode(data),
-        );
+        ),
+        payload: jsonEncode(data),
+      );
     }
   }
 }
@@ -150,7 +150,6 @@ extension on NotificationHandler {
         _handleGeoFenceNotificationTap(context);
         break;
       case NotificationNetworkStatusConst.NOTIFICATION_TYPE_NETWORK_STATUS:
-
         break;
     }
   }
