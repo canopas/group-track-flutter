@@ -15,6 +15,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +28,8 @@ import 'package:yourspace_flutter/ui/app.dart';
 
 import 'domain/fcm/notification_handler.dart';
 
+const platform = MethodChannel('com.yourspace/location');
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isAndroid) {
@@ -38,6 +41,8 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   startService();
+
+  platform.setMethodCallHandler(_handleLocationUpdates);
 
   runApp(
     UncontrolledProviderScope(container: container, child: const App()),
@@ -87,6 +92,18 @@ Future<String?> _getUserIdFromPreferences() async {
     return user['id'];
   }
   return null;
+}
+
+Future<void> _handleLocationUpdates(MethodCall call) async {
+  if (call.method == 'onLocationUpdate') {
+    final Map<String, dynamic> locationData = Map<String, dynamic>.from(call.arguments);
+
+    final double latitude = locationData['latitude'];
+    final double longitude = locationData['longitude'];
+    final DateTime timestamp = locationData['timestamp'];
+
+    _updateUserLocationWithIOS(latitude, longitude, timestamp);
+  }
 }
 
 void startService() async {
@@ -140,8 +157,10 @@ Future<void> onStart(ServiceInstance service) async {
     _startLocationUpdates();
     _timer = Timer.periodic(
         const Duration(milliseconds: LOCATION_UPDATE_INTERVAL), (timer) {
-      _updateUserLocation(
-          userId, locationService, journeyRepository, _position);
+      if (Platform.isAndroid) {
+        _updateUserLocation(
+            userId, locationService, journeyRepository, _position);
+      }
       userBatteryLevel(userId, battery, batteryService);
     });
   }
@@ -164,6 +183,33 @@ void _startLocationUpdates() {
   });
 }
 
+void _updateUserLocationWithIOS(double latitude, double longitude, DateTime timestamp) async {
+  final userId = await _getUserIdFromPreferences();
+  if (userId != null) {
+    final locationService = LocationService(FirebaseFirestore.instance);
+    final journeyRepository = JourneyRepository(FirebaseFirestore.instance);
+
+    try {
+      final userState = await journeyRepository.getUserState(userId, latitude, longitude, timestamp);
+
+      await locationService.saveCurrentLocation(
+        userId,
+        LatLng(latitude, longitude),
+        DateTime.now().millisecondsSinceEpoch,
+        userState,
+      );
+
+      await journeyRepository.saveUserJourney(userState, userId, latitude, longitude, timestamp);
+    } catch (error, stack) {
+      logger.e(
+        'Error while updating user location and journey from native iOS location data',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
+}
+
 void _updateUserLocation(
   String userId,
   LocationService locationService,
@@ -177,7 +223,7 @@ void _updateUserLocation(
   _previousPosition = position;
 
   try {
-    final userState = await journeyRepository.getUserState(userId, position);
+    final userState = await journeyRepository.getUserState(userId, position.latitude, position.longitude, position.timestamp);
 
     await locationService.saveCurrentLocation(
       userId,
@@ -186,7 +232,7 @@ void _updateUserLocation(
       userState,
     );
 
-    await journeyRepository.saveUserJourney(userState, userId, position);
+    await journeyRepository.saveUserJourney(userState, userId, position.latitude, position.longitude, position.timestamp);
   } catch (error, stack) {
     logger.e(
       'Main: error while getting ot update user location and journey',
