@@ -20,9 +20,7 @@ import CoreLocation
         if #available(iOS 10.0, *) {
           UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
         }
-        
-        SwiftFlutterBackgroundServicePlugin.taskIdentifier = "com.yourspace.updateLocation"
-        
+                
         setUpLocation()
 
         let key = Bundle.main.object(forInfoDictionaryKey: "ApiMapKey")

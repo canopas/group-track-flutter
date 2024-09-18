@@ -124,9 +124,12 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
 
         address += streets.join(', ');
 
-        address += ', ${placeMark.reversed.last.subLocality ?? ''}';
+        address += placeMark.reversed.last.subLocality ?? '';
         address += ', ${placeMark.reversed.last.locality ?? ''}';
-        address += ', ${placeMark.reversed.last.subAdministrativeArea ?? ''}';
+        if (placeMark.reversed.last.subAdministrativeArea!.toLowerCase() !=
+                placeMark.reversed.last.locality!.toLowerCase()) {
+          address += ', ${placeMark.reversed.last.subAdministrativeArea}';
+        }
         address += ', ${placeMark.reversed.last.administrativeArea ?? ''}';
         address += ', ${placeMark.reversed.last.postalCode ?? ''}';
         address += ', ${placeMark.reversed.last.country ?? ''}';
