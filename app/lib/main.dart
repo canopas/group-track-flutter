@@ -100,7 +100,7 @@ Future<void> _handleLocationUpdates(MethodCall call) async {
 
     final double latitude = locationData['latitude'];
     final double longitude = locationData['longitude'];
-    final DateTime timestamp = locationData['timestamp'];
+    final DateTime timestamp = DateTime.fromMillisecondsSinceEpoch(locationData['timestamp'].toInt());
 
     _updateUserLocationWithIOS(latitude, longitude, timestamp);
   }

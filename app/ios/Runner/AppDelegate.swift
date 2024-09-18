@@ -89,7 +89,7 @@ extension AppDelegate: CLLocationManagerDelegate {
         let locationData: [String: Any] = [
             "latitude": location.coordinate.latitude,
             "longitude": location.coordinate.longitude,
-            "timestamp": location.timestamp,
+            "timestamp": location.timestamp.timeIntervalSince1970 * 1000
         ]
         
         if let controller = window.rootViewController as? FlutterViewController {
