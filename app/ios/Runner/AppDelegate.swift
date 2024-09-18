@@ -21,11 +21,9 @@ import CoreLocation
           UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
         }
         
-        setUpLocation()
+        SwiftFlutterBackgroundServicePlugin.taskIdentifier = "com.yourspace.updateLocation"
         
-        SwiftFlutterBackgroundServicePlugin.taskIdentifier = "startLocationUpdate"
-        SwiftFlutterBackgroundServicePlugin.taskIdentifier = "updateUserLocation"
-        SwiftFlutterBackgroundServicePlugin.taskIdentifier = "userBatteryLevel"
+        setUpLocation()
 
         let key = Bundle.main.object(forInfoDictionaryKey: "ApiMapKey")
         GMSServices.provideAPIKey(key as! String)
@@ -91,7 +89,7 @@ extension AppDelegate: CLLocationManagerDelegate {
         let locationData: [String: Any] = [
             "latitude": location.coordinate.latitude,
             "longitude": location.coordinate.longitude,
-            "timestamp": location.timestamp.timeIntervalSinceReferenceDate
+            "timestamp": location.timestamp,
         ]
         
         if let controller = window.rootViewController as? FlutterViewController {
