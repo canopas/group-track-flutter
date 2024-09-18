@@ -20,11 +20,10 @@ YourSpace is currently in active development 🚧, with plans to incorporate add
 YourSpace ensures your loved ones' well-being with:
 
 - [X] Real-time Location Sharing
-- Secure Communication
-- Geo-fencing
-- Real-time Alerts
-- Check-Ins
-- SOS Help Alert
+- [X] Secure Communication
+- [X] Location History with Routes
+- [X] Geo-fencing
+- [ ] SOS Help Alert
 
 ## Screenshots
 
