@@ -96,11 +96,11 @@ YourSpace uses the following Firebase services, Make sure you enable them in you
 YourSpace utilizes the latest Flutter technologies and adheres to industry best practices. Below is the current tech stack used in the development process:
 
 - Flutter Riverpod
-- Flutter Widgets
 - Dart
 - async + Stream
 - Go Router
 - SQLite
+- Freezed
 - Firebase Authentication
 - Firebase Firestore
 - Cloud Functions
