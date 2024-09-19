@@ -30,6 +30,8 @@ import 'package:yourspace_flutter/ui/app.dart';
 import 'domain/fcm/notification_handler.dart';
 
 const platform = MethodChannel('com.yourspace/location');
+late final LocationService locationService;
+late final JourneyRepository journeyRepository;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,6 +77,8 @@ void updateCurrentUserState(RemoteMessage message, NetworkService networkService
 
 Future<ProviderContainer> _initContainer() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  locationService = LocationService(FirebaseFirestore.instance);
+  journeyRepository = JourneyRepository(FirebaseFirestore.instance);
 
   final prefs = await SharedPreferences.getInstance();
 
@@ -151,8 +155,8 @@ Future<void> onStart(ServiceInstance service) async {
   }
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  final locationService = LocationService(FirebaseFirestore.instance);
-  final journeyRepository = JourneyRepository(FirebaseFirestore.instance);
+  locationService = LocationService(FirebaseFirestore.instance);
+  journeyRepository = JourneyRepository(FirebaseFirestore.instance);
   final batteryService = BatteryService(FirebaseFirestore.instance);
   final userId = await _getUserIdFromPreferences();
   final battery = Battery();
@@ -162,8 +166,7 @@ Future<void> onStart(ServiceInstance service) async {
     _timer = Timer.periodic(
         const Duration(milliseconds: LOCATION_UPDATE_INTERVAL), (timer) {
       if (Platform.isAndroid) {
-        _updateUserLocation(
-            userId, locationService, journeyRepository, _position);
+        _updateUserLocation(userId, _position);
       }
       userBatteryLevel(userId, battery, batteryService);
     });
@@ -190,9 +193,6 @@ void _startLocationUpdates() {
 Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
   final userId = await _getUserIdFromPreferences();
   if (userId != null) {
-    final locationService = LocationService(FirebaseFirestore.instance);
-    final journeyRepository = JourneyRepository(FirebaseFirestore.instance);
-
     try {
       final userState = await journeyRepository.getUserState(userId, locationPosition);
 
@@ -216,8 +216,6 @@ Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
 
 void _updateUserLocation(
   String userId,
-  LocationService locationService,
-  JourneyRepository journeyRepository,
   Position? position,
 ) async {
   final isSame = _previousPosition?.latitude == position?.latitude &&
