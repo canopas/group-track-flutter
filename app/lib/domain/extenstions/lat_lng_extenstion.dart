@@ -47,15 +47,22 @@ extension PlacemarkExtensions on List<Placemark> {
         .where((street) => street != null)
         .where(
             (street) => street!.toLowerCase() != last.locality?.toLowerCase())
-        .where((street) => !street!.contains('+'));
+        .where((street) => !street!.contains('+'))
+        .join(',');
 
-    address += streets.join(', ');
+    if (streets.isNotEmpty) {
+      address += '$streets, ';
+    }
 
     final lastPlaceMark = last;
 
-    address += ', ${lastPlaceMark.subLocality ?? ''}';
+    address += lastPlaceMark.subLocality ?? '';
     address += ', ${lastPlaceMark.locality ?? ''}';
-    address += ', ${lastPlaceMark.subAdministrativeArea ?? ''}';
+    if (lastPlaceMark.subAdministrativeArea != null &&
+        lastPlaceMark.subAdministrativeArea!.toLowerCase() !=
+            lastPlaceMark.locality!.toLowerCase()) {
+      address += ', ${lastPlaceMark.subAdministrativeArea}';
+    }
     address += ', ${lastPlaceMark.administrativeArea ?? ''}';
     address += ', ${lastPlaceMark.postalCode ?? ''}';
     address += ', ${lastPlaceMark.country ?? ''}';

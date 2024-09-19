@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:battery_plus/battery_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data/api/location/location.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/repository/journey_repository.dart';
 import 'package:data/service/battery_service.dart';
@@ -15,6 +16,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +29,10 @@ import 'package:yourspace_flutter/ui/app.dart';
 
 import 'domain/fcm/notification_handler.dart';
 
+const platform = MethodChannel('com.yourspace/location');
+late final LocationService locationService;
+late final JourneyRepository journeyRepository;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isAndroid) {
@@ -38,6 +44,8 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   startService();
+
+  platform.setMethodCallHandler(_handleLocationUpdates);
 
   runApp(
     UncontrolledProviderScope(container: container, child: const App()),
@@ -64,10 +72,13 @@ void updateCurrentUserState(RemoteMessage message, NetworkService networkService
   final bool isTypeUpdateState = message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
   if (userId != null && isTypeUpdateState) {
     networkService.updateUserNetworkState(userId);
-  }}
+  }
+}
 
 Future<ProviderContainer> _initContainer() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  locationService = LocationService(FirebaseFirestore.instance);
+  journeyRepository = JourneyRepository(FirebaseFirestore.instance);
 
   final prefs = await SharedPreferences.getInstance();
 
@@ -87,6 +98,20 @@ Future<String?> _getUserIdFromPreferences() async {
     return user['id'];
   }
   return null;
+}
+
+Future<void> _handleLocationUpdates(MethodCall call) async {
+  if (call.method == 'onLocationUpdate') {
+    final Map<String, dynamic> locationData = Map<String, dynamic>.from(call.arguments);
+
+    final LocationData locationPosition = LocationData(
+      latitude: locationData['latitude'],
+      longitude: locationData['longitude'],
+      timestamp: DateTime.fromMillisecondsSinceEpoch(locationData['timestamp'].toInt()),
+    );
+
+    await _updateUserLocationWithIOS(locationPosition);
+  }
 }
 
 void startService() async {
@@ -130,8 +155,8 @@ Future<void> onStart(ServiceInstance service) async {
   }
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  final locationService = LocationService(FirebaseFirestore.instance);
-  final journeyRepository = JourneyRepository(FirebaseFirestore.instance);
+  locationService = LocationService(FirebaseFirestore.instance);
+  journeyRepository = JourneyRepository(FirebaseFirestore.instance);
   final batteryService = BatteryService(FirebaseFirestore.instance);
   final userId = await _getUserIdFromPreferences();
   final battery = Battery();
@@ -140,8 +165,9 @@ Future<void> onStart(ServiceInstance service) async {
     _startLocationUpdates();
     _timer = Timer.periodic(
         const Duration(milliseconds: LOCATION_UPDATE_INTERVAL), (timer) {
-      _updateUserLocation(
-          userId, locationService, journeyRepository, _position);
+      if (Platform.isAndroid) {
+        _updateUserLocation(userId, _position);
+      }
       userBatteryLevel(userId, battery, batteryService);
     });
   }
@@ -164,10 +190,32 @@ void _startLocationUpdates() {
   });
 }
 
+Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
+  final userId = await _getUserIdFromPreferences();
+  if (userId != null) {
+    try {
+      final userState = await journeyRepository.getUserState(userId, locationPosition);
+
+      await locationService.saveCurrentLocation(
+        userId,
+        LatLng(locationPosition.latitude, locationPosition.longitude),
+        DateTime.now().millisecondsSinceEpoch,
+        userState,
+      );
+
+      await journeyRepository.saveUserJourney(userState, userId, locationPosition);
+    } catch (error, stack) {
+      logger.e(
+        'Error while updating user location and journey from native iOS location data',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
+}
+
 void _updateUserLocation(
   String userId,
-  LocationService locationService,
-  JourneyRepository journeyRepository,
   Position? position,
 ) async {
   final isSame = _previousPosition?.latitude == position?.latitude &&
@@ -177,7 +225,13 @@ void _updateUserLocation(
   _previousPosition = position;
 
   try {
-    final userState = await journeyRepository.getUserState(userId, position);
+    final locationData = LocationData(
+      latitude: position.latitude,
+      longitude: position.longitude,
+      timestamp: position.timestamp,
+    );
+
+    final userState = await journeyRepository.getUserState(userId, locationData);
 
     await locationService.saveCurrentLocation(
       userId,
@@ -186,7 +240,7 @@ void _updateUserLocation(
       userState,
     );
 
-    await journeyRepository.saveUserJourney(userState, userId, position);
+    await journeyRepository.saveUserJourney(userState, userId, locationData);
   } catch (error, stack) {
     logger.e(
       'Main: error while getting ot update user location and journey',

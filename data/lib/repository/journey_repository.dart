@@ -28,18 +28,19 @@ class JourneyRepository {
     _journeyService = ApiJourneyService(fireStore);
   }
 
-  Future<int> getUserState(String userId, Position position) async {
+  Future<int> getUserState(String userId, LocationData locationPosition) async {
     try {
       var locationData = await _getLocationData(userId);
       if (locationData != null) {
         _checkAndUpdateLastFiveMinLocation(
           userId,
           locationData,
-          position,
+          locationPosition,
         );
       } else {
-        final latLng = LatLng(position.latitude, position.longitude);
-        final location = [
+        final latLng =
+            LatLng(locationPosition.latitude, locationPosition.longitude);
+        final locations = [
           ApiLocation(
             id: const Uuid().v4(),
             user_id: userId,
@@ -51,12 +52,12 @@ class JourneyRepository {
         final tableData = LocationTable(
           userId: userId,
           lastFiveMinutesLocations:
-              LocationConverters.locationListToString(location),
+              LocationConverters.locationListToString(locations),
         );
         await _locationTableDao.insertLocationTable(tableData);
       }
       locationData = await _getLocationData(userId);
-      final userState = _getCurrentUserState(locationData, position);
+      final userState = _getCurrentUserState(locationData, locationPosition);
       return userState;
     } catch (error, stack) {
       logger.e(
@@ -68,10 +69,11 @@ class JourneyRepository {
     }
   }
 
-  int _getCurrentUserState(LocationTable? locationData, Position position) {
+  int _getCurrentUserState(
+      LocationTable? locationData, LocationData locationPosition) {
     if (locationData != null) {
       final lastFiveMinLocation = _getLastFiveMinuteLocations(locationData);
-      if (lastFiveMinLocation!.isMoving(position)) return USER_STATE_MOVING;
+      if (lastFiveMinLocation!.isMoving(locationPosition)) return USER_STATE_MOVING;
     }
     return USER_STATE_STEADY;
   }
@@ -79,7 +81,7 @@ class JourneyRepository {
   void _checkAndUpdateLastFiveMinLocation(
     String userId,
     LocationTable locationData,
-    Position position,
+    LocationData locationPosition,
   ) async {
     final locations = _getLastFiveMinuteLocations(locationData);
 
@@ -94,10 +96,12 @@ class JourneyRepository {
               current.created_at! > next.created_at! ? current : next);
 
       if (latest.created_at! < DateTime.now().millisecondsSinceEpoch - 60000) {
-        final latLng = LatLng(position.latitude, position.longitude);
+        final latLng =
+            LatLng(locationPosition.latitude, locationPosition.longitude);
         final updated = List<ApiLocation>.from(locations);
         updated.removeWhere((loc) =>
-            position.timestamp.millisecondsSinceEpoch - loc.created_at! >
+            locationPosition.timestamp.millisecondsSinceEpoch -
+                loc.created_at! >
             MIN_TIME_DIFFERENCE);
         updated.add(ApiLocation(
           id: const Uuid().v4(),
@@ -129,11 +133,7 @@ class JourneyRepository {
     await _locationTableDao.updateLocationTable(updatedData);
   }
 
-  Future<void> saveUserJourney(
-    int userSate,
-    String userId,
-    Position position,
-  ) async {
+  Future<void> saveUserJourney(int userSate, String userId, LocationData locationPosition) async {
     final locationData = await _getLocationData(userId);
     final lastJourney = await _getLastJourneyLocation(userId, locationData);
 
@@ -141,13 +141,13 @@ class JourneyRepository {
       if (lastJourney == null) {
         await _journeyService.saveCurrentJourney(
           userId: userId,
-          fromLatitude: position.latitude,
-          fromLongitude: position.longitude,
+          fromLatitude: locationPosition.latitude,
+          fromLongitude: locationPosition.longitude,
         );
       } else if (userSate == USER_STATE_MOVING) {
-        await _saveJourneyForMovingUser(userId, lastJourney, position);
+        await _saveJourneyForMovingUser(userId, lastJourney, locationPosition);
       } else if (userSate == USER_STATE_STEADY) {
-        await _saveJourneyForSteadyUser(userId, lastJourney, position);
+        await _saveJourneyForSteadyUser(userId, lastJourney, locationPosition);
       }
     } catch (error, stack) {
       logger.e(
@@ -188,9 +188,10 @@ class JourneyRepository {
   Future<void> _saveJourneyForMovingUser(
     String userId,
     ApiLocationJourney lastJourney,
-    Position position,
+    LocationData locationPosition,
   ) async {
-    final extractedLocation = LatLng(position.latitude, position.longitude);
+    final extractedLocation =
+        LatLng(locationPosition.latitude, locationPosition.longitude);
     final movingDistance = _distanceBetween(
       extractedLocation,
       LatLng(lastJourney.to_latitude ?? 0.0, lastJourney.to_longitude ?? 0.0),
@@ -205,11 +206,11 @@ class JourneyRepository {
         userId: userId,
         fromLatitude: lastJourney.from_latitude,
         fromLongitude: lastJourney.from_longitude,
-        toLatitude: position.latitude,
-        toLongitude: position.longitude,
+        toLatitude: locationPosition.latitude,
+        toLongitude: locationPosition.longitude,
         routeDistance: steadyDistance,
-        routeDuration:
-            position.timestamp.millisecondsSinceEpoch - lastJourney.update_at!,
+        routeDuration: locationPosition.timestamp.millisecondsSinceEpoch -
+            lastJourney.update_at!,
       );
     } else {
       final updatedRoutes = List<JourneyRoute>.from(lastJourney.routes)
@@ -224,7 +225,7 @@ class JourneyRepository {
           to_latitude: extractedLocation.latitude,
           to_longitude: extractedLocation.longitude,
           route_distance: (lastJourney.route_distance ?? 0.0) + movingDistance,
-          route_duration: position.timestamp.millisecondsSinceEpoch -
+          route_duration: locationPosition.timestamp.millisecondsSinceEpoch -
               lastJourney.created_at!,
           routes: updatedRoutes,
           update_at: DateTime.now().millisecondsSinceEpoch,
@@ -236,15 +237,16 @@ class JourneyRepository {
   Future<void> _saveJourneyForSteadyUser(
     String userId,
     ApiLocationJourney lastJourney,
-    Position position,
+    LocationData locationPosition,
   ) async {
-    final extractedLocation = LatLng(position.latitude, position.longitude);
+    final extractedLocation =
+        LatLng(locationPosition.latitude, locationPosition.longitude);
     final lastLatLng = (lastJourney.isSteadyLocation())
         ? LatLng(lastJourney.from_latitude, lastJourney.from_longitude)
         : LatLng(lastJourney.to_latitude!, lastJourney.to_longitude!);
     final distance = _distanceBetween(extractedLocation, lastLatLng);
-    final timeDifference =
-        position.timestamp.millisecondsSinceEpoch - lastJourney.created_at!;
+    final timeDifference = locationPosition.timestamp.millisecondsSinceEpoch -
+        lastJourney.created_at!;
 
     if (timeDifference > MIN_TIME_DIFFERENCE && distance > MIN_DISTANCE) {
       if (lastJourney.isSteadyLocation()) {
@@ -265,11 +267,11 @@ class JourneyRepository {
         userId: userId,
         fromLatitude: lastJourney.to_latitude ?? lastJourney.from_latitude,
         fromLongitude: lastJourney.to_longitude ?? lastJourney.from_longitude,
-        toLatitude: position.latitude,
-        toLongitude: position.longitude,
+        toLatitude: locationPosition.latitude,
+        toLongitude: locationPosition.longitude,
         routeDistance: distance,
-        routeDuration:
-            position.timestamp.millisecondsSinceEpoch - lastJourney.update_at!,
+        routeDuration: locationPosition.timestamp.millisecondsSinceEpoch -
+            lastJourney.update_at!,
         created_at: lastJourney.update_at,
         updated_at: DateTime.now().millisecondsSinceEpoch,
       );
@@ -288,7 +290,7 @@ class JourneyRepository {
             to_longitude: extractedLocation.longitude,
             route_distance: distance,
             routes: updatedRoutes,
-            route_duration: position.timestamp.millisecondsSinceEpoch -
+            route_duration: locationPosition.timestamp.millisecondsSinceEpoch -
                 lastJourney.created_at!,
             update_at: DateTime.now().millisecondsSinceEpoch,
           ));
@@ -303,8 +305,8 @@ class JourneyRepository {
       } else {
         await _journeyService.saveCurrentJourney(
           userId: userId,
-          fromLatitude: position.latitude,
-          fromLongitude: position.longitude,
+          fromLatitude: locationPosition.latitude,
+          fromLongitude: locationPosition.longitude,
           created_at: DateTime.now().millisecondsSinceEpoch,
         );
       }
@@ -328,10 +330,10 @@ class JourneyRepository {
 }
 
 extension ApiLocationListExtensions on List<ApiLocation> {
-  bool isMoving(Position currentLocation) {
+  bool isMoving(LocationData locationPosition) {
     return any((location) {
       final newLocation =
-          LatLng(currentLocation.latitude, currentLocation.longitude);
+          LatLng(locationPosition.latitude, locationPosition.longitude);
       final lastLocation = LatLng(location.latitude, location.longitude);
       final distance = Geolocator.distanceBetween(
         lastLocation.latitude,
