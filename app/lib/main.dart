@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:battery_plus/battery_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data/api/location/location.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/repository/journey_repository.dart';
 import 'package:data/service/battery_service.dart';
@@ -69,7 +70,8 @@ void updateCurrentUserState(RemoteMessage message, NetworkService networkService
   final bool isTypeUpdateState = message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
   if (userId != null && isTypeUpdateState) {
     networkService.updateUserNetworkState(userId);
-  }}
+  }
+}
 
 Future<ProviderContainer> _initContainer() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -98,11 +100,13 @@ Future<void> _handleLocationUpdates(MethodCall call) async {
   if (call.method == 'onLocationUpdate') {
     final Map<String, dynamic> locationData = Map<String, dynamic>.from(call.arguments);
 
-    final double latitude = locationData['latitude'];
-    final double longitude = locationData['longitude'];
-    final DateTime timestamp = DateTime.fromMillisecondsSinceEpoch(locationData['timestamp'].toInt());
+    final LocationData locationPosition = LocationData(
+      latitude: locationData['latitude'],
+      longitude: locationData['longitude'],
+      timestamp: DateTime.fromMillisecondsSinceEpoch(locationData['timestamp'].toInt()),
+    );
 
-    _updateUserLocationWithIOS(latitude, longitude, timestamp);
+    await _updateUserLocationWithIOS(locationPosition);
   }
 }
 
@@ -183,23 +187,23 @@ void _startLocationUpdates() {
   });
 }
 
-void _updateUserLocationWithIOS(double latitude, double longitude, DateTime timestamp) async {
+Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
   final userId = await _getUserIdFromPreferences();
   if (userId != null) {
     final locationService = LocationService(FirebaseFirestore.instance);
     final journeyRepository = JourneyRepository(FirebaseFirestore.instance);
 
     try {
-      final userState = await journeyRepository.getUserState(userId, latitude, longitude, timestamp);
+      final userState = await journeyRepository.getUserState(userId, locationPosition);
 
       await locationService.saveCurrentLocation(
         userId,
-        LatLng(latitude, longitude),
+        LatLng(locationPosition.latitude, locationPosition.longitude),
         DateTime.now().millisecondsSinceEpoch,
         userState,
       );
 
-      await journeyRepository.saveUserJourney(userState, userId, latitude, longitude, timestamp);
+      await journeyRepository.saveUserJourney(userState, userId, locationPosition);
     } catch (error, stack) {
       logger.e(
         'Error while updating user location and journey from native iOS location data',
@@ -223,7 +227,13 @@ void _updateUserLocation(
   _previousPosition = position;
 
   try {
-    final userState = await journeyRepository.getUserState(userId, position.latitude, position.longitude, position.timestamp);
+    final locationData = LocationData(
+      latitude: position.latitude,
+      longitude: position.longitude,
+      timestamp: position.timestamp,
+    );
+
+    final userState = await journeyRepository.getUserState(userId, locationData);
 
     await locationService.saveCurrentLocation(
       userId,
@@ -232,7 +242,7 @@ void _updateUserLocation(
       userState,
     );
 
-    await journeyRepository.saveUserJourney(userState, userId, position.latitude, position.longitude, position.timestamp);
+    await journeyRepository.saveUserJourney(userState, userId, locationData);
   } catch (error, stack) {
     logger.e(
       'Main: error while getting ot update user location and journey',

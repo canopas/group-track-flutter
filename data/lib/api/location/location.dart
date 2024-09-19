@@ -34,3 +34,15 @@ class ApiLocation with _$ApiLocation {
 
   Map<String, dynamic> toFireStore(ApiLocation space) => space.toJson();
 }
+
+class LocationData {
+  final double latitude;
+  final double longitude;
+  final DateTime timestamp;
+
+  LocationData({
+    required this.latitude,
+    required this.longitude,
+    required this.timestamp,
+  });
+}
