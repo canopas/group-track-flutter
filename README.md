@@ -50,7 +50,7 @@ YourSpace ensures your loved ones' well-being with:
 </table>
 
 ## Requirements
-Ensure you have the latest stable version of Android Studio installed, and set the iOS deployment target to 14.0 or higher
+Ensure you have the latest stable version of Android Studio installed
 You can then proceed by either cloning this repository or importing the project directly into Android Studio, following the steps provided in the [documentation](https://developer.android.com/jetpack/compose/setup#sample).
 <details>
      <summary> Click to expand </summary>
@@ -68,6 +68,7 @@ IOS:
 <key>ApiMapKey</key>
 <string>your_map_api_key</string>
 ```
+Note: Set iOS minimum deployment target to 14.0 or higher
 
 ### Add config.dart
 Inside the `data/lib` directory, create a new file named `config.dart`. This file will store your place API key, follow format:
