@@ -34,7 +34,7 @@ YourSpace ensures your loved ones' well-being with:
   </tr>
   <tr>
     <td><img src="screenshots/create_space.gif"  alt="Family Safety At Your Fingertips"/></td>
-    <td> <img src="screenshots/create_space.gif"   alt="Say Goodbye to 'Where are You?' Texts "/> </td>
+    <td> <img src="screenshots/location_tracking.gif"   alt="Say Goodbye to 'Where are You?' Texts "/> </td>
   </tr>
 </table>
 
@@ -44,8 +44,8 @@ YourSpace ensures your loved ones' well-being with:
     <th  width="33%" >Communication</th>
   </tr>
   <tr align="center">
-    <td><img src="screenshots/create_space.gif"  alt="Customize Your Places According to Your Needs" width="70%" /></td>
-    <td> <img src="screenshots/create_space.gif"   alt="Chat with Your Loved Ones Anytime, Anywhere" width="70%" /> </td>
+    <td><img src="screenshots/place.gif"  alt="Customize Your Places According to Your Needs" width="70%" /></td>
+    <td> <img src="screenshots/message.gif"   alt="Chat with Your Loved Ones Anytime, Anywhere" width="70%" /> </td>
   </tr>
 </table>
 
