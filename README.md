@@ -44,8 +44,8 @@ YourSpace ensures your loved ones' well-being with:
     <th  width="33%" >Communication</th>
   </tr>
   <tr align="center">
-    <td><img src="screenshots/place.gif"  alt="Customize Your Places According to Your Needs" width="70%" /></td>
-    <td> <img src="screenshots/message.gif"   alt="Chat with Your Loved Ones Anytime, Anywhere" width="70%" /> </td>
+    <td><img src="screenshots/place.gif"  alt="Customize Your Places According to Your Needs"/></td>
+    <td> <img src="screenshots/message.gif"   alt="Chat with Your Loved Ones Anytime, Anywhere"/> </td>
   </tr>
 </table>
 
