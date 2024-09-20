@@ -6,7 +6,7 @@ Enhancing family safety and communication with real-time location sharing and mo
 <img src="screenshots/cover_image.png"  alt="cover"  width="100%"/>
 
 ## Overview
-Welcome to YourSpace, an open-source Flutter application designed to enhance family safety through real-time location sharing and communication features. YourSpace aims to provide peace of mind by ensuring the safety of your loved ones while facilitating seamless communication regardless of their location.
+Welcome to YourSpace, an open-source Flutter application designed to enhance family safety 👫 through real-time location sharing 📍 and communication features 💬. YourSpace aims to provide peace of mind by ensuring the safety 🛣 of your loved ones while facilitating seamless communication regardless of their location.
 
 YourSpace adopts a declarative UI approach with Flutter and utilizes [flutter riverpod](https://pub.dev/packages/flutter_riverpod) for state management. This architecture promotes a clear separation of concerns, making the codebase more maintainable, scalable, and testable. Flutter’s widget-based system allows for the creation of highly responsive UIs, while flutter riverpod ensures efficient state handling across different components, leading to a smooth and intuitive user experience.
 
@@ -19,11 +19,11 @@ YourSpace is currently in active development 🚧, with plans to incorporate add
 
 YourSpace ensures your loved ones' well-being with:
 
-- [X] Real-time Location Sharing
-- [X] Secure Communication
-- [X] Location History with Routes
-- [X] Geo-fencing
-- [ ] SOS Help Alert
+- Create and Join Spaces: Set up your own personalised spaces and invite others to join, or become part of an existing group to stay connected.
+- Live Location Sharing: Share your real-time location with members of your space, allowing them to follow your journey and stay informed about your whereabouts.
+- Track Journeys: Whether it's your own route or someone else's, track journeys in real-time to ensure smooth navigation and timely arrivals.
+- Place Notifications: Add specific places within your space, and get notified whenever a member enters or leaves that location, making coordination effortless.
+- Real-Time Chat: Stay in touch with other space members through built-in chat functionality, enabling you to coordinate, plan, or simply catch up in real-time.
 
 ## Screenshots
 
@@ -31,12 +31,10 @@ YourSpace ensures your loved ones' well-being with:
   <tr>
     <th width="33%" >Create/Join Space</th>
     <th  width="33%" >Share Location</th>
-    <th  width="33%" >Location History</th>
   </tr>
   <tr>
-    <td><img src="screenshots/yourspace_ss_1.jpg"  alt="Family Safety At Your Fingertips"/></td>
-    <td> <img src="screenshots/yourspace_ss_2.jpg"   alt="Say Goodbye to 'Where are You?' Texts "/> </td>
-    <td> <img src="screenshots/yourspace_ss_3.jpg"  alt="Always Track Your Loved Ones"/> </td>
+    <td><img src="screenshots/create_space.gif"  alt="Family Safety At Your Fingertips"/></td>
+    <td> <img src="screenshots/location_tracking.gif"   alt="Say Goodbye to 'Where are You?' Texts "/> </td>
   </tr>
 </table>
 
@@ -46,13 +44,13 @@ YourSpace ensures your loved ones' well-being with:
     <th  width="33%" >Communication</th>
   </tr>
   <tr align="center">
-    <td><img src="screenshots/yourspace_ss_4.jpg"  alt="Customize Your Places According to Your Needs" width="70%" /></td>
-    <td> <img src="screenshots/yourspace_ss_5.jpg"   alt="Chat with Your Loved Ones Anytime, Anywhere" width="70%" /> </td>
+    <td><img src="screenshots/place.gif"  alt="Customize Your Places According to Your Needs" width="70%" /></td>
+    <td> <img src="screenshots/message.gif"   alt="Chat with Your Loved Ones Anytime, Anywhere" width="70%" /> </td>
   </tr>
 </table>
 
 ## Requirements
-Make sure you have the latest stable version of Android Studio installed.
+Ensure you have the latest stable version of Android Studio installed, and set the iOS deployment target to 14.0 or higher
 You can then proceed by either cloning this repository or importing the project directly into Android Studio, following the steps provided in the [documentation](https://developer.android.com/jetpack/compose/setup#sample).
 <details>
      <summary> Click to expand </summary>
