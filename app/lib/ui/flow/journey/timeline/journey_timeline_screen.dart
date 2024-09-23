@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:data/api/auth/auth_models.dart';
@@ -386,9 +385,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
 
   Future<String> _getAddress(LatLng latLng) async {
     await Future.delayed(const Duration(seconds: 2));
-    final address = Platform.isAndroid
-        ? await latLng.getAddressFromLocation()
-        : await notifier.getAddress(latLng.latitude, latLng.longitude);
+    final address = await latLng.getAddressFromLocation();
     return address;
   }
 
@@ -410,12 +407,13 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
 
   String _getFormattedLocationTime(int createdAt) {
     DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
+    final startTime = createdAtDate.format(context, DateFormatType.time);
 
     if (createdAtDate.isToday) {
       final time = createdAtDate.format(context, DateFormatType.time);
       return context.l10n.journey_timeline_today_text(time);
     } else {
-      return createdAtDate.format(context, DateFormatType.dayTime);
+      return '${createdAtDate.format(context, DateFormatType.relativeDate)} $startTime';
     }
   }
 
