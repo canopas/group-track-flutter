@@ -1,39 +1,11 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Style
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+The YourSpace style module centralizes all the styling elements of the YourSpace app. It ensures
+that fonts, themes, and reusable styles are consistently applied across the entire application,
+creating a unified and cohesive design experience.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
-```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+- **Fonts:** Manages the fonts used throughout the app, defining consistent typography for headings, body text, and other text elements.
+- **Themes:**  Configures global themes, including light and dark modes, and manages the app's color schemes.
+- **Reusable Styles:** Provides shared styles, such as button styles, animations, and other UI elements, to maintain design consistency across the app.
