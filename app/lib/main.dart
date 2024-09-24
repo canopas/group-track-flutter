@@ -138,7 +138,6 @@ StreamSubscription<Position>? positionSubscription;
 Timer? _timer;
 Position? _position;
 Position? _previousPosition;
-LocationData? _iOSPreviousPosition;
 int? _batteryLevel;
 
 @pragma('vm:entry-point')
@@ -194,12 +193,6 @@ void _startLocationUpdates() {
 Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
   final userId = await _getUserIdFromPreferences();
   if (userId != null) {
-    final isSame = _iOSPreviousPosition?.latitude == locationPosition.latitude &&
-        _iOSPreviousPosition?.longitude == locationPosition.longitude;
-
-    if (isSame) return;
-    _iOSPreviousPosition = locationPosition;
-
     try {
       final userState = await journeyRepository.getUserState(userId, locationPosition);
 
