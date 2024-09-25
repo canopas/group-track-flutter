@@ -1,16 +1,9 @@
-# yourspace_flutter
+# App
 
-A new Flutter project.
+The `App` is the main module of YourSpace. It contains the core Flutter application implementation for YourSpace.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **User Interface:** Delivers the complete user interface for the YourSpace app.
+- **Native Integration:** Includes native code for platform-specific functionalities, such as background location tracking and geofencing.
+- **Components:** Contains reusable components such as buttons, views and extenstions.

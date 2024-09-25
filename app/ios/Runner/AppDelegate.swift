@@ -7,13 +7,13 @@ import CoreLocation
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
-    
+
     var geofencePlugin: GeofenceService?
     var locationManager: CLLocationManager?
     var previousLocation: CLLocation?
-    
+
     let minimumDistance: Double = 10.0 // 10 meters
-    
+
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -23,14 +23,14 @@ import CoreLocation
         if #available(iOS 10.0, *) {
             UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
         }
-        
+
         setUpLocation()
-        
+
         let key = Bundle.main.object(forInfoDictionaryKey: "ApiMapKey")
         GMSServices.provideAPIKey(key as! String)
-        
+
         geofencePluginRegistration()
-        
+
         GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
@@ -46,9 +46,9 @@ extension AppDelegate {
     private func geofencePluginRegistration() {
         let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
         let geofenceChannel = FlutterMethodChannel(name: "geofence_plugin", binaryMessenger: controller.binaryMessenger)
-        
+
         geofencePlugin = GeofenceService(channel: geofenceChannel)
-        
+
         geofenceChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
             guard let self = self else { return }
             if call.method == "startMonitoring" {
@@ -88,20 +88,20 @@ extension AppDelegate: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last else { return }
-        
+
         let now = Date().timeIntervalSince1970
         let lastUpdate = previousLocation?.timestamp.timeIntervalSince1970 ?? 0
         let timeDifference = now - lastUpdate
         if timeDifference < 60 { return }
-        
+
         if let previousLocation = previousLocation {
             let distance = currentLocation.distance(from: previousLocation)
-                        
+
             if distance < minimumDistance {
                 return
             }
         }
-        
+
         previousLocation = currentLocation
         
         let locationData: [String: Any] = [
