@@ -14,8 +14,9 @@ import '../log/logger.dart';
 import '../service/location_service.dart';
 import '../utils/location_converters.dart';
 
-const MIN_TIME_DIFFERENCE = 5 * 60 * 1000;
-const MIN_DISTANCE = 100.0;
+const MIN_TIME_DIFFERENCE = 5 * 60 * 1000; // 5 min in milliseconds
+const MIN_DISTANCE = 100.0; // Minimum distance in meter to consider movement
+const int GRACE_PERIOD = 2 * 60 * 1000; // Grace period of 2 min considering small stops
 
 class JourneyRepository {
   late LocationService _locationService;
@@ -246,9 +247,10 @@ class JourneyRepository {
         : LatLng(lastJourney.to_latitude!, lastJourney.to_longitude!);
     final distance = _distanceBetween(extractedLocation, lastLatLng);
     final timeDifference = locationPosition.timestamp.millisecondsSinceEpoch -
-        lastJourney.created_at!;
+        (lastJourney.update_at ?? lastJourney.created_at!);
 
-    if (timeDifference > MIN_TIME_DIFFERENCE && distance > MIN_DISTANCE) {
+    if (timeDifference > MIN_TIME_DIFFERENCE && timeDifference > GRACE_PERIOD && distance > MIN_DISTANCE) {
+      // Case 1: User has stayed for more than the MIN_TIME_DIFFERENCE and moved
       if (lastJourney.isSteadyLocation()) {
         await _journeyService.updateLastLocationJourney(
           userId = userId,
@@ -277,6 +279,7 @@ class JourneyRepository {
       );
     } else if (timeDifference < MIN_TIME_DIFFERENCE &&
         distance > MIN_DISTANCE) {
+      // Case 2: Update routes when the time difference is small but distance is significant
       final updatedRoutes = List<JourneyRoute>.from(lastJourney.routes)
         ..add(JourneyRoute(
           latitude: extractedLocation.latitude,
@@ -284,18 +287,18 @@ class JourneyRepository {
         ));
 
       await _journeyService.updateLastLocationJourney(
-          userId,
-          lastJourney.copyWith(
-            to_latitude: extractedLocation.latitude,
-            to_longitude: extractedLocation.longitude,
-            route_distance: distance,
-            routes: updatedRoutes,
-            route_duration: locationPosition.timestamp.millisecondsSinceEpoch -
-                lastJourney.created_at!,
-            update_at: DateTime.now().millisecondsSinceEpoch,
-          ));
-    } else if (timeDifference > MIN_TIME_DIFFERENCE &&
-        distance < MIN_DISTANCE) {
+        userId,
+        lastJourney.copyWith(
+          to_latitude: extractedLocation.latitude,
+          to_longitude: extractedLocation.longitude,
+          route_distance: distance,
+          routes: updatedRoutes,
+          route_duration: locationPosition.timestamp.millisecondsSinceEpoch -
+              lastJourney.created_at!,
+          update_at: DateTime.now().millisecondsSinceEpoch,
+        ));
+    } else if (timeDifference > MIN_TIME_DIFFERENCE && distance < MIN_DISTANCE) {
+      // Case 3: Steady location when the user has stayed for longer than MIN_TIME_DIFFERENCE but hasn't moved much
       if (lastJourney.isSteadyLocation()) {
         await _journeyService.updateLastLocationJourney(
           userId = userId,
@@ -312,6 +315,7 @@ class JourneyRepository {
       }
     } else if (timeDifference < MIN_TIME_DIFFERENCE &&
         distance < MIN_DISTANCE) {
+      // Case 4: No significant movement or time passed; just update the journey's update time
       await _journeyService.updateLastLocationJourney(
         userId = userId,
         lastJourney.copyWith(update_at: DateTime.now().millisecondsSinceEpoch),

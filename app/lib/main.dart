@@ -225,6 +225,7 @@ void _updateUserLocation(
   String userId,
   Position? position,
 ) async {
+  if (Platform.isIOS) return;
   final isSame = _previousPosition?.latitude == position?.latitude &&
       _previousPosition?.longitude == position?.longitude;
 

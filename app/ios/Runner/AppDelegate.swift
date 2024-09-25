@@ -79,6 +79,8 @@ extension AppDelegate: CLLocationManagerDelegate {
     private func setUpLocation() {
         locationManager = CLLocationManager()
         locationManager?.delegate = self
+        locationManager?.distanceFilter = 10
+        locationManager?.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         locationManager?.allowsBackgroundLocationUpdates = true
         locationManager?.pausesLocationUpdatesAutomatically = false
         locationManager?.startMonitoringSignificantLocationChanges()
@@ -86,6 +88,11 @@ extension AppDelegate: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last else { return }
+        
+        let now = Date().timeIntervalSince1970
+        let lastUpdate = previousLocation?.timestamp.timeIntervalSince1970 ?? 0
+        let timeDifference = now - lastUpdate
+        if timeDifference < 60 { return }
         
         if let previousLocation = previousLocation {
             let distance = currentLocation.distance(from: previousLocation)
