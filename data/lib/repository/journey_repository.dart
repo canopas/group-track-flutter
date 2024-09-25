@@ -1,8 +1,7 @@
 //ignore_for_file: constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:data/api/location/location_table.dart';
-import 'package:data/storage/database/location_table_dao.dart';
+import 'package:data/storage/location_caches.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -11,21 +10,16 @@ import '../api/location/journey/api_journey_service.dart';
 import '../api/location/journey/journey.dart';
 import '../api/location/location.dart';
 import '../log/logger.dart';
-import '../service/location_service.dart';
-import '../utils/location_converters.dart';
 
-const MIN_TIME_DIFFERENCE = 5 * 60 * 1000; // 5 min in milliseconds
-const MIN_DISTANCE = 100.0; // Minimum distance in meter to consider movement
-const int GRACE_PERIOD = 2 * 60 * 1000; // Grace period of 2 min considering small stops
+const MIN_TIME_DIFFERENCE = 5 * 60 * 1000;
+const MIN_DISTANCE = 100.0;
 
 class JourneyRepository {
-  late LocationService _locationService;
   late ApiJourneyService _journeyService;
 
-  final LocationTableDao _locationTableDao = LocationTableDao();
+  final LocationCache _locationCache = LocationCache();
 
   JourneyRepository(FirebaseFirestore fireStore) {
-    _locationService = LocationService(fireStore);
     _journeyService = ApiJourneyService(fireStore);
   }
 
@@ -50,12 +44,7 @@ class JourneyRepository {
             created_at: DateTime.now().millisecondsSinceEpoch,
           ),
         ];
-        final tableData = LocationTable(
-          userId: userId,
-          lastFiveMinutesLocations:
-              LocationConverters.locationListToString(locations),
-        );
-        await _locationTableDao.insertLocationTable(tableData);
+        _locationCache.putLastFiveLocations(locations, userId);
       }
       locationData = await _getLocationData(userId);
       final userState = _getCurrentUserState(locationData, locationPosition);
@@ -71,25 +60,27 @@ class JourneyRepository {
   }
 
   int _getCurrentUserState(
-      LocationTable? locationData, LocationData locationPosition) {
-    if (locationData != null) {
-      final lastFiveMinLocation = _getLastFiveMinuteLocations(locationData);
-      if (lastFiveMinLocation!.isMoving(locationPosition)) return USER_STATE_MOVING;
+      List<ApiLocation>? locationData, LocationData locationPosition) {
+    if (locationData == null || locationData.isEmpty) {
+      return USER_STATE_STEADY;
     }
-    return USER_STATE_STEADY;
+
+    LatLng median = geometricMedian(locationData.map((loc) => LatLng(loc.latitude, loc.longitude)).toList());
+
+    double distanceToMedian = _distanceBetween(LatLng(locationPosition.latitude, locationPosition.longitude), median);
+    if (distanceToMedian > MIN_DISTANCE) {
+      return USER_STATE_MOVING;
+    } else {
+      return USER_STATE_STEADY;
+    }
   }
 
-  void _checkAndUpdateLastFiveMinLocation(
-    String userId,
-    LocationTable locationData,
-    LocationData locationPosition,
-  ) async {
-    final locations = _getLastFiveMinuteLocations(locationData);
+  void _checkAndUpdateLastFiveMinLocation(String userId,
+      List<ApiLocation> locationData, LocationData locationPosition) async {
+    final locations = locationData;
 
-    if (locations == null || locations.isEmpty) {
-      final fiveMinLocation =
-          await _locationService.getLastFiveMinLocation(userId).first;
-      await _updateLocationData(locationData, fiveMinLocation);
+    if (locations.isEmpty) {
+      await _updateLocationData(locations, locationPosition, userId);
     } else {
       final latest = (locations.length == 1)
           ? locations.first
@@ -111,32 +102,22 @@ class JourneyRepository {
           longitude: latLng.longitude,
           created_at: DateTime.now().millisecondsSinceEpoch,
         ));
-        await _updateLocationData(locationData, updated);
+        await _updateLocationData(updated, locationPosition, userId);
       }
     }
   }
 
-  List<ApiLocation>? _getLastFiveMinuteLocations(LocationTable locationData) {
-    return locationData.lastFiveMinutesLocations != null
-        ? LocationConverters.locationListFromString(
-            locationData.lastFiveMinutesLocations!)
-        : [];
+  Future<List<ApiLocation>?> _getLocationData(String userId) async {
+    return _locationCache.getLastFiveLocations(userId);
   }
 
-  Future<void> _updateLocationData(
-    LocationTable locationData,
-    List<ApiLocation?> locations,
-  ) async {
-    final updatedData = locationData.copyWith(
-      lastFiveMinutesLocations:
-          LocationConverters.locationListToString(locations),
-    );
-    await _locationTableDao.updateLocationTable(updatedData);
+  Future<void> _updateLocationData(List<ApiLocation> locations,
+      LocationData locationPosition, String userId) async {
+    _locationCache.putLastFiveLocations(locations, userId);
   }
 
   Future<void> saveUserJourney(int userSate, String userId, LocationData locationPosition) async {
-    final locationData = await _getLocationData(userId);
-    final lastJourney = await _getLastJourneyLocation(userId, locationData);
+    final lastJourney = _locationCache.getLastJourney(userId);
 
     try {
       if (lastJourney == null) {
@@ -156,33 +137,6 @@ class JourneyRepository {
         error: error,
         stackTrace: stack,
       );
-    }
-  }
-
-  Future<LocationTable?> _getLocationData(String userId) async {
-    return await _locationTableDao.getLocationData(userId);
-  }
-
-  Future<ApiLocationJourney?> _getLastJourneyLocation(
-    String userId,
-    LocationTable? locationData,
-  ) async {
-    if (locationData != null && locationData.lastLocationJourney != null) {
-      return LocationConverters.journeyFromString(
-          locationData.lastLocationJourney!);
-    } else {
-      final lastJourneyLocation =
-          await _journeyService.getLastJourneyLocation(userId);
-      if (lastJourneyLocation != null) {
-        final updatedLocationData = locationData?.copyWith(
-          lastLocationJourney:
-              LocationConverters.journeyToString(lastJourneyLocation),
-        );
-        if (updatedLocationData != null) {
-          await _locationTableDao.updateLocationTable(updatedLocationData);
-        }
-      }
-      return lastJourneyLocation;
     }
   }
 
@@ -232,6 +186,7 @@ class JourneyRepository {
           update_at: DateTime.now().millisecondsSinceEpoch,
         ),
       );
+      _locationCache.putLastJourney(lastJourney, userId);
     }
   }
 
@@ -249,8 +204,7 @@ class JourneyRepository {
     final timeDifference = locationPosition.timestamp.millisecondsSinceEpoch -
         (lastJourney.update_at ?? lastJourney.created_at!);
 
-    if (timeDifference > MIN_TIME_DIFFERENCE && timeDifference > GRACE_PERIOD && distance > MIN_DISTANCE) {
-      // Case 1: User has stayed for more than the MIN_TIME_DIFFERENCE and moved
+    if (timeDifference > MIN_TIME_DIFFERENCE && distance > MIN_DISTANCE) {
       if (lastJourney.isSteadyLocation()) {
         await _journeyService.updateLastLocationJourney(
           userId = userId,
@@ -279,7 +233,6 @@ class JourneyRepository {
       );
     } else if (timeDifference < MIN_TIME_DIFFERENCE &&
         distance > MIN_DISTANCE) {
-      // Case 2: Update routes when the time difference is small but distance is significant
       final updatedRoutes = List<JourneyRoute>.from(lastJourney.routes)
         ..add(JourneyRoute(
           latitude: extractedLocation.latitude,
@@ -287,18 +240,18 @@ class JourneyRepository {
         ));
 
       await _journeyService.updateLastLocationJourney(
-        userId,
-        lastJourney.copyWith(
-          to_latitude: extractedLocation.latitude,
-          to_longitude: extractedLocation.longitude,
-          route_distance: distance,
-          routes: updatedRoutes,
-          route_duration: locationPosition.timestamp.millisecondsSinceEpoch -
-              lastJourney.created_at!,
-          update_at: DateTime.now().millisecondsSinceEpoch,
-        ));
-    } else if (timeDifference > MIN_TIME_DIFFERENCE && distance < MIN_DISTANCE) {
-      // Case 3: Steady location when the user has stayed for longer than MIN_TIME_DIFFERENCE but hasn't moved much
+          userId,
+          lastJourney.copyWith(
+            to_latitude: extractedLocation.latitude,
+            to_longitude: extractedLocation.longitude,
+            route_distance: distance,
+            routes: updatedRoutes,
+            route_duration: locationPosition.timestamp.millisecondsSinceEpoch -
+                lastJourney.created_at!,
+            update_at: DateTime.now().millisecondsSinceEpoch,
+          ));
+    } else if (timeDifference > MIN_TIME_DIFFERENCE &&
+        distance < MIN_DISTANCE) {
       if (lastJourney.isSteadyLocation()) {
         await _journeyService.updateLastLocationJourney(
           userId = userId,
@@ -315,12 +268,12 @@ class JourneyRepository {
       }
     } else if (timeDifference < MIN_TIME_DIFFERENCE &&
         distance < MIN_DISTANCE) {
-      // Case 4: No significant movement or time passed; just update the journey's update time
       await _journeyService.updateLastLocationJourney(
         userId = userId,
         lastJourney.copyWith(update_at: DateTime.now().millisecondsSinceEpoch),
       );
     }
+    _locationCache.putLastJourney(lastJourney, userId); // Update cache
   }
 
   double _distanceBetween(LatLng startLocation, LatLng endLocation) {
@@ -331,9 +284,32 @@ class JourneyRepository {
       endLocation.longitude,
     );
   }
+
+  LatLng geometricMedian(List<LatLng> locations) {
+    if (locations.isEmpty) {
+      return const LatLng(0, 0);
+    }
+    LatLng result = locations.reduce((candidate, location) {
+      double candidateSum = locations.map((loc) => Geolocator.distanceBetween(
+        candidate.latitude,
+        candidate.longitude,
+        loc.latitude,
+        loc.longitude,
+      )).reduce((a, b) => a + b);
+
+      double locationSum = locations.map((loc) => Geolocator.distanceBetween(
+        location.latitude,
+        location.longitude,
+        loc.latitude,
+        loc.longitude
+      )).reduce((a, b) => a + b);
+      return candidateSum < locationSum ? candidate : location;
+    });
+    return result;
+  }
 }
 
-extension ApiLocationListExtensions on List<ApiLocation> {
+extension LocationListExtensions on List<ApiLocation> {
   bool isMoving(LocationData locationPosition) {
     return any((location) {
       final newLocation =
