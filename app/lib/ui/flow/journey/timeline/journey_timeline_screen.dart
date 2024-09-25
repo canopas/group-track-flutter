@@ -164,9 +164,10 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     String? spaceId,
   ) {
     final location = LatLng(journey.from_latitude, journey.from_longitude);
+    final steadyDuration = notifier.getSteadyDuration(journey.created_at!, journey.update_at!);
     final formattedTime = (isFirstItem)
         ? _getFormattedLocationTimeForFirstItem(journey.created_at!)
-        : _getFormattedLocationTime(journey.created_at!);
+        : _getFormattedTimeForSteadyLocation(journey.created_at!, steadyDuration);
 
     return Padding(
       padding: EdgeInsets.only(top: isFirstItem ? 16 : 0),
@@ -416,6 +417,18 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
       return context.l10n.journey_timeline_today_text(time);
     } else {
       return '${createdAtDate.format(context, DateFormatType.dayMonthFull)} $startTime';
+    }
+  }
+
+  String _getFormattedTimeForSteadyLocation(int createdAt, String steadyDuration) {
+    DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
+    final startTime = createdAtDate.format(context, DateFormatType.time);
+
+    if (createdAtDate.isToday) {
+      final time = createdAtDate.format(context, DateFormatType.time);
+      return '${context.l10n.journey_timeline_today_text(time)} for $steadyDuration';
+    } else {
+      return '${createdAtDate.format(context, DateFormatType.dayMonthFull)} $startTime for $steadyDuration';
     }
   }
 

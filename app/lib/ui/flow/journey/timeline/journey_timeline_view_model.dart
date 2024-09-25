@@ -106,11 +106,14 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     _loadJourney();
   }
 
-  String formatTimeDifference(Duration duration) {
+  String getSteadyDuration(int createdAt, int updatedAt) {
+    Duration duration = DateTime.fromMillisecondsSinceEpoch(updatedAt)
+        .difference(DateTime.fromMillisecondsSinceEpoch(createdAt));
+
     if (duration.inHours > 0) {
-      return '${duration.inHours}h ${duration.inMinutes.remainder(60)}min'; // Returns hours and remaining minutes
+      return '${duration.inHours}h ${duration.inMinutes.remainder(60)}min';
     } else {
-      return '${duration.inMinutes} min'; // Returns only minutes if less than an hour
+      return '${duration.inMinutes} min';
     }
   }
 }

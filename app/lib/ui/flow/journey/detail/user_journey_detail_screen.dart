@@ -9,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
@@ -145,7 +146,7 @@ class _UserJourneyDetailScreenState
 
   Widget _placeInfo(List<Placemark> placeMark, int? createdAt) {
     final formattedTime = _getDateAndTime(createdAt ?? 0);
-    final address = placeMark.isNotEmpty ? placeMark.getFormattedAddress() : 'Getting the address';
+    final address = placeMark.isNotEmpty ? placeMark.getFormattedAddress() : context.l10n.journey_detail_getting_address_text;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

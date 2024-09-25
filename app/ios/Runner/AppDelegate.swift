@@ -12,8 +12,6 @@ import CoreLocation
     var locationManager: CLLocationManager?
     var previousLocation: CLLocation?
 
-    let minimumDistance: Double = 10.0 // 10 meters
-
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -93,14 +91,6 @@ extension AppDelegate: CLLocationManagerDelegate {
         let lastUpdate = previousLocation?.timestamp.timeIntervalSince1970 ?? 0
         let timeDifference = now - lastUpdate
         if timeDifference < 60 { return }
-
-        if let previousLocation = previousLocation {
-            let distance = currentLocation.distance(from: previousLocation)
-
-            if distance < minimumDistance {
-                return
-            }
-        }
 
         previousLocation = currentLocation
         
