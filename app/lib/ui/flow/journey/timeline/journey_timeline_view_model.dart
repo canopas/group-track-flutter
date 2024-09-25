@@ -105,6 +105,14 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     );
     _loadJourney();
   }
+
+  String formatTimeDifference(Duration duration) {
+    if (duration.inHours > 0) {
+      return '${duration.inHours}h ${duration.inMinutes.remainder(60)}min'; // Returns hours and remaining minutes
+    } else {
+      return '${duration.inMinutes} min'; // Returns only minutes if less than an hour
+    }
+  }
 }
 
 @freezed

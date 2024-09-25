@@ -285,6 +285,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
               context.l10n.journey_timeline_unknown_address_text;
           _addressCache[latLng] = address;
           return _placeInfo(address, formattedTime);
+        } else if (snapshot.hasError) {
+          return _placeInfo("Request timeout", formattedTime);
         } else {
           return _placeInfo(
             context.l10n.journey_timeline_unknown_address_text,
@@ -378,7 +380,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
       final time = createdAtDate.format(context, DateFormatType.time);
       return context.l10n.journey_timeline_Since_text(time);
     } else {
-      final dayTime = createdAtDate.format(context, DateFormatType.dayTime);
+      final dayTime = createdAtDate.format(context, DateFormatType.dayMonthFull);
       return context.l10n.journey_timeline_Since_text(dayTime);
     }
   }
@@ -413,7 +415,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
       final time = createdAtDate.format(context, DateFormatType.time);
       return context.l10n.journey_timeline_today_text(time);
     } else {
-      return '${createdAtDate.format(context, DateFormatType.relativeDate)} $startTime';
+      return '${createdAtDate.format(context, DateFormatType.dayMonthFull)} $startTime';
     }
   }
 
@@ -451,11 +453,11 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     } else if (fromArea == toArea) {
       return "$fromArea, $fromCity";
     } else if (fromCity == toCity) {
-      return "$fromArea to $toArea, $fromCity";
+      return "$fromArea -> $toArea, $fromCity";
     } else if (fromState == toState) {
-      return "$fromArea, $fromCity to $toArea, $toCity";
+      return "$fromArea, $fromCity -> $toArea, $toCity";
     } else {
-      return "$fromCity, $fromState to $toCity, $toState";
+      return "$fromCity, $fromState -> $toCity, $toState";
     }
   }
 

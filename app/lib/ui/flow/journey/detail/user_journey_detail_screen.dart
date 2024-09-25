@@ -145,7 +145,7 @@ class _UserJourneyDetailScreenState
 
   Widget _placeInfo(List<Placemark> placeMark, int? createdAt) {
     final formattedTime = _getDateAndTime(createdAt ?? 0);
-    final address = placeMark.getFormattedAddress();
+    final address = placeMark.isNotEmpty ? placeMark.getFormattedAddress() : 'Getting the address';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,7 +222,8 @@ class _UserJourneyDetailScreenState
 
   String _getDateAndTime(int createdAt) {
     DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
-    return createdAtDate.format(context, DateFormatType.dayTime);
+    final startTime = createdAtDate.format(context, DateFormatType.time);
+    return '${createdAtDate.format(context, DateFormatType.dayMonthFull)} $startTime';
   }
 
   void _observeError() {
