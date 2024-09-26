@@ -1,9 +1,13 @@
 //ignore_for_file: constant_identifier_names
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/storage/location_caches.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../api/location/journey/api_journey_service.dart';
@@ -45,6 +49,7 @@ class JourneyRepository {
           ),
         ];
         _locationCache.putLastFiveLocations(locations, userId);
+        logger.i('add location in cache $locations', time: DateTime.now());
       }
       locationData = await _getLocationData(userId);
       final userState = _getCurrentUserState(locationData, locationPosition);
@@ -69,8 +74,10 @@ class JourneyRepository {
 
     double distanceToMedian = _distanceBetween(LatLng(locationPosition.latitude, locationPosition.longitude), median);
     if (distanceToMedian > MIN_DISTANCE) {
+      logger.i('Update as Moving state', time: DateTime.now());
       return USER_STATE_MOVING;
     } else {
+      logger.i('Update as steady state', time: DateTime.now());
       return USER_STATE_STEADY;
     }
   }
@@ -114,6 +121,7 @@ class JourneyRepository {
   Future<void> _updateLocationData(List<ApiLocation> locations,
       LocationData locationPosition, String userId) async {
     _locationCache.putLastFiveLocations(locations, userId);
+    logger.i('Update location data $locations', time: DateTime.now());
   }
 
   Future<void> saveUserJourney(int userSate, String userId, LocationData locationPosition) async {
@@ -126,10 +134,13 @@ class JourneyRepository {
           fromLatitude: locationPosition.latitude,
           fromLongitude: locationPosition.longitude,
         );
+        logger.i('Save location journey when user last journey is null: $locationPosition', time: DateTime.now());
       } else if (userSate == USER_STATE_MOVING) {
         await _saveJourneyForMovingUser(userId, lastJourney, locationPosition);
+        logger.i('Save location journey when user is in moving state: $locationPosition, last journey: $lastJourney', time: DateTime.now());
       } else if (userSate == USER_STATE_STEADY) {
         await _saveJourneyForSteadyUser(userId, lastJourney, locationPosition);
+        logger.i('Save location journey when user is in steady state: $locationPosition, last journey $lastJourney', time: DateTime.now());
       }
     } catch (error, stack) {
       logger.e(
@@ -211,6 +222,7 @@ class JourneyRepository {
           lastJourney.copyWith(
               update_at: DateTime.now().millisecondsSinceEpoch),
         );
+        logger.i('update user journey when last loc is steady, check condition 1: $lastJourney', time: DateTime.now());
       } else {
         await _journeyService.saveCurrentJourney(
           userId: userId,
@@ -218,6 +230,7 @@ class JourneyRepository {
           fromLongitude: lastJourney.to_longitude!,
           created_at: lastJourney.update_at,
         );
+        logger.i('save user current journey when last loc is not steady, check condition 1: $lastJourney', time: DateTime.now());
       }
       await _journeyService.saveCurrentJourney(
         userId: userId,
@@ -231,6 +244,7 @@ class JourneyRepository {
         created_at: lastJourney.update_at,
         updated_at: DateTime.now().millisecondsSinceEpoch,
       );
+      logger.i('save user current journey outside if else condition, check condition 1: $lastJourney', time: DateTime.now());
     } else if (timeDifference < MIN_TIME_DIFFERENCE &&
         distance > MIN_DISTANCE) {
       final updatedRoutes = List<JourneyRoute>.from(lastJourney.routes)
@@ -250,6 +264,7 @@ class JourneyRepository {
                 lastJourney.created_at!,
             update_at: DateTime.now().millisecondsSinceEpoch,
           ));
+      logger.i('update location for steady user: $lastJourney', time: DateTime.now());
     } else if (timeDifference > MIN_TIME_DIFFERENCE &&
         distance < MIN_DISTANCE) {
       if (lastJourney.isSteadyLocation()) {
@@ -258,6 +273,7 @@ class JourneyRepository {
           lastJourney.copyWith(
               update_at: DateTime.now().millisecondsSinceEpoch),
         );
+        logger.i('update user journey when last loc is steady, check condition 2: $lastJourney', time: DateTime.now());
       } else {
         await _journeyService.saveCurrentJourney(
           userId: userId,
@@ -265,6 +281,7 @@ class JourneyRepository {
           fromLongitude: locationPosition.longitude,
           created_at: DateTime.now().millisecondsSinceEpoch,
         );
+        logger.i('save user current journey outside if else condition, check condition 2: $lastJourney', time: DateTime.now());
       }
     } else if (timeDifference < MIN_TIME_DIFFERENCE &&
         distance < MIN_DISTANCE) {
@@ -272,8 +289,10 @@ class JourneyRepository {
         userId = userId,
         lastJourney.copyWith(update_at: DateTime.now().millisecondsSinceEpoch),
       );
+      logger.i('update user journey when last loc is steady, check condition 3: $lastJourney', time: DateTime.now());
     }
-    _locationCache.putLastJourney(lastJourney, userId); // Update cache
+    _locationCache.putLastJourney(lastJourney, userId);
+    uploadLogFileToFirebase();
   }
 
   double _distanceBetween(LatLng startLocation, LatLng endLocation) {
@@ -306,6 +325,27 @@ class JourneyRepository {
       return candidateSum < locationSum ? candidate : location;
     });
     return result;
+  }
+
+  Future<void> uploadLogFileToFirebase() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final logFile = File('${directory.path}/app.log');
+
+      if (await logFile.exists()) {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('logs/${DateTime.now().toIso8601String()}-app.log');
+
+        // Upload the log file
+        await storageRef.putFile(logFile);
+        logger.i('Log file uploaded to Firebase Storage');
+      } else {
+        logger.w('Log file not found');
+      }
+    } catch (e) {
+      logger.e('Error uploading log file: $e');
+    }
   }
 }
 
