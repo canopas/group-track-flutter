@@ -273,7 +273,9 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$HomeViewStateImpl implements _HomeViewState {
+class _$HomeViewStateImpl
+    with DiagnosticableTreeMixin
+    implements _HomeViewState {
   const _$HomeViewStateImpl(
       {this.allowSave = false,
       this.isCreating = false,
@@ -337,8 +339,29 @@ class _$HomeViewStateImpl implements _HomeViewState {
   final bool hasNetWork;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'HomeViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, enablingLocation: $enablingLocation, locationEnabled: $locationEnabled, isSessionExpired: $isSessionExpired, popToSignIn: $popToSignIn, selectedSpace: $selectedSpace, spaceInvitationCode: $spaceInvitationCode, spaceList: $spaceList, error: $error, showBatteryDialog: $showBatteryDialog, hasNetWork: $hasNetWork)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'HomeViewState'))
+      ..add(DiagnosticsProperty('allowSave', allowSave))
+      ..add(DiagnosticsProperty('isCreating', isCreating))
+      ..add(DiagnosticsProperty('loading', loading))
+      ..add(DiagnosticsProperty('fetchingInviteCode', fetchingInviteCode))
+      ..add(DiagnosticsProperty('enablingLocation', enablingLocation))
+      ..add(DiagnosticsProperty('locationEnabled', locationEnabled))
+      ..add(DiagnosticsProperty('isSessionExpired', isSessionExpired))
+      ..add(DiagnosticsProperty('popToSignIn', popToSignIn))
+      ..add(DiagnosticsProperty('selectedSpace', selectedSpace))
+      ..add(DiagnosticsProperty('spaceInvitationCode', spaceInvitationCode))
+      ..add(DiagnosticsProperty('spaceList', spaceList))
+      ..add(DiagnosticsProperty('error', error))
+      ..add(DiagnosticsProperty('showBatteryDialog', showBatteryDialog))
+      ..add(DiagnosticsProperty('hasNetWork', hasNetWork));
   }
 
   @override

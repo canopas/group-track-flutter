@@ -81,18 +81,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppPage(
       body: ResumeDetector(
         onResume: () {
+          notifier.streamNetworkConnectivity();
           notifier.showBatteryOptimizationDialog();
           mapNotifier.checkUserPermission();
         },
-         child:// !state.hasNetWork
-        //     ? NoInternetScreen(onPressed: () => notifier.listenSpaceMember())
-        //     :
-          _body(context, state),
+        child: _body(context, state),
       ),
     );
   }
 
   Widget _body(BuildContext context, HomeViewState state) {
+    if (!state.hasNetWork) {
+      return NoInternetScreen(onPressed: () {
+        notifier.listenSpaceMember();
+      });
+    }
+
     return Padding(
       padding: context.mediaQueryPadding,
       child: Stack(

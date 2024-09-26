@@ -6,6 +6,7 @@ import 'package:data/log/logger.dart';
 import 'package:data/service/permission_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -45,7 +46,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this._userSession,
     this._checkNetwork,
   ) : super(const HomeViewState()) {
-    streamNetworkConnectivity();
     listenSpaceMember();
     updateCurrentUserNetworkState();
 
@@ -56,6 +56,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   String? get currentSpaceId => _currentSpaceIdController.state;
 
   void listenSpaceMember() async {
+    print('XXX call api');
     if (state.loading) return;
 
     try {
@@ -70,7 +71,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
         } else {
           state = state.copyWith(spaceList: [], selectedSpace: null);
         }
-        state = state.copyWith(loading: false, error: null, hasNetWork: true);
+        state = state.copyWith(loading: false, error: null);
       });
     } catch (error, stack) {
       state = state.copyWith(error: error, loading: false);
@@ -249,7 +250,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
   void streamNetworkConnectivity() async {
     Connectivity().onConnectivityChanged.listen((result) {
-
       final isNetwork = ConnectivityResult.none != result.first;
       print('XXX network:$result, isnetwork:$isNetwork');
       _checkNetwork.state = isNetwork;
