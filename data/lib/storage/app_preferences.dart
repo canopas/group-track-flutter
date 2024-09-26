@@ -53,3 +53,8 @@ final lastBatteryDialogPod = createPrefProvider<String?>(
   prefKey: 'show_battery_dialog',
   defaultValue: null,
 );
+
+final hasDeviceNetwork = createPrefProvider<bool>(
+  prefKey: "has_device_network",
+  defaultValue: true,
+);

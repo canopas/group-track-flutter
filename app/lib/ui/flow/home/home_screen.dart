@@ -18,6 +18,7 @@ import 'package:yourspace_flutter/ui/flow/home/map/map_view_model.dart';
 
 import '../../../domain/fcm/notification_handler.dart';
 import '../../components/alert.dart';
+import '../../components/no_internet_screen.dart';
 import '../../components/permission_dialog.dart';
 import 'components/home_top_bar.dart';
 import 'map/map_screen.dart';
@@ -83,7 +84,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           notifier.showBatteryOptimizationDialog();
           mapNotifier.checkUserPermission();
         },
-        child: _body(context, state),
+         child:// !state.hasNetWork
+        //     ? NoInternetScreen(onPressed: () => notifier.listenSpaceMember())
+        //     :
+          _body(context, state),
       ),
     );
   }

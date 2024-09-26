@@ -29,6 +29,7 @@ mixin _$HomeViewState {
   List<SpaceInfo> get spaceList => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   DateTime? get showBatteryDialog => throw _privateConstructorUsedError;
+  bool get hasNetWork => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeViewStateCopyWith<HomeViewState> get copyWith =>
@@ -54,7 +55,8 @@ abstract class $HomeViewStateCopyWith<$Res> {
       String spaceInvitationCode,
       List<SpaceInfo> spaceList,
       Object? error,
-      DateTime? showBatteryDialog});
+      DateTime? showBatteryDialog,
+      bool hasNetWork});
 
   $SpaceInfoCopyWith<$Res>? get selectedSpace;
 }
@@ -85,6 +87,7 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
     Object? spaceList = null,
     Object? error = freezed,
     Object? showBatteryDialog = freezed,
+    Object? hasNetWork = null,
   }) {
     return _then(_value.copyWith(
       allowSave: null == allowSave
@@ -136,6 +139,10 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
           ? _value.showBatteryDialog
           : showBatteryDialog // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      hasNetWork: null == hasNetWork
+          ? _value.hasNetWork
+          : hasNetWork // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 
@@ -173,7 +180,8 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
       String spaceInvitationCode,
       List<SpaceInfo> spaceList,
       Object? error,
-      DateTime? showBatteryDialog});
+      DateTime? showBatteryDialog,
+      bool hasNetWork});
 
   @override
   $SpaceInfoCopyWith<$Res>? get selectedSpace;
@@ -203,6 +211,7 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
     Object? spaceList = null,
     Object? error = freezed,
     Object? showBatteryDialog = freezed,
+    Object? hasNetWork = null,
   }) {
     return _then(_$HomeViewStateImpl(
       allowSave: null == allowSave
@@ -254,6 +263,10 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
           ? _value.showBatteryDialog
           : showBatteryDialog // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      hasNetWork: null == hasNetWork
+          ? _value.hasNetWork
+          : hasNetWork // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -274,7 +287,8 @@ class _$HomeViewStateImpl implements _HomeViewState {
       this.spaceInvitationCode = '',
       final List<SpaceInfo> spaceList = const [],
       this.error,
-      this.showBatteryDialog})
+      this.showBatteryDialog,
+      this.hasNetWork = true})
       : _spaceList = spaceList;
 
   @override
@@ -318,10 +332,13 @@ class _$HomeViewStateImpl implements _HomeViewState {
   final Object? error;
   @override
   final DateTime? showBatteryDialog;
+  @override
+  @JsonKey()
+  final bool hasNetWork;
 
   @override
   String toString() {
-    return 'HomeViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, enablingLocation: $enablingLocation, locationEnabled: $locationEnabled, isSessionExpired: $isSessionExpired, popToSignIn: $popToSignIn, selectedSpace: $selectedSpace, spaceInvitationCode: $spaceInvitationCode, spaceList: $spaceList, error: $error, showBatteryDialog: $showBatteryDialog)';
+    return 'HomeViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, enablingLocation: $enablingLocation, locationEnabled: $locationEnabled, isSessionExpired: $isSessionExpired, popToSignIn: $popToSignIn, selectedSpace: $selectedSpace, spaceInvitationCode: $spaceInvitationCode, spaceList: $spaceList, error: $error, showBatteryDialog: $showBatteryDialog, hasNetWork: $hasNetWork)';
   }
 
   @override
@@ -352,7 +369,9 @@ class _$HomeViewStateImpl implements _HomeViewState {
                 .equals(other._spaceList, _spaceList) &&
             const DeepCollectionEquality().equals(other.error, error) &&
             (identical(other.showBatteryDialog, showBatteryDialog) ||
-                other.showBatteryDialog == showBatteryDialog));
+                other.showBatteryDialog == showBatteryDialog) &&
+            (identical(other.hasNetWork, hasNetWork) ||
+                other.hasNetWork == hasNetWork));
   }
 
   @override
@@ -370,7 +389,8 @@ class _$HomeViewStateImpl implements _HomeViewState {
       spaceInvitationCode,
       const DeepCollectionEquality().hash(_spaceList),
       const DeepCollectionEquality().hash(error),
-      showBatteryDialog);
+      showBatteryDialog,
+      hasNetWork);
 
   @JsonKey(ignore: true)
   @override
@@ -393,7 +413,8 @@ abstract class _HomeViewState implements HomeViewState {
       final String spaceInvitationCode,
       final List<SpaceInfo> spaceList,
       final Object? error,
-      final DateTime? showBatteryDialog}) = _$HomeViewStateImpl;
+      final DateTime? showBatteryDialog,
+      final bool hasNetWork}) = _$HomeViewStateImpl;
 
   @override
   bool get allowSave;
@@ -421,6 +442,8 @@ abstract class _HomeViewState implements HomeViewState {
   Object? get error;
   @override
   DateTime? get showBatteryDialog;
+  @override
+  bool get hasNetWork;
   @override
   @JsonKey(ignore: true)
   _$$HomeViewStateImplCopyWith<_$HomeViewStateImpl> get copyWith =>

@@ -21,6 +21,7 @@ final homeViewStateProvider =
     ref.read(currentUserPod),
     ref.read(apiUserServiceProvider),
     ref.read(currentUserSessionPod),
+    ref.read(hasDeviceNetwork.notifier),
   ),
 );
 
@@ -32,6 +33,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final ApiUser? _currentUser;
   final ApiUserService userService;
   final ApiSession? _userSession;
+  final StateController<bool> _checkNetwork;
 
   HomeViewNotifier(
     this.spaceService,
@@ -41,7 +43,9 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this._currentUser,
     this.userService,
     this._userSession,
+    this._checkNetwork,
   ) : super(const HomeViewState()) {
+    streamNetworkConnectivity();
     listenSpaceMember();
     updateCurrentUserNetworkState();
 
@@ -66,7 +70,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
         } else {
           state = state.copyWith(spaceList: [], selectedSpace: null);
         }
-        state = state.copyWith(loading: false, error: null);
+        state = state.copyWith(loading: false, error: null, hasNetWork: true);
       });
     } catch (error, stack) {
       state = state.copyWith(error: error, loading: false);
@@ -128,9 +132,11 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
   void reorderSpaces(List<SpaceInfo> spaces) {
     final sortedSpaces = spaces.toList();
-    if ((currentSpaceId?.isNotEmpty ?? false) && spaces.isNotEmpty && spaces.length > 1) {
-      final selectedSpaceIndex = sortedSpaces
-          .indexWhere((space) => space.space.id == currentSpaceId);
+    if ((currentSpaceId?.isNotEmpty ?? false) &&
+        spaces.isNotEmpty &&
+        spaces.length > 1) {
+      final selectedSpaceIndex =
+          sortedSpaces.indexWhere((space) => space.space.id == currentSpaceId);
       if (selectedSpaceIndex > -1) {
         final selectedSpace = sortedSpaces.removeAt(selectedSpaceIndex);
         sortedSpaces.insert(0, selectedSpace);
@@ -143,7 +149,8 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       updateSelectedSpace(sortedSpaces.first);
       state = state.copyWith(selectedSpace: sortedSpaces.first);
     }
-    state = state.copyWith(selectedSpace: sortedSpaces.first, spaceList: sortedSpaces);
+    state = state.copyWith(
+        selectedSpace: sortedSpaces.first, spaceList: sortedSpaces);
   }
 
   void updateSelectedSpace(SpaceInfo space) {
@@ -239,6 +246,16 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     state =
         state.copyWith(popToSignIn: DateTime.now(), isSessionExpired: false);
   }
+
+  void streamNetworkConnectivity() async {
+    Connectivity().onConnectivityChanged.listen((result) {
+
+      final isNetwork = ConnectivityResult.none != result.first;
+      print('XXX network:$result, isnetwork:$isNetwork');
+      _checkNetwork.state = isNetwork;
+      state = state.copyWith(hasNetWork: isNetwork);
+    });
+  }
 }
 
 @freezed
@@ -257,5 +274,6 @@ class HomeViewState with _$HomeViewState {
     @Default([]) List<SpaceInfo> spaceList,
     Object? error,
     DateTime? showBatteryDialog,
+    @Default(true) bool hasNetWork,
   }) = _HomeViewState;
 }
