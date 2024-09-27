@@ -30,6 +30,7 @@ import CoreLocation
         geofencePluginRegistration()
 
         GeneratedPluginRegistrant.register(with: self)
+        setUpFlutterMethodChannelForInvokeLocation()
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
@@ -82,6 +83,21 @@ extension AppDelegate: CLLocationManagerDelegate {
         locationManager?.allowsBackgroundLocationUpdates = true
         locationManager?.pausesLocationUpdatesAutomatically = false
         locationManager?.startMonitoringSignificantLocationChanges()
+    }
+    
+    private func setUpFlutterMethodChannelForInvokeLocation() {
+        let controller = window?.rootViewController as! FlutterViewController
+        let locationChannel = FlutterMethodChannel(name: "com.yourspace/set_up_location", binaryMessenger: controller.binaryMessenger)
+        
+        locationChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
+            guard let self = self else { return }
+            if call.method == "setUpLocation" {
+                self.setUpLocation()
+                result(nil)
+            } else {
+                result(FlutterMethodNotImplemented)
+            }
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

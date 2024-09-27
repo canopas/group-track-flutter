@@ -88,36 +88,6 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
     }
   }
 
-  String formattedAddress(
-      List<Placemark>? fromPlaces,
-      List<Placemark>? toPlaces,
-      ) {
-    if (fromPlaces == null || fromPlaces.isEmpty) return '';
-    final fromPlace = fromPlaces.first;
-    final toPlace = toPlaces?.first;
-
-    final fromCity = fromPlace.locality ?? '';
-    final toCity = toPlace?.locality ?? '';
-
-    final fromArea = fromPlace.subLocality ?? '';
-    final toArea = toPlace?.subLocality ?? '';
-
-    final fromState = fromPlace.administrativeArea ?? '';
-    final toState = toPlace?.administrativeArea ?? '';
-
-    if (toPlace == null) {
-      return "$fromArea, $fromCity";
-    } else if (fromArea == toArea) {
-      return "$fromArea, $fromCity";
-    } else if (fromCity == toCity) {
-      return "$fromArea to $toArea, $fromCity";
-    } else if (fromState == toState) {
-      return "$fromArea, $fromCity to $toArea, $toCity";
-    } else {
-      return "$fromCity, $fromState to $toCity, $toState";
-    }
-  }
-
   Future<BitmapDescriptor> createCustomIcon(String assetPath) async {
     final data = await rootBundle.load(assetPath);
     final codec = await ui.instantiateImageCodec(

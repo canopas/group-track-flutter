@@ -47,7 +47,7 @@ class _UserJourneyDetailScreenState
     _observeMapMarker();
 
     final state = ref.watch(userJourneyDetailStateProvider);
-    final title = notifier.formattedAddress(state.addressFrom, state.addressTo);
+    final title = _formattedAddress(state.addressFrom, state.addressTo);
     return AppPage(title: title, body: _body(state));
   }
 
@@ -192,6 +192,36 @@ class _UserJourneyDetailScreenState
         });
       }
     });
+  }
+
+  String _formattedAddress(
+      List<Placemark>? fromPlaces,
+      List<Placemark>? toPlaces,
+      ) {
+    if (fromPlaces == null || fromPlaces.isEmpty) return '';
+    final fromPlace = fromPlaces.first;
+    final toPlace = toPlaces?.first;
+
+    final fromCity = fromPlace.locality ?? '';
+    final toCity = toPlace?.locality ?? '';
+
+    final fromArea = fromPlace.subLocality ?? '';
+    final toArea = toPlace?.subLocality ?? '';
+
+    final fromState = fromPlace.administrativeArea ?? '';
+    final toState = toPlace?.administrativeArea ?? '';
+
+    if (toPlace == null) {
+      return "$fromArea, $fromCity";
+    } else if (fromArea == toArea) {
+      return "$fromArea, $fromCity";
+    } else if (fromCity == toCity) {
+      return "$fromArea to $toArea, $fromCity";
+    } else if (fromState == toState) {
+      return "$fromArea, $fromCity to $toArea, $toCity";
+    } else {
+      return "$fromCity, $fromState to $toCity, $toState";
+    }
   }
 
   Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {
