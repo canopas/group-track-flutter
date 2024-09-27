@@ -1,8 +1,5 @@
-import 'dart:ui' as ui;
-
 import 'package:data/api/location/journey/journey.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -33,14 +30,14 @@ class UserJourneyDetailScreen extends ConsumerStatefulWidget {
 class _UserJourneyDetailScreenState
     extends ConsumerState<UserJourneyDetailScreen> {
   final List<Marker> _markers = [];
+  late UserJourneyDetailViewModel notifier;
 
   @override
   void initState() {
     super.initState();
     runPostFrame(() {
-      ref
-          .read(userJourneyDetailStateProvider.notifier)
-          .loadData(widget.journey);
+      notifier = ref.read(userJourneyDetailStateProvider.notifier);
+      notifier.loadData(widget.journey);
     });
   }
 
@@ -50,7 +47,7 @@ class _UserJourneyDetailScreenState
     _observeMapMarker();
 
     final state = ref.watch(userJourneyDetailStateProvider);
-    final title = _formattedAddress(state.addressFrom, state.addressTo);
+    final title = notifier.formattedAddress(state.addressFrom, state.addressTo);
     return AppPage(title: title, body: _body(state));
   }
 
@@ -78,9 +75,8 @@ class _UserJourneyDetailScreenState
   }
 
   Widget _journeyInfo(UserJourneyDetailState state) {
-    final distance = _getDistanceString(state.journey!.route_distance ?? 0.0);
-    final duration =
-        _getRouteDurationString(state.journey!.route_duration ?? 0);
+    final distance = notifier.getDistanceString(state.journey!);
+    final duration = notifier.getRouteDurationString(state.journey!);
 
     return Padding(
       padding: EdgeInsets.only(
@@ -168,59 +164,6 @@ class _UserJourneyDetailScreenState
     );
   }
 
-  String _formattedAddress(
-    List<Placemark>? fromPlaces,
-    List<Placemark>? toPlaces,
-  ) {
-    if (fromPlaces == null || fromPlaces.isEmpty) return '';
-    final fromPlace = fromPlaces.first;
-    final toPlace = toPlaces?.first;
-
-    final fromCity = fromPlace.locality ?? '';
-    final toCity = toPlace?.locality ?? '';
-
-    final fromArea = fromPlace.subLocality ?? '';
-    final toArea = toPlace?.subLocality ?? '';
-
-    final fromState = fromPlace.administrativeArea ?? '';
-    final toState = toPlace?.administrativeArea ?? '';
-
-    if (toPlace == null) {
-      return "$fromArea, $fromCity";
-    } else if (fromArea == toArea) {
-      return "$fromArea, $fromCity";
-    } else if (fromCity == toCity) {
-      return "$fromArea to $toArea, $fromCity";
-    } else if (fromState == toState) {
-      return "$fromArea, $fromCity to $toArea, $toCity";
-    } else {
-      return "$fromCity, $fromState to $toCity, $toState";
-    }
-  }
-
-  String _getDistanceString(double distance) {
-    if (distance < 1000) {
-      return '${distance.round()} m';
-    } else {
-      final distanceInKm = distance / 1000;
-      return '${distanceInKm.round()} km';
-    }
-  }
-
-  String _getRouteDurationString(int durationInMilliseconds) {
-    final duration = Duration(milliseconds: durationInMilliseconds);
-    final hours = duration.inHours;
-    final minutes = duration.inMinutes % 60;
-    final seconds = duration.inSeconds % 60;
-    if (hours > 0) {
-      return '$hours hr $minutes mins';
-    } else if (minutes > 0) {
-      return '$minutes mins';
-    } else {
-      return '$seconds sec';
-    }
-  }
-
   String _getDateAndTime(int createdAt) {
     DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
     final startTime = createdAtDate.format(context, DateFormatType.time);
@@ -252,9 +195,9 @@ class _UserJourneyDetailScreenState
   }
 
   Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {
-    final fromIcon = await _createCustomIcon(
+    final fromIcon = await notifier.createCustomIcon(
         'assets/images/ic_start_location_detail_icon.png');
-    final toIcon = await _createCustomIcon(
+    final toIcon = await notifier.createCustomIcon(
         'assets/images/ic_end_location_detail_icon.png');
 
     final List<Marker> markers = [
@@ -275,21 +218,5 @@ class _UserJourneyDetailScreenState
     ];
 
     return markers;
-  }
-
-  Future<BitmapDescriptor> _createCustomIcon(String assetPath) async {
-    final data = await rootBundle.load(assetPath);
-    final codec = await ui.instantiateImageCodec(
-      data.buffer.asUint8List(),
-      targetWidth: 200,
-      targetHeight: 200,
-    );
-    final frameInfo = await codec.getNextFrame();
-
-    final byteData =
-        await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
-    final resizedBytes = byteData!.buffer.asUint8List();
-
-    return BitmapDescriptor.fromBytes(resizedBytes);
   }
 }

@@ -1,6 +1,8 @@
+import 'dart:ui' as ui;
 import 'package:data/api/location/journey/api_journey_service.dart';
 import 'package:data/api/location/journey/journey.dart';
 import 'package:data/log/logger.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:geocoding/geocoding.dart';
@@ -53,6 +55,83 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
         stackTrace: stack,
       );
     }
+  }
+
+  String getDistanceString(ApiLocationJourney location) {
+    final steadyLocation = location.toPositionFromSteadyJourney();
+    final movingLocation = location.toPositionFromMovingJourney();
+
+    final routeDistance = steadyLocation.distanceTo(movingLocation);
+
+    if (routeDistance < 1000) {
+      return '${routeDistance.round()} m';
+    } else {
+      final distanceInKm = routeDistance / 1000;
+      return '${distanceInKm.round()} km';
+    }
+  }
+
+  String getRouteDurationString(ApiLocationJourney journey) {
+    final routeDurationMillis = journey.update_at! - journey.created_at!;
+    final routeDuration = Duration(milliseconds: routeDurationMillis);
+
+    final hours = routeDuration.inHours;
+    final minutes = routeDuration.inMinutes % 60;
+    final seconds = routeDuration.inSeconds % 60;
+
+    if (hours > 0) {
+      return "$hours hr $minutes mins";
+    } else if (minutes > 0) {
+      return "$minutes mins";
+    } else {
+      return "$seconds sec";
+    }
+  }
+
+  String formattedAddress(
+      List<Placemark>? fromPlaces,
+      List<Placemark>? toPlaces,
+      ) {
+    if (fromPlaces == null || fromPlaces.isEmpty) return '';
+    final fromPlace = fromPlaces.first;
+    final toPlace = toPlaces?.first;
+
+    final fromCity = fromPlace.locality ?? '';
+    final toCity = toPlace?.locality ?? '';
+
+    final fromArea = fromPlace.subLocality ?? '';
+    final toArea = toPlace?.subLocality ?? '';
+
+    final fromState = fromPlace.administrativeArea ?? '';
+    final toState = toPlace?.administrativeArea ?? '';
+
+    if (toPlace == null) {
+      return "$fromArea, $fromCity";
+    } else if (fromArea == toArea) {
+      return "$fromArea, $fromCity";
+    } else if (fromCity == toCity) {
+      return "$fromArea to $toArea, $fromCity";
+    } else if (fromState == toState) {
+      return "$fromArea, $fromCity to $toArea, $toCity";
+    } else {
+      return "$fromCity, $fromState to $toCity, $toState";
+    }
+  }
+
+  Future<BitmapDescriptor> createCustomIcon(String assetPath) async {
+    final data = await rootBundle.load(assetPath);
+    final codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetWidth: 200,
+      targetHeight: 200,
+    );
+    final frameInfo = await codec.getNextFrame();
+
+    final byteData =
+    await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
+    final resizedBytes = byteData!.buffer.asUint8List();
+
+    return BitmapDescriptor.fromBytes(resizedBytes);
   }
 }
 

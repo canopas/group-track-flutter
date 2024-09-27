@@ -47,7 +47,6 @@ class LocationService {
     String userId,
     LatLng latLng,
     int recodedAt,
-    int? userState,
   ) async {
     final docRef = _locationRef(userId).doc();
 
@@ -56,8 +55,7 @@ class LocationService {
         user_id: userId,
         latitude: latLng.latitude,
         longitude: latLng.longitude,
-        created_at: recodedAt,
-        user_state: userState);
+        created_at: recodedAt);
 
     await docRef.set(location);
   }

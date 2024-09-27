@@ -1,9 +1,6 @@
-import 'dart:ui' as ui;
-
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/location/journey/journey.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
@@ -15,7 +12,6 @@ import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
-import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_view_model.dart';
 
@@ -210,7 +206,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   ) {
     final time = _getFormattedJourneyTime(
         journey.created_at ?? 0, journey.update_at ?? 0);
-    final distance = _getDistanceString(journey.route_distance ?? 0.0);
+    final distance = notifier.getDistanceString(journey);
     final fromLatLng = LatLng(journey.from_latitude, journey.from_longitude);
     final toLatLng =
         LatLng(journey.to_latitude ?? 0.0, journey.to_longitude ?? 0.0);
@@ -272,7 +268,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     }
 
     return FutureBuilder(
-      future: _getAddress(latLng),
+      future: notifier.getAddress(latLng),
       builder: (_, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _placeInfo(
@@ -386,12 +382,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     }
   }
 
-  Future<String> _getAddress(LatLng latLng) async {
-    await Future.delayed(const Duration(seconds: 2));
-    final address = await latLng.getAddressFromLocation();
-    return address;
-  }
-
   String _getFormattedJourneyTime(int startAt, int endAt) {
     DateTime startAtDate = DateTime.fromMillisecondsSinceEpoch(startAt);
     DateTime endAtDate = DateTime.fromMillisecondsSinceEpoch(endAt);
@@ -432,15 +422,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     }
   }
 
-  String _getDistanceString(double distance) {
-    if (distance < 1000) {
-      return '${distance.round()} m';
-    } else {
-      final distanceInKm = distance / 1000;
-      return '${distanceInKm.round()} km';
-    }
-  }
-
   Future<String> _getMovingJourneyAddress(
       LatLng fromLatLng, LatLng toLatLng) async {
     final fromPlaceMarks = await placemarkFromCoordinates(
@@ -448,37 +429,14 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     final toPlaceMarks =
         await placemarkFromCoordinates(toLatLng.latitude, toLatLng.longitude);
 
-    return _formattedAddress(fromPlaceMarks.first, toPlaceMarks.first);
-  }
-
-  String _formattedAddress(Placemark fromPlace, Placemark? toPlace) {
-    final fromCity = fromPlace.locality ?? '';
-    final toCity = toPlace?.locality ?? '';
-
-    final fromArea = fromPlace.subLocality ?? '';
-    final toArea = toPlace?.subLocality ?? '';
-
-    final fromState = fromPlace.administrativeArea ?? '';
-    final toState = toPlace?.administrativeArea ?? '';
-
-    if (toPlace == null) {
-      return "$fromArea, $fromCity";
-    } else if (fromArea == toArea) {
-      return "$fromArea, $fromCity";
-    } else if (fromCity == toCity) {
-      return "$fromArea -> $toArea, $fromCity";
-    } else if (fromState == toState) {
-      return "$fromArea, $fromCity -> $toArea, $toCity";
-    } else {
-      return "$fromCity, $fromState -> $toCity, $toState";
-    }
+    return notifier.formattedAddress(fromPlaceMarks.first, toPlaceMarks.first);
   }
 
   Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {
     final fromIcon =
-        await _createCustomIcon('assets/images/ic_feed_location_icon.png');
+        await notifier.createCustomIcon('assets/images/ic_feed_location_icon.png');
     final toIcon =
-        await _createCustomIcon('assets/images/ic_distance_icon.png');
+        await notifier.createCustomIcon('assets/images/ic_distance_icon.png');
 
     final List<Marker> markers = [
       Marker(
@@ -497,22 +455,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     ];
 
     return markers;
-  }
-
-  Future<BitmapDescriptor> _createCustomIcon(String assetPath) async {
-    final data = await rootBundle.load(assetPath);
-    final codec = await ui.instantiateImageCodec(
-      data.buffer.asUint8List(),
-      targetWidth: 38,
-      targetHeight: 54,
-    );
-    final frameInfo = await codec.getNextFrame();
-
-    final byteData =
-        await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
-    final resizedBytes = byteData!.buffer.asUint8List();
-
-    return BitmapDescriptor.fromBytes(resizedBytes);
   }
 
   String _onSelectDatePickerDate(int? timestamp) {

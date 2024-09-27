@@ -5,11 +5,11 @@ import 'package:data/api/location/location.dart';
 
 class LocationCache {
   final Cache<String, ApiLocationJourney> _lastJourneyCache;
-  final Cache<String, List<ApiLocation>> _lastFiveLocationCache;
+  final Cache<String, List<LocationData>> _lastFiveLocationCache;
 
   LocationCache({int cacheSize = 5})
       : _lastJourneyCache = Cache<String, ApiLocationJourney>(cacheSize),
-        _lastFiveLocationCache = Cache<String, List<ApiLocation>>(cacheSize);
+        _lastFiveLocationCache = Cache<String, List<LocationData>>(cacheSize);
 
   void putLastJourney(ApiLocationJourney journey, String userId) {
     _lastJourneyCache.put(userId, journey);
@@ -19,11 +19,11 @@ class LocationCache {
     return _lastJourneyCache.get(userId);
   }
 
-  void putLastFiveLocations(List<ApiLocation> locations, String userId) {
+  void putLastFiveLocations(List<LocationData> locations, String userId) {
     _lastFiveLocationCache.put(userId, locations);
   }
 
-  List<ApiLocation>? getLastFiveLocations(String userId) {
+  List<LocationData>? getLastFiveLocations(String userId) {
     return _lastFiveLocationCache.get(userId);
   }
 
