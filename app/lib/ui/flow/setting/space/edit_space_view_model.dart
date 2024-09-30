@@ -6,6 +6,7 @@ import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:yourspace_flutter/ui/components/no_internet_screen.dart';
 
 part 'edit_space_view_model.freezed.dart';
 
@@ -25,6 +26,9 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
       : super(EditSpaceViewState(spaceName: TextEditingController()));
 
   void getSpaceDetails(String spaceId) async {
+    final hasNetwork = await _checkUserInternet();
+    if (hasNetwork) return;
+
     try {
       state = state.copyWith(loading: true);
       final space = await spaceService.getSpaceInfo(spaceId);
@@ -110,7 +114,15 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
   }
 
   void toggleLocationSharing(bool isEnabled) {
-    state = state.copyWith(locationEnabled: isEnabled, allowSave: state.currentUserInfo!.isLocationEnabled != isEnabled);
+    state = state.copyWith(
+        locationEnabled: isEnabled,
+        allowSave: state.currentUserInfo!.isLocationEnabled != isEnabled);
+  }
+
+  Future<bool> _checkUserInternet() async {
+    final hasNetwork = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: hasNetwork);
+    return hasNetwork;
   }
 }
 
@@ -124,6 +136,7 @@ class EditSpaceViewState with _$EditSpaceViewState {
     @Default(false) bool deleting,
     @Default(false) bool deleted,
     @Default(false) bool locationEnabled,
+    @Default(false) bool isNetworkOff,
     @Default('') String selectedSpaceName,
     @Default('') String currentUserId,
     ApiUserInfo? currentUserInfo,

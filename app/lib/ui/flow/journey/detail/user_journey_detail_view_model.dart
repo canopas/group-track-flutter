@@ -6,6 +6,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../../components/no_internet_screen.dart';
+
 part 'user_journey_detail_view_model.freezed.dart';
 
 final userJourneyDetailStateProvider = StateNotifierProvider.autoDispose<
@@ -21,6 +23,9 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
       : super(const UserJourneyDetailState());
 
   void loadData(ApiLocationJourney journey) async {
+    final hasNetwork = await _checkUserInternet();
+    if (hasNetwork) return;
+
     if (state.loading) return;
     state = state.copyWith(loading: true, error: null);
 
@@ -54,12 +59,19 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
       );
     }
   }
+
+  Future<bool> _checkUserInternet() async {
+    final hasNetwork = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: hasNetwork);
+    return hasNetwork;
+  }
 }
 
 @freezed
 class UserJourneyDetailState with _$UserJourneyDetailState {
   const factory UserJourneyDetailState({
     @Default(false) bool loading,
+    @Default(false) bool isNetworkOff,
     ApiLocationJourney? journey,
     String? journeyId,
     @Default([]) List<Placemark> addressFrom,

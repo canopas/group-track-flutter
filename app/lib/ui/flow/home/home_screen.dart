@@ -81,7 +81,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppPage(
       body: ResumeDetector(
         onResume: () {
-          notifier.streamNetworkConnectivity();
           notifier.showBatteryOptimizationDialog();
           mapNotifier.checkUserPermission();
         },
@@ -91,9 +90,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _body(BuildContext context, HomeViewState state) {
-    if (!state.hasNetWork) {
+    if (state.isNetworkOff) {
       return NoInternetScreen(onPressed: () {
-        notifier.listenSpaceMember();
+        notifier.setDate();
       });
     }
 
@@ -105,8 +104,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           HomeTopBar(
             spaces: state.spaceList,
             onSpaceItemTap: (name) => notifier.updateSelectedSpace(name),
-            onAddMemberTap: () => notifier.onAddMemberTap(),
-            onToggleLocation: () => notifier.toggleLocation(),
+            onAddMemberTap: () {
+              _checkUserInternet(() => notifier.onAddMemberTap());
+            },
+            onToggleLocation: () {
+              _checkUserInternet(() => notifier.toggleLocation());
+            },
             selectedSpace: state.selectedSpace,
             loading: state.loading,
             fetchingInviteCode: state.fetchingInviteCode,
@@ -197,5 +200,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         AppRoute.signInMethod.push(context);
       }
     });
+  }
+
+  void _checkUserInternet(VoidCallback onCallback) async {
+    final isNetworkOff = await checkInternetConnectivity();
+    isNetworkOff ? _showSnackBar() : onCallback();
+  }
+
+  void _showSnackBar() {
+    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }

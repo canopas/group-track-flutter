@@ -17,6 +17,7 @@ import 'package:yourspace_flutter/ui/flow/journey/detail/user_journey_detail_vie
 
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../components/error_snakebar.dart';
+import '../../../components/no_internet_screen.dart';
 import '../components/dotted_line_view.dart';
 
 class UserJourneyDetailScreen extends ConsumerStatefulWidget {
@@ -32,14 +33,14 @@ class UserJourneyDetailScreen extends ConsumerStatefulWidget {
 class _UserJourneyDetailScreenState
     extends ConsumerState<UserJourneyDetailScreen> {
   final List<Marker> _markers = [];
+  late UserJourneyDetailViewModel notifier;
 
   @override
   void initState() {
     super.initState();
     runPostFrame(() {
-      ref
-          .read(userJourneyDetailStateProvider.notifier)
-          .loadData(widget.journey);
+      notifier = ref.read(userJourneyDetailStateProvider.notifier);
+      notifier.loadData(widget.journey);
     });
   }
 
@@ -54,6 +55,12 @@ class _UserJourneyDetailScreenState
   }
 
   Widget _body(UserJourneyDetailState state) {
+    if (state.isNetworkOff) {
+      return NoInternetScreen(onPressed: () {
+        notifier.loadData(widget.journey);
+      });
+    }
+
     if (state.loading) {
       return const Center(
         child: AppProgressIndicator(),

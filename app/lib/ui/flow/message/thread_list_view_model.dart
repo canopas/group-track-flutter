@@ -5,10 +5,12 @@ import 'package:data/api/message/api_message_service.dart';
 import 'package:data/api/message/message_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:data/service/space_service.dart';
+
+import '../../components/no_internet_screen.dart';
 
 part 'thread_list_view_model.freezed.dart';
 
@@ -27,14 +29,15 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   final SpaceService spaceService;
   final ApiMessageService messageService;
   final ApiUser? currentUser;
-  final List<StreamSubscription<List<ApiThreadMessage>>> _userSubscriptions =
-      [];
 
   ThreadListViewNotifier(
       this.spaceId, this.spaceService, this.messageService, this.currentUser)
       : super(const ThreadListViewState());
 
-  void setSpace(SpaceInfo space) {
+  void setSpace(SpaceInfo space) async {
+    final hasNetwork = await _checkUserInternet();
+    if (hasNetwork) return;
+
     state = state.copyWith(space: space);
     listenThreads(space.space.id);
   }
@@ -42,7 +45,9 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   void listenThreads(String spaceId) async {
     try {
       state = state.copyWith(loading: state.threadInfo.isEmpty);
-      messageService.getThreadsWithMembers(spaceId, currentUser!.id).listen((threads) {
+      messageService
+          .getThreadsWithMembers(spaceId, currentUser!.id)
+          .listen((threads) {
         final filteredThreads = _filterArchivedThreads(threads);
 
         filteredThreads.sort((a, b) {
@@ -55,7 +60,8 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
           return bTimestamp.compareTo(aTimestamp);
         });
 
-        state = state.copyWith(threadInfo: filteredThreads, loading: false, error: null);
+        state = state.copyWith(
+            threadInfo: filteredThreads, loading: false, error: null);
         getMessage();
       });
     } catch (error, stack) {
@@ -67,11 +73,13 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
 
   void getMessage() async {
     try {
-      final List<List<ApiThreadMessage>> newThreadMessages = List.generate(state.threadInfo.length, (_) => []);
+      final List<List<ApiThreadMessage>> newThreadMessages =
+          List.generate(state.threadInfo.length, (_) => []);
 
       for (int i = 0; i < state.threadInfo.length; i++) {
         final threads = state.threadInfo[i];
-        final threadMessages = await messageService.getMessages(threads.thread.id, DateTime.now());
+        final threadMessages =
+            await messageService.getMessages(threads.thread.id, DateTime.now());
         newThreadMessages[i] = threadMessages;
       }
       state = state.copyWith(threadMessages: List.from(newThreadMessages));
@@ -97,8 +105,12 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   void onAddNewMemberTap() async {
     try {
       state = state.copyWith(fetchingInviteCode: true);
-      final code = await spaceService.getInviteCode(state.space?.space.id ?? '');
-      state = state.copyWith(spaceInvitationCode: code ?? '', fetchingInviteCode: false, error: null);
+      final code =
+          await spaceService.getInviteCode(state.space?.space.id ?? '');
+      state = state.copyWith(
+          spaceInvitationCode: code ?? '',
+          fetchingInviteCode: false,
+          error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error);
       logger.e(
@@ -112,7 +124,6 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   void deleteThread(ApiThread thread) async {
     try {
       state = state.copyWith(deleting: true);
-      _cancelSubscriptions();
       await messageService.deleteThread(thread, currentUser?.id ?? '');
       state = state.copyWith(deleting: false, error: null);
     } catch (error, stack) {
@@ -125,14 +136,10 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
     }
   }
 
-  void _cancelSubscriptions() {
-    _userSubscriptions.clear();
-  }
-
-  @override
-  void dispose() {
-    _cancelSubscriptions();
-    super.dispose();
+  Future<bool> _checkUserInternet() async {
+    final hasNetwork = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: hasNetwork);
+    return hasNetwork;
   }
 }
 
@@ -144,6 +151,7 @@ class ThreadListViewState with _$ThreadListViewState {
     @Default(false) bool loading,
     @Default(false) bool fetchingInviteCode,
     @Default(false) bool deleting,
+    @Default(false) isNetworkOff,
     SpaceInfo? space,
     @Default('') String spaceInvitationCode,
     @Default('') String message,

@@ -17,6 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$UserJourneyDetailState {
   bool get loading => throw _privateConstructorUsedError;
+  bool get isNetworkOff => throw _privateConstructorUsedError;
   ApiLocationJourney? get journey => throw _privateConstructorUsedError;
   String? get journeyId => throw _privateConstructorUsedError;
   List<Placemark> get addressFrom => throw _privateConstructorUsedError;
@@ -36,6 +37,7 @@ abstract class $UserJourneyDetailStateCopyWith<$Res> {
   @useResult
   $Res call(
       {bool loading,
+      bool isNetworkOff,
       ApiLocationJourney? journey,
       String? journeyId,
       List<Placemark> addressFrom,
@@ -60,6 +62,7 @@ class _$UserJourneyDetailStateCopyWithImpl<$Res,
   @override
   $Res call({
     Object? loading = null,
+    Object? isNetworkOff = null,
     Object? journey = freezed,
     Object? journeyId = freezed,
     Object? addressFrom = null,
@@ -70,6 +73,10 @@ class _$UserJourneyDetailStateCopyWithImpl<$Res,
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isNetworkOff: null == isNetworkOff
+          ? _value.isNetworkOff
+          : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
       journey: freezed == journey
           ? _value.journey
@@ -115,6 +122,7 @@ abstract class _$$UserJourneyDetailStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {bool loading,
+      bool isNetworkOff,
       ApiLocationJourney? journey,
       String? journeyId,
       List<Placemark> addressFrom,
@@ -139,6 +147,7 @@ class __$$UserJourneyDetailStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? loading = null,
+    Object? isNetworkOff = null,
     Object? journey = freezed,
     Object? journeyId = freezed,
     Object? addressFrom = null,
@@ -149,6 +158,10 @@ class __$$UserJourneyDetailStateImplCopyWithImpl<$Res>
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isNetworkOff: null == isNetworkOff
+          ? _value.isNetworkOff
+          : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
       journey: freezed == journey
           ? _value.journey
@@ -176,6 +189,7 @@ class __$$UserJourneyDetailStateImplCopyWithImpl<$Res>
 class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
   const _$UserJourneyDetailStateImpl(
       {this.loading = false,
+      this.isNetworkOff = false,
       this.journey,
       this.journeyId,
       final List<Placemark> addressFrom = const [],
@@ -187,6 +201,9 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
   @override
   @JsonKey()
   final bool loading;
+  @override
+  @JsonKey()
+  final bool isNetworkOff;
   @override
   final ApiLocationJourney? journey;
   @override
@@ -214,7 +231,7 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
 
   @override
   String toString() {
-    return 'UserJourneyDetailState(loading: $loading, journey: $journey, journeyId: $journeyId, addressFrom: $addressFrom, addressTo: $addressTo, error: $error)';
+    return 'UserJourneyDetailState(loading: $loading, isNetworkOff: $isNetworkOff, journey: $journey, journeyId: $journeyId, addressFrom: $addressFrom, addressTo: $addressTo, error: $error)';
   }
 
   @override
@@ -223,6 +240,8 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
         (other.runtimeType == runtimeType &&
             other is _$UserJourneyDetailStateImpl &&
             (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.isNetworkOff, isNetworkOff) ||
+                other.isNetworkOff == isNetworkOff) &&
             (identical(other.journey, journey) || other.journey == journey) &&
             (identical(other.journeyId, journeyId) ||
                 other.journeyId == journeyId) &&
@@ -237,6 +256,7 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
   int get hashCode => Object.hash(
       runtimeType,
       loading,
+      isNetworkOff,
       journey,
       journeyId,
       const DeepCollectionEquality().hash(_addressFrom),
@@ -254,6 +274,7 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
 abstract class _UserJourneyDetailState implements UserJourneyDetailState {
   const factory _UserJourneyDetailState(
       {final bool loading,
+      final bool isNetworkOff,
       final ApiLocationJourney? journey,
       final String? journeyId,
       final List<Placemark> addressFrom,
@@ -262,6 +283,8 @@ abstract class _UserJourneyDetailState implements UserJourneyDetailState {
 
   @override
   bool get loading;
+  @override
+  bool get isNetworkOff;
   @override
   ApiLocationJourney? get journey;
   @override

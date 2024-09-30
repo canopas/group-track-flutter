@@ -6,6 +6,8 @@ import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../components/no_internet_screen.dart';
+
 part 'journey_timeline_view_model.freezed.dart';
 
 final journeyTimelineStateProvider = StateNotifierProvider.autoDispose<
@@ -27,7 +29,10 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     this._currentSpaceId,
   ) : super(const JourneyTimelineState());
 
-  void loadData(ApiUser selectedUser) {
+  void loadData(ApiUser selectedUser) async {
+    final hasNetwork = await _checkUserInternet();
+    if (hasNetwork) return;
+
     final isCurrentUser = selectedUser.id == currentUser?.id;
     state = state.copyWith(
       isCurrentUser: isCurrentUser,
@@ -95,7 +100,10 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     state = state.copyWith(showDatePicker: showPicker);
   }
 
-  void onFilterBySelectedDate(DateTime pickedDate) {
+  void onFilterBySelectedDate(DateTime pickedDate) async {
+    final hasNetwork = await _checkUserInternet();
+    if (hasNetwork) return;
+
     final fromTimeStamp = pickedDate.millisecondsSinceEpoch;
     final toTimeStamp = pickedDate.copyWith(hour: 23).millisecondsSinceEpoch;
     state = state.copyWith(
@@ -104,6 +112,12 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       sortedJourney: [],
     );
     _loadJourney();
+  }
+
+  Future<bool> _checkUserInternet() async {
+    final hasNetwork = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: hasNetwork);
+    return hasNetwork;
   }
 }
 
@@ -115,6 +129,7 @@ class JourneyTimelineState with _$JourneyTimelineState {
     @Default(true) bool hasMore,
     @Default(false) bool isCurrentUser,
     @Default(false) bool showDatePicker,
+    @Default(false) bool isNetworkOff,
     ApiUser? selectedUser,
     @Default([]) List<ApiLocationJourney> sortedJourney,
     int? selectedTimeFrom,

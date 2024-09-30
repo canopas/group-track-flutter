@@ -68,11 +68,14 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
                 ),
               ],
               const SizedBox(height: 16),
-              ...state.places.map((place) {
-                final isLast =
-                    state.places.indexOf(place) == state.places.length - 1;
-                return _suggestedPlaceItemView(place, isLast);
-              }),
+              if (state.isNetworkOff)
+                _showNoInternetView()
+              else
+                ...state.places.map((place) {
+                  final isLast =
+                      state.places.indexOf(place) == state.places.length - 1;
+                  return _suggestedPlaceItemView(place, isLast);
+                }),
               const SizedBox(height: 24),
               state.loading
                   ? const Center(child: AppProgressIndicator())
@@ -215,6 +218,19 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
               color: context.colorScheme.outline,
             ),
           ),
+        )
+      ],
+    );
+  }
+
+  Widget _showNoInternetView() {
+    return Column(
+      children: [
+        Text(
+          context.l10n.on_internet_error_sub_title,
+          style: AppTextStyle.body2
+              .copyWith(color: context.colorScheme.textDisabled),
+          textAlign: TextAlign.center,
         )
       ],
     );

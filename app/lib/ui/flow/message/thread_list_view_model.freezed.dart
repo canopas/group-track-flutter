@@ -21,6 +21,7 @@ mixin _$ThreadListViewState {
   bool get loading => throw _privateConstructorUsedError;
   bool get fetchingInviteCode => throw _privateConstructorUsedError;
   bool get deleting => throw _privateConstructorUsedError;
+  dynamic get isNetworkOff => throw _privateConstructorUsedError;
   SpaceInfo? get space => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
@@ -47,6 +48,7 @@ abstract class $ThreadListViewStateCopyWith<$Res> {
       bool loading,
       bool fetchingInviteCode,
       bool deleting,
+      dynamic isNetworkOff,
       SpaceInfo? space,
       String spaceInvitationCode,
       String message,
@@ -76,6 +78,7 @@ class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
     Object? loading = null,
     Object? fetchingInviteCode = null,
     Object? deleting = null,
+    Object? isNetworkOff = freezed,
     Object? space = freezed,
     Object? spaceInvitationCode = null,
     Object? message = null,
@@ -105,6 +108,10 @@ class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
           ? _value.deleting
           : deleting // ignore: cast_nullable_to_non_nullable
               as bool,
+      isNetworkOff: freezed == isNetworkOff
+          ? _value.isNetworkOff
+          : isNetworkOff // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       space: freezed == space
           ? _value.space
           : space // ignore: cast_nullable_to_non_nullable
@@ -160,6 +167,7 @@ abstract class _$$ThreadListViewStateImplCopyWith<$Res>
       bool loading,
       bool fetchingInviteCode,
       bool deleting,
+      dynamic isNetworkOff,
       SpaceInfo? space,
       String spaceInvitationCode,
       String message,
@@ -188,6 +196,7 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
     Object? loading = null,
     Object? fetchingInviteCode = null,
     Object? deleting = null,
+    Object? isNetworkOff = freezed,
     Object? space = freezed,
     Object? spaceInvitationCode = null,
     Object? message = null,
@@ -217,6 +226,8 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
           ? _value.deleting
           : deleting // ignore: cast_nullable_to_non_nullable
               as bool,
+      isNetworkOff:
+          freezed == isNetworkOff ? _value.isNetworkOff! : isNetworkOff,
       space: freezed == space
           ? _value.space
           : space // ignore: cast_nullable_to_non_nullable
@@ -255,6 +266,7 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
       this.loading = false,
       this.fetchingInviteCode = false,
       this.deleting = false,
+      this.isNetworkOff = false,
       this.space,
       this.spaceInvitationCode = '',
       this.message = '',
@@ -281,6 +293,9 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
   @override
   @JsonKey()
   final bool deleting;
+  @override
+  @JsonKey()
+  final dynamic isNetworkOff;
   @override
   final SpaceInfo? space;
   @override
@@ -321,7 +336,7 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
 
   @override
   String toString() {
-    return 'ThreadListViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, deleting: $deleting, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, spaceList: $spaceList, threadInfo: $threadInfo, threadMessages: $threadMessages, error: $error)';
+    return 'ThreadListViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, deleting: $deleting, isNetworkOff: $isNetworkOff, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, spaceList: $spaceList, threadInfo: $threadInfo, threadMessages: $threadMessages, error: $error)';
   }
 
   @override
@@ -338,6 +353,8 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
                 other.fetchingInviteCode == fetchingInviteCode) &&
             (identical(other.deleting, deleting) ||
                 other.deleting == deleting) &&
+            const DeepCollectionEquality()
+                .equals(other.isNetworkOff, isNetworkOff) &&
             (identical(other.space, space) || other.space == space) &&
             (identical(other.spaceInvitationCode, spaceInvitationCode) ||
                 other.spaceInvitationCode == spaceInvitationCode) &&
@@ -359,6 +376,7 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
       loading,
       fetchingInviteCode,
       deleting,
+      const DeepCollectionEquality().hash(isNetworkOff),
       space,
       spaceInvitationCode,
       message,
@@ -382,6 +400,7 @@ abstract class _ThreadListViewState implements ThreadListViewState {
       final bool loading,
       final bool fetchingInviteCode,
       final bool deleting,
+      final dynamic isNetworkOff,
       final SpaceInfo? space,
       final String spaceInvitationCode,
       final String message,
@@ -400,6 +419,8 @@ abstract class _ThreadListViewState implements ThreadListViewState {
   bool get fetchingInviteCode;
   @override
   bool get deleting;
+  @override
+  dynamic get isNetworkOff;
   @override
   SpaceInfo? get space;
   @override

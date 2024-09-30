@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:style/button/primary_button.dart';
@@ -7,11 +8,16 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 
 import '../../gen/assets.gen.dart';
 
-class NoInternetScreen extends StatelessWidget {
+class NoInternetScreen extends StatefulWidget {
   final Function() onPressed;
 
   const NoInternetScreen({super.key, required this.onPressed});
 
+  @override
+  State<NoInternetScreen> createState() => _NoInternetScreenState();
+}
+
+class _NoInternetScreenState extends State<NoInternetScreen> {
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -21,22 +27,16 @@ class NoInternetScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                Assets.images.icNoConnectionIcon,
-                // colorFilter: ColorFilter.mode(
-                //   context.colorScheme.onPrimary,
-                //   BlendMode.srcATop,
-                // ),
-              ),
+              SvgPicture.asset(Assets.images.icNoConnectionIcon),
               const SizedBox(height: 40),
               Text(
-                context.l10n.no_internet_error_title,
+                context.l10n.on_internet_error_title,
                 style: AppTextStyle.header1
                     .copyWith(color: context.colorScheme.textPrimary),
               ),
               const SizedBox(height: 16),
               Text(
-                context.l10n.no_internet_error_sub_title,
+                context.l10n.on_internet_error_sub_title,
                 style: AppTextStyle.subtitle2
                     .copyWith(color: context.colorScheme.textSecondary),
                 textAlign: TextAlign.center,
@@ -48,7 +48,7 @@ class NoInternetScreen extends StatelessWidget {
                     vertical: 14.0, horizontal: 42.0),
                 expanded: false,
                 onPressed: () {
-                  onPressed();
+                  widget.onPressed();
                 },
               ),
             ],
@@ -57,4 +57,9 @@ class NoInternetScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<bool> checkInternetConnectivity() async {
+  final result = await Connectivity().checkConnectivity();
+  return result.first == ConnectivityResult.none;
 }

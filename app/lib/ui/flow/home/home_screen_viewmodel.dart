@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
@@ -9,6 +11,8 @@ import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+
+import '../../components/no_internet_screen.dart';
 
 part 'home_screen_viewmodel.freezed.dart';
 
@@ -22,7 +26,6 @@ final homeViewStateProvider =
     ref.read(currentUserPod),
     ref.read(apiUserServiceProvider),
     ref.read(currentUserSessionPod),
-    ref.read(hasDeviceNetwork.notifier),
   ),
 );
 
@@ -34,7 +37,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final ApiUser? _currentUser;
   final ApiUserService userService;
   final ApiSession? _userSession;
-  final StateController<bool> _checkNetwork;
 
   HomeViewNotifier(
     this.spaceService,
@@ -44,8 +46,18 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this._currentUser,
     this.userService,
     this._userSession,
-    this._checkNetwork,
   ) : super(const HomeViewState()) {
+    setDate();
+  }
+
+  StreamSubscription<List<SpaceInfo>>? _spacesSubscription;
+
+  String? get currentSpaceId => _currentSpaceIdController.state;
+
+  void setDate() async {
+    final hasNetwork = await _checkUserInternet();
+    if (hasNetwork) return;
+
     listenSpaceMember();
     updateCurrentUserNetworkState();
 
@@ -53,15 +65,12 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     listenUserSession(_currentUser!.id, _userSession!.id);
   }
 
-  String? get currentSpaceId => _currentSpaceIdController.state;
-
   void listenSpaceMember() async {
-    print('XXX call api');
     if (state.loading) return;
 
     try {
       state = state.copyWith(loading: true);
-      spaceService.streamAllSpace().listen((spaces) {
+      _spacesSubscription = spaceService.streamAllSpace().listen((spaces) {
         if (spaces.isNotEmpty) {
           if (state.spaceList.length != spaces.length) {
             reorderSpaces(spaces);
@@ -248,13 +257,11 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
         state.copyWith(popToSignIn: DateTime.now(), isSessionExpired: false);
   }
 
-  void streamNetworkConnectivity() async {
-    Connectivity().onConnectivityChanged.listen((result) {
-      final isNetwork = ConnectivityResult.none != result.first;
-      print('XXX network:$result, isnetwork:$isNetwork');
-      _checkNetwork.state = isNetwork;
-      state = state.copyWith(hasNetWork: isNetwork);
-    });
+  Future<bool> _checkUserInternet() async {
+    final hasNetwork = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: hasNetwork);
+    if (hasNetwork) _spacesSubscription?.cancel();
+    return hasNetwork;
   }
 }
 
@@ -268,12 +275,12 @@ class HomeViewState with _$HomeViewState {
     @Default(false) bool enablingLocation,
     @Default(true) bool locationEnabled,
     @Default(false) bool isSessionExpired,
+    @Default(false) bool isNetworkOff,
     DateTime? popToSignIn,
     SpaceInfo? selectedSpace,
     @Default('') String spaceInvitationCode,
     @Default([]) List<SpaceInfo> spaceList,
     Object? error,
     DateTime? showBatteryDialog,
-    @Default(true) bool hasNetWork,
   }) = _HomeViewState;
 }

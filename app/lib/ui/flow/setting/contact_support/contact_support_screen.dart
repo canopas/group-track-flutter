@@ -18,6 +18,7 @@ import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_suppor
 
 import '../../../components/alert.dart';
 import '../../../components/app_page.dart';
+import '../../../components/no_internet_screen.dart';
 
 class ContactSupportScreen extends ConsumerStatefulWidget {
   const ContactSupportScreen({super.key});
@@ -197,7 +198,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
           progress: state.submitting,
           context.l10n.contact_support_submit_title,
           onPressed: () {
-            notifier.submitSupportRequest();
+            _checkUserInternet(() => notifier.submitSupportRequest());
           },
         ),
       ),
@@ -227,5 +228,14 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
         );
       }
     });
+  }
+
+  void _checkUserInternet(VoidCallback onCallback) async {
+    final isNetworkOff = await checkInternetConnectivity();
+    isNetworkOff ? _showSnackBar() : onCallback();
+  }
+
+  void _showSnackBar() {
+    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }

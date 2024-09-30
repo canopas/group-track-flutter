@@ -16,6 +16,7 @@ import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_na
 import '../../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../../gen/assets.gen.dart';
 import '../../../../components/error_snakebar.dart';
+import '../../../../components/no_internet_screen.dart';
 import '../components/place_added_dialog.dart';
 
 class ChoosePlaceNameScreen extends ConsumerStatefulWidget {
@@ -62,25 +63,23 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
 
   Widget _body(ChoosePlaceViewState state) {
     return SafeArea(
-      child: Stack(
-        children:[
-          ListView(
-            padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-            children: [
-              _searchTextField(state),
-              const SizedBox(height: 50),
-              Text(
-                context.l10n.choose_place_suggestion_text,
-                style: AppTextStyle.caption
-                    .copyWith(color: context.colorScheme.textDisabled),
-              ),
-              const SizedBox(height: 16),
-              _suggestionsPlaceView(state.suggestions, state),
-            ],
-          ),
-          _addPlaceButtonView(state),
-        ]
-      ),
+      child: Stack(children: [
+        ListView(
+          padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+          children: [
+            _searchTextField(state),
+            const SizedBox(height: 50),
+            Text(
+              context.l10n.choose_place_suggestion_text,
+              style: AppTextStyle.caption
+                  .copyWith(color: context.colorScheme.textDisabled),
+            ),
+            const SizedBox(height: 16),
+            _suggestionsPlaceView(state.suggestions, state),
+          ],
+        ),
+        _addPlaceButtonView(state),
+      ]),
     );
   }
 
@@ -152,8 +151,9 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
       child: PrimaryButton(
         enabled: enable,
         progress: state.addingPlace,
-        onPressed: () {
-          notifier.onTapAddPlaceBtn();
+        onPressed: () async {
+          final isNetworkOff = await checkInternetConnectivity();
+          isNetworkOff ? _showSnackBar() : notifier.onTapAddPlaceBtn();
         },
         edgeInsets: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
         context.l10n.choose_place_add_place_btn_text,
@@ -182,5 +182,9 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
         title,
       );
     });
+  }
+
+  void _showSnackBar() {
+    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }
