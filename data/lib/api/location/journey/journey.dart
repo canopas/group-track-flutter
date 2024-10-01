@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data/api/location/location.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'journey.freezed.dart';
@@ -15,8 +16,6 @@ class ApiLocationJourney with _$ApiLocationJourney {
     required double from_longitude,
     double? to_latitude,
     double? to_longitude,
-    double? route_distance,
-    int? route_duration,
     @Default([]) List<JourneyRoute> routes,
     int? created_at,
     int? update_at,
@@ -34,6 +33,31 @@ class ApiLocationJourney with _$ApiLocationJourney {
 
   bool isSteadyLocation() {
     return to_latitude == null && to_longitude == null;
+  }
+
+  LocationData toPositionFromSteadyJourney() {
+    return LocationData(latitude: from_latitude, longitude: from_longitude, timestamp: DateTime.now());
+  }
+
+  LocationData toPositionFromMovingJourney() {
+    return LocationData(latitude: to_latitude ?? 0, longitude: to_longitude ?? 0, timestamp: DateTime.now());
+  }
+
+  JourneyRoute toRouteFromSteadyJourney() {
+    return JourneyRoute(latitude: from_latitude, longitude: from_longitude);
+  }
+
+  static ApiLocationJourney fromPosition(LocationData pos, String userId, String newJourneyId) {
+    return ApiLocationJourney(
+      id: newJourneyId,
+      user_id: userId,
+      from_latitude: pos.latitude,
+      from_longitude: pos.longitude,
+      to_latitude: pos.latitude,
+      to_longitude: pos.longitude,
+      created_at: pos.timestamp.millisecondsSinceEpoch,
+      update_at: pos.timestamp.millisecondsSinceEpoch,
+    );
   }
 }
 

@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:data/utils/location_converters.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../log/logger.dart';
-import '../../../storage/database/location_table_dao.dart';
 import '../../network/client.dart';
 import 'journey.dart';
 
@@ -15,8 +17,6 @@ final journeyServiceProvider = Provider((ref) => ApiJourneyService(
 class ApiJourneyService {
   late FirebaseFirestore _db;
 
-  final LocationTableDao locationTableDao = LocationTableDao();
-
   ApiJourneyService(FirebaseFirestore fireStore) {
     _db = fireStore;
   }
@@ -26,29 +26,14 @@ class ApiJourneyService {
   CollectionReference _journeyRef(String userId) =>
       _userRef.doc(userId).collection("user_journeys");
 
-  Future<ApiLocationJourney?> getLastJourneyLocation(String userId) async {
-    final querySnapshot = await _journeyRef(userId)
-        .where('user_id', isEqualTo: userId)
-        .orderBy('created_at', descending: true)
-        .limit(1)
-        .get();
-
-    final doc = querySnapshot.docs.firstOrNull;
-    if (doc != null) {
-      return ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>);
-    }
-    return null;
-  }
-
-  Future<void> saveCurrentJourney({
+  Future<String> saveCurrentJourney({
     required String userId,
     required double fromLatitude,
     required double fromLongitude,
     double? toLatitude,
     double? toLongitude,
     LatLng? toLatLng,
-    double? routeDistance,
-    int? routeDuration,
+    List<JourneyRoute>? routes,
     int? created_at,
     int? updated_at,
   }) async {
@@ -66,14 +51,12 @@ class ApiJourneyService {
       from_longitude: fromLatLng.longitude,
       to_latitude: toLatLng?.latitude,
       to_longitude: toLatLng?.longitude,
-      route_distance: routeDistance,
-      route_duration: routeDuration,
-      routes: [],
+      routes: routes ?? [],
       created_at: created_at ?? DateTime.now().millisecondsSinceEpoch,
-      update_at: updated_at ?? created_at ?? DateTime.now().millisecondsSinceEpoch,
+      update_at: updated_at ?? DateTime.now().millisecondsSinceEpoch,
     );
     await docRef.set(journey.toJson());
-    await _updateLocationJourneyInDatabase(userId, journey);
+    return docRef.id;
   }
 
   Future<void> updateLastLocationJourney(
@@ -81,7 +64,6 @@ class ApiJourneyService {
     ApiLocationJourney journey,
   ) async {
     try {
-      await _updateLocationJourneyInDatabase(userId, journey);
       await _journeyRef(userId).doc(journey.id).set(journey.toJson());
     } catch (error) {
       logger.e(
@@ -91,24 +73,18 @@ class ApiJourneyService {
     }
   }
 
-  Future<void> _updateLocationJourneyInDatabase(
-    String userId,
-    ApiLocationJourney journey,
-  ) async {
-    try {
-      final locationData = await locationTableDao.getLocationData(userId);
-      if (locationData != null) {
-        final updatedLocationData = locationData.copyWith(
-          lastLocationJourney: LocationConverters.journeyToString(journey),
-        );
-        await locationTableDao.updateLocationTable(updatedLocationData);
-      }
-    } catch (error) {
-      logger.e(
-        'ApiJourneyService: Error while updating journey in database',
-        error: error,
-      );
+  Future<ApiLocationJourney?> getLastJourneyLocation(String userId) async {
+    final querySnapshot = await _journeyRef(userId)
+        .where('user_id', isEqualTo: userId)
+        .orderBy('created_at', descending: true)
+        .limit(1)
+        .get();
+
+    final doc = querySnapshot.docs.firstOrNull;
+    if (doc != null) {
+      return ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>);
     }
+    return null;
   }
 
   Future<List<ApiLocationJourney>> getJourneyHistory(
@@ -193,5 +169,18 @@ class ApiJourneyService {
       );
     }
     return null;
+  }
+
+  Future<void> uploadLogFileToFirebase() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final logFile = File('${directory.path}/app.log');
+      final storage = FirebaseStorage.instance;
+      final fileName = 'LOG_${DateTime.now().millisecondsSinceEpoch}.log';
+      final logFileRef = storage.ref().child('logs/$fileName');
+      await logFileRef.putFile(logFile);
+    } catch (e) {
+      logger.e('Error uploading log file: $e');
+    }
   }
 }

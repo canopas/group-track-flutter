@@ -131,7 +131,7 @@ class _JourneyMapState extends State<JourneyMap> {
 
     final longDistanceLatLng = _getLongDistanceCoordinate();
     final centerLatLng = _getCenterCoordinate(_fromLatLng, longDistanceLatLng);
-    final zoom = _calculateZoomLevel(journey.route_distance ?? 0);
+    final zoom = _calculateZoomLevel(_getDistanceString(journey));
     return (polyline, centerLatLng, zoom);
   }
 
@@ -196,5 +196,19 @@ class _JourneyMapState extends State<JourneyMap> {
         _mapStyle = null;
       }
     });
+  }
+
+  double _getDistanceString(ApiLocationJourney location) {
+    final steadyLocation = location.toPositionFromSteadyJourney();
+    final movingLocation = location.toPositionFromMovingJourney();
+
+    final routeDistance = steadyLocation.distanceTo(movingLocation);
+
+    if (routeDistance < 1000) {
+      return routeDistance.round().ceilToDouble();
+    } else {
+      final distanceInKm = routeDistance / 1000;
+      return distanceInKm.round().ceilToDouble();
+    }
   }
 }

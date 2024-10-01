@@ -6,10 +6,13 @@ import 'package:data/log/logger.dart';
 import 'package:data/service/permission_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'home_screen_viewmodel.freezed.dart';
+
+const platform = MethodChannel('com.yourspace/set_up_location');
 
 final homeViewStateProvider =
     StateNotifierProvider.autoDispose<HomeViewNotifier, HomeViewState>(
@@ -32,6 +35,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final ApiUser? _currentUser;
   final ApiUserService userService;
   final ApiSession? _userSession;
+  static const platform = MethodChannel('com.yourspace/set_up_location');
 
   HomeViewNotifier(
     this.spaceService,
@@ -47,13 +51,21 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
     if (_currentUser == null && _userSession == null) return;
     listenUserSession(_currentUser!.id, _userSession!.id);
+    _setupLocationOnIOS();
   }
 
   String? get currentSpaceId => _currentSpaceIdController.state;
 
+  Future<void> _setupLocationOnIOS() async {
+    try {
+      await platform.invokeMethod('setUpLocation');
+    } on PlatformException catch (e) {
+      logger.e('HomeViewNotifier: error while invoke update location in iOS', error: e);
+    }
+  }
+
   void listenSpaceMember() async {
     if (state.loading) return;
-
     try {
       state = state.copyWith(loading: true);
       spaceService.streamAllSpace().listen((spaces) {

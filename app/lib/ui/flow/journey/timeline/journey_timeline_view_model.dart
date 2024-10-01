@@ -1,10 +1,15 @@
+import 'dart:ui' as ui;
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/location/journey/api_journey_service.dart';
 import 'package:data/api/location/journey/journey.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/storage/app_preferences.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 
 part 'journey_timeline_view_model.freezed.dart';
 
@@ -35,6 +40,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       spaceId: _currentSpaceId.state,
     );
     _loadJourney();
+    journeyService.uploadLogFileToFirebase();
   }
 
   void _loadJourney({bool loadMore = false}) async {
@@ -104,6 +110,76 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       sortedJourney: [],
     );
     _loadJourney();
+  }
+
+  String getSteadyDuration(int createdAt, int updatedAt) {
+    Duration duration = DateTime.fromMillisecondsSinceEpoch(updatedAt)
+        .difference(DateTime.fromMillisecondsSinceEpoch(createdAt));
+
+    if (duration.inHours > 0) {
+      return '${duration.inHours}h ${duration.inMinutes.remainder(60)}min';
+    } else {
+      return '${duration.inMinutes} min';
+    }
+  }
+
+  String getDistanceString(ApiLocationJourney location) {
+    final steadyLocation = location.toPositionFromSteadyJourney();
+    final movingLocation = location.toPositionFromMovingJourney();
+
+    final routeDistance = steadyLocation.distanceTo(movingLocation);
+
+    if (routeDistance < 1000) {
+      return '${routeDistance.round()} m';
+    } else {
+      final distanceInKm = routeDistance / 1000;
+      return '${distanceInKm.round()} km';
+    }
+  }
+
+  Future<String> getAddress(LatLng latLng) async {
+    await Future.delayed(const Duration(seconds: 2));
+    final address = await latLng.getAddressFromLocation();
+    return address;
+  }
+
+  String formattedAddress(Placemark fromPlace, Placemark? toPlace) {
+    final fromCity = fromPlace.locality ?? '';
+    final toCity = toPlace?.locality ?? '';
+
+    final fromArea = fromPlace.subLocality ?? '';
+    final toArea = toPlace?.subLocality ?? '';
+
+    final fromState = fromPlace.administrativeArea ?? '';
+    final toState = toPlace?.administrativeArea ?? '';
+
+    if (toPlace == null) {
+      return "$fromArea, $fromCity";
+    } else if (fromArea == toArea) {
+      return "$fromArea, $fromCity";
+    } else if (fromCity == toCity) {
+      return "$fromArea -> $toArea, $fromCity";
+    } else if (fromState == toState) {
+      return "$fromArea, $fromCity -> $toArea, $toCity";
+    } else {
+      return "$fromCity, $fromState -> $toCity, $toState";
+    }
+  }
+
+  Future<BitmapDescriptor> createCustomIcon(String assetPath) async {
+    final data = await rootBundle.load(assetPath);
+    final codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetWidth: 38,
+      targetHeight: 54,
+    );
+    final frameInfo = await codec.getNextFrame();
+
+    final byteData =
+    await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
+    final resizedBytes = byteData!.buffer.asUint8List();
+
+    return BitmapDescriptor.fromBytes(resizedBytes);
   }
 }
 
