@@ -26,8 +26,8 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
       : super(EditSpaceViewState(spaceName: TextEditingController()));
 
   void getSpaceDetails(String spaceId) async {
-    final hasNetwork = await _checkUserInternet();
-    if (hasNetwork) return;
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
 
     try {
       state = state.copyWith(loading: true);
@@ -120,9 +120,9 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
   }
 
   Future<bool> _checkUserInternet() async {
-    final hasNetwork = await checkInternetConnectivity();
-    state = state.copyWith(isNetworkOff: hasNetwork);
-    return hasNetwork;
+    final isNetworkOff = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: isNetworkOff);
+    return isNetworkOff;
   }
 }
 

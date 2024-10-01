@@ -64,8 +64,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     required String threadId,
     required List<ThreadInfo> threadInfoList,
   }) async {
-    final hasNetwork = await _checkUserInternet();
-    if (hasNetwork) return;
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
 
     _getSpaceInfo(spaceId);
     if (threadId.isNotEmpty) {
@@ -445,9 +445,9 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   }
 
   Future<bool> _checkUserInternet() async {
-    final hasNetwork = await checkInternetConnectivity();
-    state = state.copyWith(isNetworkOff: hasNetwork);
-    return hasNetwork;
+    final isNetworkOff = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: isNetworkOff);
+    return isNetworkOff;
   }
 }
 

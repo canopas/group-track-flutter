@@ -35,8 +35,8 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
   ) : super(const JourneyTimelineState());
 
   void loadData(ApiUser selectedUser) async {
-    final hasNetwork = await _checkUserInternet();
-    if (hasNetwork) return;
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
 
     final isCurrentUser = selectedUser.id == currentUser?.id;
     state = state.copyWith(
@@ -107,8 +107,8 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
   }
 
   void onFilterBySelectedDate(DateTime pickedDate) async {
-    final hasNetwork = await _checkUserInternet();
-    if (hasNetwork) return;
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
 
     final fromTimeStamp = pickedDate.millisecondsSinceEpoch;
     final toTimeStamp = pickedDate.copyWith(hour: 23).millisecondsSinceEpoch;
@@ -121,9 +121,9 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
   }
 
   Future<bool> _checkUserInternet() async {
-    final hasNetwork = await checkInternetConnectivity();
-    state = state.copyWith(isNetworkOff: hasNetwork);
-    return hasNetwork;
+    final isNetworkOff = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: isNetworkOff);
+    return isNetworkOff;
   }
 
   String getSteadyDuration(int createdAt, int updatedAt) {

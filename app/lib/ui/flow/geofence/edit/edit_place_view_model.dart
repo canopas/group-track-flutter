@@ -35,8 +35,8 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
       : super(const EditPlaceState());
 
   void loadData(ApiPlace place) async {
-    final hasNetwork = await _checkUserInternet();
-    if (hasNetwork) return;
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
 
     if (state.loading) return;
     try {
@@ -214,9 +214,9 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
   }
 
   Future<bool> _checkUserInternet() async {
-    final hasNetwork = await checkInternetConnectivity();
-    state = state.copyWith(isNetworkOff: hasNetwork);
-    return hasNetwork;
+    final isNetworkOff = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: isNetworkOff);
+    return isNetworkOff;
   }
 }
 

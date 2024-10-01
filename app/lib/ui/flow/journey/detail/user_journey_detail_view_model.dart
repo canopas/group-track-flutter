@@ -25,8 +25,8 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
       : super(const UserJourneyDetailState());
 
   void loadData(ApiLocationJourney journey) async {
-    final hasNetwork = await _checkUserInternet();
-    if (hasNetwork) return;
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
 
     if (state.loading) return;
     state = state.copyWith(loading: true, error: null);
@@ -63,9 +63,9 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
   }
 
   Future<bool> _checkUserInternet() async {
-    final hasNetwork = await checkInternetConnectivity();
-    state = state.copyWith(isNetworkOff: hasNetwork);
-    return hasNetwork;
+    final isNetworkOff = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: isNetworkOff);
+    return isNetworkOff;
   }
 
   String getDistanceString(ApiLocationJourney location) {

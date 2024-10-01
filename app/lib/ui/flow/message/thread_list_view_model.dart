@@ -35,8 +35,8 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
       : super(const ThreadListViewState());
 
   void setSpace(SpaceInfo space) async {
-    final hasNetwork = await _checkUserInternet();
-    if (hasNetwork) return;
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
 
     state = state.copyWith(space: space);
     listenThreads(space.space.id);
@@ -137,9 +137,9 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   }
 
   Future<bool> _checkUserInternet() async {
-    final hasNetwork = await checkInternetConnectivity();
-    state = state.copyWith(isNetworkOff: hasNetwork);
-    return hasNetwork;
+    final isNetworkOff = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: isNetworkOff);
+    return isNetworkOff;
   }
 }
 

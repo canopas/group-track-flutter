@@ -59,8 +59,8 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   String? get currentSpaceId => _currentSpaceIdController.state;
 
   void setDate() async {
-    final hasNetwork = await _checkUserInternet();
-    if (hasNetwork) return;
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
 
     listenSpaceMember();
     updateCurrentUserNetworkState();
@@ -270,10 +270,10 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   }
 
   Future<bool> _checkUserInternet() async {
-    final hasNetwork = await checkInternetConnectivity();
-    state = state.copyWith(isNetworkOff: hasNetwork);
-    if (hasNetwork) _spacesSubscription?.cancel();
-    return hasNetwork;
+    final isNetworkOff = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: isNetworkOff);
+    if (isNetworkOff) _spacesSubscription?.cancel();
+    return isNetworkOff;
   }
 }
 
