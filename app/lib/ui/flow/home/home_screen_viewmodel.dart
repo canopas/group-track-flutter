@@ -70,8 +70,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     _setupLocationOnIOS();
   }
 
-  String? get currentSpaceId => _currentSpaceIdController.state;
-
   Future<void> _setupLocationOnIOS() async {
     try {
       await platform.invokeMethod('setUpLocation');
