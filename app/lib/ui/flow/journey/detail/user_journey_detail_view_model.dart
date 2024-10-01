@@ -57,12 +57,7 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
     }
   }
 
-  String getDistanceString(ApiLocationJourney location) {
-    final steadyLocation = location.toPositionFromSteadyJourney();
-    final movingLocation = location.toPositionFromMovingJourney();
-
-    final routeDistance = steadyLocation.distanceTo(movingLocation);
-
+  String getDistanceString(double routeDistance) {
     if (routeDistance < 1000) {
       return '${routeDistance.round()} m';
     } else {
@@ -71,13 +66,12 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
     }
   }
 
-  String getRouteDurationString(ApiLocationJourney journey) {
-    final routeDurationMillis = journey.update_at! - journey.created_at!;
-    final routeDuration = Duration(milliseconds: routeDurationMillis);
+  String getRouteDurationString(int routeDuration) {
+    final duration = Duration(milliseconds: routeDuration);
 
-    final hours = routeDuration.inHours;
-    final minutes = routeDuration.inMinutes % 60;
-    final seconds = routeDuration.inSeconds % 60;
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    final seconds = duration.inSeconds % 60;
 
     if (hours > 0) {
       return "$hours hr $minutes mins";

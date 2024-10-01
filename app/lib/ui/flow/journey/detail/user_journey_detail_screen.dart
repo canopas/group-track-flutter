@@ -75,8 +75,8 @@ class _UserJourneyDetailScreenState
   }
 
   Widget _journeyInfo(UserJourneyDetailState state) {
-    final distance = notifier.getDistanceString(state.journey!);
-    final duration = notifier.getRouteDurationString(state.journey!);
+    final distance = notifier.getDistanceString(state.journey!.route_distance ?? 0);
+    final duration = notifier.getRouteDurationString(state.journey!.route_duration ?? 0);
 
     return Padding(
       padding: EdgeInsets.only(

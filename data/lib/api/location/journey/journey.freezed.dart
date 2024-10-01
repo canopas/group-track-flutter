@@ -27,6 +27,8 @@ mixin _$ApiLocationJourney {
   double? get to_latitude => throw _privateConstructorUsedError;
   double? get to_longitude => throw _privateConstructorUsedError;
   List<JourneyRoute> get routes => throw _privateConstructorUsedError;
+  double? get route_distance => throw _privateConstructorUsedError;
+  int? get route_duration => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
   int? get update_at => throw _privateConstructorUsedError;
 
@@ -50,6 +52,8 @@ abstract class $ApiLocationJourneyCopyWith<$Res> {
       double? to_latitude,
       double? to_longitude,
       List<JourneyRoute> routes,
+      double? route_distance,
+      int? route_duration,
       int? created_at,
       int? update_at});
 }
@@ -74,6 +78,8 @@ class _$ApiLocationJourneyCopyWithImpl<$Res, $Val extends ApiLocationJourney>
     Object? to_latitude = freezed,
     Object? to_longitude = freezed,
     Object? routes = null,
+    Object? route_distance = freezed,
+    Object? route_duration = freezed,
     Object? created_at = freezed,
     Object? update_at = freezed,
   }) {
@@ -106,6 +112,14 @@ class _$ApiLocationJourneyCopyWithImpl<$Res, $Val extends ApiLocationJourney>
           ? _value.routes
           : routes // ignore: cast_nullable_to_non_nullable
               as List<JourneyRoute>,
+      route_distance: freezed == route_distance
+          ? _value.route_distance
+          : route_distance // ignore: cast_nullable_to_non_nullable
+              as double?,
+      route_duration: freezed == route_duration
+          ? _value.route_duration
+          : route_duration // ignore: cast_nullable_to_non_nullable
+              as int?,
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -134,6 +148,8 @@ abstract class _$$LocationJourneyImplCopyWith<$Res>
       double? to_latitude,
       double? to_longitude,
       List<JourneyRoute> routes,
+      double? route_distance,
+      int? route_duration,
       int? created_at,
       int? update_at});
 }
@@ -156,6 +172,8 @@ class __$$LocationJourneyImplCopyWithImpl<$Res>
     Object? to_latitude = freezed,
     Object? to_longitude = freezed,
     Object? routes = null,
+    Object? route_distance = freezed,
+    Object? route_duration = freezed,
     Object? created_at = freezed,
     Object? update_at = freezed,
   }) {
@@ -188,6 +206,14 @@ class __$$LocationJourneyImplCopyWithImpl<$Res>
           ? _value._routes
           : routes // ignore: cast_nullable_to_non_nullable
               as List<JourneyRoute>,
+      route_distance: freezed == route_distance
+          ? _value.route_distance
+          : route_distance // ignore: cast_nullable_to_non_nullable
+              as double?,
+      route_duration: freezed == route_duration
+          ? _value.route_duration
+          : route_duration // ignore: cast_nullable_to_non_nullable
+              as int?,
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -211,6 +237,8 @@ class _$LocationJourneyImpl extends _LocationJourney {
       this.to_latitude,
       this.to_longitude,
       final List<JourneyRoute> routes = const [],
+      this.route_distance,
+      this.route_duration,
       this.created_at,
       this.update_at})
       : _routes = routes,
@@ -241,13 +269,17 @@ class _$LocationJourneyImpl extends _LocationJourney {
   }
 
   @override
+  final double? route_distance;
+  @override
+  final int? route_duration;
+  @override
   final int? created_at;
   @override
   final int? update_at;
 
   @override
   String toString() {
-    return 'ApiLocationJourney(id: $id, user_id: $user_id, from_latitude: $from_latitude, from_longitude: $from_longitude, to_latitude: $to_latitude, to_longitude: $to_longitude, routes: $routes, created_at: $created_at, update_at: $update_at)';
+    return 'ApiLocationJourney(id: $id, user_id: $user_id, from_latitude: $from_latitude, from_longitude: $from_longitude, to_latitude: $to_latitude, to_longitude: $to_longitude, routes: $routes, route_distance: $route_distance, route_duration: $route_duration, created_at: $created_at, update_at: $update_at)';
   }
 
   @override
@@ -266,6 +298,10 @@ class _$LocationJourneyImpl extends _LocationJourney {
             (identical(other.to_longitude, to_longitude) ||
                 other.to_longitude == to_longitude) &&
             const DeepCollectionEquality().equals(other._routes, _routes) &&
+            (identical(other.route_distance, route_distance) ||
+                other.route_distance == route_distance) &&
+            (identical(other.route_duration, route_duration) ||
+                other.route_duration == route_duration) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at) &&
             (identical(other.update_at, update_at) ||
@@ -283,6 +319,8 @@ class _$LocationJourneyImpl extends _LocationJourney {
       to_latitude,
       to_longitude,
       const DeepCollectionEquality().hash(_routes),
+      route_distance,
+      route_duration,
       created_at,
       update_at);
 
@@ -310,6 +348,8 @@ abstract class _LocationJourney extends ApiLocationJourney {
       final double? to_latitude,
       final double? to_longitude,
       final List<JourneyRoute> routes,
+      final double? route_distance,
+      final int? route_duration,
       final int? created_at,
       final int? update_at}) = _$LocationJourneyImpl;
   const _LocationJourney._() : super._();
@@ -331,6 +371,10 @@ abstract class _LocationJourney extends ApiLocationJourney {
   double? get to_longitude;
   @override
   List<JourneyRoute> get routes;
+  @override
+  double? get route_distance;
+  @override
+  int? get route_duration;
   @override
   int? get created_at;
   @override
