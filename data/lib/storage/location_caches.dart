@@ -23,8 +23,8 @@ class LocationCache {
     _lastFiveLocationCache.put(userId, locations);
   }
 
-  List<LocationData>? getLastFiveLocations(String userId) {
-    return _lastFiveLocationCache.get(userId);
+  List<LocationData> getLastFiveLocations(String userId) {
+    return _lastFiveLocationCache.get(userId) ?? [];
   }
 
   void clear() {

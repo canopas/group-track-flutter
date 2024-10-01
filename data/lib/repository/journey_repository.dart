@@ -26,6 +26,13 @@ class JourneyRepository {
     try {
       var lastKnownJourney = await getLastKnownLocation(userId, extractedLocation);
 
+      bool isDayChanged = this.isDayChanged(extractedLocation, lastKnownJourney);
+
+      if (isDayChanged) {
+        await saveJourneyOnDayChanged(userId, lastKnownJourney);
+        return;
+      }
+
       await checkAndSaveLastFiveLocations(extractedLocation, userId);
       await checkAndSaveLocationJourney(userId, extractedLocation, lastKnownJourney);
     } catch (error, stack) {
@@ -34,6 +41,31 @@ class JourneyRepository {
         error: error, stackTrace: stack
       );
     }
+  }
+
+  bool isDayChanged(LocationData extractedLocation, ApiLocationJourney lastKnownJourney) {
+    var lastKnownDate = DateTime.fromMillisecondsSinceEpoch(lastKnownJourney.update_at!);
+    var extractedDate = DateTime.fromMillisecondsSinceEpoch(extractedLocation.timestamp.millisecondsSinceEpoch);
+
+    return lastKnownDate.day != extractedDate.day;
+  }
+
+  Future<void> saveJourneyOnDayChanged(String userId, ApiLocationJourney lastKnownJourney) async {
+    String newJourneyId = await journeyService.saveCurrentJourney(
+      userId: userId,
+      fromLatitude: lastKnownJourney.from_latitude,
+      fromLongitude: lastKnownJourney.from_longitude,
+      toLatitude: lastKnownJourney.to_latitude ?? 0,
+      toLongitude: lastKnownJourney.to_longitude ?? 0,
+    );
+
+    var newJourney = lastKnownJourney.copyWith(
+      id: newJourneyId,
+      created_at: DateTime.now().millisecondsSinceEpoch,
+      update_at: DateTime.now().millisecondsSinceEpoch,
+    );
+
+    locationCache.putLastJourney(newJourney, userId);
   }
 
   Future<ApiLocationJourney> getLastKnownLocation(String userId, LocationData extractedLocation) async {
@@ -64,15 +96,17 @@ class JourneyRepository {
 
   Future<void> checkAndSaveLocationJourney(String userId, LocationData extractedLocation, ApiLocationJourney lastKnownJourney) async {
     var locations = locationCache.getLastFiveLocations(userId);
-    var geometricMedian = locations != null && locations.isNotEmpty
-        ? geometricMedianCalculation(locations)
-        : extractedLocation;
+    var geometricMedian = locations.isNotEmpty ? geometricMedianCalculation(locations) : null;
 
     double distance = lastKnownJourney.isSteadyLocation()
-        ? distanceBetween(geometricMedian, lastKnownJourney.toPositionFromSteadyJourney())
-        : distanceBetween(geometricMedian, lastKnownJourney.toPositionFromMovingJourney());
+        ? distanceBetween(geometricMedian ?? extractedLocation,
+            lastKnownJourney.toPositionFromSteadyJourney())
+        : distanceBetween(geometricMedian ?? extractedLocation,
+            lastKnownJourney.toPositionFromMovingJourney());
 
-    int timeDifference = geometricMedian.timestamp.millisecondsSinceEpoch - lastKnownJourney.update_at!;
+    int timeDifference = geometricMedian?.timestamp.millisecondsSinceEpoch ??
+        extractedLocation.timestamp.millisecondsSinceEpoch -
+            lastKnownJourney.update_at!;
 
     if (lastKnownJourney.isSteadyLocation()) {
       if (distance > MIN_DISTANCE) {
@@ -137,7 +171,7 @@ class JourneyRepository {
       to_longitude: extractedLocation.longitude,
       routes: [...lastKnownJourney.routes, extractedLocation.toRoute()],
       created_at: lastKnownJourney.created_at,
-      update_at: DateTime.now().millisecondsSinceEpoch,
+      update_at: lastKnownJourney.update_at,
     );
 
     journeyService.updateLastLocationJourney(userId, movingJourney);
@@ -146,7 +180,7 @@ class JourneyRepository {
       userId: userId,
       fromLatitude: extractedLocation.latitude,
       fromLongitude: extractedLocation.longitude,
-      created_at: extractedLocation.timestamp.millisecondsSinceEpoch,
+      created_at: lastKnownJourney.update_at,
     );
 
     var steadyJourney = ApiLocationJourney(
@@ -170,7 +204,7 @@ class JourneyRepository {
   }
 
   Future<void> checkAndSaveLastFiveLocations(LocationData extractedLocation, String userId) async {
-    var lastFiveLocations = locationCache.getLastFiveLocations(userId) ?? [];
+    var lastFiveLocations = locationCache.getLastFiveLocations(userId);
     lastFiveLocations.add(extractedLocation);
     locationCache.putLastFiveLocations(lastFiveLocations, userId);
   }
