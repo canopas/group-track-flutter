@@ -286,5 +286,7 @@
   "journey_timeline_empty_screen_text": "No location history found!",
   "journey_timeline_Since_text": "Since {date}",
   "journey_timeline_today_text": "Today {date}",
-  "journey_timeline_date_picker_select_text": "Select"
+  "journey_timeline_date_picker_select_text": "Select",
+
+  "journey_detail_getting_address_text": "Getting the address..."
 }

@@ -47,7 +47,6 @@ class LocationService {
     String userId,
     LatLng latLng,
     int recodedAt,
-    int? userState,
   ) async {
     final docRef = _locationRef(userId).doc();
 
@@ -56,33 +55,8 @@ class LocationService {
         user_id: userId,
         latitude: latLng.latitude,
         longitude: latLng.longitude,
-        created_at: recodedAt,
-        user_state: userState);
+        created_at: recodedAt);
 
     await docRef.set(location);
-  }
-
-  Stream<List<ApiLocation?>> getLastFiveMinLocation(String userId) {
-    final currentTime = DateTime.now().millisecondsSinceEpoch;
-
-    return Stream.fromIterable(List.generate(5, (i) => i))
-        .asyncMap((i) async {
-          final startTime = currentTime - (i + 1) * 60000;
-          final endTime = startTime - 60000;
-          final querySnapshot = await _locationRef(userId)
-              .where('user_id', isEqualTo: userId)
-              .where('created_at', isGreaterThanOrEqualTo: endTime)
-              .where('created_at', isLessThan: startTime)
-              .orderBy('created_at', descending: true)
-              .limit(1)
-              .get();
-
-          return querySnapshot.docs.isNotEmpty
-              ? querySnapshot.docs.first.data() as ApiLocation
-              : null;
-        })
-        .where((location) => location != null)
-        .toList()
-        .asStream();
   }
 }

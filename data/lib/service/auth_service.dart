@@ -62,8 +62,8 @@ class AuthService {
   }
 
   Future<void> deleteAccount({String? currentUserId}) async {
-    await userService.deleteUser(currentUserId ?? _currentUser?.id ?? '');
     userService.clearPreference();
+    await userService.deleteUser(currentUserId ?? _currentUser?.id ?? '');
   }
 
   Future<void> getUserNetworkStatus(

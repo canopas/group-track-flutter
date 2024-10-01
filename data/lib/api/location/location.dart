@@ -1,7 +1,9 @@
 //ignore_for_file: constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data/api/location/journey/journey.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:geolocator/geolocator.dart';
 
 part 'location.freezed.dart';
 part 'location.g.dart';
@@ -39,10 +41,20 @@ class LocationData {
   final double latitude;
   final double longitude;
   final DateTime timestamp;
+  final JourneyRoute? routes;
 
   LocationData({
     required this.latitude,
     required this.longitude,
     required this.timestamp,
+    this.routes,
   });
+
+  JourneyRoute toRoute() {
+    return JourneyRoute(latitude: latitude, longitude: longitude);
+  }
+
+  double distanceTo(LocationData other) {
+    return Geolocator.distanceBetween(latitude, longitude, other.latitude, other.longitude);
+  }
 }

@@ -7,13 +7,11 @@ import CoreLocation
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
-    
+
     var geofencePlugin: GeofenceService?
     var locationManager: CLLocationManager?
     var previousLocation: CLLocation?
-    
-    let minimumDistance: Double = 10.0 // 10 meters
-    
+
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -23,15 +21,16 @@ import CoreLocation
         if #available(iOS 10.0, *) {
             UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
         }
-        
+
         setUpLocation()
-        
+
         let key = Bundle.main.object(forInfoDictionaryKey: "ApiMapKey")
         GMSServices.provideAPIKey(key as! String)
-        
+
         geofencePluginRegistration()
-        
+
         GeneratedPluginRegistrant.register(with: self)
+        setUpFlutterMethodChannelForInvokeLocation()
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
@@ -46,9 +45,9 @@ extension AppDelegate {
     private func geofencePluginRegistration() {
         let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
         let geofenceChannel = FlutterMethodChannel(name: "geofence_plugin", binaryMessenger: controller.binaryMessenger)
-        
+
         geofencePlugin = GeofenceService(channel: geofenceChannel)
-        
+
         geofenceChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
             guard let self = self else { return }
             if call.method == "startMonitoring" {
@@ -79,18 +78,35 @@ extension AppDelegate: CLLocationManagerDelegate {
     private func setUpLocation() {
         locationManager = CLLocationManager()
         locationManager?.delegate = self
+        locationManager?.distanceFilter = 10
+        locationManager?.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         locationManager?.allowsBackgroundLocationUpdates = true
         locationManager?.pausesLocationUpdatesAutomatically = false
         locationManager?.startMonitoringSignificantLocationChanges()
     }
     
+    private func setUpFlutterMethodChannelForInvokeLocation() {
+        let controller = window?.rootViewController as! FlutterViewController
+        let locationChannel = FlutterMethodChannel(name: "com.yourspace/set_up_location", binaryMessenger: controller.binaryMessenger)
+        
+        locationChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
+            guard let self = self else { return }
+            if call.method == "setUpLocation" {
+                self.setUpLocation()
+                result(nil)
+            } else {
+                result(FlutterMethodNotImplemented)
+            }
+        }
+    }
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last else { return }
         
-        if let previousLocation = previousLocation {
-            let distance = currentLocation.distance(from: previousLocation)
-                        
-            if distance < minimumDistance {
+        if let lastLocation = previousLocation {
+            let distance = currentLocation.distance(from: lastLocation)
+            
+            if distance < 10 {
                 return
             }
         }

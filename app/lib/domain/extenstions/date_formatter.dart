@@ -20,7 +20,6 @@ enum DateFormatType {
   relativeDate,
   relativeDateWeekday,
   serverIso,
-  dayTime,
   shortDayMonth
 }
 
@@ -71,8 +70,6 @@ extension DateFormatter on DateTime {
         return _formattedPastTime(context);
       case DateFormatType.serverIso:
         return DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(toUtc());
-      case DateFormatType.dayTime:
-        return DateFormat('dd MMMM hh:mm a').format(this);
       case DateFormatType.shortDayMonth:
         return DateFormat('d MMMM').format(this);
     }
@@ -118,7 +115,7 @@ extension DateFormatter on DateTime {
     } else if (isSameDay(yesterday)) {
       return context.l10n.common_yesterday;
     } else if (year == today.year) {
-      return DateFormat('${includeWeekday ? 'EEEE, ' : ''}d MMMM').format(this);
+      return DateFormat('${includeWeekday ? 'EEEE, ' : ''}d MMM').format(this);
     } else {
       return DateFormat('${includeWeekday ? 'EEEE, ' : ''}d MMM yyyy')
           .format(this);
