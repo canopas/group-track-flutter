@@ -55,10 +55,7 @@ class ApiLocationJourney with _$ApiLocationJourney {
       user_id: userId,
       from_latitude: pos.latitude,
       from_longitude: pos.longitude,
-      to_latitude: pos.latitude,
-      to_longitude: pos.longitude,
       created_at: pos.timestamp.millisecondsSinceEpoch,
-      update_at: pos.timestamp.millisecondsSinceEpoch,
     );
   }
 }

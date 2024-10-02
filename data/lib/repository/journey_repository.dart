@@ -37,7 +37,7 @@ class JourneyRepository {
       await _checkAndSaveLocationJourney(
           userId, extractedLocation, lastKnownJourney);
     } catch (error, stack) {
-      logger.e('Journey Repository: Error while save journey',
+      logger.e('Journey Repository: Error while save journey, $extractedLocation',
           error: error, stackTrace: stack);
     }
   }
