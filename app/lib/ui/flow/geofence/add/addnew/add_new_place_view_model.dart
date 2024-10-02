@@ -32,14 +32,14 @@ class AddNewPlaceViewNotifier extends StateNotifier<AddNewPlaceState> {
   Timer? _debounce;
   Position? _position;
 
-  void onPlaceNameChanged(String value) async {
-    final isNetworkOff = await checkInternetConnectivity();
-    state = state.copyWith(isNetworkOff: isNetworkOff);
-    if (isNetworkOff) return;
-
+  void onPlaceNameChanged(String value) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    _debounce = Timer(const Duration(milliseconds: 500), () {
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      final isNetworkOff = await checkInternetConnectivity();
+      state = state.copyWith(isNetworkOff: isNetworkOff);
+      if (isNetworkOff) return;
+
       fidePlace(value);
     });
   }

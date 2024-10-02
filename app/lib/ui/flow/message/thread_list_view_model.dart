@@ -151,7 +151,7 @@ class ThreadListViewState with _$ThreadListViewState {
     @Default(false) bool loading,
     @Default(false) bool fetchingInviteCode,
     @Default(false) bool deleting,
-    @Default(false) isNetworkOff,
+    @Default(false) bool isNetworkOff,
     SpaceInfo? space,
     @Default('') String spaceInvitationCode,
     @Default('') String message,
