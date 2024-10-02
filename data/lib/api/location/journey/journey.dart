@@ -17,6 +17,8 @@ class ApiLocationJourney with _$ApiLocationJourney {
     double? to_latitude,
     double? to_longitude,
     @Default([]) List<JourneyRoute> routes,
+    double? route_distance,
+    int? route_duration,
     int? created_at,
     int? update_at,
   }) = _LocationJourney;
