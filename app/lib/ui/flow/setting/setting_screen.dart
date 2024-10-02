@@ -207,6 +207,13 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
         const SizedBox(height: 16),
         _otherOptionItem(
             context: context,
+            title: context.l10n.settings_subscriptions_title,
+            icon: Assets.images.icSubscriptionIcon,
+            onTap: () {
+              AppRoute.subscription.push(context);
+            }),
+        _otherOptionItem(
+            context: context,
             title: context.l10n.settings_other_option_contact_support_text,
             icon: Assets.images.icContactSupport,
             onTap: () {

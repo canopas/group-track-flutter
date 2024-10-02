@@ -33,6 +33,7 @@ import 'flow/auth/sign_in/sign_in_method_screen.dart';
 import 'flow/geofence/add/addnew/add_new_place_screen.dart';
 import 'flow/home/home_screen.dart';
 import 'flow/intro/intro_screen.dart';
+import 'flow/setting/subscription/subscription_screen.dart';
 
 class AppRoute {
   static const pathPhoneNumberVerification = '/phone-number-verification';
@@ -55,6 +56,7 @@ class AppRoute {
   static const pathEditPlace = "/edit_place";
   static const pathJourneyTimeline = '/journey-timeline';
   static const pathJourneyDetail = '/journey-detail';
+  static const pathSubscriptions = '/subscriptions';
 
   final String path;
   final String? name;
@@ -93,6 +95,12 @@ class AppRoute {
     }
 
     if (inclusive && GoRouter.of(context).canPop()) {
+      GoRouter.of(context).pop();
+    }
+  }
+
+  static void popBack(BuildContext context) {
+    if (GoRouter.of(context).canPop()) {
       GoRouter.of(context).pop();
     }
   }
@@ -194,6 +202,9 @@ class AppRoute {
 
   static AppRoute get contactSupport => AppRoute(pathContactSupport,
       builder: (_) => const ContactSupportScreen());
+
+  static AppRoute get subscription =>
+      AppRoute(pathSubscriptions, builder: (_) => const SubscriptionScreen());
 
   static AppRoute placesList(String spaceId) {
     return AppRoute(pathPlacesList,
@@ -384,7 +395,10 @@ class AppRoute {
     GoRoute(
       path: pathJourneyDetail,
       builder: (context, state) => state.widget(context),
-    )
+    ),
+    GoRoute(
+        path: pathSubscriptions,
+        builder: (context, state) => state.widget(context)),
   ];
 }
 
