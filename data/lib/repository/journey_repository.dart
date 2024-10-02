@@ -29,15 +29,20 @@ class JourneyRepository {
       bool isDayChanged = this.isDayChanged(extractedLocation, lastKnownJourney);
 
       if (isDayChanged) {
+        // Day is changed between last known journey and current location
+        // Just save again the last known journey in remote database with updated day i.e., current time
         await _saveJourneyOnDayChanged(userId, lastKnownJourney);
         return;
       }
 
+      // Check add add extracted location to last five locations to calculate geometric median
       await _checkAndSaveLastFiveLocations(extractedLocation, userId);
+
+      // Check and save location journey based on user state i.e., steady or moving
       await _checkAndSaveLocationJourney(
           userId, extractedLocation, lastKnownJourney);
     } catch (error, stack) {
-      logger.e('Journey Repository: Error while save journey',
+      logger.e('Journey Repository: Error while save journey, $extractedLocation',
           error: error, stackTrace: stack);
     }
   }
@@ -71,19 +76,32 @@ class JourneyRepository {
     locationCache.putLastJourney(newJourney, userId);
   }
 
+  /// Get last known location journey from cache
+  /// If not available, fetch from remote database and save it to cache
+  /// If not available in remote database as well, save extracted location as new location journey
+  /// with steady state in cache as well as remote database
+  ///
   Future<ApiLocationJourney> _getLastKnownLocation(
       String userId, LocationData extractedLocation) async {
     var lastKnownJourney = locationCache.getLastJourney(userId);
 
     if (lastKnownJourney != null) {
+      // Return last location journey if available from cache
       return lastKnownJourney;
     } else {
+      // Here, means no location journey available in cache
+      // Fetch last location journey from remote database and save it to cache
+
       lastKnownJourney = await journeyService.getLastJourneyLocation(userId);
 
       if (lastKnownJourney != null) {
         locationCache.putLastJourney(lastKnownJourney, userId);
         return lastKnownJourney;
       } else {
+        // Here, means no location journey available in remote database as well
+        // Possibly user is new or no location journey available
+        // Save extracted location as new location journey with steady state in cache
+
         String newJourneyId = await journeyService.saveCurrentJourney(
           userId: userId,
           fromLatitude: extractedLocation.latitude,
@@ -101,6 +119,7 @@ class JourneyRepository {
     }
   }
 
+  /// Figure out the state of user i.e., steady or moving and save location journey accordingly.
   Future<void> _checkAndSaveLocationJourney(
       String userId,
       LocationData extractedLocation,
@@ -121,21 +140,32 @@ class JourneyRepository {
 
     if (lastKnownJourney.isSteadyLocation()) {
       if (distance > MIN_DISTANCE) {
+        // Here, means last known journey is steady and and now user has started moving
+        // Save journey for moving user and update cache as well:
+
         await _saveJourneyWhenUserStartsMoving(
             userId, extractedLocation, lastKnownJourney, distance);
       }
     } else {
       if (distance > MIN_DISTANCE) {
+        // Here, means last known journey is moving and user is still moving
+        // Save journey for moving user and update last known journey.
+        // Note: Need to use lastKnownJourney.id as journey id because we are updating the journey
+
         await _updateJourneyForContinuedMovingUser(
             userId, extractedLocation, lastKnownJourney, distance);
       } else if (distance < MIN_DISTANCE &&
           timeDifference > MIN_TIME_DIFFERENCE) {
+        // Here, means last known journey is moving and user has stopped moving
+        // Save journey for steady user and update last known journey:
+
         await _saveJourneyOnJourneyStopped(
             userId, extractedLocation, lastKnownJourney, distance);
       }
     }
   }
 
+  /// Save journey when user starts moving i.e., state changes from steady to moving
   Future<void> _saveJourneyWhenUserStartsMoving(
       String userId,
       LocationData extractedLocation,
@@ -170,6 +200,7 @@ class JourneyRepository {
         time: DateTime.now());
   }
 
+  /// Update journey for continued moving user i.e., state is moving and user is still moving
   Future<void> _updateJourneyForContinuedMovingUser(
       String userId,
       LocationData extractedLocation,
@@ -195,6 +226,7 @@ class JourneyRepository {
         time: DateTime.now());
   }
 
+  /// Save journey when user stops moving i.e., state changes from moving to steady
   Future<void> _saveJourneyOnJourneyStopped(
       String userId,
       LocationData extractedLocation,
@@ -216,6 +248,7 @@ class JourneyRepository {
 
     journeyService.updateLastLocationJourney(userId, movingJourney);
 
+    // Save journey for steady user and update cache as well:
     var newJourneyId = await journeyService.saveCurrentJourney(
       userId: userId,
       fromLatitude: extractedLocation.latitude,

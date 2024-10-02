@@ -40,7 +40,6 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       spaceId: _currentSpaceId.state,
     );
     _loadJourney();
-    journeyService.uploadLogFileToFirebase();
   }
 
   void _loadJourney({bool loadMore = false}) async {
