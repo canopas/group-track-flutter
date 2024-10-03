@@ -11,7 +11,7 @@ Welcome to GroupTrack, an open-source Flutter application designed to enhance fa
 GroupTrack adopts a declarative UI approach with Flutter and utilizes [flutter riverpod](https://pub.dev/packages/flutter_riverpod) for state management. This architecture promotes a clear separation of concerns, making the codebase more maintainable, scalable, and testable. Flutter’s widget-based system allows for the creation of highly responsive UIs, while flutter riverpod ensures efficient state handling across different components, leading to a smooth and intuitive user experience.
 
 ## Download App
-<a href="https://play.google.com/store/apps/details?id=com.canopas.GroupTrack"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="200"></img></a>
+<a href="https://play.google.com/store/apps/details?id=com.canopas.yourspace"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="200"></img></a>
 
 
 ## Features
