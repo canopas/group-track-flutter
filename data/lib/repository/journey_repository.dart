@@ -2,6 +2,7 @@
 
 import 'package:data/api/location/journey/journey.dart';
 import 'package:data/api/location/location.dart';
+import 'package:data/domain/location_data_extension.dart';
 import 'package:data/log/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -111,9 +112,6 @@ class JourneyRepository {
         var locationJourney = ApiLocationJourney.fromPosition(
             extractedLocation, userId, newJourneyId);
         locationCache.putLastJourney(locationJourney, userId);
-        logger.i(
-            'get last known location - save current journey: $locationJourney',
-            time: DateTime.now());
         return locationJourney;
       }
     }
@@ -125,6 +123,7 @@ class JourneyRepository {
       LocationData extractedLocation,
       ApiLocationJourney lastKnownJourney) async {
     var locations = locationCache.getLastFiveLocations(userId);
+
     var geometricMedian =
         locations.isNotEmpty ? _geometricMedianCalculation(locations) : null;
 
@@ -137,6 +136,8 @@ class JourneyRepository {
     int timeDifference = geometricMedian?.timestamp.millisecondsSinceEpoch ??
         extractedLocation.timestamp.millisecondsSinceEpoch -
             lastKnownJourney.update_at!;
+
+    logger.i('time difference ==== XXX === $timeDifference, distance ==== XXX ==== $distance');
 
     if (lastKnownJourney.isSteadyLocation()) {
       if (distance > MIN_DISTANCE) {
@@ -189,8 +190,8 @@ class JourneyRepository {
         to_latitude: extractedLocation.latitude,
         to_longitude: extractedLocation.longitude,
         routes: [
-          lastKnownJourney.toRouteFromSteadyJourney(),
-          extractedLocation.toRoute()
+          lastKnownJourney.toPositionFromSteadyJourney().toJourneyRoute(),
+          extractedLocation.toJourneyRoute()
         ],
         route_distance: distance,
         route_duration: null);
@@ -215,7 +216,7 @@ class JourneyRepository {
       to_longitude: extractedLocation.longitude,
       route_distance: distance + (lastKnownJourney.route_distance ?? 0),
       route_duration: (lastKnownJourney.update_at ?? 0) - (lastKnownJourney.created_at ?? 0),
-      routes: [...lastKnownJourney.routes, extractedLocation.toRoute()],
+      routes: [...lastKnownJourney.routes, extractedLocation.toJourneyRoute()],
       created_at: lastKnownJourney.created_at,
       update_at: DateTime.now().millisecondsSinceEpoch,
     );
@@ -241,7 +242,7 @@ class JourneyRepository {
       to_longitude: extractedLocation.longitude,
       route_distance: distance + (lastKnownJourney.route_distance ?? 0),
       route_duration: (lastKnownJourney.update_at ?? 0) - (lastKnownJourney.created_at ?? 0),
-      routes: [...lastKnownJourney.routes, extractedLocation.toRoute()],
+      routes: [...lastKnownJourney.routes, extractedLocation.toJourneyRoute()],
       created_at: lastKnownJourney.created_at,
       update_at: lastKnownJourney.update_at,
     );
@@ -285,14 +286,13 @@ class JourneyRepository {
   }
 
   LocationData _geometricMedianCalculation(List<LocationData> locations) {
-    return locations.reduce((a, b) {
-      var totalDistanceA = locations
-          .map((loc) => _distanceBetween(a, loc))
-          .reduce((a, b) => a + b);
-      var totalDistanceB = locations
-          .map((loc) => _distanceBetween(b, loc))
-          .reduce((a, b) => a + b);
-      return totalDistanceA < totalDistanceB ? a : b;
+    LocationData result = locations.reduce((candidate, location) {
+      double candidateSum = locations.fold(0.0, (sum, loc) => sum + _distanceBetween(candidate, loc));
+      double locationSum = locations.fold(0.0, (sum, loc) => sum + _distanceBetween(location, loc));
+
+      return candidateSum < locationSum ? candidate : location;
     });
+
+    return result;
   }
 }
