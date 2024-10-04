@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
@@ -6,9 +8,12 @@ import 'package:data/log/logger.dart';
 import 'package:data/service/permission_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+
+import '../../components/no_internet_screen.dart';
 
 part 'home_screen_viewmodel.freezed.dart';
 
@@ -46,6 +51,17 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this.userService,
     this._userSession,
   ) : super(const HomeViewState()) {
+    setDate();
+  }
+
+  StreamSubscription<List<SpaceInfo>>? _spacesSubscription;
+
+  String? get currentSpaceId => _currentSpaceIdController.state;
+
+  void setDate() async {
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
+
     listenSpaceMember();
     updateCurrentUserNetworkState();
 
@@ -53,8 +69,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     listenUserSession(_currentUser!.id, _userSession!.id);
     _setupLocationOnIOS();
   }
-
-  String? get currentSpaceId => _currentSpaceIdController.state;
 
   Future<void> _setupLocationOnIOS() async {
     try {
@@ -68,7 +82,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     if (state.loading) return;
     try {
       state = state.copyWith(loading: true);
-      spaceService.streamAllSpace().listen((spaces) {
+      _spacesSubscription = spaceService.streamAllSpace().listen((spaces) {
         if (spaces.isNotEmpty) {
           if (state.spaceList.length != spaces.length) {
             reorderSpaces(spaces);
@@ -140,9 +154,11 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
   void reorderSpaces(List<SpaceInfo> spaces) {
     final sortedSpaces = spaces.toList();
-    if ((currentSpaceId?.isNotEmpty ?? false) && spaces.isNotEmpty && spaces.length > 1) {
-      final selectedSpaceIndex = sortedSpaces
-          .indexWhere((space) => space.space.id == currentSpaceId);
+    if ((currentSpaceId?.isNotEmpty ?? false) &&
+        spaces.isNotEmpty &&
+        spaces.length > 1) {
+      final selectedSpaceIndex =
+          sortedSpaces.indexWhere((space) => space.space.id == currentSpaceId);
       if (selectedSpaceIndex > -1) {
         final selectedSpace = sortedSpaces.removeAt(selectedSpaceIndex);
         sortedSpaces.insert(0, selectedSpace);
@@ -155,7 +171,8 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       updateSelectedSpace(sortedSpaces.first);
       state = state.copyWith(selectedSpace: sortedSpaces.first);
     }
-    state = state.copyWith(selectedSpace: sortedSpaces.first, spaceList: sortedSpaces);
+    state = state.copyWith(
+        selectedSpace: sortedSpaces.first, spaceList: sortedSpaces);
   }
 
   void updateSelectedSpace(SpaceInfo space) {
@@ -251,6 +268,13 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     state =
         state.copyWith(popToSignIn: DateTime.now(), isSessionExpired: false);
   }
+
+  Future<bool> _checkUserInternet() async {
+    final isNetworkOff = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: isNetworkOff);
+    if (isNetworkOff) _spacesSubscription?.cancel();
+    return isNetworkOff;
+  }
 }
 
 @freezed
@@ -263,6 +287,7 @@ class HomeViewState with _$HomeViewState {
     @Default(false) bool enablingLocation,
     @Default(true) bool locationEnabled,
     @Default(false) bool isSessionExpired,
+    @Default(false) bool isNetworkOff,
     DateTime? popToSignIn,
     SpaceInfo? selectedSpace,
     @Default('') String spaceInvitationCode,

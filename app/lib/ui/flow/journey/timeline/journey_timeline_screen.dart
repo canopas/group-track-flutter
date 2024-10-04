@@ -18,6 +18,8 @@ import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_view
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../app_route.dart';
+import '../../../components/error_snakebar.dart';
+import '../../../components/no_internet_screen.dart';
 import '../components/dotted_line_view.dart';
 import '../components/journey_map.dart';
 
@@ -91,6 +93,12 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Widget _body(JourneyTimelineState state) {
+    if (state.isNetworkOff) {
+      return NoInternetScreen(onPressed: () {
+        notifier.loadData(widget.selectedUser);
+      });
+    }
+
     if (state.isLoading) {
       return const Center(child: AppProgressIndicator());
     }
@@ -127,7 +135,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
             );
           } else {
             if (state.hasMore) {
-              notifier.loadMoreJourney();
+              _checkUserInternet(() => notifier.loadMoreJourney());
               return const AppProgressIndicator();
             }
           }
@@ -485,5 +493,14 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         }
       }
     });
+  }
+
+  void _checkUserInternet(VoidCallback onCallback) async {
+    final isNetworkOff = await checkInternetConnectivity();
+    isNetworkOff ? _showSnackBar() : onCallback();
+  }
+
+  void _showSnackBar() {
+    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }

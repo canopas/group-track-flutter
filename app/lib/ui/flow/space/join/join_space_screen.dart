@@ -14,6 +14,7 @@ import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/space/join/join_space_view_model.dart';
 
 import '../../../components/app_page.dart';
+import '../../../components/no_internet_screen.dart';
 
 class JoinSpace extends ConsumerStatefulWidget {
   final bool fromOnboard;
@@ -193,7 +194,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
               final inviteCode = _controllers
                   .map((controller) => controller.text.trim())
                   .join();
-              notifier.joinSpace(inviteCode.toUpperCase());
+              _checkInternet(inviteCode);
             },
           ),
           if (widget.fromOnboard) ...[
@@ -262,5 +263,16 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
         );
       }
     });
+  }
+
+  void _checkInternet(String inviteCode) async {
+    final isNetworkOff = await checkInternetConnectivity();
+    isNetworkOff
+        ? _showSnackBar()
+        : notifier.joinSpace(inviteCode.toUpperCase());
+  }
+
+  void _showSnackBar() {
+    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }

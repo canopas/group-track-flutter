@@ -15,6 +15,7 @@ import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../components/alert.dart';
 import '../../../components/error_snakebar.dart';
+import '../../../components/no_internet_screen.dart';
 
 class PlacesListScreen extends ConsumerStatefulWidget {
   final String spaceId;
@@ -53,6 +54,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
         child: AppProgressIndicator(),
       );
     }
+
     final placeLength = (state.places.isEmpty) ? 0 : state.places.length + 1;
     return SafeArea(
       child: Column(
@@ -67,9 +69,10 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
 
                 if (index == state.places.length && state.places.isNotEmpty) {
                   return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Divider(color: context.colorScheme.outline, height: 1),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    child:
+                        Divider(color: context.colorScheme.outline, height: 1),
                   );
                 }
 
@@ -252,15 +255,20 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
         placesListViewStateProvider
             .select((state) => state.showDeletePlaceDialog), (_, next) {
       if (next != null) {
-        showConfirmation(
-          context,
-          message: context.l10n.places_list_delete_dialog_content_text,
-          confirmBtnText: context.l10n.common_delete,
-          cancelButtonText: context.l10n.common_cancel,
-          onCancel: () => notifier.dismissDeletePlaceDialog(),
-          onConfirm: () => notifier.deletePlace(),
-        );
+        showConfirmation(context,
+            message: context.l10n.places_list_delete_dialog_content_text,
+            confirmBtnText: context.l10n.common_delete,
+            cancelButtonText: context.l10n.common_cancel,
+            onCancel: () => notifier.dismissDeletePlaceDialog(),
+            onConfirm: () async {
+              final isNetworkOff = await checkInternetConnectivity();
+              isNetworkOff ? _showSnackBar() : notifier.deletePlace();
+            });
       }
     });
+  }
+
+  void _showSnackBar() {
+    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }

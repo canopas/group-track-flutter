@@ -12,8 +12,11 @@ import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_view_model.dart';
 
+import '../../components/no_internet_screen.dart';
+
 class PickNameScreen extends ConsumerStatefulWidget {
   final ApiUser? user;
+
   const PickNameScreen({super.key, this.user});
 
   @override
@@ -46,16 +49,12 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
                   style: AppTextStyle.header1
                       .copyWith(color: context.colorScheme.textPrimary)),
               const SizedBox(height: 40),
-              Text(
-                  context.l10n.onboard_pick_name_hint_first_name
-                      .toUpperCase(),
-                  style: AppTextStyle.subtitle1.copyWith(
-                      color: context.colorScheme.textSecondary)),
+              Text(context.l10n.onboard_pick_name_hint_first_name.toUpperCase(),
+                  style: AppTextStyle.subtitle1
+                      .copyWith(color: context.colorScheme.textSecondary)),
               _nameTextField(state.firstName),
               const SizedBox(height: 6),
-              Text(
-                  context.l10n.onboard_pick_name_hint_last_name
-                      .toUpperCase(),
+              Text(context.l10n.onboard_pick_name_hint_last_name.toUpperCase(),
                   style: AppTextStyle.subtitle1.copyWith(
                     color: context.colorScheme.textSecondary,
                   )),
@@ -68,7 +67,7 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
               enabled: state.enableBtn,
               progress: state.savingUser,
               onPressed: () {
-                _notifier.saveUser(widget.user ?? state.user);
+                _checkInternet(widget.user ?? state.user);
               },
             ),
           )
@@ -105,10 +104,20 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
   }
 
   void _observeError() {
-    ref.listen(pickNameStateNotifierProvider.select((state) => state.error), (previous, next) {
+    ref.listen(pickNameStateNotifierProvider.select((state) => state.error),
+        (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
       }
     });
+  }
+
+  void _checkInternet(ApiUser user) async {
+    final isNetworkOff = await checkInternetConnectivity();
+    isNetworkOff ? _showSnackBar() : _notifier.saveUser(user);
+  }
+
+  void _showSnackBar() {
+    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }

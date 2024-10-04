@@ -89,6 +89,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_message.svg
   String get icMessage => 'assets/images/ic_message.svg';
 
+  /// File path: assets/images/ic_no_connection_icon.svg
+  String get icNoConnectionIcon => 'assets/images/ic_no_connection_icon.svg';
+
   /// File path: assets/images/ic_place_marker_icon.png
   AssetGenImage get icPlaceMarkerIcon =>
       const AssetGenImage('assets/images/ic_place_marker_icon.png');
@@ -201,6 +204,7 @@ class $AssetsImagesGen {
         icLocation,
         icLocationOff,
         icMessage,
+        icNoConnectionIcon,
         icPlaceMarkerIcon,
         icPlacesGymIcon,
         icPlacesHomeIcon,

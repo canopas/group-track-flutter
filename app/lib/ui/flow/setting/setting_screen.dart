@@ -17,6 +17,7 @@ import 'package:yourspace_flutter/ui/flow/setting/setting_view_model.dart';
 
 import '../../../gen/assets.gen.dart';
 import '../../components/alert.dart';
+import '../../components/no_internet_screen.dart';
 
 const privacyPolicyUrl = "https://canopas.github.io/your-space-android/";
 
@@ -63,7 +64,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
               _yourSpaceList(context, state),
               const SizedBox(height: 24),
             ],
-            _otherOptionList(context),
+            _otherOptionList(context, state),
           ],
         ),
       ),
@@ -196,7 +197,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     );
   }
 
-  Widget _otherOptionList(BuildContext context) {
+  Widget _otherOptionList(BuildContext context, SettingViewState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -248,7 +249,9 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                     context.l10n.settings_other_option_sign_out_text,
                 title: context.l10n.settings_sign_out_alert_title,
                 message: context.l10n.settings_sign_out_alert_description,
-                onConfirm: () => notifier.signOut(),
+                onConfirm: () {
+                  _checkUserInternet(() => notifier.signOut());
+                },
               );
             }),
       ],
@@ -322,5 +325,14 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
         showErrorSnackBar(context, next.toString());
       }
     });
+  }
+
+  void _checkUserInternet(VoidCallback onCallback) async {
+    final isNetworkOff = await checkInternetConnectivity();
+    isNetworkOff ? _showSnackBar() : onCallback();
+  }
+
+  void _showSnackBar() {
+    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }
