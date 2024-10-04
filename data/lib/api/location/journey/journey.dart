@@ -40,7 +40,9 @@ class ApiLocationJourney with _$ApiLocationJourney {
     } else {
       List<LatLng> result = [LatLng(from_latitude, from_longitude)];
       result.addAll(routes.map((route) => route.toLatLng()));
-      result.add(LatLng(to_latitude!, to_longitude!));
+      if (to_latitude != null && to_longitude != null) {
+        result.add(LatLng(to_latitude!, to_longitude!));
+      }
       return result;
     }
   }
