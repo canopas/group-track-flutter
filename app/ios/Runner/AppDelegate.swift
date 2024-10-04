@@ -10,6 +10,7 @@ import CoreLocation
 
     var geofencePlugin: GeofenceService?
     var locationManager: CLLocationManager?
+    var previousLocation: CLLocation?
 
     override func application(
         _ application: UIApplication,
@@ -101,7 +102,16 @@ extension AppDelegate: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last else { return }
-                
+        
+        if let lastLocation = previousLocation {
+            let distance = currentLocation.distance(from: lastLocation)
+            
+            if distance < 10 {
+                previousLocation = currentLocation
+                return
+            }
+        }
+        
         let locationData: [String: Any] = [
             "latitude": currentLocation.coordinate.latitude,
             "longitude": currentLocation.coordinate.longitude,

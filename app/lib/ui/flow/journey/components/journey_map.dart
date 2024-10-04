@@ -55,10 +55,6 @@ class _JourneyMapState extends State<JourneyMap> {
 
     _updateMapStyle(context.brightness == Brightness.dark);
 
-    List<LatLng> routePoints = widget.journey.routes
-        .map((e) => LatLng(e.latitude, e.longitude))
-        .toList();
-
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
@@ -85,14 +81,7 @@ class _JourneyMapState extends State<JourneyMap> {
             scrollGesturesEnabled: widget.gestureEnable,
             rotateGesturesEnabled: widget.gestureEnable,
             markers: widget.markers.toSet(),
-            polylines: {
-              Polyline(
-                polylineId: const PolylineId('route'),
-                points: routePoints,
-                color: context.colorScheme.primary,
-                width: 2,
-              ),
-            },
+            polylines:ployLines.toSet(),
           ),
         ),
       ),

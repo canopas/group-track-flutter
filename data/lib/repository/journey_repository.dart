@@ -137,6 +137,8 @@ class JourneyRepository {
         extractedLocation.timestamp.millisecondsSinceEpoch -
             lastKnownJourney.update_at!;
 
+    logger.i('time difference ==== XXX === $timeDifference, distance ==== XXX ==== $distance');
+
     if (lastKnownJourney.isSteadyLocation()) {
       if (distance > MIN_DISTANCE) {
         // Here, means last known journey is steady and and now user has started moving
@@ -189,7 +191,7 @@ class JourneyRepository {
         to_longitude: extractedLocation.longitude,
         routes: [
           lastKnownJourney.toRouteFromSteadyJourney(),
-          extractedLocation.toRoute()
+          extractedLocation.toJourneyRoute()
         ],
         route_distance: distance,
         route_duration: null);
@@ -214,7 +216,7 @@ class JourneyRepository {
       to_longitude: extractedLocation.longitude,
       route_distance: distance + (lastKnownJourney.route_distance ?? 0),
       route_duration: (lastKnownJourney.update_at ?? 0) - (lastKnownJourney.created_at ?? 0),
-      routes: [...lastKnownJourney.routes, extractedLocation.toRoute()],
+      routes: [...lastKnownJourney.routes, extractedLocation.toJourneyRoute()],
       created_at: lastKnownJourney.created_at,
       update_at: DateTime.now().millisecondsSinceEpoch,
     );
@@ -240,7 +242,7 @@ class JourneyRepository {
       to_longitude: extractedLocation.longitude,
       route_distance: distance + (lastKnownJourney.route_distance ?? 0),
       route_duration: (lastKnownJourney.update_at ?? 0) - (lastKnownJourney.created_at ?? 0),
-      routes: [...lastKnownJourney.routes, extractedLocation.toRoute()],
+      routes: [...lastKnownJourney.routes, extractedLocation.toJourneyRoute()],
       created_at: lastKnownJourney.created_at,
       update_at: lastKnownJourney.update_at,
     );
@@ -284,10 +286,6 @@ class JourneyRepository {
   }
 
   LocationData _geometricMedianCalculation(List<LocationData> locations) {
-    if (locations.isEmpty) {
-      throw ArgumentError("Location list is empty");
-    }
-
     LocationData result = locations.reduce((candidate, location) {
       double candidateSum = locations.fold(0.0, (sum, loc) => sum + _distanceBetween(candidate, loc));
       double locationSum = locations.fold(0.0, (sum, loc) => sum + _distanceBetween(location, loc));
