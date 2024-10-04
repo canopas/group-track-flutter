@@ -107,11 +107,10 @@ extension AppDelegate: CLLocationManagerDelegate {
             let distance = currentLocation.distance(from: lastLocation)
             
             if distance < 10 {
+                previousLocation = currentLocation
                 return
             }
         }
-        
-        previousLocation = currentLocation
                 
         let locationData: [String: Any] = [
             "latitude": currentLocation.coordinate.latitude,
