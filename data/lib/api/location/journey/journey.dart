@@ -60,10 +60,6 @@ class ApiLocationJourney with _$ApiLocationJourney {
     return LocationData(latitude: to_latitude ?? 0, longitude: to_longitude ?? 0, timestamp: DateTime.now());
   }
 
-  JourneyRoute toRouteFromSteadyJourney() {
-    return JourneyRoute(latitude: from_latitude, longitude: from_longitude);
-  }
-
   static ApiLocationJourney fromPosition(LocationData pos, String userId, String newJourneyId) {
     return ApiLocationJourney(
       id: newJourneyId,

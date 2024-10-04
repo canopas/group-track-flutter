@@ -32,21 +32,7 @@ class _JourneyMapState extends State<JourneyMap> {
   GoogleMapController? _controller;
   String? _mapStyle;
   bool _isDarkMode = false;
-  LatLng _fromLatLng = const LatLng(0.0, 0.0);
-  LatLng? _toLatLng;
-  List<LatLng> _routePoints = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fromLatLng =
-        LatLng(widget.journey.from_latitude, widget.journey.from_longitude);
-    _toLatLng = widget.journey.to_latitude != null &&
-            widget.journey.to_longitude != null
-        ? LatLng(widget.journey.to_latitude!, widget.journey.to_longitude!)
-        : null;
-    _routePoints = _getRoutePositionList(widget.journey.routes);
-  }
+  final LatLng _fromLatLng = const LatLng(0.0, 0.0);
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +79,7 @@ class _JourneyMapState extends State<JourneyMap> {
     ApiLocationJourney journey,
   ) async {
     _controller = controller;
-    LatLngBounds bounds = _createLatLngBounds(_routePoints);
+    LatLngBounds bounds = _createLatLngBounds(journey.toRoute());
     await _controller?.animateCamera(CameraUpdate.newLatLngBounds(bounds, 20));
   }
 
@@ -124,7 +110,7 @@ class _JourneyMapState extends State<JourneyMap> {
     polyline.add(Polyline(
       polylineId: PolylineId(journey.id!),
       color: context.colorScheme.primary,
-      points: _routePoints,
+      points: journey.toRoute(),
       patterns: [PatternItem.dash(20.0), PatternItem.gap(8)],
       width: 3,
     ));
@@ -133,19 +119,6 @@ class _JourneyMapState extends State<JourneyMap> {
     final centerLatLng = _getCenterCoordinate(_fromLatLng, longDistanceLatLng);
     final zoom = _calculateZoomLevel(_getDistanceString(journey));
     return (polyline, centerLatLng, zoom);
-  }
-
-  List<LatLng> _getRoutePositionList(List<JourneyRoute> routes) {
-    List<LatLng> latLngList = [];
-
-    latLngList.add(_fromLatLng);
-    for (var route in routes) {
-      latLngList.add(LatLng(route.latitude, route.longitude));
-    }
-    if (_toLatLng != null) {
-      latLngList.add(_toLatLng!);
-    }
-    return latLngList;
   }
 
   double _calculateZoomLevel(double distanceInMeters) {
@@ -165,7 +138,7 @@ class _JourneyMapState extends State<JourneyMap> {
   LatLng _getLongDistanceCoordinate() {
     LatLng longCoordinate = _fromLatLng;
     double distance = 0.0;
-    for (final route in _routePoints) {
+    for (final route in widget.journey.toRoute()) {
       final routeDistance = _distanceBetween(_fromLatLng, route);
       if (routeDistance > distance) {
         distance = routeDistance;

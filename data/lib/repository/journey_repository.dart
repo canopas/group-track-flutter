@@ -190,7 +190,7 @@ class JourneyRepository {
         to_latitude: extractedLocation.latitude,
         to_longitude: extractedLocation.longitude,
         routes: [
-          lastKnownJourney.toRouteFromSteadyJourney(),
+          lastKnownJourney.toPositionFromSteadyJourney().toJourneyRoute(),
           extractedLocation.toJourneyRoute()
         ],
         route_distance: distance,
