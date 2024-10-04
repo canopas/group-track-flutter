@@ -2,6 +2,7 @@
 
 import 'package:data/api/location/journey/journey.dart';
 import 'package:data/api/location/location.dart';
+import 'package:data/domain/location_data_extension.dart';
 import 'package:data/log/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';

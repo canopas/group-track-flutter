@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/location.dart';
+import 'package:data/domain/journey_lat_lng_entension.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -83,16 +84,4 @@ class JourneyRoute with _$JourneyRoute {
 
   factory JourneyRoute.fromJson(Map<String, dynamic> json) =>
       _$JourneyRouteFromJson(json);
-}
-
-extension JourneyRouteLatLngExtension on JourneyRoute {
-  LatLng toLatLng() {
-    return LatLng(latitude, longitude);
-  }
-}
-
-extension LocationDataExtension on LocationData {
-  JourneyRoute toRoute() {
-    return JourneyRoute(latitude: latitude, longitude: longitude);
-  }
 }
