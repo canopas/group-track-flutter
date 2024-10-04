@@ -40,7 +40,7 @@ class ApiLocationJourney with _$ApiLocationJourney {
     } else {
       List<LatLng> result = [LatLng(from_latitude, from_longitude)];
       result.addAll(routes.map((route) => route.toLatLng()));
-      result.add(LatLng(to_latitude ?? 0.0, to_longitude ?? 0.0));
+      result.add(LatLng(to_latitude!, to_longitude!));
       return result;
     }
   }
@@ -81,7 +81,9 @@ class JourneyRoute with _$JourneyRoute {
 
   factory JourneyRoute.fromJson(Map<String, dynamic> json) =>
       _$JourneyRouteFromJson(json);
+}
 
+extension JourneyRouteLatLngExtension on JourneyRoute {
   LatLng toLatLng() {
     return LatLng(latitude, longitude);
   }

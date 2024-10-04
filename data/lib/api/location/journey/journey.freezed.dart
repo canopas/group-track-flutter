@@ -521,11 +521,6 @@ class _$JourneyRouteImpl implements _JourneyRoute {
       this,
     );
   }
-
-  @override
-  LatLng toLatLng() {
-    throw UnimplementedError();
-  }
 }
 
 abstract class _JourneyRoute implements JourneyRoute {

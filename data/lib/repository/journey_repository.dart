@@ -1,7 +1,5 @@
 // ignore_for_file: constant_identifier_names
 
-import 'dart:math';
-
 import 'package:data/api/location/journey/journey.dart';
 import 'package:data/api/location/location.dart';
 import 'package:data/log/logger.dart';
@@ -290,18 +288,12 @@ class JourneyRepository {
     }
 
     LocationData result = locations.reduce((candidate, location) {
-      double candidateSum = locations.fold(0.0, (sum, loc) => sum + _distance(candidate, loc));
-      double locationSum = locations.fold(0.0, (sum, loc) => sum + _distance(location, loc));
+      double candidateSum = locations.fold(0.0, (sum, loc) => sum + _distanceBetween(candidate, loc));
+      double locationSum = locations.fold(0.0, (sum, loc) => sum + _distanceBetween(location, loc));
 
       return candidateSum < locationSum ? candidate : location;
     });
 
     return result;
-  }
-
-  double _distance(LocationData loc1, LocationData loc2) {
-    double latDiff = loc1.latitude - loc2.latitude;
-    double lonDiff = loc1.longitude - loc2.longitude;
-    return sqrt(latDiff * latDiff + lonDiff * lonDiff);
   }
 }
