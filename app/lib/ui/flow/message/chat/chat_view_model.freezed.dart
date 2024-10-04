@@ -23,6 +23,7 @@ mixin _$ChatViewState {
   bool get allowSend => throw _privateConstructorUsedError;
   bool get showMemberSelectionView => throw _privateConstructorUsedError;
   bool get isNewThread => throw _privateConstructorUsedError;
+  bool get isNetworkOff => throw _privateConstructorUsedError;
   List<ApiUserInfo> get users => throw _privateConstructorUsedError;
   String get threadId => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
@@ -55,6 +56,7 @@ abstract class $ChatViewStateCopyWith<$Res> {
       bool allowSend,
       bool showMemberSelectionView,
       bool isNewThread,
+      bool isNetworkOff,
       List<ApiUserInfo> users,
       String threadId,
       String title,
@@ -92,6 +94,7 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
     Object? allowSend = null,
     Object? showMemberSelectionView = null,
     Object? isNewThread = null,
+    Object? isNetworkOff = null,
     Object? users = null,
     Object? threadId = null,
     Object? title = null,
@@ -133,6 +136,10 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
       isNewThread: null == isNewThread
           ? _value.isNewThread
           : isNewThread // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isNetworkOff: null == isNetworkOff
+          ? _value.isNetworkOff
+          : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
       users: null == users
           ? _value.users
@@ -223,6 +230,7 @@ abstract class _$$ChatViewStateImplCopyWith<$Res>
       bool allowSend,
       bool showMemberSelectionView,
       bool isNewThread,
+      bool isNetworkOff,
       List<ApiUserInfo> users,
       String threadId,
       String title,
@@ -260,6 +268,7 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
     Object? allowSend = null,
     Object? showMemberSelectionView = null,
     Object? isNewThread = null,
+    Object? isNetworkOff = null,
     Object? users = null,
     Object? threadId = null,
     Object? title = null,
@@ -301,6 +310,10 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
       isNewThread: null == isNewThread
           ? _value.isNewThread
           : isNewThread // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isNetworkOff: null == isNetworkOff
+          ? _value.isNetworkOff
+          : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
       users: null == users
           ? _value._users
@@ -362,6 +375,7 @@ class _$ChatViewStateImpl implements _ChatViewState {
       this.allowSend = false,
       this.showMemberSelectionView = false,
       this.isNewThread = false,
+      this.isNetworkOff = false,
       final List<ApiUserInfo> users = const [],
       this.threadId = '',
       this.title = '',
@@ -401,6 +415,9 @@ class _$ChatViewStateImpl implements _ChatViewState {
   @override
   @JsonKey()
   final bool isNewThread;
+  @override
+  @JsonKey()
+  final bool isNetworkOff;
   final List<ApiUserInfo> _users;
   @override
   @JsonKey()
@@ -464,7 +481,7 @@ class _$ChatViewStateImpl implements _ChatViewState {
 
   @override
   String toString() {
-    return 'ChatViewState(loading: $loading, creating: $creating, loadingMessages: $loadingMessages, messageSending: $messageSending, allowSend: $allowSend, showMemberSelectionView: $showMemberSelectionView, isNewThread: $isNewThread, users: $users, threadId: $threadId, title: $title, message: $message, messages: $messages, sender: $sender, selectedMember: $selectedMember, error: $error, spaceInfo: $spaceInfo, threadInfo: $threadInfo, currentUserId: $currentUserId, threadList: $threadList)';
+    return 'ChatViewState(loading: $loading, creating: $creating, loadingMessages: $loadingMessages, messageSending: $messageSending, allowSend: $allowSend, showMemberSelectionView: $showMemberSelectionView, isNewThread: $isNewThread, isNetworkOff: $isNetworkOff, users: $users, threadId: $threadId, title: $title, message: $message, messages: $messages, sender: $sender, selectedMember: $selectedMember, error: $error, spaceInfo: $spaceInfo, threadInfo: $threadInfo, currentUserId: $currentUserId, threadList: $threadList)';
   }
 
   @override
@@ -486,6 +503,8 @@ class _$ChatViewStateImpl implements _ChatViewState {
                 other.showMemberSelectionView == showMemberSelectionView) &&
             (identical(other.isNewThread, isNewThread) ||
                 other.isNewThread == isNewThread) &&
+            (identical(other.isNetworkOff, isNetworkOff) ||
+                other.isNetworkOff == isNetworkOff) &&
             const DeepCollectionEquality().equals(other._users, _users) &&
             (identical(other.threadId, threadId) ||
                 other.threadId == threadId) &&
@@ -516,6 +535,7 @@ class _$ChatViewStateImpl implements _ChatViewState {
         allowSend,
         showMemberSelectionView,
         isNewThread,
+        isNetworkOff,
         const DeepCollectionEquality().hash(_users),
         threadId,
         title,
@@ -546,6 +566,7 @@ abstract class _ChatViewState implements ChatViewState {
       final bool allowSend,
       final bool showMemberSelectionView,
       final bool isNewThread,
+      final bool isNetworkOff,
       final List<ApiUserInfo> users,
       final String threadId,
       final String title,
@@ -573,6 +594,8 @@ abstract class _ChatViewState implements ChatViewState {
   bool get showMemberSelectionView;
   @override
   bool get isNewThread;
+  @override
+  bool get isNetworkOff;
   @override
   List<ApiUserInfo> get users;
   @override

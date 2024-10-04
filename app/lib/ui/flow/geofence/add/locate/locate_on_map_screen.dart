@@ -16,6 +16,7 @@ import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_view
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../components/error_snakebar.dart';
+import '../../../../components/no_internet_screen.dart';
 import '../../../home/map/map_screen.dart';
 import '../components/place_added_dialog.dart';
 
@@ -60,19 +61,21 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
           progress: state.addingPlace,
           enabled: !state.addingPlace && enable,
           onPressed: () {
-            if (widget.placesName == null) {
-              if (state.cameraLatLng != null) {
-                AppRoute.choosePlaceName(
-                  location: state.cameraLatLng!,
-                  spaceId: widget.spaceId,
-                ).push(context);
+            _checkUserInternet(() {
+              if (widget.placesName == null) {
+                if (state.cameraLatLng != null) {
+                  AppRoute.choosePlaceName(
+                    location: state.cameraLatLng!,
+                    spaceId: widget.spaceId,
+                  ).push(context);
+                }
+              } else {
+                notifier.onTapAddPlaceBtn(
+                  widget.spaceId,
+                  widget.placesName ?? '',
+                );
               }
-            } else {
-              notifier.onTapAddPlaceBtn(
-                widget.spaceId,
-                widget.placesName ?? '',
-              );
-            }
+            });
           },
           icon: Text(
             widget.placesName != null
@@ -279,5 +282,14 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
         });
       }
     });
+  }
+
+  void _checkUserInternet(VoidCallback onCallback) async {
+    final isNetworkOff = await checkInternetConnectivity();
+    isNetworkOff ? _showSnackBar() : onCallback();
+  }
+
+  void _showSnackBar() {
+    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }

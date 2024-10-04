@@ -17,6 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$AddNewPlaceState {
   dynamic get loading => throw _privateConstructorUsedError;
+  dynamic get isNetworkOff => throw _privateConstructorUsedError;
   List<ApiNearbyPlace> get places => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
@@ -31,7 +32,11 @@ abstract class $AddNewPlaceStateCopyWith<$Res> {
           AddNewPlaceState value, $Res Function(AddNewPlaceState) then) =
       _$AddNewPlaceStateCopyWithImpl<$Res, AddNewPlaceState>;
   @useResult
-  $Res call({dynamic loading, List<ApiNearbyPlace> places, Object? error});
+  $Res call(
+      {dynamic loading,
+      dynamic isNetworkOff,
+      List<ApiNearbyPlace> places,
+      Object? error});
 }
 
 /// @nodoc
@@ -48,6 +53,7 @@ class _$AddNewPlaceStateCopyWithImpl<$Res, $Val extends AddNewPlaceState>
   @override
   $Res call({
     Object? loading = freezed,
+    Object? isNetworkOff = freezed,
     Object? places = null,
     Object? error = freezed,
   }) {
@@ -55,6 +61,10 @@ class _$AddNewPlaceStateCopyWithImpl<$Res, $Val extends AddNewPlaceState>
       loading: freezed == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      isNetworkOff: freezed == isNetworkOff
+          ? _value.isNetworkOff
+          : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as dynamic,
       places: null == places
           ? _value.places
@@ -73,7 +83,11 @@ abstract class _$$AddNewPlaceStateImplCopyWith<$Res>
       __$$AddNewPlaceStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({dynamic loading, List<ApiNearbyPlace> places, Object? error});
+  $Res call(
+      {dynamic loading,
+      dynamic isNetworkOff,
+      List<ApiNearbyPlace> places,
+      Object? error});
 }
 
 /// @nodoc
@@ -88,11 +102,14 @@ class __$$AddNewPlaceStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? loading = freezed,
+    Object? isNetworkOff = freezed,
     Object? places = null,
     Object? error = freezed,
   }) {
     return _then(_$AddNewPlaceStateImpl(
       loading: freezed == loading ? _value.loading! : loading,
+      isNetworkOff:
+          freezed == isNetworkOff ? _value.isNetworkOff! : isNetworkOff,
       places: null == places
           ? _value._places
           : places // ignore: cast_nullable_to_non_nullable
@@ -107,6 +124,7 @@ class __$$AddNewPlaceStateImplCopyWithImpl<$Res>
 class _$AddNewPlaceStateImpl implements _AddNewPlaceState {
   const _$AddNewPlaceStateImpl(
       {this.loading = false,
+      this.isNetworkOff = false,
       final List<ApiNearbyPlace> places = const [],
       this.error})
       : _places = places;
@@ -114,6 +132,9 @@ class _$AddNewPlaceStateImpl implements _AddNewPlaceState {
   @override
   @JsonKey()
   final dynamic loading;
+  @override
+  @JsonKey()
+  final dynamic isNetworkOff;
   final List<ApiNearbyPlace> _places;
   @override
   @JsonKey()
@@ -128,7 +149,7 @@ class _$AddNewPlaceStateImpl implements _AddNewPlaceState {
 
   @override
   String toString() {
-    return 'AddNewPlaceState(loading: $loading, places: $places, error: $error)';
+    return 'AddNewPlaceState(loading: $loading, isNetworkOff: $isNetworkOff, places: $places, error: $error)';
   }
 
   @override
@@ -137,6 +158,8 @@ class _$AddNewPlaceStateImpl implements _AddNewPlaceState {
         (other.runtimeType == runtimeType &&
             other is _$AddNewPlaceStateImpl &&
             const DeepCollectionEquality().equals(other.loading, loading) &&
+            const DeepCollectionEquality()
+                .equals(other.isNetworkOff, isNetworkOff) &&
             const DeepCollectionEquality().equals(other._places, _places) &&
             const DeepCollectionEquality().equals(other.error, error));
   }
@@ -145,6 +168,7 @@ class _$AddNewPlaceStateImpl implements _AddNewPlaceState {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(loading),
+      const DeepCollectionEquality().hash(isNetworkOff),
       const DeepCollectionEquality().hash(_places),
       const DeepCollectionEquality().hash(error));
 
@@ -159,11 +183,14 @@ class _$AddNewPlaceStateImpl implements _AddNewPlaceState {
 abstract class _AddNewPlaceState implements AddNewPlaceState {
   const factory _AddNewPlaceState(
       {final dynamic loading,
+      final dynamic isNetworkOff,
       final List<ApiNearbyPlace> places,
       final Object? error}) = _$AddNewPlaceStateImpl;
 
   @override
   dynamic get loading;
+  @override
+  dynamic get isNetworkOff;
   @override
   List<ApiNearbyPlace> get places;
   @override

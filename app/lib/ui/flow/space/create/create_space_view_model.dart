@@ -1,8 +1,8 @@
+import 'package:data/log/logger.dart';
+import 'package:data/service/space_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:data/service/space_service.dart';
-import 'package:data/log/logger.dart';
 
 part 'create_space_view_model.freezed.dart';
 

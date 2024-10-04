@@ -11,6 +11,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 
+import '../../../components/no_internet_screen.dart';
+
 part 'journey_timeline_view_model.freezed.dart';
 
 final journeyTimelineStateProvider = StateNotifierProvider.autoDispose<
@@ -32,7 +34,10 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     this._currentSpaceId,
   ) : super(const JourneyTimelineState());
 
-  void loadData(ApiUser selectedUser) {
+  void loadData(ApiUser selectedUser) async {
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
+
     final isCurrentUser = selectedUser.id == currentUser?.id;
     state = state.copyWith(
       isCurrentUser: isCurrentUser,
@@ -100,7 +105,10 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     state = state.copyWith(showDatePicker: showPicker);
   }
 
-  void onFilterBySelectedDate(DateTime pickedDate) {
+  void onFilterBySelectedDate(DateTime pickedDate) async {
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
+
     final fromTimeStamp = pickedDate.millisecondsSinceEpoch;
     final toTimeStamp = pickedDate.copyWith(hour: 23).millisecondsSinceEpoch;
     state = state.copyWith(
@@ -109,6 +117,12 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       sortedJourney: [],
     );
     _loadJourney();
+  }
+
+  Future<bool> _checkUserInternet() async {
+    final isNetworkOff = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: isNetworkOff);
+    return isNetworkOff;
   }
 
   String getSteadyDuration(int createdAt, int updatedAt) {
@@ -185,6 +199,7 @@ class JourneyTimelineState with _$JourneyTimelineState {
     @Default(true) bool hasMore,
     @Default(false) bool isCurrentUser,
     @Default(false) bool showDatePicker,
+    @Default(false) bool isNetworkOff,
     ApiUser? selectedUser,
     @Default([]) List<ApiLocationJourney> sortedJourney,
     int? selectedTimeFrom,

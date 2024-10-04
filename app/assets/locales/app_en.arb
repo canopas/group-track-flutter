@@ -24,12 +24,18 @@
   "common_verify": "Verify",
   "common_go_to_setting": "Go to settings",
   "commonMembers": "{memberCount} {memberCount, plural, =1{Member} other{Members}}",
+  "common_retry": "Retry",
   "@commonMembers": {
     "placeholders": {
       "memberCount": {}
     }
   },
   "common_skip": "Skip",
+
+  "@_ERROR_SCREEN": {
+  },
+  "on_internet_error_title": "No Internet!",
+  "on_internet_error_sub_title": "No Internet Connection. Please check your network settings and try again.",
 
    "@_INTRO": {
    },

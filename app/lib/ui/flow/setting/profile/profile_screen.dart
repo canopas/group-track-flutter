@@ -23,6 +23,7 @@ import '../../../../gen/assets.gen.dart';
 import '../../../components/action_bottom_sheet.dart';
 import '../../../components/alert.dart';
 import '../../../components/error_snakebar.dart';
+import '../../../components/no_internet_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -59,7 +60,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
           onPressed: () {
             if (state.allowSave) {
-              notifier.save();
+              _checkUserInternet(() => notifier.save());
             }
           },
         ),
@@ -285,7 +286,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             confirmBtnText: context.l10n.common_delete,
             title: context.l10n.edit_profile_alert_title,
             message: context.l10n.edit_profile_alert_description,
-            onConfirm: () => notifier.deleteAccount(),
+            onConfirm: () {
+              _checkUserInternet(() => notifier.deleteAccount());
+            },
           );
         },
       ),
@@ -318,5 +321,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         showErrorSnackBar(context, next.toString());
       }
     });
+  }
+
+  void _checkUserInternet(VoidCallback onCallback) async {
+    final isNetworkOff = await checkInternetConnectivity();
+    isNetworkOff ? _showSnackBar() : onCallback();
+  }
+
+  void _showSnackBar() {
+    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }

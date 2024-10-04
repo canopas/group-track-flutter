@@ -22,6 +22,7 @@ mixin _$EditPlaceState {
   bool get saving => throw _privateConstructorUsedError;
   bool get deleting => throw _privateConstructorUsedError;
   bool get gettingAddress => throw _privateConstructorUsedError;
+  bool get isNetworkOff => throw _privateConstructorUsedError;
   String? get placeId => throw _privateConstructorUsedError;
   ApiPlace? get updatedPlace => throw _privateConstructorUsedError;
   ApiPlaceMemberSetting? get updatedSetting =>
@@ -51,6 +52,7 @@ abstract class $EditPlaceStateCopyWith<$Res> {
       bool saving,
       bool deleting,
       bool gettingAddress,
+      bool isNetworkOff,
       String? placeId,
       ApiPlace? updatedPlace,
       ApiPlaceMemberSetting? updatedSetting,
@@ -84,6 +86,7 @@ class _$EditPlaceStateCopyWithImpl<$Res, $Val extends EditPlaceState>
     Object? saving = null,
     Object? deleting = null,
     Object? gettingAddress = null,
+    Object? isNetworkOff = null,
     Object? placeId = freezed,
     Object? updatedPlace = freezed,
     Object? updatedSetting = freezed,
@@ -118,6 +121,10 @@ class _$EditPlaceStateCopyWithImpl<$Res, $Val extends EditPlaceState>
       gettingAddress: null == gettingAddress
           ? _value.gettingAddress
           : gettingAddress // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isNetworkOff: null == isNetworkOff
+          ? _value.isNetworkOff
+          : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
       placeId: freezed == placeId
           ? _value.placeId
@@ -196,6 +203,7 @@ abstract class _$$EditPlaceStateImplCopyWith<$Res>
       bool saving,
       bool deleting,
       bool gettingAddress,
+      bool isNetworkOff,
       String? placeId,
       ApiPlace? updatedPlace,
       ApiPlaceMemberSetting? updatedSetting,
@@ -229,6 +237,7 @@ class __$$EditPlaceStateImplCopyWithImpl<$Res>
     Object? saving = null,
     Object? deleting = null,
     Object? gettingAddress = null,
+    Object? isNetworkOff = null,
     Object? placeId = freezed,
     Object? updatedPlace = freezed,
     Object? updatedSetting = freezed,
@@ -263,6 +272,10 @@ class __$$EditPlaceStateImplCopyWithImpl<$Res>
       gettingAddress: null == gettingAddress
           ? _value.gettingAddress
           : gettingAddress // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isNetworkOff: null == isNetworkOff
+          ? _value.isNetworkOff
+          : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
       placeId: freezed == placeId
           ? _value.placeId
@@ -311,6 +324,7 @@ class _$EditPlaceStateImpl implements _EditPlaceState {
       this.saving = false,
       this.deleting = false,
       this.gettingAddress = false,
+      this.isNetworkOff = false,
       this.placeId,
       this.updatedPlace,
       this.updatedSetting,
@@ -341,6 +355,9 @@ class _$EditPlaceStateImpl implements _EditPlaceState {
   @JsonKey()
   final bool gettingAddress;
   @override
+  @JsonKey()
+  final bool isNetworkOff;
+  @override
   final String? placeId;
   @override
   final ApiPlace? updatedPlace;
@@ -368,7 +385,7 @@ class _$EditPlaceStateImpl implements _EditPlaceState {
 
   @override
   String toString() {
-    return 'EditPlaceState(loading: $loading, isAdmin: $isAdmin, enableSave: $enableSave, saving: $saving, deleting: $deleting, gettingAddress: $gettingAddress, placeId: $placeId, updatedPlace: $updatedPlace, updatedSetting: $updatedSetting, membersInfo: $membersInfo, address: $address, radius: $radius, error: $error, popToBack: $popToBack, showDeleteDialog: $showDeleteDialog)';
+    return 'EditPlaceState(loading: $loading, isAdmin: $isAdmin, enableSave: $enableSave, saving: $saving, deleting: $deleting, gettingAddress: $gettingAddress, isNetworkOff: $isNetworkOff, placeId: $placeId, updatedPlace: $updatedPlace, updatedSetting: $updatedSetting, membersInfo: $membersInfo, address: $address, radius: $radius, error: $error, popToBack: $popToBack, showDeleteDialog: $showDeleteDialog)';
   }
 
   @override
@@ -385,6 +402,8 @@ class _$EditPlaceStateImpl implements _EditPlaceState {
                 other.deleting == deleting) &&
             (identical(other.gettingAddress, gettingAddress) ||
                 other.gettingAddress == gettingAddress) &&
+            (identical(other.isNetworkOff, isNetworkOff) ||
+                other.isNetworkOff == isNetworkOff) &&
             (identical(other.placeId, placeId) || other.placeId == placeId) &&
             (identical(other.updatedPlace, updatedPlace) ||
                 other.updatedPlace == updatedPlace) &&
@@ -410,6 +429,7 @@ class _$EditPlaceStateImpl implements _EditPlaceState {
       saving,
       deleting,
       gettingAddress,
+      isNetworkOff,
       placeId,
       updatedPlace,
       updatedSetting,
@@ -436,6 +456,7 @@ abstract class _EditPlaceState implements EditPlaceState {
       final bool saving,
       final bool deleting,
       final bool gettingAddress,
+      final bool isNetworkOff,
       final String? placeId,
       final ApiPlace? updatedPlace,
       final ApiPlaceMemberSetting? updatedSetting,
@@ -458,6 +479,8 @@ abstract class _EditPlaceState implements EditPlaceState {
   bool get deleting;
   @override
   bool get gettingAddress;
+  @override
+  bool get isNetworkOff;
   @override
   String? get placeId;
   @override
