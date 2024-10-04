@@ -1,4 +1,5 @@
 import 'package:data/api/space/space_models.dart';
+import 'package:data/feature_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -205,13 +206,16 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
               .copyWith(color: context.colorScheme.textDisabled),
         ),
         const SizedBox(height: 16),
-        _otherOptionItem(
-            context: context,
-            title: context.l10n.settings_subscriptions_title,
-            icon: Assets.images.icSubscriptionIcon,
-            onTap: () {
-              AppRoute.subscription.push(context);
-            }),
+        Visibility(
+          visible: FeatureFlags.enableSubscription,
+          child: _otherOptionItem(
+              context: context,
+              title: context.l10n.settings_subscriptions_title,
+              icon: Assets.images.icSubscriptionIcon,
+              onTap: () {
+                AppRoute.subscription.push(context);
+              }),
+        ),
         _otherOptionItem(
             context: context,
             title: context.l10n.settings_other_option_contact_support_text,
