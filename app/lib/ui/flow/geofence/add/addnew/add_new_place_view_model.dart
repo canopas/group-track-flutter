@@ -8,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../../../components/no_internet_screen.dart';
+
 part 'add_new_place_view_model.freezed.dart';
 
 final addNewPlaceStateProvider = StateNotifierProvider.autoDispose<
@@ -33,7 +35,11 @@ class AddNewPlaceViewNotifier extends StateNotifier<AddNewPlaceState> {
   void onPlaceNameChanged(String value) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    _debounce = Timer(const Duration(milliseconds: 500), () {
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      final isNetworkOff = await checkInternetConnectivity();
+      state = state.copyWith(isNetworkOff: isNetworkOff);
+      if (isNetworkOff) return;
+
       fidePlace(value);
     });
   }
@@ -73,6 +79,7 @@ class AddNewPlaceViewNotifier extends StateNotifier<AddNewPlaceState> {
 class AddNewPlaceState with _$AddNewPlaceState {
   const factory AddNewPlaceState({
     @Default(false) loading,
+    @Default(false) isNetworkOff,
     @Default([]) List<ApiNearbyPlace> places,
     Object? error,
   }) = _AddNewPlaceState;

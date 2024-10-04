@@ -24,6 +24,7 @@ import 'package:yourspace_flutter/ui/flow/setting/profile/profile_view_model.dar
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../components/alert.dart';
 import '../../../components/error_snakebar.dart';
+import '../../../components/no_internet_screen.dart';
 import '../add/components/place_marker.dart';
 
 const defaultCameraZoom = 15.5;
@@ -80,7 +81,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
               : OnTapScale(
                   enabled: state.enableSave,
                   onTap: () {
-                    notifier.onSavePlace();
+                    _checkUserInternet(() => notifier.onSavePlace());
                   },
                   child: Text(
                     context.l10n.common_save,
@@ -93,17 +94,25 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
                 ),
         )
       ],
-      body: state.loading
-          ? const Center(
-              child: AppProgressIndicator(
-                size: AppProgressIndicatorSize.normal,
-              ),
-            )
-          : SafeArea(child: _body(state)),
+      body: SafeArea(child: _body(state)),
     );
   }
 
   Widget _body(EditPlaceState state) {
+    if (state.isNetworkOff) {
+      return NoInternetScreen(onPressed: () {
+        notifier.loadData(widget.place);
+      });
+    }
+
+    if (state.loading) {
+      return const Center(
+        child: AppProgressIndicator(
+          size: AppProgressIndicatorSize.normal,
+        ),
+      );
+    }
+
     final place = state.updatedPlace;
     if (place == null) return Container();
 
@@ -410,7 +419,8 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
           activeTrackColor: context.colorScheme.primary,
           inactiveTrackColor: context.colorScheme.outline,
           inactiveThumbColor: context.colorScheme.textPrimaryDark,
-          trackOutlineColor: WidgetStatePropertyAll(context.colorScheme.outline),
+          trackOutlineColor:
+              WidgetStatePropertyAll(context.colorScheme.outline),
           trackOutlineWidth: const WidgetStatePropertyAll(0.5),
         )
       ],
@@ -515,9 +525,20 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
           message: context.l10n.edit_place_delete_dialog_sub_title_text,
           confirmBtnText: context.l10n.common_delete,
           cancelButtonText: context.l10n.common_cancel,
-          onConfirm: () => notifier.onPlaceDelete(),
+          onConfirm: () {
+            _checkUserInternet(() => notifier.onPlaceDelete());
+          },
         );
       }
     });
+  }
+
+  void _checkUserInternet(VoidCallback onCallback) async {
+    final isNetworkOff = await checkInternetConnectivity();
+    isNetworkOff ? _showSnackBar() : onCallback();
+  }
+
+  void _showSnackBar() {
+    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }

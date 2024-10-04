@@ -23,6 +23,7 @@ mixin _$EditSpaceViewState {
   bool get deleting => throw _privateConstructorUsedError;
   bool get deleted => throw _privateConstructorUsedError;
   bool get locationEnabled => throw _privateConstructorUsedError;
+  bool get isNetworkOff => throw _privateConstructorUsedError;
   String get selectedSpaceName => throw _privateConstructorUsedError;
   String get currentUserId => throw _privateConstructorUsedError;
   ApiUserInfo? get currentUserInfo => throw _privateConstructorUsedError;
@@ -50,6 +51,7 @@ abstract class $EditSpaceViewStateCopyWith<$Res> {
       bool deleting,
       bool deleted,
       bool locationEnabled,
+      bool isNetworkOff,
       String selectedSpaceName,
       String currentUserId,
       ApiUserInfo? currentUserInfo,
@@ -82,6 +84,7 @@ class _$EditSpaceViewStateCopyWithImpl<$Res, $Val extends EditSpaceViewState>
     Object? deleting = null,
     Object? deleted = null,
     Object? locationEnabled = null,
+    Object? isNetworkOff = null,
     Object? selectedSpaceName = null,
     Object? currentUserId = null,
     Object? currentUserInfo = freezed,
@@ -118,6 +121,10 @@ class _$EditSpaceViewStateCopyWithImpl<$Res, $Val extends EditSpaceViewState>
       locationEnabled: null == locationEnabled
           ? _value.locationEnabled
           : locationEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isNetworkOff: null == isNetworkOff
+          ? _value.isNetworkOff
+          : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
       selectedSpaceName: null == selectedSpaceName
           ? _value.selectedSpaceName
@@ -188,6 +195,7 @@ abstract class _$$EditSpaceViewStateImplCopyWith<$Res>
       bool deleting,
       bool deleted,
       bool locationEnabled,
+      bool isNetworkOff,
       String selectedSpaceName,
       String currentUserId,
       ApiUserInfo? currentUserInfo,
@@ -220,6 +228,7 @@ class __$$EditSpaceViewStateImplCopyWithImpl<$Res>
     Object? deleting = null,
     Object? deleted = null,
     Object? locationEnabled = null,
+    Object? isNetworkOff = null,
     Object? selectedSpaceName = null,
     Object? currentUserId = null,
     Object? currentUserInfo = freezed,
@@ -256,6 +265,10 @@ class __$$EditSpaceViewStateImplCopyWithImpl<$Res>
       locationEnabled: null == locationEnabled
           ? _value.locationEnabled
           : locationEnabled // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isNetworkOff: null == isNetworkOff
+          ? _value.isNetworkOff
+          : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
       selectedSpaceName: null == selectedSpaceName
           ? _value.selectedSpaceName
@@ -297,6 +310,7 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
       this.deleting = false,
       this.deleted = false,
       this.locationEnabled = false,
+      this.isNetworkOff = false,
       this.selectedSpaceName = '',
       this.currentUserId = '',
       this.currentUserInfo,
@@ -329,6 +343,9 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
   final bool locationEnabled;
   @override
   @JsonKey()
+  final bool isNetworkOff;
+  @override
+  @JsonKey()
   final String selectedSpaceName;
   @override
   @JsonKey()
@@ -353,7 +370,7 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
 
   @override
   String toString() {
-    return 'EditSpaceViewState(loading: $loading, allowSave: $allowSave, saving: $saving, isAdmin: $isAdmin, deleting: $deleting, deleted: $deleted, locationEnabled: $locationEnabled, selectedSpaceName: $selectedSpaceName, currentUserId: $currentUserId, currentUserInfo: $currentUserInfo, userInfo: $userInfo, spaceName: $spaceName, space: $space, error: $error)';
+    return 'EditSpaceViewState(loading: $loading, allowSave: $allowSave, saving: $saving, isAdmin: $isAdmin, deleting: $deleting, deleted: $deleted, locationEnabled: $locationEnabled, isNetworkOff: $isNetworkOff, selectedSpaceName: $selectedSpaceName, currentUserId: $currentUserId, currentUserInfo: $currentUserInfo, userInfo: $userInfo, spaceName: $spaceName, space: $space, error: $error)';
   }
 
   @override
@@ -371,6 +388,8 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
             (identical(other.deleted, deleted) || other.deleted == deleted) &&
             (identical(other.locationEnabled, locationEnabled) ||
                 other.locationEnabled == locationEnabled) &&
+            (identical(other.isNetworkOff, isNetworkOff) ||
+                other.isNetworkOff == isNetworkOff) &&
             (identical(other.selectedSpaceName, selectedSpaceName) ||
                 other.selectedSpaceName == selectedSpaceName) &&
             (identical(other.currentUserId, currentUserId) ||
@@ -394,6 +413,7 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
       deleting,
       deleted,
       locationEnabled,
+      isNetworkOff,
       selectedSpaceName,
       currentUserId,
       currentUserInfo,
@@ -419,6 +439,7 @@ abstract class _EditSpaceViewState implements EditSpaceViewState {
       final bool deleting,
       final bool deleted,
       final bool locationEnabled,
+      final bool isNetworkOff,
       final String selectedSpaceName,
       final String currentUserId,
       final ApiUserInfo? currentUserInfo,
@@ -441,6 +462,8 @@ abstract class _EditSpaceViewState implements EditSpaceViewState {
   bool get deleted;
   @override
   bool get locationEnabled;
+  @override
+  bool get isNetworkOff;
   @override
   String get selectedSpaceName;
   @override

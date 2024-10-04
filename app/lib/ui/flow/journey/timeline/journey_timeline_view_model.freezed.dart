@@ -21,6 +21,7 @@ mixin _$JourneyTimelineState {
   bool get hasMore => throw _privateConstructorUsedError;
   bool get isCurrentUser => throw _privateConstructorUsedError;
   bool get showDatePicker => throw _privateConstructorUsedError;
+  bool get isNetworkOff => throw _privateConstructorUsedError;
   ApiUser? get selectedUser => throw _privateConstructorUsedError;
   List<ApiLocationJourney> get sortedJourney =>
       throw _privateConstructorUsedError;
@@ -46,6 +47,7 @@ abstract class $JourneyTimelineStateCopyWith<$Res> {
       bool hasMore,
       bool isCurrentUser,
       bool showDatePicker,
+      bool isNetworkOff,
       ApiUser? selectedUser,
       List<ApiLocationJourney> sortedJourney,
       int? selectedTimeFrom,
@@ -75,6 +77,7 @@ class _$JourneyTimelineStateCopyWithImpl<$Res,
     Object? hasMore = null,
     Object? isCurrentUser = null,
     Object? showDatePicker = null,
+    Object? isNetworkOff = null,
     Object? selectedUser = freezed,
     Object? sortedJourney = null,
     Object? selectedTimeFrom = freezed,
@@ -102,6 +105,10 @@ class _$JourneyTimelineStateCopyWithImpl<$Res,
       showDatePicker: null == showDatePicker
           ? _value.showDatePicker
           : showDatePicker // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isNetworkOff: null == isNetworkOff
+          ? _value.isNetworkOff
+          : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
       selectedUser: freezed == selectedUser
           ? _value.selectedUser
@@ -154,6 +161,7 @@ abstract class _$$JourneyTimelineStateImplCopyWith<$Res>
       bool hasMore,
       bool isCurrentUser,
       bool showDatePicker,
+      bool isNetworkOff,
       ApiUser? selectedUser,
       List<ApiLocationJourney> sortedJourney,
       int? selectedTimeFrom,
@@ -181,6 +189,7 @@ class __$$JourneyTimelineStateImplCopyWithImpl<$Res>
     Object? hasMore = null,
     Object? isCurrentUser = null,
     Object? showDatePicker = null,
+    Object? isNetworkOff = null,
     Object? selectedUser = freezed,
     Object? sortedJourney = null,
     Object? selectedTimeFrom = freezed,
@@ -208,6 +217,10 @@ class __$$JourneyTimelineStateImplCopyWithImpl<$Res>
       showDatePicker: null == showDatePicker
           ? _value.showDatePicker
           : showDatePicker // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isNetworkOff: null == isNetworkOff
+          ? _value.isNetworkOff
+          : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
       selectedUser: freezed == selectedUser
           ? _value.selectedUser
@@ -243,6 +256,7 @@ class _$JourneyTimelineStateImpl implements _JourneyTimelineState {
       this.hasMore = true,
       this.isCurrentUser = false,
       this.showDatePicker = false,
+      this.isNetworkOff = false,
       this.selectedUser,
       final List<ApiLocationJourney> sortedJourney = const [],
       this.selectedTimeFrom,
@@ -267,6 +281,9 @@ class _$JourneyTimelineStateImpl implements _JourneyTimelineState {
   @JsonKey()
   final bool showDatePicker;
   @override
+  @JsonKey()
+  final bool isNetworkOff;
+  @override
   final ApiUser? selectedUser;
   final List<ApiLocationJourney> _sortedJourney;
   @override
@@ -288,7 +305,7 @@ class _$JourneyTimelineStateImpl implements _JourneyTimelineState {
 
   @override
   String toString() {
-    return 'JourneyTimelineState(isLoading: $isLoading, appending: $appending, hasMore: $hasMore, isCurrentUser: $isCurrentUser, showDatePicker: $showDatePicker, selectedUser: $selectedUser, sortedJourney: $sortedJourney, selectedTimeFrom: $selectedTimeFrom, selectedTimeTo: $selectedTimeTo, spaceId: $spaceId, error: $error)';
+    return 'JourneyTimelineState(isLoading: $isLoading, appending: $appending, hasMore: $hasMore, isCurrentUser: $isCurrentUser, showDatePicker: $showDatePicker, isNetworkOff: $isNetworkOff, selectedUser: $selectedUser, sortedJourney: $sortedJourney, selectedTimeFrom: $selectedTimeFrom, selectedTimeTo: $selectedTimeTo, spaceId: $spaceId, error: $error)';
   }
 
   @override
@@ -305,6 +322,8 @@ class _$JourneyTimelineStateImpl implements _JourneyTimelineState {
                 other.isCurrentUser == isCurrentUser) &&
             (identical(other.showDatePicker, showDatePicker) ||
                 other.showDatePicker == showDatePicker) &&
+            (identical(other.isNetworkOff, isNetworkOff) ||
+                other.isNetworkOff == isNetworkOff) &&
             (identical(other.selectedUser, selectedUser) ||
                 other.selectedUser == selectedUser) &&
             const DeepCollectionEquality()
@@ -325,6 +344,7 @@ class _$JourneyTimelineStateImpl implements _JourneyTimelineState {
       hasMore,
       isCurrentUser,
       showDatePicker,
+      isNetworkOff,
       selectedUser,
       const DeepCollectionEquality().hash(_sortedJourney),
       selectedTimeFrom,
@@ -348,6 +368,7 @@ abstract class _JourneyTimelineState implements JourneyTimelineState {
       final bool hasMore,
       final bool isCurrentUser,
       final bool showDatePicker,
+      final bool isNetworkOff,
       final ApiUser? selectedUser,
       final List<ApiLocationJourney> sortedJourney,
       final int? selectedTimeFrom,
@@ -365,6 +386,8 @@ abstract class _JourneyTimelineState implements JourneyTimelineState {
   bool get isCurrentUser;
   @override
   bool get showDatePicker;
+  @override
+  bool get isNetworkOff;
   @override
   ApiUser? get selectedUser;
   @override

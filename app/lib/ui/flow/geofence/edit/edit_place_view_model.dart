@@ -9,6 +9,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 
+import '../../../components/no_internet_screen.dart';
+
 part 'edit_place_view_model.freezed.dart';
 
 final editPlaceViewStateProvider =
@@ -33,6 +35,9 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
       : super(const EditPlaceState());
 
   void loadData(ApiPlace place) async {
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
+
     if (state.loading) return;
     try {
       state = state.copyWith(loading: true);
@@ -176,7 +181,8 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
           updatedSetting,
         );
       }
-      state = state.copyWith(saving: false, popToBack: DateTime.now(), error: null);
+      state =
+          state.copyWith(saving: false, popToBack: DateTime.now(), error: null);
     } catch (error, stack) {
       state = state.copyWith(saving: false, error: error);
       logger.e(
@@ -206,6 +212,12 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
       );
     }
   }
+
+  Future<bool> _checkUserInternet() async {
+    final isNetworkOff = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: isNetworkOff);
+    return isNetworkOff;
+  }
 }
 
 @freezed
@@ -217,6 +229,7 @@ class EditPlaceState with _$EditPlaceState {
     @Default(false) bool saving,
     @Default(false) bool deleting,
     @Default(false) bool gettingAddress,
+    @Default(false) bool isNetworkOff,
     String? placeId,
     ApiPlace? updatedPlace,
     ApiPlaceMemberSetting? updatedSetting,

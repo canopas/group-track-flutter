@@ -6,13 +6,15 @@ import 'package:data/api/message/api_message_service.dart';
 import 'package:data/api/message/message_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
-import 'package:data/service/space_service.dart';
 import 'package:data/service/message_service.dart';
+import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:style/extenstions/date_extenstions.dart';
+
+import '../../../components/no_internet_screen.dart';
 
 part 'chat_view_model.freezed.dart';
 
@@ -61,12 +63,18 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     required bool show,
     required String threadId,
     required List<ThreadInfo> threadInfoList,
-  }) {
+  }) async {
+    final isNetworkOff = await _checkUserInternet();
+    if (isNetworkOff) return;
+
     _getSpaceInfo(spaceId);
     if (threadId.isNotEmpty) {
       _getThreadInfo(threadId);
     }
-    state = state.copyWith(showMemberSelectionView: show, threadId: threadId, threadList: threadInfoList);
+    state = state.copyWith(
+        showMemberSelectionView: show,
+        threadId: threadId,
+        threadList: threadInfoList);
   }
 
   void _getSpaceInfo(String spaceId) async {
@@ -75,9 +83,12 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
       state = state.copyWith(loading: true);
       final space = await spaceService.getSpaceInfo(spaceId);
       final userList = space?.members
-          .where((user) => user.user.id != currentUser?.id,)
+          .where(
+            (user) => user.user.id != currentUser?.id,
+          )
           .toList();
-      state = state.copyWith(spaceInfo: space, users: userList ?? [], loading: false, error: null);
+      state = state.copyWith(
+          spaceInfo: space, users: userList ?? [], loading: false, error: null);
       _selectExistingThread();
     } catch (error, stack) {
       state = state.copyWith(error: error);
@@ -95,10 +106,13 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
       final threadInfo = await messageService.getThreadInfo(threadId);
       _getThreadMembers(threadInfo!.thread);
       final userList = threadInfo.members
-          .where((user) => user.user.id != currentUser?.id,)
+          .where(
+            (user) => user.user.id != currentUser?.id,
+          )
           .toList();
       _formatMemberNames(threadId.isEmpty ? [] : userList);
-      state = state.copyWith(threadInfo: threadInfo, threadId: threadId, error: null);
+      state = state.copyWith(
+          threadInfo: threadInfo, threadId: threadId, error: null);
       _listenThread(threadId);
     } catch (error, stack) {
       state = state.copyWith(error: error);
@@ -114,7 +128,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     try {
       if (threadId.isEmpty) return;
       if (state.creating) return;
-      _cancelMessageSubscription();
+      cancelMessageSubscription();
       state = state.copyWith(loading: state.messages.isEmpty);
       _messageSubscription = messageService
           .getLatestMessages(threadId, limit: 20)
@@ -202,7 +216,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   void createNewThread(String message) async {
     try {
       state = state.copyWith(creating: true);
-      _cancelMessageSubscription();
+      cancelMessageSubscription();
       List<String> selectedMembers = [];
       if (!selectedMembers.contains(currentUser?.id) &&
           state.selectedMember.isNotEmpty) {
@@ -213,8 +227,14 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
           ? selectedMembers
           : state.spaceInfo?.members.map((members) => members.user.id).toList();
 
-      final threadId = await messageService.createThread(state.spaceInfo!.space.id, currentUser?.id ?? '', threadMembersIds ?? []);
-      state = state.copyWith(showMemberSelectionView: false, threadId: threadId, isNewThread: true);
+      final threadId = await messageService.createThread(
+          state.spaceInfo!.space.id,
+          currentUser?.id ?? '',
+          threadMembersIds ?? []);
+      state = state.copyWith(
+          showMemberSelectionView: false,
+          threadId: threadId,
+          isNewThread: true);
       if (threadId.isNotEmpty) {
         sendMessage(threadId, message);
         _getCreatedThread(threadId);
@@ -234,7 +254,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     }
   }
 
-  void _cancelMessageSubscription() {
+  void cancelMessageSubscription() {
     _messageSubscription?.cancel();
     _messageSubscription = null;
   }
@@ -243,7 +263,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     try {
       final thread = await messageService.getThreadInfo(threadId);
       _getThreadMembers(thread!.thread);
-      state = state.copyWith(threadInfo: thread, sender: thread.members, error: null);
+      state = state.copyWith(
+          threadInfo: thread, sender: thread.members, error: null);
       final filteredMembers = thread.members
           .where((member) => member.user.id != state.currentUserId)
           .toList();
@@ -302,6 +323,11 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     return set1.containsAll(set2) && set2.containsAll(set1);
   }
 
+  void onLoadMore(String threadId) {
+    if (!_hasMoreItems || loadingData) return;
+    _loadMoreMessages(threadId, true);
+  }
+
   void _loadMoreMessages(String threadId, bool append) async {
     try {
       if ((loadingData) && threadId.isEmpty) return;
@@ -326,19 +352,15 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     }
   }
 
-  void onLoadMore(String threadId) {
-    if (!_hasMoreItems || loadingData) return;
-    _loadMoreMessages(threadId, true);
-  }
-
   bool isSender(ApiThreadMessage message) {
     return message.sender_id != currentUser?.id;
   }
 
   void _formatMemberNames(List<ApiUserInfo>? members) {
-    final filteredMembers = members ?? state.threadInfo!.members
-        .where((member) => member.user.id != state.currentUserId)
-        .toList();
+    final filteredMembers = members ??
+        state.threadInfo!.members
+            .where((member) => member.user.id != state.currentUserId)
+            .toList();
     state = state.copyWith(title: '');
     if (filteredMembers.length > 2) {
       state = state.copyWith(
@@ -421,6 +443,12 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     state = state.copyWith(selectedMember: []);
     _selectExistingThread();
   }
+
+  Future<bool> _checkUserInternet() async {
+    final isNetworkOff = await checkInternetConnectivity();
+    state = state.copyWith(isNetworkOff: isNetworkOff);
+    return isNetworkOff;
+  }
 }
 
 @freezed
@@ -433,6 +461,7 @@ class ChatViewState with _$ChatViewState {
     @Default(false) bool allowSend,
     @Default(false) bool showMemberSelectionView,
     @Default(false) bool isNewThread,
+    @Default(false) bool isNetworkOff,
     @Default([]) List<ApiUserInfo> users,
     @Default('') String threadId,
     @Default('') String title,

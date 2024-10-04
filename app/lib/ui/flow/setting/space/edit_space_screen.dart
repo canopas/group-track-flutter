@@ -17,6 +17,7 @@ import 'package:yourspace_flutter/ui/components/profile_picture.dart';
 import 'package:yourspace_flutter/ui/flow/setting/space/edit_space_view_model.dart';
 
 import '../../../components/alert.dart';
+import '../../../components/no_internet_screen.dart';
 
 class EditSpaceScreen extends ConsumerStatefulWidget {
   final String spaceId;
@@ -60,9 +61,11 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                       : context.colorScheme.textDisabled,
                 ),
           onPressed: () {
-            if (state.allowSave) {
-              notifier.updateSpace();
-            }
+            _checkUserInternet(() {
+              if (state.allowSave) {
+                notifier.updateSpace();
+              }
+            });
           },
         ),
       ],
@@ -71,6 +74,12 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
   }
 
   Widget _body(BuildContext context, EditSpaceViewState state) {
+    if (state.isNetworkOff) {
+      return NoInternetScreen(onPressed: () {
+        notifier.getSpaceDetails(widget.spaceId);
+      });
+    }
+
     if (state.loading) {
       return const Center(child: AppProgressIndicator());
     }
@@ -242,20 +251,21 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         foreground: context.colorScheme.alert,
         background: context.colorScheme.containerLowOnSurface,
         onPressed: () {
-          showConfirmation(
-            context,
-            confirmBtnText: state.isAdmin
-                ? context.l10n.common_delete
-                : context.l10n.edit_space_leave_space_alert_confirm_button_text,
-            title: state.isAdmin
-                ? context.l10n.edit_space_delete_space_title
-                : context.l10n.edit_space_leave_space_title,
-            message: state.isAdmin
-                ? context.l10n.edit_space_delete_space_alert_message
-                : context.l10n.edit_space_leave_space_alert_message,
-            onConfirm: () =>
-                state.isAdmin ? notifier.deleteSpace() : notifier.leaveSpace(),
-          );
+          showConfirmation(context,
+              confirmBtnText: state.isAdmin
+                  ? context.l10n.common_delete
+                  : context
+                      .l10n.edit_space_leave_space_alert_confirm_button_text,
+              title: state.isAdmin
+                  ? context.l10n.edit_space_delete_space_title
+                  : context.l10n.edit_space_leave_space_title,
+              message: state.isAdmin
+                  ? context.l10n.edit_space_delete_space_alert_message
+                  : context.l10n.edit_space_leave_space_alert_message,
+              onConfirm: () {
+            _checkUserInternet(() =>
+                state.isAdmin ? notifier.deleteSpace() : notifier.leaveSpace());
+          });
         },
       ),
     );
@@ -277,5 +287,14 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         showErrorSnackBar(context, next.toString());
       }
     });
+  }
+
+  void _checkUserInternet(VoidCallback onCallback) async {
+    final isNetworkOff = await checkInternetConnectivity();
+    isNetworkOff ? _showSnackBar() : onCallback();
+  }
+
+  void _showSnackBar() {
+    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }
