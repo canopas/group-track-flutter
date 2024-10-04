@@ -19,6 +19,8 @@ _$LocationJourneyImpl _$$LocationJourneyImplFromJson(
               ?.map((e) => JourneyRoute.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      route_distance: (json['route_distance'] as num?)?.toDouble(),
+      route_duration: (json['route_duration'] as num?)?.toInt(),
       created_at: (json['created_at'] as num?)?.toInt(),
       update_at: (json['update_at'] as num?)?.toInt(),
     );
@@ -33,6 +35,8 @@ Map<String, dynamic> _$$LocationJourneyImplToJson(
       'to_latitude': instance.to_latitude,
       'to_longitude': instance.to_longitude,
       'routes': instance.routes.map((e) => e.toJson()).toList(),
+      'route_distance': instance.route_distance,
+      'route_duration': instance.route_duration,
       'created_at': instance.created_at,
       'update_at': instance.update_at,
     };

@@ -45,7 +45,6 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       spaceId: _currentSpaceId.state,
     );
     _loadJourney();
-    journeyService.uploadLogFileToFirebase();
   }
 
   void _loadJourney({bool loadMore = false}) async {
@@ -137,12 +136,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     }
   }
 
-  String getDistanceString(ApiLocationJourney location) {
-    final steadyLocation = location.toPositionFromSteadyJourney();
-    final movingLocation = location.toPositionFromMovingJourney();
-
-    final routeDistance = steadyLocation.distanceTo(movingLocation);
-
+  String getDistanceString(double routeDistance) {
     if (routeDistance < 1000) {
       return '${routeDistance.round()} m';
     } else {

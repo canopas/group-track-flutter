@@ -34,6 +34,8 @@ class ApiJourneyService {
     double? toLongitude,
     LatLng? toLatLng,
     List<JourneyRoute>? routes,
+    double? routeDistance,
+    int? routeDuration,
     int? created_at,
     int? updated_at,
   }) async {
@@ -52,6 +54,8 @@ class ApiJourneyService {
       to_latitude: toLatLng?.latitude,
       to_longitude: toLatLng?.longitude,
       routes: routes ?? [],
+      route_distance: routeDistance,
+      route_duration: routeDuration,
       created_at: created_at ?? DateTime.now().millisecondsSinceEpoch,
       update_at: updated_at ?? DateTime.now().millisecondsSinceEpoch,
     );

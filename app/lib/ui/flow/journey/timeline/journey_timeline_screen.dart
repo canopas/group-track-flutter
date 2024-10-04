@@ -214,7 +214,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   ) {
     final time = _getFormattedJourneyTime(
         journey.created_at ?? 0, journey.update_at ?? 0);
-    final distance = notifier.getDistanceString(journey);
+    final distance = notifier.getDistanceString(journey.route_distance ?? 0);
     final fromLatLng = LatLng(journey.from_latitude, journey.from_longitude);
     final toLatLng =
         LatLng(journey.to_latitude ?? 0.0, journey.to_longitude ?? 0.0);

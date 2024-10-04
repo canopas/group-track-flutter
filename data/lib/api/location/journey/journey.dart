@@ -17,6 +17,8 @@ class ApiLocationJourney with _$ApiLocationJourney {
     double? to_latitude,
     double? to_longitude,
     @Default([]) List<JourneyRoute> routes,
+    double? route_distance,
+    int? route_duration,
     int? created_at,
     int? update_at,
   }) = _LocationJourney;
@@ -53,10 +55,7 @@ class ApiLocationJourney with _$ApiLocationJourney {
       user_id: userId,
       from_latitude: pos.latitude,
       from_longitude: pos.longitude,
-      to_latitude: pos.latitude,
-      to_longitude: pos.longitude,
       created_at: pos.timestamp.millisecondsSinceEpoch,
-      update_at: pos.timestamp.millisecondsSinceEpoch,
     );
   }
 }
