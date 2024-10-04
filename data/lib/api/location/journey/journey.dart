@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/location.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 part 'journey.freezed.dart';
 part 'journey.g.dart';
@@ -31,6 +32,17 @@ class ApiLocationJourney with _$ApiLocationJourney {
       SnapshotOptions? options) {
     Map<String, dynamic>? data = snapshot.data();
     return ApiLocationJourney.fromJson(data!);
+  }
+
+  List<LatLng> toRoute() {
+    if (isSteadyLocation()) {
+      return [];
+    } else {
+      List<LatLng> result = [LatLng(from_latitude, from_longitude)];
+      result.addAll(routes.map((route) => route.toLatLng()));
+      result.add(LatLng(to_latitude ?? 0.0, to_longitude ?? 0.0));
+      return result;
+    }
   }
 
   bool isSteadyLocation() {
@@ -69,4 +81,14 @@ class JourneyRoute with _$JourneyRoute {
 
   factory JourneyRoute.fromJson(Map<String, dynamic> json) =>
       _$JourneyRouteFromJson(json);
+
+  LatLng toLatLng() {
+    return LatLng(latitude, longitude);
+  }
+}
+
+extension LocationDataExtension on LocationData {
+  JourneyRoute toRoute() {
+    return JourneyRoute(latitude: latitude, longitude: longitude);
+  }
 }

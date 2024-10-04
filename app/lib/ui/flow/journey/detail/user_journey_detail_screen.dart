@@ -116,7 +116,7 @@ class _UserJourneyDetailScreenState
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DottedLineView(isSteadyLocation: !isLastItem, isLastItem: isLastItem),
+          DottedLineView(isSteadyLocation: isLastItem, isLastItem: isLastItem),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 16),

@@ -50,10 +50,6 @@ class LocationData {
     this.routes,
   });
 
-  JourneyRoute toRoute() {
-    return JourneyRoute(latitude: latitude, longitude: longitude);
-  }
-
   double distanceTo(LocationData other) {
     return Geolocator.distanceBetween(latitude, longitude, other.latitude, other.longitude);
   }
