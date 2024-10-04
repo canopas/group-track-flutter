@@ -87,7 +87,7 @@ extension AppDelegate: CLLocationManagerDelegate {
     
     private func setUpFlutterMethodChannelForInvokeLocation() {
         let controller = window?.rootViewController as! FlutterViewController
-        let locationChannel = FlutterMethodChannel(name: "com.yourspace/set_up_location", binaryMessenger: controller.binaryMessenger)
+        let locationChannel = FlutterMethodChannel(name: "com.grouptrack/set_up_location", binaryMessenger: controller.binaryMessenger)
         
         locationChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
             guard let self = self else { return }
@@ -102,16 +102,16 @@ extension AppDelegate: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last else { return }
-        
+
         if let lastLocation = previousLocation {
             let distance = currentLocation.distance(from: lastLocation)
-            
+
             if distance < 10 {
                 previousLocation = currentLocation
                 return
             }
         }
-        
+
         let locationData: [String: Any] = [
             "latitude": currentLocation.coordinate.latitude,
             "longitude": currentLocation.coordinate.longitude,
@@ -119,7 +119,7 @@ extension AppDelegate: CLLocationManagerDelegate {
         ]
         
         if let controller = window?.rootViewController as? FlutterViewController {
-            let methodChannel = FlutterMethodChannel(name: "com.yourspace/location", binaryMessenger: controller.binaryMessenger)
+            let methodChannel = FlutterMethodChannel(name: "com.grouptrack/location", binaryMessenger: controller.binaryMessenger)
             methodChannel.invokeMethod("onLocationUpdate", arguments: locationData)
         }
     }
