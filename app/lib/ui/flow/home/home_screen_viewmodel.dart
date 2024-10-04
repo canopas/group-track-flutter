@@ -17,8 +17,6 @@ import '../../components/no_internet_screen.dart';
 
 part 'home_screen_viewmodel.freezed.dart';
 
-const platform = MethodChannel('com.yourspace/set_up_location');
-
 final homeViewStateProvider =
     StateNotifierProvider.autoDispose<HomeViewNotifier, HomeViewState>(
   (ref) => HomeViewNotifier(
@@ -40,7 +38,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final ApiUser? _currentUser;
   final ApiUserService userService;
   final ApiSession? _userSession;
-  static const platform = MethodChannel('com.yourspace/set_up_location');
+  static const platform = MethodChannel('com.grouptrack/set_up_location');
 
   HomeViewNotifier(
     this.spaceService,

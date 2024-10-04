@@ -30,7 +30,7 @@ import 'package:yourspace_flutter/ui/app.dart';
 
 import 'domain/fcm/notification_handler.dart';
 
-const platform = MethodChannel('com.yourspace/location');
+const platform = MethodChannel('com.grouptrack/location');
 late final LocationService locationService;
 late final JourneyRepository journeyRepository;
 late final ApiJourneyService journeyService;
