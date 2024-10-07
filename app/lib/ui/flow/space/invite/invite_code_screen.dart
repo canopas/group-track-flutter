@@ -99,7 +99,7 @@ class _InviteCodeState extends State<InviteCode> {
           PrimaryButton(
             context.l10n.invite_code_share_code_title,
             onPressed: () {
-              Share.share(widget.inviteCode);
+              Share.share("Join me on Group Track! Use this invite code to join group: ${widget.inviteCode}");
             },
           ),
           if (widget.fromOnboard) ...[

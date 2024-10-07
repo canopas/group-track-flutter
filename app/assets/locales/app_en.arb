@@ -63,7 +63,7 @@
   "@_HOME": {
   },
   "home_create_space_title": "Create new",
-  "home_join_space_title": "Join space",
+  "home_join_space_title": "Join group",
   "home_space_owner_text": "By {spaceName}",
   "@home_space_owner_text": {
     "placeholders": {
@@ -72,7 +72,7 @@
       }
     }
   },
-  "home_select_space_text": "Select a space",
+  "home_select_space_text": "Select a group",
   "home_session_expired_title": "You've been logged out",
   "home_session_expired_message": "You need to sign in again to continue using the application.",
 
@@ -80,9 +80,9 @@
   "map_selected_user_item_location_off_state_text": "Location off",
   "map_selected_user_item_online_state_text": "Online",
 
-  "create_space_give_your_space_name_title": "Give your space name",
-  "create_space_tip_text": "Tips: You create dedicated spaces for work, family, friends, and more.",
-  "create_space_name_title": "Space name",
+  "create_space_give_your_space_name_title": "Give your group name",
+  "create_space_tip_text": "Tips: You create dedicated groups for work, family, friends, and more.",
+  "create_space_name_title": "Group name",
   "create_space_suggestion_family_text": "Family",
   "create_space_suggestion_friends_text": "Friends",
   "create_space_suggestion_special_someone_text": "Special someone",
@@ -95,10 +95,10 @@
   "create_space_suggestion_blood_bond_text": "Blood bond",
   "create_space_some_suggestion_title": "Some suggestion...",
 
-  "join_space_title": "Join space",
+  "join_space_title": "Join group",
   "join_space_invite_code_title": "Enter the invite code",
-  "join_space_get_code_from_space_text": "Get the code from the space creator to join.",
-  "join_space_already_joined_error_text": "You are already member of this space",
+  "join_space_get_code_from_space_text": "Get the code from the group creator to join.",
+  "join_space_already_joined_error_text": "You are already member of this group",
   "join_space_invalid_code_error_text": "It appears the code is no longer valid or has expired. please review and enter valid code.",
   "join_space_congratulation_title": "Congratulation",
   "join_space_congratulation_subtitle": "You’re now member of {spaceName} group for sharing your real-time location.",
@@ -109,9 +109,9 @@
       }
     }
   },
-  "join_space_invitation_title": "Have a Space Invitation?",
-  "join_space_get_code_from_space_creator_title": "Get the code from the space creator and input it here to join.\n\nIf you don't have an invitation code, create a new space.",
-  "join_space_create_new_space_title": "Create a new space",
+  "join_space_invitation_title": "Have a Group Invitation?",
+  "join_space_get_code_from_space_creator_title": "Get the code from the group creator and input it here to join.\n\nIf you don't have an invitation code, create a new group.",
+  "join_space_create_new_space_title": "Create a new group",
 
   "invite_code_title": "Invite code",
   "invite_code_invite_member_title": "Invite members to the {spaceName}",
@@ -128,7 +128,7 @@
 
   "settings_title": "Settings",
   "settings_profile_title": "Profile",
-  "settings_your_space_title": "Your spaces",
+  "settings_your_space_title": "Your groups",
   "settings_other_title": "Other",
   "settings_other_option_privacy_policy_text": "Privacy policy",
   "settings_other_option_contact_support_text": "Contact support",
@@ -138,9 +138,9 @@
   "settings_sign_out_alert_description": "Are you sure you want to sign out?",
 
   "message_add_member_to_send_message_title": "Add members to send messages",
-  "message_add_member_to_send_message_subtitle": "At least one member needs to join your space to be able to chat.",
+  "message_add_member_to_send_message_subtitle": "At least one member needs to join your group to be able to chat.",
   "message_add_new_member_title": "Add a new member",
-  "message_tap_to_send_new_message_text": "Tap on ‘+’ to send new message to anyone in your space",
+  "message_tap_to_send_new_message_text": "Tap on ‘+’ to send new message to anyone in your group",
   "message_delete_thread_title": "Delete thread?",
   "message_delete_thread_subtitle": "Are you sure you want to delete this thread? This action cannot be undone",
   "message_member_count_text": " +{memberCount}",
@@ -177,13 +177,13 @@
   "edit_profile_cropper_text": "Cropper",
   "edit_profile_delete_account_title": "Delete account",
 
-  "edit_space_name_title": "Space name",
+  "edit_space_name_title": "Group name",
   "edit_space_member_location_sharing_title": "Member location sharing",
   "edit_space_your_location_sharing_title": "Your location sharing",
-  "edit_space_delete_space_title": "Delete space",
-  "edit_space_leave_space_title": "Leave space",
-  "edit_space_leave_space_alert_message": "Are you sure you want to leave this space? You will no longer be able to view or share location with member of this space",
-  "edit_space_delete_space_alert_message": "Confirming will permanently delete this space and associated data. This action cannot be undone.",
+  "edit_space_delete_space_title": "Delete group",
+  "edit_space_leave_space_title": "Leave group",
+  "edit_space_leave_space_alert_message": "Are you sure you want to leave this group? You will no longer be able to view or share location with member of this group",
+  "edit_space_delete_space_alert_message": "Confirming will permanently delete this group and associated data. This action cannot be undone.",
   "edit_space_no_member_in_space_text": "No members in {spaceName}",
   "@edit_space_no_member_in_space_text": {
     "placeholders": {
@@ -201,7 +201,7 @@
   "contact_support_submit_title": "Submit",
   "contact_support_feedback_alert_message": "Thanks! Your feedback has been recorded.",
 
-  "connection_share_title": "Connect, share, explore join your trusted space for safe location sharing.",
+  "connection_share_title": "Connect, share, explore join your trusted group for safe location sharing.",
   "connection_share_subtitle": "Simplify your connections and insights explore drive reports, location history effortlessly.",
   "connection_continue_title": "Continue",
 
@@ -230,7 +230,7 @@
   "permission_footer_missing_location_permission_subtitle": "Some permissions are missing - grant access.",
 
   "battery_optimization_dialog_title":"Turn off Battery Optimization for Location Sharing",
-  "battery_optimization_dialog_message": "For location sharing feature to work properly for your Spaces, turn off Battery Optimization in your phone settings for the GroupTrack app. This won't affect your other apps.",
+  "battery_optimization_dialog_message": "For location sharing feature to work properly for your Groups, turn off Battery Optimization in your phone settings for the GroupTrack app. This won't affect your other apps.",
   "battery_optimization_dialog_btn_change_now":"Change now",
 
   "@_PLACES": {
@@ -252,7 +252,7 @@
 
   "locate_on_map_title": "Locate on Map",
   "locate_on_map_prompt_added_title_text": "{placeName} Added",
-  "locate_on_map_prompt_sub_title_text": "You will be notified when members of your space arrive/leave this place",
+  "locate_on_map_prompt_sub_title_text": "You will be notified when members of your group arrive/leave this place",
   "locate_on_map_prompt_got_it_btn_text": "Got it",
 
   "choose_place_screen_title": "Choose place name",
@@ -260,7 +260,7 @@
   "choose_place_suggestion_text": "Some suggestions...",
   "choose_place_add_place_btn_text": "Add place",
   "choose_place_prompt_added_title_text": "{placeName} Added",
-  "choose_place_prompt_sub_title_text": "You will be notified when members of your space arrive/leave this place",
+  "choose_place_prompt_sub_title_text": "You will be notified when members of your group arrive/leave this place",
   "choose_place_prompt_got_it_btn_text": "Got it",
 
   "@_EditPlaces": {
