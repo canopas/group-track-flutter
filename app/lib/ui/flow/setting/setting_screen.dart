@@ -207,16 +207,15 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
               .copyWith(color: context.colorScheme.textDisabled),
         ),
         const SizedBox(height: 16),
-        Visibility(
-          visible: FeatureFlags.enableSubscription,
-          child: _otherOptionItem(
+        if (FeatureFlags.enableSubscription) ...{
+          _otherOptionItem(
               context: context,
               title: context.l10n.settings_subscriptions_title,
               icon: Assets.images.icSubscriptionIcon,
               onTap: () {
                 AppRoute.subscription.push(context);
               }),
-        ),
+        },
         _otherOptionItem(
             context: context,
             title: context.l10n.settings_other_option_contact_support_text,
