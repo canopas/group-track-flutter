@@ -38,9 +38,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
           firstName: TextEditingController(text: user?.first_name),
           lastName: TextEditingController(text: user?.last_name),
           email: TextEditingController(text: user?.email),
-          phone: TextEditingController(text: user?.phone),
-          enableEmail: user?.auth_type == LOGIN_TYPE_PHONE,
-          enablePhone: user?.auth_type == LOGIN_TYPE_GOOGLE,
+          enableEmail: true,
           profileUrl: user?.profile_image ?? '',
         ));
 
@@ -67,7 +65,6 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
         first_name: state.firstName.text.trim(),
         last_name: state.lastName.text.trim(),
         email: state.email.text.trim(),
-        phone: state.phone.text.trim(),
         profile_image: state.profileUrl,
       );
       state = state.copyWith(saving: true);
@@ -86,13 +83,11 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
   void onChange() {
     final validFirstName = state.firstName.text.trim().length >= 3;
     final validEmail = state.email.text.trim().length >= 3;
-    final validPhone = state.phone.text.trim().length >= 3;
 
-    final isValid = validFirstName && (validEmail || validPhone);
+    final isValid = validFirstName && validEmail;
     final changed = state.firstName.text.trim() != user?.first_name ||
         state.lastName.text.trim() != user?.last_name ||
         state.email.text.trim() != user?.email ||
-        state.phone.text.trim() != user?.phone ||
         state.profileUrl != user?.profile_image;
 
     state = state.copyWith(allowSave: isValid && changed);
@@ -148,7 +143,6 @@ class EditProfileViewState with _$EditProfileViewState {
     required TextEditingController firstName,
     required TextEditingController lastName,
     required TextEditingController email,
-    required TextEditingController phone,
     required String profileUrl,
     Object? error,
   }) = _EditProfileViewState;
