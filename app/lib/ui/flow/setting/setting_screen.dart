@@ -18,7 +18,7 @@ import '../../../gen/assets.gen.dart';
 import '../../components/alert.dart';
 import '../../components/no_internet_screen.dart';
 
-const privacyPolicyUrl = "https://canopas.github.io/your-space-android/";
+const privacyPolicyUrl = "https://canopas.github.io/group-track-android/";
 
 class SettingScreen extends ConsumerStatefulWidget {
   const SettingScreen({super.key});
