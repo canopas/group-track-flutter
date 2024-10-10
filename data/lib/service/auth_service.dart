@@ -30,7 +30,7 @@ class AuthService {
       String? firstName,
       String? lastName,
       String? profileImg,
-      int authType = LOGIN_TYPE_PHONE}) async {
+      int authType = LOGIN_TYPE_GOOGLE}) async {
     final data = await userService.saveUser(
         uid: uid,
         firebaseToken: firebaseToken,
