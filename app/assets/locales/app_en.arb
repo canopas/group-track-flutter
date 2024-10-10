@@ -125,6 +125,14 @@
   "invite_code_invite_member_subtitle": "Share this invite code with your trusted ones in your own style. Connecting is as flexible as you are.",
   "invite_code_active_code_text": "This code will be active for 2 days.",
   "invite_code_share_code_title": "Share code",
+  "invite_code_share_code_text": "Join me on Group Track! Use this invite code to join group: {invitationCode}",
+  "@invite_code_share_code_text": {
+    "placeholders": {
+      "invitationCode": {
+        "type": "String"
+      }
+    }
+  },
 
   "settings_title": "Settings",
   "settings_profile_title": "Profile",
