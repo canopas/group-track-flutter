@@ -169,14 +169,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
-  canopas_country_picker:
-    dependency: "direct main"
-    description:
-      name: canopas_country_picker
-      sha256: "758e12e799588c2c5eb913b2b8c66495cc9187ec5fb8a1fd39604a02fcf0fc88"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.9"
   characters:
     dependency: transitive
     description:
