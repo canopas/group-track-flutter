@@ -79,10 +79,9 @@ extension AppDelegate: CLLocationManagerDelegate {
         locationManager = CLLocationManager()
         locationManager?.delegate = self
         locationManager?.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager?.distanceFilter = kCLDistanceFilterNone
         locationManager?.allowsBackgroundLocationUpdates = true
         locationManager?.pausesLocationUpdatesAutomatically = false
-        locationManager?.startMonitoringSignificantLocationChanges()
+        locationManager?.startUpdatingLocation()
     }
     
     private func setUpFlutterMethodChannelForInvokeLocation() {
