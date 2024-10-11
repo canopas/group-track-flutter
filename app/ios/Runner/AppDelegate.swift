@@ -10,7 +10,7 @@ import CoreLocation
 
     var geofencePlugin: GeofenceService?
     var locationManager: CLLocationManager?
-    var previousLocation: CLLocation?
+    var lastUpdateTime: Date?
 
     override func application(
         _ application: UIApplication,
@@ -78,11 +78,10 @@ extension AppDelegate: CLLocationManagerDelegate {
     private func setUpLocation() {
         locationManager = CLLocationManager()
         locationManager?.delegate = self
-        locationManager?.distanceFilter = 10
-        locationManager?.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager?.desiredAccuracy = kCLLocationAccuracyBest
         locationManager?.allowsBackgroundLocationUpdates = true
         locationManager?.pausesLocationUpdatesAutomatically = false
-        locationManager?.startMonitoringSignificantLocationChanges()
+        locationManager?.startUpdatingLocation()
     }
     
     private func setUpFlutterMethodChannelForInvokeLocation() {
@@ -102,16 +101,18 @@ extension AppDelegate: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last else { return }
-
-        if let lastLocation = previousLocation {
-            let distance = currentLocation.distance(from: lastLocation)
-
-            if distance < 10 {
-                previousLocation = currentLocation
+        
+        let currentTime = Date()
+        
+        if let lastTime = lastUpdateTime {
+            let timeInterval = currentTime.timeIntervalSince(lastTime)
+            if timeInterval < 10 {
                 return
             }
         }
-
+        
+        lastUpdateTime = currentTime
+        
         let locationData: [String: Any] = [
             "latitude": currentLocation.coordinate.latitude,
             "longitude": currentLocation.coordinate.longitude,
