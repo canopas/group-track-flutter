@@ -83,6 +83,7 @@ Future<ProviderContainer> _initContainer() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (!kDebugMode) {
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+    await FirebaseCrashlytics.instance.setCustomKey("app_type", "flutter");
   }
 
   locationService = LocationService(FirebaseFirestore.instance);
