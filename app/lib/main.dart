@@ -61,17 +61,22 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   updateCurrentUserState(message, networkService);
 }
 
-void updateSpaceUserNetworkState(RemoteMessage message, NetworkService networkService) {
-  final String? userId = message.data[NotificationNetworkStatusConst.KEY_USER_ID];
-  final bool isTypeNetworkStatus = message.data[NotificationNetworkStatusConst.NOTIFICATION_TYPE_NETWORK_STATUS];
+void updateSpaceUserNetworkState(
+    RemoteMessage message, NetworkService networkService) {
+  final String? userId =
+      message.data[NotificationNetworkStatusConst.KEY_USER_ID];
+  final bool isTypeNetworkStatus = message
+      .data[NotificationNetworkStatusConst.NOTIFICATION_TYPE_NETWORK_STATUS];
   if (userId != null && isTypeNetworkStatus) {
     networkService.updateUserNetworkState(userId);
   }
 }
 
-void updateCurrentUserState(RemoteMessage message, NetworkService networkService) {
+void updateCurrentUserState(
+    RemoteMessage message, NetworkService networkService) {
   final String? userId = message.data[NotificationUpdateStateConst.KEY_USER_ID];
-  final bool isTypeUpdateState = message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
+  final bool isTypeUpdateState =
+      message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
   if (userId != null && isTypeUpdateState) {
     networkService.updateUserNetworkState(userId);
   }
@@ -105,12 +110,14 @@ Future<String?> _getUserIdFromPreferences() async {
 
 Future<void> _handleLocationUpdates(MethodCall call) async {
   if (call.method == 'onLocationUpdate') {
-    final Map<String, dynamic> locationData = Map<String, dynamic>.from(call.arguments);
+    final Map<String, dynamic> locationData =
+        Map<String, dynamic>.from(call.arguments);
 
     final LocationData locationPosition = LocationData(
       latitude: locationData['latitude'],
       longitude: locationData['longitude'],
-      timestamp: DateTime.fromMillisecondsSinceEpoch(locationData['timestamp'].toInt()),
+      timestamp: DateTime.fromMillisecondsSinceEpoch(
+          locationData['timestamp'].toInt()),
     );
 
     await _updateUserLocationWithIOS(locationPosition);
@@ -166,13 +173,9 @@ Future<void> onStart(ServiceInstance service) async {
   final battery = Battery();
 
   if (userId != null) {
-    _startLocationUpdates();
-    _timer = Timer.periodic(
-        const Duration(milliseconds: LOCATION_UPDATE_INTERVAL), (timer) {
-      if (Platform.isAndroid) {
-        _updateUserLocation(userId, _position);
-      }
-      userBatteryLevel(userId, battery, batteryService);
+    if (Platform.isAndroid) _startLocationUpdates(userId);
+    _timer = Timer.periodic(const Duration(minutes: 2), (timer) {
+      _userBatteryLevel(userId, battery, batteryService);
     });
   }
 
@@ -183,13 +186,29 @@ Future<void> onStart(ServiceInstance service) async {
   });
 }
 
-void _startLocationUpdates() {
+void _startLocationUpdates(String userId) {
   positionSubscription = Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.high,
+      distanceFilter: 10,
     ),
   ).listen((position) {
-    _position = position;
+    print('XXX position: $position');
+    final isSame = _previousPosition?.latitude == position.latitude &&
+        _previousPosition?.longitude == position.longitude;
+
+    final isIntervalUpdate = _previousPosition == null
+        ? true
+        : position.timestamp.difference(_previousPosition!.timestamp) >
+            const Duration(milliseconds: LOCATION_UPDATE_INTERVAL);
+    print('XXX update: $isSame  and  $isIntervalUpdate');
+    if (!isSame && isIntervalUpdate) {
+      print('XXX location update: $position');
+      print(
+          'XXX difference: ${position.timestamp.difference(_previousPosition?.timestamp ?? DateTime.now())}');
+      _previousPosition = position;
+      _updateUserLocation(userId, position);
+    }
   });
 }
 
@@ -198,10 +217,9 @@ Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
   if (userId != null) {
     try {
       await locationService.saveCurrentLocation(
-        userId,
-        LatLng(locationPosition.latitude, locationPosition.longitude),
-        DateTime.now().millisecondsSinceEpoch
-      );
+          userId,
+          LatLng(locationPosition.latitude, locationPosition.longitude),
+          DateTime.now().millisecondsSinceEpoch);
 
       await journeyRepository.saveLocationJourney(locationPosition, userId);
     } catch (error, stack) {
@@ -214,17 +232,7 @@ Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
   }
 }
 
-void _updateUserLocation(
-  String userId,
-  Position? position,
-) async {
-  if (Platform.isIOS) return;
-  final isSame = _previousPosition?.latitude == position?.latitude &&
-      _previousPosition?.longitude == position?.longitude;
-
-  if (isSame || position == null) return;
-  _previousPosition = position;
-
+void _updateUserLocation(String userId, Position position) async {
   try {
     final locationData = LocationData(
       latitude: position.latitude,
@@ -253,7 +261,7 @@ bool onIosBackground(ServiceInstance service) {
   return true;
 }
 
-void userBatteryLevel(
+void _userBatteryLevel(
   String userId,
   Battery battery,
   BatteryService batteryService,
