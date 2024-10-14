@@ -35,6 +35,8 @@ abstract class $SubscriptionStateCopyWith<$Res> {
       {bool loading,
       SubscriptionPlan? selectedPlan,
       List<SubscriptionPlan> plans});
+
+  $SubscriptionPlanCopyWith<$Res>? get selectedPlan;
 }
 
 /// @nodoc
@@ -69,6 +71,18 @@ class _$SubscriptionStateCopyWithImpl<$Res, $Val extends SubscriptionState>
               as List<SubscriptionPlan>,
     ) as $Val);
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $SubscriptionPlanCopyWith<$Res>? get selectedPlan {
+    if (_value.selectedPlan == null) {
+      return null;
+    }
+
+    return $SubscriptionPlanCopyWith<$Res>(_value.selectedPlan!, (value) {
+      return _then(_value.copyWith(selectedPlan: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -83,6 +97,9 @@ abstract class _$$SubscriptionStateImplCopyWith<$Res>
       {bool loading,
       SubscriptionPlan? selectedPlan,
       List<SubscriptionPlan> plans});
+
+  @override
+  $SubscriptionPlanCopyWith<$Res>? get selectedPlan;
 }
 
 /// @nodoc

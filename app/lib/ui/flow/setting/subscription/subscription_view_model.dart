@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:data/api/subscription/subscription_models.dart';
 
 part 'subscription_view_model.freezed.dart';
 
@@ -13,17 +14,17 @@ final subscriptionViewProvider = StateNotifierProvider.autoDispose<
 
 class SubscriptionViewNotifier extends StateNotifier<SubscriptionState> {
   SubscriptionViewNotifier() : super(const SubscriptionState()) {
-    setDate();
+    _setData();
   }
 
-  void setDate() {
+  void _setData() {
     final plans = [
-      SubscriptionPlan(
+      const SubscriptionPlan(
           id: freePlan,
           name: "Free",
           planDetail: "100 call/month",
           planInfo: "Basic plan"),
-      SubscriptionPlan(
+      const SubscriptionPlan(
           id: proPlan,
           name: "Pro",
           planDetail: "\u{20B9}200 /month",
@@ -44,18 +45,4 @@ class SubscriptionState with _$SubscriptionState {
     SubscriptionPlan? selectedPlan,
     @Default([]) List<SubscriptionPlan> plans,
   }) = _SubscriptionState;
-}
-
-class SubscriptionPlan {
-  final String id;
-  final String name;
-  final String planDetail;
-  final String planInfo;
-
-  SubscriptionPlan({
-    required this.id,
-    required this.name,
-    required this.planDetail,
-    required this.planInfo,
-  });
 }

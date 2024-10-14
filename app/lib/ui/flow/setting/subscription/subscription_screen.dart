@@ -1,3 +1,4 @@
+import 'package:data/api/subscription/subscription_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -145,7 +146,6 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   Widget _paymentBtnView() {
     return Column(children: [
       _bottomCaptions(),
-      const SizedBox(height: 8),
       PrimaryButton(
         context.l10n.subscription_go_to_payment_text,
         onPressed: () {
@@ -159,25 +159,28 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   Widget _bottomCaptions() {
     final textColor = context.colorScheme.textDisabled;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          context.l10n.subscription_auto_renewable_text,
-          style: AppTextStyle.body2.copyWith(color: textColor),
-        ),
-        Container(
-          width: 4,
-          height: 4,
-          margin: const EdgeInsets.only(left: 6, right: 6),
-          decoration: BoxDecoration(color: textColor, shape: BoxShape.circle),
-        ),
-        Text(
-          context.l10n.subscription_cancel_anytime_text,
-          style: AppTextStyle.body2.copyWith(color: textColor),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            context.l10n.subscription_auto_renewable_text,
+            style: AppTextStyle.body2.copyWith(color: textColor),
+          ),
+          Container(
+            width: 4,
+            height: 4,
+            margin: const EdgeInsets.only(left: 6, right: 6),
+            decoration: BoxDecoration(color: textColor, shape: BoxShape.circle),
+          ),
+          Text(
+            context.l10n.subscription_cancel_anytime_text,
+            style: AppTextStyle.body2.copyWith(color: textColor),
+          ),
+        ],
+      ),
     );
   }
 }

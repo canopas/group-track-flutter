@@ -1,4 +1,4 @@
 
 class FeatureFlags {
-  static const enableSubscription = false;
+  static const enableSubscription = true;
 }
