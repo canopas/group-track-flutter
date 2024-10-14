@@ -20,7 +20,6 @@ mixin _$SubscriptionPlan {
   String get name => throw _privateConstructorUsedError;
   String get planDetail => throw _privateConstructorUsedError;
   String get planInfo => throw _privateConstructorUsedError;
-  int? get created_at => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $SubscriptionPlanCopyWith<SubscriptionPlan> get copyWith =>
@@ -33,12 +32,7 @@ abstract class $SubscriptionPlanCopyWith<$Res> {
           SubscriptionPlan value, $Res Function(SubscriptionPlan) then) =
       _$SubscriptionPlanCopyWithImpl<$Res, SubscriptionPlan>;
   @useResult
-  $Res call(
-      {String id,
-      String name,
-      String planDetail,
-      String planInfo,
-      int? created_at});
+  $Res call({String id, String name, String planDetail, String planInfo});
 }
 
 /// @nodoc
@@ -58,7 +52,6 @@ class _$SubscriptionPlanCopyWithImpl<$Res, $Val extends SubscriptionPlan>
     Object? name = null,
     Object? planDetail = null,
     Object? planInfo = null,
-    Object? created_at = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -77,10 +70,6 @@ class _$SubscriptionPlanCopyWithImpl<$Res, $Val extends SubscriptionPlan>
           ? _value.planInfo
           : planInfo // ignore: cast_nullable_to_non_nullable
               as String,
-      created_at: freezed == created_at
-          ? _value.created_at
-          : created_at // ignore: cast_nullable_to_non_nullable
-              as int?,
     ) as $Val);
   }
 }
@@ -93,12 +82,7 @@ abstract class _$$SubscriptionPlanImplCopyWith<$Res>
       __$$SubscriptionPlanImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String name,
-      String planDetail,
-      String planInfo,
-      int? created_at});
+  $Res call({String id, String name, String planDetail, String planInfo});
 }
 
 /// @nodoc
@@ -116,7 +100,6 @@ class __$$SubscriptionPlanImplCopyWithImpl<$Res>
     Object? name = null,
     Object? planDetail = null,
     Object? planInfo = null,
-    Object? created_at = freezed,
   }) {
     return _then(_$SubscriptionPlanImpl(
       id: null == id
@@ -135,10 +118,6 @@ class __$$SubscriptionPlanImplCopyWithImpl<$Res>
           ? _value.planInfo
           : planInfo // ignore: cast_nullable_to_non_nullable
               as String,
-      created_at: freezed == created_at
-          ? _value.created_at
-          : created_at // ignore: cast_nullable_to_non_nullable
-              as int?,
     ));
   }
 }
@@ -150,8 +129,7 @@ class _$SubscriptionPlanImpl implements _SubscriptionPlan {
       {required this.id,
       required this.name,
       required this.planDetail,
-      required this.planInfo,
-      this.created_at});
+      required this.planInfo});
 
   @override
   final String id;
@@ -161,12 +139,10 @@ class _$SubscriptionPlanImpl implements _SubscriptionPlan {
   final String planDetail;
   @override
   final String planInfo;
-  @override
-  final int? created_at;
 
   @override
   String toString() {
-    return 'SubscriptionPlan(id: $id, name: $name, planDetail: $planDetail, planInfo: $planInfo, created_at: $created_at)';
+    return 'SubscriptionPlan(id: $id, name: $name, planDetail: $planDetail, planInfo: $planInfo)';
   }
 
   @override
@@ -179,14 +155,11 @@ class _$SubscriptionPlanImpl implements _SubscriptionPlan {
             (identical(other.planDetail, planDetail) ||
                 other.planDetail == planDetail) &&
             (identical(other.planInfo, planInfo) ||
-                other.planInfo == planInfo) &&
-            (identical(other.created_at, created_at) ||
-                other.created_at == created_at));
+                other.planInfo == planInfo));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, planDetail, planInfo, created_at);
+  int get hashCode => Object.hash(runtimeType, id, name, planDetail, planInfo);
 
   @JsonKey(ignore: true)
   @override
@@ -201,8 +174,7 @@ abstract class _SubscriptionPlan implements SubscriptionPlan {
       {required final String id,
       required final String name,
       required final String planDetail,
-      required final String planInfo,
-      final int? created_at}) = _$SubscriptionPlanImpl;
+      required final String planInfo}) = _$SubscriptionPlanImpl;
 
   @override
   String get id;
@@ -212,8 +184,6 @@ abstract class _SubscriptionPlan implements SubscriptionPlan {
   String get planDetail;
   @override
   String get planInfo;
-  @override
-  int? get created_at;
   @override
   @JsonKey(ignore: true)
   _$$SubscriptionPlanImplCopyWith<_$SubscriptionPlanImpl> get copyWith =>

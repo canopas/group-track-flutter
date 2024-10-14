@@ -9,7 +9,6 @@ class SubscriptionPlan with _$SubscriptionPlan {
     required String id,
     required String name,
     required String planDetail,
-    required  String planInfo,
-    int? created_at,
+    required  String planInfo
   }) = _SubscriptionPlan;
 }
