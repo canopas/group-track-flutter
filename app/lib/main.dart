@@ -64,7 +64,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void updateSpaceUserNetworkState(
     RemoteMessage message, NetworkService networkService) {
   final String? userId =
-      message.data[NotificationNetworkStatusConst.KEY_USER_ID];
+  message.data[NotificationNetworkStatusConst.KEY_USER_ID];
   final bool isTypeNetworkStatus = message
       .data[NotificationNetworkStatusConst.NOTIFICATION_TYPE_NETWORK_STATUS];
   if (userId != null && isTypeNetworkStatus) {
@@ -76,7 +76,7 @@ void updateCurrentUserState(
     RemoteMessage message, NetworkService networkService) {
   final String? userId = message.data[NotificationUpdateStateConst.KEY_USER_ID];
   final bool isTypeUpdateState =
-      message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
+  message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
   if (userId != null && isTypeUpdateState) {
     networkService.updateUserNetworkState(userId);
   }
@@ -111,7 +111,7 @@ Future<String?> _getUserIdFromPreferences() async {
 Future<void> _handleLocationUpdates(MethodCall call) async {
   if (call.method == 'onLocationUpdate') {
     final Map<String, dynamic> locationData =
-        Map<String, dynamic>.from(call.arguments);
+    Map<String, dynamic>.from(call.arguments);
 
     final LocationData locationPosition = LocationData(
       latitude: locationData['latitude'],
@@ -146,7 +146,7 @@ void startService() async {
 
 StreamSubscription<Position>? positionSubscription;
 Timer? _timer;
-Position? _position;
+Timer? _locationTimeoutTimer;
 Position? _previousPosition;
 int? _batteryLevel;
 
@@ -173,32 +173,62 @@ Future<void> onStart(ServiceInstance service) async {
   final battery = Battery();
 
   if (userId != null) {
-    _startLocationUpdates();
-    _timer = Timer.periodic(
-        const Duration(milliseconds: LOCATION_UPDATE_INTERVAL), (timer) {
-      if (Platform.isAndroid) {
-        _updateUserLocation(userId, _position);
-      }
-      userBatteryLevel(userId, battery, batteryService);
+    if (Platform.isAndroid) _startLocationUpdates(userId);
+    _timer = Timer.periodic(const Duration(minutes: 2), (timer) {
+      _userBatteryLevel(userId, battery, batteryService);
     });
   }
 
   service.on('stopService').listen((event) {
     _timer?.cancel();
+    _locationTimeoutTimer?.cancel();
     positionSubscription?.cancel();
     service.stopSelf();
   });
 }
 
-void _startLocationUpdates() {
+void _startLocationUpdates(String userId) {
   positionSubscription = Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.high,
-      distanceFilter: LOCATION_UPDATE_DISTANCE,
+      distanceFilter: 10,
     ),
   ).listen((position) {
-    _position = position;
+    _locationTimeoutTimer?.cancel();
+    print('XXX position: $position');
+    print('XXX previous position: $position');
+    final isSame = _previousPosition?.latitude == position.latitude &&
+        _previousPosition?.longitude == position.longitude;
+
+    final isIntervalUpdate = _previousPosition == null
+        ? true
+        : position.timestamp.difference(_previousPosition!.timestamp) >
+        const Duration(milliseconds: LOCATION_UPDATE_INTERVAL);
+    print('XXX update: $isSame  and  $isIntervalUpdate');
+    if (!isSame && isIntervalUpdate) {
+      print('XXX location update: $position');
+      print(
+          'XXX difference: ${position.timestamp.difference(_previousPosition?.timestamp ?? DateTime.now())}');
+      _previousPosition = position;
+      _updateUserLocation(userId, position);
+    }
+    _startLocationTimeout(userId, position);
+    print("XXX -----------------");
   });
+}
+
+void _startLocationTimeout(String userId, Position position) {
+  _locationTimeoutTimer?.cancel();
+
+  _locationTimeoutTimer =
+      Timer(const Duration(milliseconds: MIN_TIME_DIFFERENCE), () {
+        print("XXX Location is steady.");
+        _updateUserLocation(userId, position);
+        _locationTimeoutTimer?.cancel();
+        _locationTimeoutTimer = null;
+      });
+
+  print("Location timeout started for 5 minutes.");
 }
 
 Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
@@ -221,16 +251,7 @@ Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
   }
 }
 
-void _updateUserLocation(
-  String userId,
-  Position? position,
-) async {
-  final isSame = _previousPosition?.latitude == position?.latitude &&
-      _previousPosition?.longitude == position?.longitude;
-
-  if (isSame || position == null) return;
-  _previousPosition = position;
-
+void _updateUserLocation(String userId, Position position) async {
   try {
     final locationData = LocationData(
       latitude: position.latitude,
@@ -259,11 +280,11 @@ bool onIosBackground(ServiceInstance service) {
   return true;
 }
 
-void userBatteryLevel(
-  String userId,
-  Battery battery,
-  BatteryService batteryService,
-) async {
+void _userBatteryLevel(
+    String userId,
+    Battery battery,
+    BatteryService batteryService,
+    ) async {
   try {
     final level = await battery.batteryLevel;
     if (level != _batteryLevel) {
