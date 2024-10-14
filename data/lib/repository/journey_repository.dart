@@ -66,6 +66,9 @@ class JourneyRepository {
       fromLongitude: lastKnownJourney.from_longitude,
       toLatitude: lastKnownJourney.to_latitude ?? 0,
       toLongitude: lastKnownJourney.to_longitude ?? 0,
+      routeDistance: lastKnownJourney.route_distance,
+      routes: lastKnownJourney.routes,
+      routeDuration: lastKnownJourney.route_duration,
     );
 
     var newJourney = lastKnownJourney.copyWith(
@@ -137,8 +140,6 @@ class JourneyRepository {
         extractedLocation.timestamp.millisecondsSinceEpoch -
             lastKnownJourney.update_at!;
 
-    logger.i('time difference ==== XXX === $timeDifference, distance ==== XXX ==== $distance');
-
     if (lastKnownJourney.isSteadyLocation()) {
       if (distance > MIN_DISTANCE) {
         // Here, means last known journey is steady and and now user has started moving
@@ -164,6 +165,8 @@ class JourneyRepository {
             userId, extractedLocation, lastKnownJourney, distance);
       }
     }
+
+    addSteadyLocationIfNoUpdate(extractedLocation, userId);
   }
 
   /// Save journey when user starts moving i.e., state changes from steady to moving
@@ -197,8 +200,6 @@ class JourneyRepository {
         route_duration: null);
 
     locationCache.putLastJourney(journey, userId);
-    logger.i('save journey when user start moving $journey',
-        time: DateTime.now());
   }
 
   /// Update journey for continued moving user i.e., state is moving and user is still moving
@@ -223,8 +224,6 @@ class JourneyRepository {
 
     await journeyService.updateLastLocationJourney(userId, journey);
     locationCache.putLastJourney(journey, userId);
-    logger.i('update journey for continued moving user: $journey',
-        time: DateTime.now());
   }
 
   /// Save journey when user stops moving i.e., state changes from moving to steady
@@ -265,8 +264,21 @@ class JourneyRepository {
     );
 
     locationCache.putLastJourney(steadyJourney, userId);
-    logger.i('save journey on journey stopped: $steadyJourney',
-        time: DateTime.now());
+  }
+
+  /// if we don't get location update from last 5 min than add last location as steady journey
+  Future<void> addSteadyLocationIfNoUpdate(LocationData position, String userId) async {
+    var lastKnownJourney = await _getLastKnownLocation(userId, position);
+
+    if (isTimeExceeded(lastKnownJourney)) {
+      await _saveJourneyOnJourneyStopped(userId, position, lastKnownJourney, 0);
+    }
+  }
+
+  bool isTimeExceeded(ApiLocationJourney lastKnownJourney) {
+    int now = DateTime.now().millisecondsSinceEpoch;
+    int lastUpdate = lastKnownJourney.update_at ?? 0;
+    return (now - lastUpdate) >= MIN_TIME_DIFFERENCE;
   }
 
   double _distanceBetween(LocationData loc1, LocationData loc2) {
