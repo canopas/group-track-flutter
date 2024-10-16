@@ -34,6 +34,8 @@ class JourneyRepository {
       var lastKnownJourney = await _getLastKnownLocation(userId, extractedLocation);
       bool isDayChanged = this.isDayChanged(extractedLocation, lastKnownJourney);
 
+      locationCache.addLocation(extractedLocation, userId); // to get all route position between location a -> b for moving user journey
+
       if (isDayChanged) {
         // Day is changed between last known journey and current location
         // Just save again the last known journey in remote database with updated day i.e., current time
@@ -65,6 +67,7 @@ class JourneyRepository {
       try {
         await _saveSteadyLocation(position, userId);
         _cancelSteadyLocationTimer();
+        locationCache.clearLocationCache(); // removing previous journey routes to get latest location route for next journey from start point to end
       } catch (e, stack) {
         logger.e('Error saving steady location for user $userId: $e', stackTrace: stack);
       }
@@ -220,10 +223,7 @@ class JourneyRepository {
         from_longitude: lastKnownJourney.from_longitude,
         to_latitude: extractedLocation.latitude,
         to_longitude: extractedLocation.longitude,
-        routes: [
-          lastKnownJourney.toPositionFromSteadyJourney().toJourneyRoute(),
-          extractedLocation.toJourneyRoute()
-        ],
+        routes: _getRoute(userId),
         route_distance: distance,
         route_duration: null);
 
@@ -245,7 +245,7 @@ class JourneyRepository {
       to_longitude: extractedLocation.longitude,
       route_distance: distance + (lastKnownJourney.route_distance ?? 0),
       route_duration: (lastKnownJourney.update_at ?? 0) - (lastKnownJourney.created_at ?? 0),
-      routes: [...lastKnownJourney.routes, extractedLocation.toJourneyRoute()],
+      routes: _getRoute(userId),
       created_at: lastKnownJourney.created_at,
       update_at: DateTime.now().millisecondsSinceEpoch,
     );
@@ -294,6 +294,17 @@ class JourneyRepository {
     );
 
     locationCache.putLastJourney(steadyJourney, userId);
+  }
+
+  List<JourneyRoute> _getRoute(String userId) {
+    var locations = locationCache.getLocation(userId);
+
+    return locations.map((location) {
+      return JourneyRoute(
+        latitude: location.latitude,
+        longitude: location.longitude,
+      );
+    }).toList();
   }
 
   double _distanceBetween(LocationData loc1, LocationData loc2) {
