@@ -107,7 +107,7 @@ extension AppDelegate: CLLocationManagerDelegate {
         
         if let lastTime = lastUpdateTime {
             let timeInterval = currentTime.timeIntervalSince(lastTime)
-            if timeInterval < 60 {
+            if timeInterval < 10 {
                 return
             }
         }
