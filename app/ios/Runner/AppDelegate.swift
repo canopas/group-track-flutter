@@ -78,7 +78,8 @@ extension AppDelegate: CLLocationManagerDelegate {
     private func setUpLocation() {
         locationManager = CLLocationManager()
         locationManager?.delegate = self
-        locationManager?.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager?.distanceFilter = 10
+        locationManager?.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         locationManager?.allowsBackgroundLocationUpdates = true
         locationManager?.pausesLocationUpdatesAutomatically = false
         locationManager?.startUpdatingLocation()
