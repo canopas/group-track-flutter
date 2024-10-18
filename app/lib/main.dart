@@ -145,6 +145,7 @@ int? _batteryLevel;
 
 @pragma('vm:entry-point')
 Future<void> onStart(ServiceInstance service) async {
+  if (Platform.isIOS) return;
   WidgetsFlutterBinding.ensureInitialized();
   final isLocationPermission = await Permission.location.isGranted;
   if (!isLocationPermission) return;
@@ -184,7 +185,6 @@ Future<void> onStart(ServiceInstance service) async {
 }
 
 void _startLocationUpdates() {
-  if (Platform.isIOS) return;
   positionSubscription = Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.high,
