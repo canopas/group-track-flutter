@@ -79,7 +79,7 @@ extension AppDelegate: CLLocationManagerDelegate {
         locationManager = CLLocationManager()
         locationManager?.delegate = self
         locationManager?.distanceFilter = 10
-        locationManager?.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager?.desiredAccuracy = kCLLocationAccuracyHundredMeters
         locationManager?.allowsBackgroundLocationUpdates = true
         locationManager?.pausesLocationUpdatesAutomatically = false
         locationManager?.startUpdatingLocation()

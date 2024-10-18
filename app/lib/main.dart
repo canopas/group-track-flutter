@@ -145,6 +145,7 @@ int? _batteryLevel;
 
 @pragma('vm:entry-point')
 Future<void> onStart(ServiceInstance service) async {
+  if (Platform.isIOS) return;
   WidgetsFlutterBinding.ensureInitialized();
   final isLocationPermission = await Permission.location.isGranted;
   if (!isLocationPermission) return;
