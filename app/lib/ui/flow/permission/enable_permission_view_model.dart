@@ -1,3 +1,6 @@
+import 'package:data/api/auth/api_user_service.dart';
+import 'package:data/api/auth/auth_models.dart';
+import 'package:data/log/logger.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/permission_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,14 +14,16 @@ final permissionStateProvider = StateNotifierProvider.autoDispose<
   return PermissionViewNotifier(
     ref.read(permissionServiceProvider),
     ref.read(locationManagerProvider),
+    ref.read(apiUserServiceProvider),
   );
 });
 
 class PermissionViewNotifier extends StateNotifier<PermissionViewState> {
   final PermissionService permissionService;
   final LocationManager locationManager;
+  final ApiUserService userService;
 
-  PermissionViewNotifier(this.permissionService, this.locationManager)
+  PermissionViewNotifier(this.permissionService, this.locationManager, this.userService)
       : super(const PermissionViewState()) {
     checkUserPermissions();
   }
@@ -63,6 +68,18 @@ class PermissionViewNotifier extends StateNotifier<PermissionViewState> {
   Future<void> requestNotificationPermission() async {
     final granted = await permissionService.requestNotificationPermission();
     state = state.copyWith(isNotificationGranted: granted);
+  }
+
+  void updateCurrentUserNetworkState() async {
+    try {
+      await userService.updateUserState(userService.currentUser?.id ?? '', USER_STATE_ONLINE);
+    } catch (error, stack) {
+      logger.e(
+        'HomeViewNotifier: error while update current user state',
+        error: error,
+        stackTrace: stack,
+      );
+    }
   }
 }
 
