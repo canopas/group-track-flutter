@@ -374,8 +374,8 @@ class _$MapViewStateImpl implements _MapViewState {
             const DeepCollectionEquality().equals(other._markers, _markers) &&
             (identical(other.selectedUser, selectedUser) ||
                 other.selectedUser == selectedUser) &&
-            (identical(other.defaultPosition, defaultPosition) ||
-                other.defaultPosition == defaultPosition) &&
+            const DeepCollectionEquality()
+                .equals(other.defaultPosition, defaultPosition) &&
             (identical(other.spaceInvitationCode, spaceInvitationCode) ||
                 other.spaceInvitationCode == spaceInvitationCode) &&
             const DeepCollectionEquality().equals(other.error, error) &&
@@ -396,7 +396,7 @@ class _$MapViewStateImpl implements _MapViewState {
       const DeepCollectionEquality().hash(_places),
       const DeepCollectionEquality().hash(_markers),
       selectedUser,
-      defaultPosition,
+      const DeepCollectionEquality().hash(defaultPosition),
       spaceInvitationCode,
       const DeepCollectionEquality().hash(error),
       showLocationDialog);
