@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:style/extenstions/context_extenstions.dart';
-import 'package:style/text/app_text_dart.dart';
-import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 
 import '../../gen/assets.gen.dart';
 
@@ -16,16 +15,9 @@ class AppLogo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Assets.images.appLogo.image(
-            width: 50,
-            height: 50,
-            color: contentColor ?? context.colorScheme.primary),
-        Text(
-          context.l10n.app_title,
-          textAlign: TextAlign.center,
-          style: AppTextStyle.logo
-              .copyWith(color: contentColor ?? context.colorScheme.primary),
-        )
+        SvgPicture.asset(
+          context.brightness == Brightness.dark ? Assets.images.appNameDark : Assets.images.appName,
+        ),
       ],
     );
   }
