@@ -184,6 +184,7 @@ Future<void> onStart(ServiceInstance service) async {
 }
 
 void _startLocationUpdates() {
+  if (Platform.isIOS) return;
   positionSubscription = Geolocator.getPositionStream(
     locationSettings: const LocationSettings(
       accuracy: LocationAccuracy.high,
