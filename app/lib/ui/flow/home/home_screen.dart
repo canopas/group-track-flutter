@@ -83,6 +83,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onResume: () {
           notifier.showBatteryOptimizationDialog();
           mapNotifier.checkUserPermission();
+          notifier.updateCurrentUserNetworkState();
         },
         child: _body(context, state),
       ),
