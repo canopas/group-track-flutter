@@ -1,31 +1,53 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+class SharedPreferencesNotifier extends Notifier<SharedPreferences> {
+  @override
+  SharedPreferences build() {
+    throw UnimplementedError("Use init() to initialize SharedPreferences.");
+  }
+
+  Future<void> init() async {
+    final prefs = await SharedPreferences.getInstance();
+    state = prefs;
+  }
+}
+
 final sharedPreferencesProvider =
-    Provider<SharedPreferences>((ref) => throw UnimplementedError());
+    NotifierProvider<SharedPreferencesNotifier, SharedPreferences>(
+  SharedPreferencesNotifier.new,
+);
 
 StateProvider<T> createPrefProvider<T>({
   required String prefKey,
   required T defaultValue,
 }) {
-  return StateProvider((ref) {
+  return StateProvider<T>((ref) {
     final prefs = ref.watch(sharedPreferencesProvider);
+    final notifier = ref.read(sharedPreferencesProvider.notifier);
+
     final currentValue = prefs.get(prefKey) as T? ?? defaultValue;
-    ref.listenSelf((prev, curr) {
-      if (curr == null) {
-        prefs.remove(prefKey);
-      } else if (curr is String) {
-        prefs.setString(prefKey, curr);
-      } else if (curr is bool) {
-        prefs.setBool(prefKey, curr);
-      } else if (curr is int) {
-        prefs.setInt(prefKey, curr);
-      } else if (curr is double) {
-        prefs.setDouble(prefKey, curr);
-      } else if (curr is List<String>) {
-        prefs.setStringList(prefKey, curr);
-      }
+
+    notifier.listenSelf((previous, next) {
+      _saveToPreferences(prefs, prefKey, next);
     });
+
     return currentValue;
   });
+}
+
+void _saveToPreferences<T>(SharedPreferences prefs, String key, T value) {
+  if (value is String) {
+    prefs.setString(key, value);
+  } else if (value is bool) {
+    prefs.setBool(key, value);
+  } else if (value is int) {
+    prefs.setInt(key, value);
+  } else if (value is double) {
+    prefs.setDouble(key, value);
+  } else if (value is List<String>) {
+    prefs.setStringList(key, value);
+  } else {
+    throw UnsupportedError("Unsupported type: ${T.runtimeType}");
+  }
 }

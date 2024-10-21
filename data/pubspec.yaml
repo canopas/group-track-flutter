@@ -14,7 +14,7 @@ dependencies:
   firebase_storage: ^11.7.7
   flutter:
     sdk: flutter
-  flutter_riverpod: ^2.4.10
+  flutter_riverpod: ^2.6.0
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
   shared_preferences: ^2.0.18

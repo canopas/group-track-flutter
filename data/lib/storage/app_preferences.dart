@@ -16,6 +16,11 @@ final isOnboardingShownPod = createPrefProvider<bool>(
   defaultValue: false,
 );
 
+final fetchCurrentLocation = createPrefProvider<bool>(
+  prefKey: "fetch_current_location",
+  defaultValue: false,
+);
+
 final deviceIdPod = createPrefProvider<String>(
   prefKey: "unique_device_id",
   defaultValue: const Uuid().v4(),
