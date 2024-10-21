@@ -28,7 +28,6 @@ import 'package:yourspace_flutter/firebase_options.dart';
 import 'package:yourspace_flutter/ui/app.dart';
 
 import 'domain/fcm/notification_handler.dart';
-import 'domain/mock_shared_preference.dart';
 
 const platform = MethodChannel('com.grouptrack/location');
 late final LocationService locationService;
@@ -87,8 +86,7 @@ Future<ProviderContainer> _initContainer() async {
 
   final container = ProviderContainer(
     overrides: [
-      sharedPreferencesProvider.overrideWith(
-            () => MockSharedPreferencesNotifier(prefs)),
+      sharedPreferencesProvider.overrideWithValue(prefs),
     ],
   );
   return container;
