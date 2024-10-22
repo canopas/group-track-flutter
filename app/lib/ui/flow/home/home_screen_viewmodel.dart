@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:data/api/auth/api_user_service.dart';
@@ -41,7 +42,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final ApiUser? _currentUser;
   final ApiUserService userService;
   final ApiSession? _userSession;
-  final StateController<bool?> _fetchCurrentLocation;
+  final StateController<bool> _fetchCurrentLocation;
 
   HomeViewNotifier(
     this.spaceService,
@@ -54,7 +55,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this._fetchCurrentLocation,
   ) : super(const HomeViewState()) {
     setDate();
-    fetchCurrentLocation();
+    if (Platform.isAndroid) fetchCurrentLocation();
   }
 
   StreamSubscription<List<SpaceInfo>>? _spacesSubscription;
@@ -73,7 +74,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   }
 
   Future<void> fetchCurrentLocation() async {
-    if (!_fetchCurrentLocation.state!) {
+    if (!_fetchCurrentLocation.state) {
       return;
     }
     const platform = MethodChannel('com.grouptrack/get_current_location');
