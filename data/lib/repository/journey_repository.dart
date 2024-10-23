@@ -30,8 +30,8 @@ class JourneyRepository {
       _cancelSteadyLocationTimer();
       _startSteadyLocationTimer(extractedLocation, userId);
 
-      var lastKnownJourney = await _getLastKnownLocation(userId, extractedLocation);
-      addJourneyOnDayChange(extractedLocation, userId);
+      var lastKnownJourney = await getLastKnownLocation(userId, extractedLocation);
+      addJourneyOnDayChange(extractedLocation, lastKnownJourney, userId);
 
       locationCache.addLocation(extractedLocation, userId); // to get all route position between location a -> b for moving user journey
 
@@ -72,7 +72,7 @@ class JourneyRepository {
   }
 
   Future<void> _saveSteadyLocation(LocationData position, String userId) async {
-    var lastKnownJourney = await _getLastKnownLocation(userId, position);
+    var lastKnownJourney = await getLastKnownLocation(userId, position);
     await _saveJourneyOnJourneyStopped(userId, position, lastKnownJourney, 0);
   }
 
@@ -84,15 +84,13 @@ class JourneyRepository {
     }
   }
 
-  Future<void> addJourneyOnDayChange(LocationData? extractedLocation,String userId) async {
-    var lastKnownJourney = locationCache.getLastJourney(userId);
-    if (lastKnownJourney == null) return;
-    bool isDayChanged = this.isDayChanged(extractedLocation, lastKnownJourney);
+  Future<void> addJourneyOnDayChange(LocationData? extractedLocation, ApiLocationJourney lasKnownJourney, String userId) async {
+    bool isDayChanged = this.isDayChanged(extractedLocation, lasKnownJourney);
 
     if (isDayChanged) {
       // Day is changed between last known journey and current location
       // Just save again the last known journey in remote database with updated day i.e., current time
-      await _saveJourneyOnDayChanged(userId, lastKnownJourney);
+      await _saveJourneyOnDayChanged(userId, lasKnownJourney);
       return;
     }
   }
@@ -132,8 +130,8 @@ class JourneyRepository {
   /// If not available in remote database as well, save extracted location as new location journey
   /// with steady state in cache as well as remote database
   ///
-  Future<ApiLocationJourney> _getLastKnownLocation(
-      String userId, LocationData extractedLocation) async {
+  Future<ApiLocationJourney> getLastKnownLocation(
+      String userId, LocationData? extractedLocation) async {
     var lastKnownJourney = locationCache.getLastJourney(userId);
 
     if (lastKnownJourney != null) {
@@ -155,12 +153,16 @@ class JourneyRepository {
 
         String newJourneyId = await journeyService.saveCurrentJourney(
           userId: userId,
-          fromLatitude: extractedLocation.latitude,
-          fromLongitude: extractedLocation.longitude,
+          fromLatitude: extractedLocation?.latitude ?? 0,
+          fromLongitude: extractedLocation?.longitude ?? 0,
           created_at: DateTime.now().millisecondsSinceEpoch,
         );
         var locationJourney = ApiLocationJourney.fromPosition(
-            extractedLocation, userId, newJourneyId);
+            extractedLocation ??
+                LocationData(
+                    latitude: 0, longitude: 0, timestamp: DateTime.now()),
+            userId,
+            newJourneyId);
         locationCache.putLastJourney(locationJourney, userId);
         return locationJourney;
       }
