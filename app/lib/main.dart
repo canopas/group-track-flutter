@@ -22,7 +22,6 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yourspace_flutter/firebase_options.dart';
@@ -72,13 +71,16 @@ void updateSpaceUserNetworkState(
   }
 }
 
-void updateCurrentUserState(
-    RemoteMessage message, NetworkService networkService) {
+void updateCurrentUserState(RemoteMessage message, NetworkService networkService) async {
   final String? userId = message.data[NotificationUpdateStateConst.KEY_USER_ID];
   final bool isTypeUpdateState =
       message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
   if (userId != null && isTypeUpdateState) {
     networkService.updateUserNetworkState(userId);
+  }
+  if (userId != null) {
+    final lastKnownJourney = await journeyRepository.getLastKnownLocation(userId, null);
+    journeyRepository.addJourneyOnDayChange(null, lastKnownJourney, userId);
   }
 }
 
@@ -152,6 +154,7 @@ int? _batteryLevel;
 
 @pragma('vm:entry-point')
 Future<void> onStart(ServiceInstance service) async {
+  if (Platform.isIOS) return;
   WidgetsFlutterBinding.ensureInitialized();
   final isLocationPermission = await Permission.location.isGranted;
   if (!isLocationPermission) return;
@@ -205,10 +208,7 @@ Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
   final userId = await _getUserIdFromPreferences();
   if (userId != null) {
     try {
-      await locationService.saveCurrentLocation(
-          userId,
-          LatLng(locationPosition.latitude, locationPosition.longitude),
-          DateTime.now().millisecondsSinceEpoch);
+      await locationService.saveCurrentLocation(userId, locationPosition);
 
       await journeyRepository.saveLocationJourney(locationPosition, userId);
     } catch (error, stack) {
@@ -237,11 +237,7 @@ void _updateUserLocation(
       longitude: position.longitude,
       timestamp: position.timestamp,
     );
-    await locationService.saveCurrentLocation(
-      userId,
-      LatLng(position.latitude, position.longitude),
-      DateTime.now().millisecondsSinceEpoch,
-    );
+    await locationService.saveCurrentLocation(userId, locationData);
 
     await journeyRepository.saveLocationJourney(locationData, userId);
   } catch (error, stack) {

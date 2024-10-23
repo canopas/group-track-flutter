@@ -10,7 +10,7 @@ import CoreLocation
 
     var geofencePlugin: GeofenceService?
     var locationManager: CLLocationManager?
-    var previousLocation: CLLocation?
+    var lastUpdateTime: Date?
 
     override func application(
         _ application: UIApplication,
@@ -26,11 +26,11 @@ import CoreLocation
 
         let key = Bundle.main.object(forInfoDictionaryKey: "ApiMapKey")
         GMSServices.provideAPIKey(key as! String)
-
+        
+        getLocationMethodRegistration()
         geofencePluginRegistration()
 
         GeneratedPluginRegistrant.register(with: self)
-        setUpFlutterMethodChannelForInvokeLocation()
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
@@ -79,21 +79,36 @@ extension AppDelegate: CLLocationManagerDelegate {
         locationManager = CLLocationManager()
         locationManager?.delegate = self
         locationManager?.distanceFilter = 10
-        locationManager?.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager?.desiredAccuracy = kCLLocationAccuracyHundredMeters
         locationManager?.allowsBackgroundLocationUpdates = true
         locationManager?.pausesLocationUpdatesAutomatically = false
-        locationManager?.startMonitoringSignificantLocationChanges()
+        locationManager?.startUpdatingLocation()
     }
     
-    private func setUpFlutterMethodChannelForInvokeLocation() {
-        let controller = window?.rootViewController as! FlutterViewController
-        let locationChannel = FlutterMethodChannel(name: "com.grouptrack/set_up_location", binaryMessenger: controller.binaryMessenger)
+    func getCurrentLocation(result: @escaping FlutterResult) {
+        guard let locationManager = self.locationManager,
+              let location = locationManager.location else {
+            result(FlutterError(code: "LOCATION_ERROR", message: "Location data not available", details: nil))
+            return
+        }
+        
+        let locationData: [String: Any] = [
+            "latitude": location.coordinate.latitude,
+            "longitude": location.coordinate.longitude,
+            "timestamp": location.timestamp.timeIntervalSince1970 * 1000
+        ]
+        result(locationData)
+    }
+    
+    func getLocationMethodRegistration() {
+        let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
+        let locationChannel = FlutterMethodChannel(name: "com.grouptrack/current_location", binaryMessenger: controller.binaryMessenger)
         
         locationChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
             guard let self = self else { return }
-            if call.method == "setUpLocation" {
-                self.setUpLocation()
-                result(nil)
+            
+            if call.method == "getCurrentLocation" {
+                self.getCurrentLocation(result: result)
             } else {
                 result(FlutterMethodNotImplemented)
             }
@@ -102,16 +117,18 @@ extension AppDelegate: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last else { return }
-
-        if let lastLocation = previousLocation {
-            let distance = currentLocation.distance(from: lastLocation)
-
-            if distance < 10 {
-                previousLocation = currentLocation
+        
+        let currentTime = Date()
+        
+        if let lastTime = lastUpdateTime {
+            let timeInterval = currentTime.timeIntervalSince(lastTime)
+            if timeInterval < 10 {
                 return
             }
         }
-
+        
+        lastUpdateTime = currentTime
+        
         let locationData: [String: Any] = [
             "latitude": currentLocation.coordinate.latitude,
             "longitude": currentLocation.coordinate.longitude,
