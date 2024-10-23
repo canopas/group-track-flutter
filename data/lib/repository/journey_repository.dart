@@ -31,6 +31,7 @@ class JourneyRepository {
       _startSteadyLocationTimer(extractedLocation, userId);
 
       var lastKnownJourney = await _getLastKnownLocation(userId, extractedLocation);
+      addJourneyOnDayChange(extractedLocation, userId);
 
       locationCache.addLocation(extractedLocation, userId); // to get all route position between location a -> b for moving user journey
 
@@ -83,10 +84,10 @@ class JourneyRepository {
     }
   }
 
-  Future<void> addJourneyOnDayChange(String userId) async {
+  Future<void> addJourneyOnDayChange(LocationData? extractedLocation,String userId) async {
     var lastKnownJourney = locationCache.getLastJourney(userId);
     if (lastKnownJourney == null) return;
-    bool isDayChanged = this.isDayChanged(lastKnownJourney);
+    bool isDayChanged = this.isDayChanged(extractedLocation, lastKnownJourney);
 
     if (isDayChanged) {
       // Day is changed between last known journey and current location
@@ -96,10 +97,10 @@ class JourneyRepository {
     }
   }
 
-  bool isDayChanged(ApiLocationJourney lastKnownJourney) {
+  bool isDayChanged(LocationData? extractedLocation, ApiLocationJourney lastKnownJourney) {
     var lastKnownDate =
         DateTime.fromMillisecondsSinceEpoch(lastKnownJourney.update_at!);
-    var extractedDate = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
+    var extractedDate = DateTime.fromMillisecondsSinceEpoch(extractedLocation?.timestamp.millisecondsSinceEpoch ?? DateTime.now().millisecondsSinceEpoch);
 
     return lastKnownDate.day != extractedDate.day;
   }
