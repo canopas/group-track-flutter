@@ -76,7 +76,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
   Future<void> fetchCurrentLocation() async {
     if (!_fetchCurrentLocation.state) return;
-
     try {
       final location = await currentUserLocation();
 
@@ -94,7 +93,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
   Future<LocationData> currentUserLocation() async {
     if (Platform.isIOS) {
-      const platform = MethodChannel('com.grouptrack/get_current_location');
+      const platform = MethodChannel('com.grouptrack/current_location');
       final locationFromIOS = await platform.invokeMethod('getCurrentLocation');
       return LocationData(
         latitude: locationFromIOS['latitude'],

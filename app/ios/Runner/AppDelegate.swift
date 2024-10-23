@@ -26,9 +26,9 @@ import CoreLocation
 
         let key = Bundle.main.object(forInfoDictionaryKey: "ApiMapKey")
         GMSServices.provideAPIKey(key as! String)
-
+        
+        getLocationMethodRegistration()
         geofencePluginRegistration()
-        getCurrentLocationMethod()
 
         GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -85,21 +85,6 @@ extension AppDelegate: CLLocationManagerDelegate {
         locationManager?.startUpdatingLocation()
     }
     
-    private func getCurrentLocationMethod() {
-        let controller = window?.rootViewController as! FlutterViewController
-        let locationChannel = FlutterMethodChannel(name: "com.grouptrack/set_up_location", binaryMessenger: controller.binaryMessenger)
-        
-        locationChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
-            guard let self = self else { return }
-            
-            if call.method == "getCurrentLocation" {
-                self.getCurrentLocation(result: result)
-            } else {
-                result(FlutterMethodNotImplemented)
-            }
-        }
-    }
-    
     func getCurrentLocation(result: @escaping FlutterResult) {
         guard let locationManager = self.locationManager,
               let location = locationManager.location else {
@@ -113,6 +98,21 @@ extension AppDelegate: CLLocationManagerDelegate {
             "timestamp": location.timestamp.timeIntervalSince1970 * 1000
         ]
         result(locationData)
+    }
+    
+    func getLocationMethodRegistration() {
+        let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
+        let locationChannel = FlutterMethodChannel(name: "com.grouptrack/current_location", binaryMessenger: controller.binaryMessenger)
+        
+        locationChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
+            guard let self = self else { return }
+            
+            if call.method == "getCurrentLocation" {
+                self.getCurrentLocation(result: result)
+            } else {
+                result(FlutterMethodNotImplemented)
+            }
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
