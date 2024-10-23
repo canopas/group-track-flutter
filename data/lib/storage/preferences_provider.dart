@@ -10,7 +10,9 @@ StateProvider<T> createPrefProvider<T>({
 }) {
   return StateProvider((ref) {
     final prefs = ref.watch(sharedPreferencesProvider);
+
     final currentValue = prefs.get(prefKey) as T? ?? defaultValue;
+
     ref.listenSelf((prev, curr) {
       if (curr == null) {
         prefs.remove(prefKey);
