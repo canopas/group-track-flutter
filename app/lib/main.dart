@@ -24,7 +24,6 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yourspace_flutter/firebase_options.dart';
@@ -36,6 +35,7 @@ const platform = MethodChannel('com.grouptrack/location');
 late final LocationService locationService;
 late final JourneyRepository journeyRepository;
 late final ApiJourneyService journeyService;
+late final BatteryService batteryService;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,20 +64,30 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   updateCurrentUserState(message, networkService);
 }
 
-void updateSpaceUserNetworkState(RemoteMessage message, NetworkService networkService) {
-  final String? userId = message.data[NotificationNetworkStatusConst.KEY_USER_ID];
-  final bool isTypeNetworkStatus = message.data[NotificationNetworkStatusConst.NOTIFICATION_TYPE_NETWORK_STATUS];
+void updateSpaceUserNetworkState(
+    RemoteMessage message, NetworkService networkService) {
+  final String? userId =
+      message.data[NotificationNetworkStatusConst.KEY_USER_ID];
+  final bool isTypeNetworkStatus = message
+      .data[NotificationNetworkStatusConst.NOTIFICATION_TYPE_NETWORK_STATUS];
   if (userId != null && isTypeNetworkStatus) {
     networkService.updateUserNetworkState(userId);
   }
 }
 
-void updateCurrentUserState(RemoteMessage message, NetworkService networkService) {
+void updateCurrentUserState(RemoteMessage message, NetworkService networkService) async {
   final String? userId = message.data[NotificationUpdateStateConst.KEY_USER_ID];
-  final bool isTypeUpdateState = message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
+  final bool isTypeUpdateState =
+      message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
   if (userId != null && isTypeUpdateState) {
     networkService.updateUserNetworkState(userId);
   }
+  if (userId != null) {
+    final lastKnownJourney = await journeyRepository.getLastKnownLocation(userId, null);
+    journeyRepository.addJourneyOnDayChange(null, lastKnownJourney, userId);
+  }
+
+  if (Platform.isIOS) userBatteryLevel(userId!, Battery(), batteryService);
 }
 
 Future<ProviderContainer> _initContainer() async {
@@ -90,6 +100,7 @@ Future<ProviderContainer> _initContainer() async {
   locationService = LocationService(FirebaseFirestore.instance);
   journeyService = ApiJourneyService(FirebaseFirestore.instance);
   journeyRepository = JourneyRepository(journeyService);
+  batteryService = BatteryService(FirebaseFirestore.instance);
 
   final prefs = await SharedPreferences.getInstance();
 
@@ -113,12 +124,14 @@ Future<String?> _getUserIdFromPreferences() async {
 
 Future<void> _handleLocationUpdates(MethodCall call) async {
   if (call.method == 'onLocationUpdate') {
-    final Map<String, dynamic> locationData = Map<String, dynamic>.from(call.arguments);
+    final Map<String, dynamic> locationData =
+        Map<String, dynamic>.from(call.arguments);
 
     final LocationData locationPosition = LocationData(
       latitude: locationData['latitude'],
       longitude: locationData['longitude'],
-      timestamp: DateTime.fromMillisecondsSinceEpoch(locationData['timestamp'].toInt()),
+      timestamp: DateTime.fromMillisecondsSinceEpoch(
+          locationData['timestamp'].toInt()),
     );
 
     await _updateUserLocationWithIOS(locationPosition);
@@ -153,6 +166,7 @@ int? _batteryLevel;
 
 @pragma('vm:entry-point')
 Future<void> onStart(ServiceInstance service) async {
+  if (Platform.isIOS) return;
   WidgetsFlutterBinding.ensureInitialized();
   final isLocationPermission = await Permission.location.isGranted;
   if (!isLocationPermission) return;
@@ -206,11 +220,7 @@ Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
   final userId = await _getUserIdFromPreferences();
   if (userId != null) {
     try {
-      await locationService.saveCurrentLocation(
-        userId,
-        LatLng(locationPosition.latitude, locationPosition.longitude),
-        DateTime.now().millisecondsSinceEpoch
-      );
+      await locationService.saveCurrentLocation(userId, locationPosition);
 
       await journeyRepository.saveLocationJourney(locationPosition, userId);
     } catch (error, stack) {
@@ -227,7 +237,6 @@ void _updateUserLocation(
   String userId,
   Position? position,
 ) async {
-  if (Platform.isIOS) return;
   final isSame = _previousPosition?.latitude == position?.latitude &&
       _previousPosition?.longitude == position?.longitude;
 
@@ -240,11 +249,7 @@ void _updateUserLocation(
       longitude: position.longitude,
       timestamp: position.timestamp,
     );
-    await locationService.saveCurrentLocation(
-      userId,
-      LatLng(position.latitude, position.longitude),
-      DateTime.now().millisecondsSinceEpoch,
-    );
+    await locationService.saveCurrentLocation(userId, locationData);
 
     await journeyRepository.saveLocationJourney(locationData, userId);
   } catch (error, stack) {

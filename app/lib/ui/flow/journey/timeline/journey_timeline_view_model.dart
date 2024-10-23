@@ -131,9 +131,11 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
         .difference(DateTime.fromMillisecondsSinceEpoch(createdAt));
 
     if (duration.inHours > 0) {
-      return '${duration.inHours}h ${duration.inMinutes.remainder(60)}min';
-    } else {
+      return '${duration.inHours}h ${duration.inMinutes.remainder(60) > 0 ? '${duration.inMinutes.remainder(60)}min' : ''}';
+    } else if (duration.inMinutes > 0) {
       return '${duration.inMinutes} min';
+    } else {
+      return '';
     }
   }
 
