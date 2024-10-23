@@ -68,11 +68,15 @@ void updateSpaceUserNetworkState(RemoteMessage message, NetworkService networkSe
   }
 }
 
-void updateCurrentUserState(RemoteMessage message, NetworkService networkService) {
+void updateCurrentUserState(RemoteMessage message, NetworkService networkService) async {
   final String? userId = message.data[NotificationUpdateStateConst.KEY_USER_ID];
   final bool isTypeUpdateState = message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
   if (userId != null && isTypeUpdateState) {
     networkService.updateUserNetworkState(userId);
+  }
+  if (userId != null) {
+    final lastKnownJourney = await journeyRepository.getLastKnownLocation(userId, null);
+    journeyRepository.addJourneyOnDayChange(null, lastKnownJourney, userId);
   }
 }
 
