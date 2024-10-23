@@ -33,6 +33,7 @@ const platform = MethodChannel('com.grouptrack/location');
 late final LocationService locationService;
 late final JourneyRepository journeyRepository;
 late final ApiJourneyService journeyService;
+late final BatteryService batteryService;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -82,6 +83,8 @@ void updateCurrentUserState(RemoteMessage message, NetworkService networkService
     final lastKnownJourney = await journeyRepository.getLastKnownLocation(userId, null);
     journeyRepository.addJourneyOnDayChange(null, lastKnownJourney, userId);
   }
+
+  if (Platform.isIOS) userBatteryLevel(userId!, Battery(), batteryService);
 }
 
 Future<ProviderContainer> _initContainer() async {
@@ -89,6 +92,7 @@ Future<ProviderContainer> _initContainer() async {
   locationService = LocationService(FirebaseFirestore.instance);
   journeyService = ApiJourneyService(FirebaseFirestore.instance);
   journeyRepository = JourneyRepository(journeyService);
+  batteryService = BatteryService(FirebaseFirestore.instance);
 
   final prefs = await SharedPreferences.getInstance();
 
