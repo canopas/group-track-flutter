@@ -75,7 +75,7 @@ void updateCurrentUserState(RemoteMessage message, NetworkService networkService
   if (userId != null && isTypeUpdateState) {
     networkService.updateUserNetworkState(userId);
   }
-  userBatteryLevel(userId!, Battery(), batteryService);
+  if (Platform.isIOS) userBatteryLevel(userId!, Battery(), batteryService);
 }
 
 Future<ProviderContainer> _initContainer() async {
