@@ -46,6 +46,7 @@ void main() async {
 
   final container = await _initContainer();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   startService();
 
