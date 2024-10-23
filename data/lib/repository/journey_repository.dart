@@ -15,8 +15,8 @@ const MIN_DISTANCE = 150.0; // 150 meters
 const MIN_TIME_DIFFERENCE = 5 * 60 * 1000; // 5 minutes
 
 final journeyRepositoryProvider = Provider((ref) => JourneyRepository(
-  ref.read(journeyServiceProvider),
-));
+      ref.read(journeyServiceProvider),
+    ));
 
 class JourneyRepository {
   final ApiJourneyService journeyService;
@@ -25,7 +25,10 @@ class JourneyRepository {
 
   JourneyRepository(this.journeyService);
 
-  Future<void> saveLocationJourney(LocationData extractedLocation, String userId) async {
+  Future<void> saveLocationJourney(
+    LocationData extractedLocation,
+    String userId,
+  ) async {
     try {
       _cancelSteadyLocationTimer();
       _startSteadyLocationTimer(extractedLocation, userId);
@@ -42,8 +45,10 @@ class JourneyRepository {
       await _checkAndSaveLocationJourney(
           userId, extractedLocation, lastKnownJourney);
     } catch (error, stack) {
-      logger.e('Journey Repository: Error while save journey, $extractedLocation',
-          error: error, stackTrace: stack);
+      logger.e(
+          'Journey Repository: Error while save journey, $extractedLocation',
+          error: error,
+          stackTrace: stack);
     }
   }
 
@@ -222,15 +227,18 @@ class JourneyRepository {
     );
 
     var journey = ApiLocationJourney(
-        id: newJourneyId,
-        user_id: userId,
-        from_latitude: lastKnownJourney.from_latitude,
-        from_longitude: lastKnownJourney.from_longitude,
-        to_latitude: extractedLocation.latitude,
-        to_longitude: extractedLocation.longitude,
-        routes: _getRoute(userId),
-        route_distance: distance,
-        route_duration: null);
+      id: newJourneyId,
+      user_id: userId,
+      from_latitude: lastKnownJourney.from_latitude,
+      from_longitude: lastKnownJourney.from_longitude,
+      to_latitude: extractedLocation.latitude,
+      to_longitude: extractedLocation.longitude,
+      routes: _getRoute(userId),
+      route_distance: distance,
+      route_duration: null,
+      created_at: DateTime.now().millisecondsSinceEpoch,
+      update_at: DateTime.now().millisecondsSinceEpoch,
+    );
 
     locationCache.putLastJourney(journey, userId);
   }
@@ -250,7 +258,8 @@ class JourneyRepository {
       to_latitude: extractedLocation.latitude,
       to_longitude: extractedLocation.longitude,
       route_distance: distance + (lastKnownJourney.route_distance ?? 0),
-      route_duration: (lastKnownJourney.update_at ?? 0) - (lastKnownJourney.created_at ?? 0),
+      route_duration: (lastKnownJourney.update_at ?? 0) -
+          (lastKnownJourney.created_at ?? 0),
       routes: _getRoute(userId),
       created_at: lastKnownJourney.created_at,
       update_at: DateTime.now().millisecondsSinceEpoch,
@@ -274,7 +283,8 @@ class JourneyRepository {
       to_latitude: extractedLocation.latitude,
       to_longitude: extractedLocation.longitude,
       route_distance: distance + (lastKnownJourney.route_distance ?? 0),
-      route_duration: (lastKnownJourney.update_at ?? 0) - (lastKnownJourney.created_at ?? 0),
+      route_duration: (lastKnownJourney.update_at ?? 0) -
+          (lastKnownJourney.created_at ?? 0),
       routes: _getRoute(userId),
       created_at: lastKnownJourney.created_at,
       update_at: lastKnownJourney.update_at,
@@ -331,8 +341,10 @@ class JourneyRepository {
 
   LocationData _geometricMedianCalculation(List<LocationData> locations) {
     LocationData result = locations.reduce((candidate, location) {
-      double candidateSum = locations.fold(0.0, (sum, loc) => sum + _distanceBetween(candidate, loc));
-      double locationSum = locations.fold(0.0, (sum, loc) => sum + _distanceBetween(location, loc));
+      double candidateSum = locations.fold(
+          0.0, (sum, loc) => sum + _distanceBetween(candidate, loc));
+      double locationSum = locations.fold(
+          0.0, (sum, loc) => sum + _distanceBetween(location, loc));
 
       return candidateSum < locationSum ? candidate : location;
     });
