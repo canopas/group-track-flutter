@@ -74,6 +74,7 @@ void updateCurrentUserState(RemoteMessage message, NetworkService networkService
   if (userId != null && isTypeUpdateState) {
     networkService.updateUserNetworkState(userId);
   }
+  if (userId != null) journeyRepository.addJourneyOnDayChange(userId);
 }
 
 Future<ProviderContainer> _initContainer() async {
