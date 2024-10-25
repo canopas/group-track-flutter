@@ -236,7 +236,7 @@ class JourneyRepository {
       routes: _getRoute(userId),
       route_distance: distance,
       route_duration: null,
-      created_at: DateTime.now().millisecondsSinceEpoch,
+      created_at: lastKnownJourney.created_at,
       update_at: DateTime.now().millisecondsSinceEpoch,
     );
 
