@@ -37,7 +37,7 @@ class JourneyRepository {
       _startSteadyLocationTimer(extractedLocation, userId);
 
       // Check and save location journey on day changed
-      addJourneyOnDayChange(extractedLocation, lastKnownJourney, userId);
+      checkAndSaveJourneyOnDayChange(extractedLocation, lastKnownJourney, userId);
 
       // to get all route position between location a -> b for moving user journey
       locationCache.addLocation(extractedLocation, userId);
@@ -71,8 +71,7 @@ class JourneyRepository {
       try {
         await _saveSteadyLocation(position, userId);
         _cancelSteadyLocationTimer();
-        locationCache
-            .clearLocationCache(); // removing previous journey routes to get latest location route for next journey from start point to end
+        locationCache.clearLocationCache(); // removing previous journey routes to get latest location route for next journey from start point to end
       } catch (e, stack) {
         logger.e('Error saving steady location for user $userId: $e',
             stackTrace: stack);
@@ -97,15 +96,42 @@ class JourneyRepository {
     }
   }
 
-  Future<void> addJourneyOnDayChange(LocationData? extractedLocation,
+  Future<void> checkAndSaveJourneyOnDayChange(LocationData? extractedLocation,
       ApiLocationJourney lasKnownJourney, String userId) async {
     bool dayChanged = isDayChanged(extractedLocation, lasKnownJourney);
 
-    if (dayChanged) {
-      // Day is changed between last known journey and current location
-      // Just save again the last known journey in remote database with updated day i.e., current time
-      await _saveJourneyOnDayChanged(userId, lasKnownJourney);
+    if (dayChanged && extractedLocation != null) {
+      var locations = locationCache.getLastFiveLocations(userId);
+
+      var geometricMedian = locations.isNotEmpty ? _geometricMedianCalculation(locations) : null;
+
+      final lastKnownLocation = lasKnownJourney.isSteadyLocation()
+          ? lasKnownJourney.toLocationFromSteadyJourney()
+          : lasKnownJourney.toLocationFromMovingJourney();
+
+      final distance = _distanceBetween(geometricMedian!, lastKnownLocation);
+
+      if (distance < MIN_DISTANCE) {
+        // Here, means user is at same location on day changed
+        // Save last known journey with updated day
+        await _saveJourneyOnDayChanged(userId, lasKnownJourney);
+      } else {
+        // Here means, user has moved to new location on day changed
+        // Save new location journey with steady state
+        final newJourneyId = await journeyService.saveCurrentJourney(
+          userId: userId,
+          fromLatitude: extractedLocation.latitude,
+          fromLongitude: extractedLocation.longitude,
+          created_at: extractedLocation.timestamp.millisecondsSinceEpoch,
+        );
+
+        var locationJourney = ApiLocationJourney.toLocationJourney(
+            extractedLocation, userId, newJourneyId);
+        locationCache.putLastJourney(locationJourney, userId);
+      }
       return;
+    } else if (dayChanged) {
+      await _saveJourneyOnDayChanged(userId, lasKnownJourney);
     }
   }
 
