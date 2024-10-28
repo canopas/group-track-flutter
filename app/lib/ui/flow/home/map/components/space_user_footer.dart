@@ -65,6 +65,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
             child: widget.selectedUser != null
                 ? SelectedMemberDetailView(
                     key: const ValueKey('detailView'),
+                    groupCreatedDate: widget.selectedSpace?.space.created_at ?? 0,
                     userInfo: widget.selectedUser,
                     onDismiss: widget.onDismiss,
                   )
