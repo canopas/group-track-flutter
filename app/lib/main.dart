@@ -84,7 +84,7 @@ void updateCurrentUserState(RemoteMessage message, NetworkService networkService
   }
   if (userId != null) {
     final lastKnownJourney = await journeyRepository.getLastKnownLocation(userId, null);
-    journeyRepository.addJourneyOnDayChange(null, lastKnownJourney, userId);
+    journeyRepository.checkAndSaveJourneyOnDayChange(null, lastKnownJourney, userId);
   }
 
   if (Platform.isIOS) userBatteryLevel(userId!, Battery(), batteryService);

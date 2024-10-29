@@ -52,15 +52,15 @@ class ApiLocationJourney with _$ApiLocationJourney {
     return to_latitude == null && to_longitude == null;
   }
 
-  LocationData toPositionFromSteadyJourney() {
+  LocationData toLocationFromSteadyJourney() {
     return LocationData(latitude: from_latitude, longitude: from_longitude, timestamp: DateTime.now());
   }
 
-  LocationData toPositionFromMovingJourney() {
+  LocationData toLocationFromMovingJourney() {
     return LocationData(latitude: to_latitude ?? 0, longitude: to_longitude ?? 0, timestamp: DateTime.now());
   }
 
-  static ApiLocationJourney fromPosition(LocationData pos, String userId, String newJourneyId) {
+  static ApiLocationJourney toLocationJourney(LocationData pos, String userId, String newJourneyId) {
     return ApiLocationJourney(
       id: newJourneyId,
       user_id: userId,
