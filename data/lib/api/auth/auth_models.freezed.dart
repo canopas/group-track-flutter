@@ -23,7 +23,6 @@ mixin _$ApiUser {
   String get id => throw _privateConstructorUsedError;
   String? get first_name => throw _privateConstructorUsedError;
   String? get last_name => throw _privateConstructorUsedError;
-  String? get phone => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get provider_firebase_id_token => throw _privateConstructorUsedError;
   int get auth_type => throw _privateConstructorUsedError;
@@ -50,7 +49,6 @@ abstract class $ApiUserCopyWith<$Res> {
       {String id,
       String? first_name,
       String? last_name,
-      String? phone,
       String? email,
       String? provider_firebase_id_token,
       int auth_type,
@@ -80,7 +78,6 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
     Object? id = null,
     Object? first_name = freezed,
     Object? last_name = freezed,
-    Object? phone = freezed,
     Object? email = freezed,
     Object? provider_firebase_id_token = freezed,
     Object? auth_type = null,
@@ -105,10 +102,6 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
       last_name: freezed == last_name
           ? _value.last_name
           : last_name // ignore: cast_nullable_to_non_nullable
-              as String?,
-      phone: freezed == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
               as String?,
       email: freezed == email
           ? _value.email
@@ -169,7 +162,6 @@ abstract class _$$ApiUserImplCopyWith<$Res> implements $ApiUserCopyWith<$Res> {
       {String id,
       String? first_name,
       String? last_name,
-      String? phone,
       String? email,
       String? provider_firebase_id_token,
       int auth_type,
@@ -197,7 +189,6 @@ class __$$ApiUserImplCopyWithImpl<$Res>
     Object? id = null,
     Object? first_name = freezed,
     Object? last_name = freezed,
-    Object? phone = freezed,
     Object? email = freezed,
     Object? provider_firebase_id_token = freezed,
     Object? auth_type = null,
@@ -222,10 +213,6 @@ class __$$ApiUserImplCopyWithImpl<$Res>
       last_name: freezed == last_name
           ? _value.last_name
           : last_name // ignore: cast_nullable_to_non_nullable
-              as String?,
-      phone: freezed == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
               as String?,
       email: freezed == email
           ? _value.email
@@ -282,7 +269,6 @@ class _$ApiUserImpl extends _ApiUser {
       {required this.id,
       this.first_name,
       this.last_name,
-      this.phone,
       this.email,
       this.provider_firebase_id_token,
       required this.auth_type,
@@ -306,8 +292,6 @@ class _$ApiUserImpl extends _ApiUser {
   final String? first_name;
   @override
   final String? last_name;
-  @override
-  final String? phone;
   @override
   final String? email;
   @override
@@ -344,7 +328,7 @@ class _$ApiUserImpl extends _ApiUser {
 
   @override
   String toString() {
-    return 'ApiUser(id: $id, first_name: $first_name, last_name: $last_name, phone: $phone, email: $email, provider_firebase_id_token: $provider_firebase_id_token, auth_type: $auth_type, profile_image: $profile_image, location_enabled: $location_enabled, space_ids: $space_ids, battery_pct: $battery_pct, fcm_token: $fcm_token, state: $state, created_at: $created_at, updated_at: $updated_at)';
+    return 'ApiUser(id: $id, first_name: $first_name, last_name: $last_name, email: $email, provider_firebase_id_token: $provider_firebase_id_token, auth_type: $auth_type, profile_image: $profile_image, location_enabled: $location_enabled, space_ids: $space_ids, battery_pct: $battery_pct, fcm_token: $fcm_token, state: $state, created_at: $created_at, updated_at: $updated_at)';
   }
 
   @override
@@ -357,7 +341,6 @@ class _$ApiUserImpl extends _ApiUser {
                 other.first_name == first_name) &&
             (identical(other.last_name, last_name) ||
                 other.last_name == last_name) &&
-            (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.provider_firebase_id_token,
                     provider_firebase_id_token) ||
@@ -389,7 +372,6 @@ class _$ApiUserImpl extends _ApiUser {
       id,
       first_name,
       last_name,
-      phone,
       email,
       provider_firebase_id_token,
       auth_type,
@@ -421,7 +403,6 @@ abstract class _ApiUser extends ApiUser {
       {required final String id,
       final String? first_name,
       final String? last_name,
-      final String? phone,
       final String? email,
       final String? provider_firebase_id_token,
       required final int auth_type,
@@ -443,8 +424,6 @@ abstract class _ApiUser extends ApiUser {
   String? get first_name;
   @override
   String? get last_name;
-  @override
-  String? get phone;
   @override
   String? get email;
   @override

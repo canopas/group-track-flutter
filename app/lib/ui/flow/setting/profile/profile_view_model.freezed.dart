@@ -27,7 +27,6 @@ mixin _$EditProfileViewState {
   TextEditingController get firstName => throw _privateConstructorUsedError;
   TextEditingController get lastName => throw _privateConstructorUsedError;
   TextEditingController get email => throw _privateConstructorUsedError;
-  TextEditingController get phone => throw _privateConstructorUsedError;
   String get profileUrl => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
@@ -54,7 +53,6 @@ abstract class $EditProfileViewStateCopyWith<$Res> {
       TextEditingController firstName,
       TextEditingController lastName,
       TextEditingController email,
-      TextEditingController phone,
       String profileUrl,
       Object? error});
 }
@@ -84,7 +82,6 @@ class _$EditProfileViewStateCopyWithImpl<$Res,
     Object? firstName = null,
     Object? lastName = null,
     Object? email = null,
-    Object? phone = null,
     Object? profileUrl = null,
     Object? error = freezed,
   }) {
@@ -133,10 +130,6 @@ class _$EditProfileViewStateCopyWithImpl<$Res,
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as TextEditingController,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as TextEditingController,
       profileUrl: null == profileUrl
           ? _value.profileUrl
           : profileUrl // ignore: cast_nullable_to_non_nullable
@@ -166,7 +159,6 @@ abstract class _$$EditProfileViewStateImplCopyWith<$Res>
       TextEditingController firstName,
       TextEditingController lastName,
       TextEditingController email,
-      TextEditingController phone,
       String profileUrl,
       Object? error});
 }
@@ -193,7 +185,6 @@ class __$$EditProfileViewStateImplCopyWithImpl<$Res>
     Object? firstName = null,
     Object? lastName = null,
     Object? email = null,
-    Object? phone = null,
     Object? profileUrl = null,
     Object? error = freezed,
   }) {
@@ -242,10 +233,6 @@ class __$$EditProfileViewStateImplCopyWithImpl<$Res>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as TextEditingController,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as TextEditingController,
       profileUrl: null == profileUrl
           ? _value.profileUrl
           : profileUrl // ignore: cast_nullable_to_non_nullable
@@ -270,7 +257,6 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
       required this.firstName,
       required this.lastName,
       required this.email,
-      required this.phone,
       required this.profileUrl,
       this.error});
 
@@ -305,15 +291,13 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
   @override
   final TextEditingController email;
   @override
-  final TextEditingController phone;
-  @override
   final String profileUrl;
   @override
   final Object? error;
 
   @override
   String toString() {
-    return 'EditProfileViewState(saving: $saving, saved: $saved, allowSave: $allowSave, enablePhone: $enablePhone, enableEmail: $enableEmail, accountDeleted: $accountDeleted, uploadingImage: $uploadingImage, deletingAccount: $deletingAccount, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, profileUrl: $profileUrl, error: $error)';
+    return 'EditProfileViewState(saving: $saving, saved: $saved, allowSave: $allowSave, enablePhone: $enablePhone, enableEmail: $enableEmail, accountDeleted: $accountDeleted, uploadingImage: $uploadingImage, deletingAccount: $deletingAccount, firstName: $firstName, lastName: $lastName, email: $email, profileUrl: $profileUrl, error: $error)';
   }
 
   @override
@@ -340,7 +324,6 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
             (identical(other.lastName, lastName) ||
                 other.lastName == lastName) &&
             (identical(other.email, email) || other.email == email) &&
-            (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.profileUrl, profileUrl) ||
                 other.profileUrl == profileUrl) &&
             const DeepCollectionEquality().equals(other.error, error));
@@ -360,7 +343,6 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
       firstName,
       lastName,
       email,
-      phone,
       profileUrl,
       const DeepCollectionEquality().hash(error));
 
@@ -386,7 +368,6 @@ abstract class _EditProfileViewState implements EditProfileViewState {
       required final TextEditingController firstName,
       required final TextEditingController lastName,
       required final TextEditingController email,
-      required final TextEditingController phone,
       required final String profileUrl,
       final Object? error}) = _$EditProfileViewStateImpl;
 
@@ -412,8 +393,6 @@ abstract class _EditProfileViewState implements EditProfileViewState {
   TextEditingController get lastName;
   @override
   TextEditingController get email;
-  @override
-  TextEditingController get phone;
   @override
   String get profileUrl;
   @override

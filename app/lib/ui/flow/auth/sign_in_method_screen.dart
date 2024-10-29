@@ -8,10 +8,10 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/app_logo.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
-import 'package:yourspace_flutter/ui/flow/auth/sign_in/sign_in_method_viewmodel.dart';
+import 'package:yourspace_flutter/ui/flow/auth/sign_in_method_viewmodel.dart';
 
-import '../../../../gen/assets.gen.dart';
-import '../../../app_route.dart';
+import '../../../gen/assets.gen.dart';
+import '../../app_route.dart';
 import 'component/sign_in_method_button.dart';
 
 class SignInMethodScreen extends ConsumerStatefulWidget {
@@ -56,7 +56,6 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
             const Spacer(flex: 2),
             _appleSignInButton(),
             _googleSignInButton(),
-            _phoneSignInButton(),
             const Spacer(flex: 2),
           ],
         ),
@@ -100,23 +99,6 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
           ),
         ),
       );
-
-  Widget _phoneSignInButton() => Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: SignInMethodButton(
-        onTap: () async {
-          final isGoogleLoading = ref.read(signInMethodsStateProvider
-              .select((value) => value.showGoogleLoading));
-          if (isGoogleLoading) return;
-          final List<bool> data =
-              await AppRoute.signInWithPhone.push(context) ?? List.empty();
-          if (data.isNotEmpty && data.first == true && context.mounted) {
-            onSignInSuccess();
-          }
-        },
-        title: context.l10n.sign_in_options_continue_with_phone_btn_title,
-        //  isLoading: ref.watch(signInMethodsStateProvider.select((value) => value.aho)),
-      ));
 
   void onSignInSuccess() async {
     final state = ref.watch(signInMethodsStateProvider);

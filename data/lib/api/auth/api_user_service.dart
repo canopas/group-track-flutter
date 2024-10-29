@@ -65,7 +65,7 @@ class ApiUserService {
     String? firstName,
     String? lastName,
     String? profileImage,
-    int authType = LOGIN_TYPE_PHONE,
+    int authType = LOGIN_TYPE_GOOGLE,
   }) async {
     final bool isExists = await getUser(uid) != null;
 
@@ -88,7 +88,6 @@ class ApiUserService {
       final ApiUser user = ApiUser(
         id: uid,
         email: email ?? '',
-        phone: phone ?? '',
         auth_type: authType,
         first_name: firstName ?? '',
         last_name: '',

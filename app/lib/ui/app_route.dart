@@ -8,7 +8,6 @@ import 'package:data/api/space/space_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:yourspace_flutter/ui/flow/auth/sign_in/phone/verification/phone_verification_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_screen.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/edit/edit_place_screen.dart';
@@ -28,8 +27,7 @@ import 'package:yourspace_flutter/ui/flow/space/create/create_space_screen.dart'
 import 'package:yourspace_flutter/ui/flow/space/invite/invite_code_screen.dart';
 import 'package:yourspace_flutter/ui/flow/space/join/join_space_screen.dart';
 
-import 'flow/auth/sign_in/phone/sign_in_with_phone_screen.dart';
-import 'flow/auth/sign_in/sign_in_method_screen.dart';
+import 'flow/auth/sign_in_method_screen.dart';
 import 'flow/geofence/add/addnew/add_new_place_screen.dart';
 import 'flow/home/home_screen.dart';
 import 'flow/intro/intro_screen.dart';
@@ -143,11 +141,6 @@ class AppRoute {
   static AppRoute get signInMethod =>
       AppRoute("/sign-in", builder: (_) => const SignInMethodScreen());
 
-  static AppRoute get signInWithPhone => AppRoute(
-        "/sign-in-with-phone",
-        builder: (_) => const SignInWithPhoneScreen(),
-      );
-
   static AppRoute pickName({ApiUser? user}) => AppRoute(
         pathPickName,
         builder: (_) => PickNameScreen(user: user),
@@ -155,14 +148,6 @@ class AppRoute {
 
   static AppRoute get connection =>
       AppRoute(pathConnection, builder: (_) => const ConnectionScreen());
-
-  static AppRoute otpVerification(
-      {required String phoneNumber, required String verificationId}) {
-    return AppRoute(
-      pathPhoneNumberVerification,
-      builder: (_) => PhoneVerificationScreen(phoneNumber, verificationId),
-    );
-  }
 
   static AppRoute createSpace({bool fromOnboard = false}) =>
       AppRoute(pathCreateSpace,
@@ -248,9 +233,9 @@ class AppRoute {
     );
   }
 
-  static AppRoute journeyTimeline(ApiUser user) {
+  static AppRoute journeyTimeline(ApiUser user, int groupCreatedDate) {
     return AppRoute(pathJourneyTimeline,
-        builder: (_) => JourneyTimelineScreen(selectedUser: user));
+        builder: (_) => JourneyTimelineScreen(selectedUser: user, groupCreatedDate: groupCreatedDate));
   }
 
   static AppRoute journeyDetail(ApiLocationJourney journey) {
@@ -316,14 +301,6 @@ class AppRoute {
             : state.widget(context);
       },
     ),
-    signInWithPhone.goRoute(),
-    GoRoute(
-        path: pathPhoneNumberVerification,
-        builder: (context, state) {
-          return state.extra == null
-              ? const PhoneVerificationScreen('', '')
-              : state.widget(context);
-        }),
     GoRoute(
       path: pathCreateSpace,
       builder: (context, state) => state.widget(context),

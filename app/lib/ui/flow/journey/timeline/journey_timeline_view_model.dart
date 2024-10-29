@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:style/extenstions/date_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 
 import '../../../components/no_internet_screen.dart';
@@ -53,22 +54,30 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       state = state.copyWith(
           isLoading: state.sortedJourney.isEmpty, appending: loadMore);
       final userId = state.selectedUser!.id;
-      final from = state.selectedTimeFrom;
-      final to = state.selectedTimeTo;
+      final from = state.selectedTimeFrom ?? DateTime.now().startOfDay.millisecondsSinceEpoch;
+      final to = state.selectedTimeTo ?? DateTime.now().endOfDay.millisecondsSinceEpoch;
       final lastJourneyTime = _getEarliestJourneyTime(state.sortedJourney);
+
+      // Fetch journey history based on loadMore status
       final journeys = (loadMore)
           ? await journeyService.getMoreJourneyHistory(userId, lastJourneyTime)
           : await journeyService.getJourneyHistory(userId, from, to);
 
-      final allJourney = [...state.sortedJourney, ...journeys];
+      // Filter by date range
+      final filteredJourneys = journeys.where((journey) {
+        return journey.created_at! >= from && journey.created_at! <= to;
+      }).toList();
 
-      final sortJourney = _sortJourneysByUpdateAt(allJourney);
+      // Combine all journeys and sort
+      final allJourney = [...state.sortedJourney, ...filteredJourneys];
+      final sortedJourney = _sortJourneysByUpdateAt(allJourney);
 
+      // Update state with final data
       state = state.copyWith(
         isLoading: false,
         appending: false,
-        hasMore: journeys.isNotEmpty && from == null && to == null,
-        sortedJourney: sortJourney,
+        hasMore: filteredJourneys.isNotEmpty,
+        sortedJourney: sortedJourney,
       );
     } catch (error, stack) {
       state = state.copyWith(error: error, isLoading: false, appending: false);
@@ -110,7 +119,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     if (isNetworkOff) return;
 
     final fromTimeStamp = pickedDate.millisecondsSinceEpoch;
-    final toTimeStamp = pickedDate.copyWith(hour: 23).millisecondsSinceEpoch;
+    final toTimeStamp = pickedDate.endOfDay.millisecondsSinceEpoch;
     state = state.copyWith(
       selectedTimeFrom: fromTimeStamp,
       selectedTimeTo: toTimeStamp,
@@ -130,9 +139,11 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
         .difference(DateTime.fromMillisecondsSinceEpoch(createdAt));
 
     if (duration.inHours > 0) {
-      return '${duration.inHours}h ${duration.inMinutes.remainder(60)}min';
-    } else {
+      return '${duration.inHours}h ${duration.inMinutes.remainder(60) > 0 ? '${duration.inMinutes.remainder(60)}min' : ''}';
+    } else if (duration.inMinutes > 0) {
       return '${duration.inMinutes} min';
+    } else {
+      return '';
     }
   }
 

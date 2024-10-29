@@ -89,9 +89,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 context, context.l10n.edit_profile_email_title, state.email,
                 enabled: state.enableEmail),
             const SizedBox(height: 16),
-            _textFields(
-                context, context.l10n.edit_profile_phone_title, state.phone,
-                enabled: state.enablePhone, isPhoneNumber: true),
           ],
         ),
         _deleteAccountButton(context, state),

@@ -10,8 +10,7 @@ part 'auth_models.freezed.dart';
 part 'auth_models.g.dart';
 
 const LOGIN_TYPE_GOOGLE = 1;
-const LOGIN_TYPE_PHONE = 2;
-const LOGIN_TYPE_APPLE = 3;
+const LOGIN_TYPE_APPLE = 2;
 const USER_STATE_ONLINE = 0;
 const USER_STATE_NO_NETWORK_OR_PHONE_OFF = 1;
 const USER_STATE_LOCATION_PERMISSION_DENIED = 2;
@@ -24,7 +23,6 @@ class ApiUser with _$ApiUser {
     required String id,
     String? first_name,
     String? last_name,
-    String? phone,
     String? email,
     String? provider_firebase_id_token,
     required int auth_type,
