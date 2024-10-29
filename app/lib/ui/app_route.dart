@@ -222,9 +222,9 @@ class AppRoute {
     );
   }
 
-  static AppRoute journeyTimeline(ApiUser user) {
+  static AppRoute journeyTimeline(ApiUser user, int groupCreatedDate) {
     return AppRoute(pathJourneyTimeline,
-        builder: (_) => JourneyTimelineScreen(selectedUser: user));
+        builder: (_) => JourneyTimelineScreen(selectedUser: user, groupCreatedDate: groupCreatedDate));
   }
 
   static AppRoute journeyDetail(ApiLocationJourney journey) {

@@ -18,11 +18,13 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../components/user_battery_status.dart';
 
 class SelectedMemberDetailView extends StatefulWidget {
+  final int groupCreatedDate;
   final ApiUserInfo? userInfo;
   final void Function() onDismiss;
 
   const SelectedMemberDetailView({
     super.key,
+    required this.groupCreatedDate,
     required this.userInfo,
     required this.onDismiss,
   });
@@ -168,7 +170,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   Widget _timeLineButtonView() {
     return OnTapScale(
       onTap: () {
-        AppRoute.journeyTimeline(widget.userInfo!.user).push(context);
+        AppRoute.journeyTimeline(widget.userInfo!.user, widget.groupCreatedDate).push(context);
       },
       child: Container(
         decoration: BoxDecoration(
