@@ -6,6 +6,24 @@ part of 'journey.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+_$EncryptedLocationJourneyImpl _$$EncryptedLocationJourneyImplFromJson(
+        Map<String, dynamic> json) =>
+    _$EncryptedLocationJourneyImpl(
+      id: json['id'] as String,
+      user_id: json['user_id'] as String,
+      journey: json['journey'] as String,
+      created_at: (json['created_at'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$$EncryptedLocationJourneyImplToJson(
+        _$EncryptedLocationJourneyImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'user_id': instance.user_id,
+      'journey': instance.journey,
+      'created_at': instance.created_at,
+    };
+
 _$LocationJourneyImpl _$$LocationJourneyImplFromJson(
         Map<String, dynamic> json) =>
     _$LocationJourneyImpl(

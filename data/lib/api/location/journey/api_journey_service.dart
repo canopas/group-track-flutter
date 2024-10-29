@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../log/logger.dart';
+import '../../../utils/encrytp_dycrypt.dart';
 import '../../network/client.dart';
 import 'journey.dart';
 
@@ -59,7 +60,13 @@ class ApiJourneyService {
       created_at: created_at ?? DateTime.now().millisecondsSinceEpoch,
       update_at: updated_at ?? DateTime.now().millisecondsSinceEpoch,
     );
-    await docRef.set(journey.toJson());
+    final encryptedData = encryptModel(journey.toJson());
+    final encryptedJourney = EncryptedLocationJourney(
+        id: docRef.id,
+        user_id: userId,
+        journey: encryptedData,
+        created_at: created_at ?? DateTime.now().millisecondsSinceEpoch);
+    await docRef.set(encryptedJourney.toJson());
     return docRef.id;
   }
 

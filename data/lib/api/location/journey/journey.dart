@@ -8,6 +8,28 @@ part 'journey.freezed.dart';
 part 'journey.g.dart';
 
 @freezed
+class EncryptedLocationJourney with _$EncryptedLocationJourney {
+  const EncryptedLocationJourney._();
+
+  const factory EncryptedLocationJourney({
+    required String id,
+    required String user_id,
+    required String journey,
+    int? created_at,
+  }) = _EncryptedLocationJourney;
+
+  factory EncryptedLocationJourney.fromJson(Map<String, dynamic> json) =>
+      _$EncryptedLocationJourneyFromJson(json);
+
+  factory EncryptedLocationJourney.fromFireStore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    Map<String, dynamic>? data = snapshot.data();
+    return EncryptedLocationJourney.fromJson(data!);
+  }
+}
+
+@freezed
 class ApiLocationJourney with _$ApiLocationJourney {
   const ApiLocationJourney._();
 

@@ -102,7 +102,7 @@ class JourneyRepository {
 
   bool isDayChanged(LocationData? extractedLocation, ApiLocationJourney lastKnownJourney) {
     var lastKnownDate =
-        DateTime.fromMillisecondsSinceEpoch(lastKnownJourney.update_at!);
+        DateTime.fromMillisecondsSinceEpoch(lastKnownJourney.update_at ?? DateTime.now().millisecondsSinceEpoch);
     var extractedDate = DateTime.fromMillisecondsSinceEpoch(extractedLocation?.timestamp.millisecondsSinceEpoch ?? DateTime.now().millisecondsSinceEpoch);
 
     return lastKnownDate.day != extractedDate.day;
