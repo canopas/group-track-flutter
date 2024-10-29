@@ -109,7 +109,9 @@ class JourneyRepository {
           ? lasKnownJourney.toLocationFromSteadyJourney()
           : lasKnownJourney.toLocationFromMovingJourney();
 
-      final distance = _distanceBetween(geometricMedian!, lastKnownLocation);
+      final distance = geometricMedian != null
+         ? _distanceBetween(geometricMedian, lastKnownLocation)
+         : _distanceBetween(extractedLocation, lastKnownLocation);
 
       if (distance < MIN_DISTANCE) {
         // Here, means user is at same location on day changed
