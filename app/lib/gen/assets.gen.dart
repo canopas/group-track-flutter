@@ -59,9 +59,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_empty_battery_icon.svg
   String get icEmptyBatteryIcon => 'assets/images/ic_empty_battery_icon.svg';
 
-  /// File path: assets/images/ic_end_location_detail_icon.png
+  /// File path: assets/images/ic_timeline_end_location_flag_icon.png
   AssetGenImage get icEndLocationDetailIcon =>
-      const AssetGenImage('assets/images/ic_end_location_detail_icon.png');
+      const AssetGenImage('assets/images/ic_timeline_end_location_flag_icon.png');
 
   /// File path: assets/images/ic_feed_location-pin.svg
   String get icFeedLocationPin => 'assets/images/ic_feed_location-pin.svg';
@@ -144,9 +144,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_sign_out.svg
   String get icSignOut => 'assets/images/ic_sign_out.svg';
 
-  /// File path: assets/images/ic_start_location_detail_icon.png
+  /// File path: assets/images/ic_timeline_start_location_icon.png
   AssetGenImage get icStartLocationDetailIcon =>
-      const AssetGenImage('assets/images/ic_start_location_detail_icon.png');
+      const AssetGenImage('assets/images/ic_timeline_start_location_icon.png');
 
   /// File path: assets/images/ic_subscription_check_icon.svg
   String get icSubscriptionCheckIcon =>
@@ -183,6 +183,14 @@ class $AssetsImagesGen {
   /// File path: assets/images/intro_bg.jpg
   AssetGenImage get introBg =>
       const AssetGenImage('assets/images/intro_bg.jpg');
+
+  /// File path: assets/images/ic_timeline_journey_icon.svg
+  String get icTimeLineJourneyIcon =>
+      'assets/images/ic_timeline_journey_icon.svg';
+
+  /// File path: assets/images/ic_timeline_location_pin_icon.svg
+  String get icTimeLineLocationPinIcon =>
+      'assets/images/ic_timeline_location_pin_icon.svg';
 
   /// List of all assets
   List<dynamic> get values => [
@@ -238,7 +246,9 @@ class $AssetsImagesGen {
         intro1,
         intro2,
         intro3,
-        introBg
+        introBg,
+        icTimeLineJourneyIcon,
+        icTimeLineLocationPinIcon
       ];
 }
 
