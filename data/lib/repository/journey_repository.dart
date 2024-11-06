@@ -137,17 +137,17 @@ class JourneyRepository {
     }
   }
 
-  bool isDayChanged(LocationData? extractedLocation, ApiLocationJourney lastKnownJourney) {
-    var lastKnownDate =
-        DateTime.fromMillisecondsSinceEpoch(lastKnownJourney.update_at ?? DateTime.now().millisecondsSinceEpoch);
-    var extractedDate = DateTime.fromMillisecondsSinceEpoch(extractedLocation?.timestamp.millisecondsSinceEpoch ?? DateTime.now().millisecondsSinceEpoch);
+  bool isDayChanged(
+      LocationData? extractedLocation, ApiLocationJourney lastKnownJourney) {
+    DateTime lastKnownDate = DateTime.fromMillisecondsSinceEpoch(
+        lastKnownJourney.update_at ?? DateTime.now().millisecondsSinceEpoch);
+    int lastKnownDay = lastKnownDate.day;
 
     DateTime currentDate = extractedLocation != null
         ? DateTime.fromMillisecondsSinceEpoch(
-            extractedLocation.timestamp.millisecondsSinceEpoch)
+        extractedLocation.timestamp.millisecondsSinceEpoch)
         : DateTime.now();
     int currentDay = currentDate.day;
-
     return lastKnownDay != currentDay;
   }
 
