@@ -25,8 +25,9 @@ import '../components/journey_map.dart';
 
 class JourneyTimelineScreen extends ConsumerStatefulWidget {
   final ApiUser selectedUser;
+  final int groupCreatedDate;
 
-  const JourneyTimelineScreen({super.key, required this.selectedUser});
+  const JourneyTimelineScreen({super.key, required this.selectedUser, required this.groupCreatedDate});
 
   @override
   ConsumerState<JourneyTimelineScreen> createState() =>
@@ -56,8 +57,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
             : context.l10n.journey_timeline_title_other_user(
                 state.selectedUser?.first_name ?? '');
 
-    final selectedDate = _onSelectDatePickerDate(state.selectedTimeFrom);
-
     _observeShowDatePicker(state);
 
     return AppPage(
@@ -68,11 +67,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                selectedDate,
-                style: AppTextStyle.body1
-                    .copyWith(color: context.colorScheme.textPrimary),
-              ),
               actionButton(
                 context: context,
                 onPressed: () => notifier.showDatePicker(true),
@@ -465,13 +459,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     return markers;
   }
 
-  String _onSelectDatePickerDate(int? timestamp) {
-    if (timestamp == null) return '';
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    final date = dateTime.format(context, DateFormatType.dayMonthFull);
-    return date.toString();
-  }
-
   void _observeShowDatePicker(JourneyTimelineState state) {
     ref.listen(
         journeyTimelineStateProvider.select((state) => state.showDatePicker),
@@ -483,7 +470,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         final pickedDate = await showDatePicker(
           context: context,
           initialDate: dateTime,
-          firstDate: DateTime(2023),
+          firstDate: DateTime.fromMillisecondsSinceEpoch(widget.groupCreatedDate),
           lastDate: DateTime.now(),
           confirmText: context.l10n.journey_timeline_date_picker_select_text,
         );

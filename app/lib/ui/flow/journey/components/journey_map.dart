@@ -172,8 +172,8 @@ class _JourneyMapState extends State<JourneyMap> {
   }
 
   double _getDistanceString(ApiLocationJourney location) {
-    final steadyLocation = location.toPositionFromSteadyJourney();
-    final movingLocation = location.toPositionFromMovingJourney();
+    final steadyLocation = location.toLocationFromSteadyJourney();
+    final movingLocation = location.toLocationFromMovingJourney();
 
     final routeDistance = steadyLocation.distanceTo(movingLocation);
 
