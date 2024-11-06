@@ -103,42 +103,39 @@ class ApiJourneyService {
     int? from,
     int? to,
   ) async {
+    QuerySnapshot querySnapshot;
+
     if (from == null) {
-      final querySnapshot = await _journeyRef(userId)
+      querySnapshot = await _journeyRef(userId)
           .where('user_id', isEqualTo: userId)
           .orderBy('created_at', descending: true)
           .limit(20)
           .get();
-      return querySnapshot.docs
-          .map((doc) =>
-              ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
     } else if (to == null) {
-      final querySnapshot = await _journeyRef(userId)
+      querySnapshot = await _journeyRef(userId)
           .where('user_id', isEqualTo: userId)
           .where('created_at', isGreaterThanOrEqualTo: from)
           .orderBy('created_at', descending: true)
           .limit(20)
           .get();
-
-      return querySnapshot.docs
-          .map((doc) =>
-              ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
     } else {
-      final querySnapshot = await _journeyRef(userId)
+      querySnapshot = await _journeyRef(userId)
           .where('user_id', isEqualTo: userId)
           .where('created_at', isGreaterThanOrEqualTo: from)
           .where('created_at', isLessThanOrEqualTo: to)
           .orderBy('created_at', descending: true)
           .limit(20)
           .get();
-
-      return querySnapshot.docs
-          .map((doc) =>
-              ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
     }
+
+    return querySnapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+
+      final encryptedJourney = EncryptedLocationJourney.fromJson(data);
+      final decryptedJourney = decryptModel(encryptedJourney.journey);
+
+      return ApiLocationJourney.fromJson(decryptedJourney);
+    }).where((journey) => journey.id != null).cast<ApiLocationJourney>().toList();
   }
 
   Future<List<ApiLocationJourney>> getMoreJourneyHistory(
