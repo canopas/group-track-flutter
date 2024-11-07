@@ -60,10 +60,7 @@ class JourneyRepository {
   void _startSteadyLocationTimer(LocationData position, String userId) {
     var lastLocation =
         locationCache.getLastJourney(userId)?.toLocationFromSteadyJourney();
-    var lastLocationJourney = locationCache.getLastJourney(userId);
-    if (lastLocation != null &&
-        _isSameLocation(position, lastLocation) ||
-        lastLocationJourney!.isSteadyLocation()) {
+    if (lastLocation != null && _isSameLocation(position, lastLocation)) {
       return;
     }
 
@@ -145,10 +142,9 @@ class JourneyRepository {
 
     DateTime currentDate = extractedLocation != null
         ? DateTime.fromMillisecondsSinceEpoch(
-            extractedLocation.timestamp.millisecondsSinceEpoch)
+        extractedLocation.timestamp.millisecondsSinceEpoch)
         : DateTime.now();
     int currentDay = currentDate.day;
-
     return lastKnownDay != currentDay;
   }
 

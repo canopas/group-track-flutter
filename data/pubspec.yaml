@@ -14,10 +14,12 @@ dependencies:
   firebase_storage: ^11.7.7
   flutter:
     sdk: flutter
+  intl: any
   flutter_riverpod: 2.5.3
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
   shared_preferences: ^2.0.18
+  encrypt: ^5.0.3
 
   google_sign_in: ^6.1.6
   device_info_plus: ^9.1.2

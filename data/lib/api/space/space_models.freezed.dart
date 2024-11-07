@@ -25,8 +25,12 @@ mixin _$ApiSpace {
   String get name => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
 
+  /// Serializes this ApiSpace to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiSpace
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ApiSpaceCopyWith<ApiSpace> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -49,6 +53,8 @@ class _$ApiSpaceCopyWithImpl<$Res, $Val extends ApiSpace>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ApiSpace
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -97,6 +103,8 @@ class __$$ApiSpaceImplCopyWithImpl<$Res>
       _$ApiSpaceImpl _value, $Res Function(_$ApiSpaceImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiSpace
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -166,11 +174,13 @@ class _$ApiSpaceImpl extends _ApiSpace {
                 other.created_at == created_at));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, admin_id, name, created_at);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiSpace
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiSpaceImplCopyWith<_$ApiSpaceImpl> get copyWith =>
@@ -203,8 +213,11 @@ abstract class _ApiSpace extends ApiSpace {
   String get name;
   @override
   int? get created_at;
+
+  /// Create a copy of ApiSpace
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiSpaceImplCopyWith<_$ApiSpaceImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -222,8 +235,12 @@ mixin _$ApiSpaceMember {
   bool get location_enabled => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
 
+  /// Serializes this ApiSpaceMember to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiSpaceMember
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ApiSpaceMemberCopyWith<ApiSpaceMember> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -253,6 +270,8 @@ class _$ApiSpaceMemberCopyWithImpl<$Res, $Val extends ApiSpaceMember>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ApiSpaceMember
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -317,6 +336,8 @@ class __$$ApiSpaceMemberImplCopyWithImpl<$Res>
       _$ApiSpaceMemberImpl _value, $Res Function(_$ApiSpaceMemberImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiSpaceMember
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -405,12 +426,14 @@ class _$ApiSpaceMemberImpl extends _ApiSpaceMember {
                 other.created_at == created_at));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, space_id, user_id, role, location_enabled, created_at);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiSpaceMember
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiSpaceMemberImplCopyWith<_$ApiSpaceMemberImpl> get copyWith =>
@@ -450,8 +473,11 @@ abstract class _ApiSpaceMember extends ApiSpaceMember {
   bool get location_enabled;
   @override
   int? get created_at;
+
+  /// Create a copy of ApiSpaceMember
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiSpaceMemberImplCopyWith<_$ApiSpaceMemberImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -467,8 +493,12 @@ mixin _$ApiSpaceInvitation {
   String get code => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
 
+  /// Serializes this ApiSpaceInvitation to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiSpaceInvitation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ApiSpaceInvitationCopyWith<ApiSpaceInvitation> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -492,6 +522,8 @@ class _$ApiSpaceInvitationCopyWithImpl<$Res, $Val extends ApiSpaceInvitation>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ApiSpaceInvitation
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -540,6 +572,8 @@ class __$$ApiSpaceInvitationImplCopyWithImpl<$Res>
       $Res Function(_$ApiSpaceInvitationImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiSpaceInvitation
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -609,11 +643,13 @@ class _$ApiSpaceInvitationImpl extends _ApiSpaceInvitation {
                 other.created_at == created_at));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, space_id, code, created_at);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiSpaceInvitation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiSpaceInvitationImplCopyWith<_$ApiSpaceInvitationImpl> get copyWith =>
@@ -647,8 +683,11 @@ abstract class _ApiSpaceInvitation extends ApiSpaceInvitation {
   String get code;
   @override
   int? get created_at;
+
+  /// Create a copy of ApiSpaceInvitation
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiSpaceInvitationImplCopyWith<_$ApiSpaceInvitationImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -662,8 +701,12 @@ mixin _$SpaceInfo {
   ApiSpace get space => throw _privateConstructorUsedError;
   List<ApiUserInfo> get members => throw _privateConstructorUsedError;
 
+  /// Serializes this SpaceInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SpaceInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SpaceInfoCopyWith<SpaceInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -688,6 +731,8 @@ class _$SpaceInfoCopyWithImpl<$Res, $Val extends SpaceInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SpaceInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -706,6 +751,8 @@ class _$SpaceInfoCopyWithImpl<$Res, $Val extends SpaceInfo>
     ) as $Val);
   }
 
+  /// Create a copy of SpaceInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ApiSpaceCopyWith<$Res> get space {
@@ -737,6 +784,8 @@ class __$$SpaceInfoImplCopyWithImpl<$Res>
       _$SpaceInfoImpl _value, $Res Function(_$SpaceInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SpaceInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -791,12 +840,14 @@ class _$SpaceInfoImpl extends _SpaceInfo {
             const DeepCollectionEquality().equals(other._members, _members));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, space, const DeepCollectionEquality().hash(_members));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SpaceInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SpaceInfoImplCopyWith<_$SpaceInfoImpl> get copyWith =>
@@ -823,8 +874,11 @@ abstract class _SpaceInfo extends SpaceInfo {
   ApiSpace get space;
   @override
   List<ApiUserInfo> get members;
+
+  /// Create a copy of SpaceInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SpaceInfoImplCopyWith<_$SpaceInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
