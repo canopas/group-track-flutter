@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:intl/intl.dart';
 
 import '../../../log/logger.dart';
 import '../../../utils/encrytp_dycrypt.dart';
@@ -60,14 +61,19 @@ class ApiJourneyService {
       created_at: created_at ?? DateTime.now().millisecondsSinceEpoch,
       update_at: updated_at ?? DateTime.now().millisecondsSinceEpoch,
     );
-    final encryptedData = encryptModel(journey.toJson());
+    final key = userId.toString() + _formatEncryptKeyDate(DateTime.now());
+    final encryptedData = encrypt(journey.toJson(), key);
     final encryptedJourney = EncryptedLocationJourney(
         id: docRef.id,
         user_id: userId,
-        journey: encryptedData,
+        journey: encryptedData ?? '',
         created_at: created_at ?? DateTime.now().millisecondsSinceEpoch);
     await docRef.set(encryptedJourney.toJson());
     return docRef.id;
+  }
+
+  String _formatEncryptKeyDate(DateTime dateTime) {
+    return DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(dateTime.toUtc());
   }
 
   Future<void> updateLastLocationJourney(
@@ -75,7 +81,9 @@ class ApiJourneyService {
     ApiLocationJourney journey,
   ) async {
     try {
-      await _journeyRef(userId).doc(journey.id).set(journey.toJson());
+      final key = userId.toString() + _formatEncryptKeyDate(DateTime.now());
+      final encryptedData = encrypt(journey.toJson(), key);
+      await _journeyRef(userId).doc(journey.id).set({'journey': encryptedData});
     } catch (error) {
       logger.e(
         'ApiJourneyService: Error while updating last location journey',
@@ -93,7 +101,10 @@ class ApiJourneyService {
 
     final doc = querySnapshot.docs.firstOrNull;
     if (doc != null) {
-      return ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>);
+      final encryptedJourney = EncryptedLocationJourney.fromJson(doc.data() as Map<String, dynamic>);
+      final key = userId.toString() + _formatEncryptKeyDate(DateTime.now());
+      final decryptedJourney = decrypt(encryptedJourney.journey, key);
+      return ApiLocationJourney.fromJson(decryptedJourney!);
     }
     return null;
   }
@@ -103,39 +114,31 @@ class ApiJourneyService {
     int? from,
     int? to,
   ) async {
-    QuerySnapshot querySnapshot;
-
     if (from == null) {
-      querySnapshot = await _journeyRef(userId)
+      final querySnapshot = await _journeyRef(userId)
           .where('user_id', isEqualTo: userId)
           .orderBy('created_at', descending: true)
           .limit(20)
           .get();
+      return _decryptData(querySnapshot, userId);
     } else if (to == null) {
-      querySnapshot = await _journeyRef(userId)
+      final querySnapshot = await _journeyRef(userId)
           .where('user_id', isEqualTo: userId)
           .where('created_at', isGreaterThanOrEqualTo: from)
           .orderBy('created_at', descending: true)
           .limit(20)
           .get();
+      return _decryptData(querySnapshot, userId);
     } else {
-      querySnapshot = await _journeyRef(userId)
+      final querySnapshot = await _journeyRef(userId)
           .where('user_id', isEqualTo: userId)
           .where('created_at', isGreaterThanOrEqualTo: from)
           .where('created_at', isLessThanOrEqualTo: to)
           .orderBy('created_at', descending: true)
           .limit(20)
           .get();
+      return _decryptData(querySnapshot, userId);
     }
-
-    return querySnapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-
-      final encryptedJourney = EncryptedLocationJourney.fromJson(data);
-      final decryptedJourney = decryptModel(encryptedJourney.journey);
-
-      return ApiLocationJourney.fromJson(decryptedJourney);
-    }).where((journey) => journey.id != null).cast<ApiLocationJourney>().toList();
   }
 
   Future<List<ApiLocationJourney>> getMoreJourneyHistory(
@@ -148,10 +151,7 @@ class ApiJourneyService {
           .orderBy('created_at', descending: true)
           .limit(20)
           .get();
-      return querySnapshot.docs
-          .map((doc) =>
-              ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
+      return _decryptData(querySnapshot, userId);
     }
     final querySnapshot = await _journeyRef(userId)
         .where('user_id', isEqualTo: userId)
@@ -159,10 +159,23 @@ class ApiJourneyService {
         .orderBy('created_at', descending: true)
         .limit(20)
         .get();
-    return querySnapshot.docs
-        .map((doc) =>
-            ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
-        .toList();
+    return _decryptData(querySnapshot, userId);
+  }
+
+  List<ApiLocationJourney> _decryptData(QuerySnapshot querySnapshot, String userId) {
+    return querySnapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+
+      try {
+        final encryptedJourney = EncryptedLocationJourney.fromJson(data);
+        final key = userId.toString() + _formatEncryptKeyDate(DateTime.now());
+        final decryptedJourney = decrypt(encryptedJourney.journey, key);
+
+        return ApiLocationJourney.fromJson(decryptedJourney!);
+      } catch (error, stack) {
+        logger.e('Error while decrypt journey', error: error, stackTrace: stack);
+      }
+    }).where((journey) => journey != null).cast<ApiLocationJourney>().toList();
   }
 
   Future<ApiLocationJourney?> getUserJourneyById(

@@ -14,6 +14,7 @@ dependencies:
   firebase_storage: ^11.7.7
   flutter:
     sdk: flutter
+  intl: any
   flutter_riverpod: 2.5.3
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1

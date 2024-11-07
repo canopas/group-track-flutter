@@ -60,10 +60,7 @@ class JourneyRepository {
   void _startSteadyLocationTimer(LocationData position, String userId) {
     var lastLocation =
         locationCache.getLastJourney(userId)?.toLocationFromSteadyJourney();
-    var lastLocationJourney = locationCache.getLastJourney(userId);
-    if (lastLocation != null &&
-        _isSameLocation(position, lastLocation) ||
-        lastLocationJourney!.isSteadyLocation()) {
+    if (lastLocation != null && _isSameLocation(position, lastLocation)) {
       return;
     }
 
