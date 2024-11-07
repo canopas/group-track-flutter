@@ -92,7 +92,7 @@ void updateCurrentUserState(RemoteMessage message, NetworkService networkService
 
 Future<ProviderContainer> _initContainer() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  if (!kDebugMode) {
+  if (true) { // add '!kDebugMode' for release builds
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
     await FirebaseCrashlytics.instance.setCustomKey("app_type", "flutter");
   }
