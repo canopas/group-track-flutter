@@ -280,7 +280,7 @@
   },
   "journey_timeline_title": "Timeline",
   "journey_timeline_title_your_timeline": "Your Timeline",
-  "journey_timeline_title_other_user": "{userName} Timeline",
+  "journey_timeline_title_other_user": "{userName}'s Timeline",
   "journey_timeline_add_place_btn_text": "Add Place",
   "journey_timeline_unknown_address_text": "Unknown address",
   "journey_timeline_getting_address_text": "Getting address..",

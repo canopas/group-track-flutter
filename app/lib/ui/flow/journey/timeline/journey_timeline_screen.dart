@@ -534,7 +534,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     if (dateTime.isToday) {
       return context.l10n.common_today;
     } else {
-      final date = DateFormat('dd MMMM').format(dateTime);
+      final date = DateFormat('dd MMM').format(dateTime);
       return date.toString();
     }
   }
