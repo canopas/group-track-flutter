@@ -153,7 +153,7 @@ class _UserJourneyDetailScreenState
     final formattedTime = _getDateAndTime(createdAt ?? 0);
     final address = placeMark.isNotEmpty
         ? placeMark.getFormattedAddress()
-        : context.l10n.journey_detail_getting_address_text;
+        : context.l10n.journey_timeline_unknown_address_text;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,7 +214,7 @@ class _UserJourneyDetailScreenState
   ) {
     if (fromPlaces == null || fromPlaces.isEmpty) return '';
     final fromPlace = fromPlaces.first;
-    final toPlace = toPlaces?.first;
+    final toPlace = toPlaces?.firstOrNull;
 
     final fromCity = fromPlace.locality ?? '';
     final toCity = toPlace?.locality ?? '';

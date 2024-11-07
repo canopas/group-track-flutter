@@ -316,17 +316,26 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Widget _buildMovingPlaceInfo(
-      LatLng fromLatLng, LatLng toLatLng, String formattedTime) {
+    LatLng fromLatLng,
+    LatLng toLatLng,
+    String formattedTime,
+  ) {
     return FutureBuilder(
         future: _getMovingJourneyAddress(fromLatLng, toLatLng),
         builder: (_, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _placeInfo(
+              context.l10n.journey_timeline_getting_address_text,
+              formattedTime,
+              "",
+            );
+          } else if (snapshot.hasData) {
             final address = snapshot.data ??
                 context.l10n.journey_timeline_unknown_address_text;
             return _placeInfo(address, formattedTime, "");
           } else {
             return _placeInfo(
-              context.l10n.journey_timeline_getting_address_text,
+              context.l10n.journey_timeline_unknown_address_text,
               formattedTime,
               "",
             );

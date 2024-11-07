@@ -282,15 +282,13 @@
   "journey_timeline_title_your_timeline": "Your Timeline",
   "journey_timeline_title_other_user": "{userName}'s Timeline",
   "journey_timeline_add_place_btn_text": "Add Place",
-  "journey_timeline_unknown_address_text": "Unknown address",
-  "journey_timeline_getting_address_text": "Getting address..",
+  "journey_timeline_unknown_address_text": "Unknown address.",
+  "journey_timeline_getting_address_text": "Getting address...",
   "journey_timeline_empty_screen_text": "No location history found!",
   "journey_timeline_Since_text": "Since {date}",
   "journey_timeline_today_text": "Today {date}",
   "journey_timeline_date_picker_select_text": "Select",
   "journey_timeline_steady_for_text": " | Steady for {duration}",
-
-  "journey_detail_getting_address_text": "Getting the address...",
 
   "@_subscription":{
   },
