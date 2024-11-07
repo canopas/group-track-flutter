@@ -239,10 +239,10 @@ class _UserJourneyDetailScreenState
   }
 
   Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {
-    final fromIcon = await notifier
-        .createCustomIcon('assets/images/ic_journey_detail_flag_icon.png');
-    final toIcon = await notifier
-        .createCustomIcon('assets/images/ic_journey_detail_location_icon.png');
+    final fromIcon = await notifier.createCustomIcon(
+        'assets/images/ic_timeline_start_location_icon.png');
+    final toIcon = await notifier.createCustomIcon(
+        'assets/images/ic_timeline_end_location_flag_icon.png');
 
     final List<Marker> markers = [
       Marker(

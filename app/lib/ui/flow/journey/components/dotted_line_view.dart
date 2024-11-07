@@ -36,14 +36,14 @@ class DottedLineView extends StatelessWidget {
           child: Center(
               child: isSteadyLocation
                   ? SvgPicture.asset(
-                      Assets.images.icTimeLineLocationPinIcon,
+                      Assets.images.icTimelineLocationPinIcon,
                       colorFilter: ColorFilter.mode(
                         context.colorScheme.primary,
                         BlendMode.srcATop,
                       ),
                     )
                   : SvgPicture.asset(
-                      Assets.images.icTimeLineJourneyIcon,
+                      Assets.images.icTimelineJourneyIcon,
                       colorFilter: ColorFilter.mode(
                         context.colorScheme.primary,
                         BlendMode.srcATop,
@@ -80,19 +80,19 @@ class DetailJourneyDottedLineView extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: isSteadyLocation
+            color: !isSteadyLocation
                 ? context.colorScheme.surface
                 : context.colorScheme.containerLowOnSurface,
             shape: BoxShape.circle,
             border: Border.all(
-              color: isSteadyLocation
+              color: !isSteadyLocation
                   ? context.colorScheme.outline
                   : Colors.transparent,
               width: 1,
             ),
           ),
           child: Center(
-              child: isSteadyLocation
+              child: !isSteadyLocation
                   ? Container(
                       width: 8,
                       height: 8,
@@ -102,7 +102,7 @@ class DetailJourneyDottedLineView extends StatelessWidget {
                       ),
                     )
                   : SvgPicture.asset(
-                      Assets.images.icFeedLocationPin,
+                      Assets.images.icFlagIcon,
                       colorFilter: ColorFilter.mode(
                         context.colorScheme.primary,
                         BlendMode.srcATop,

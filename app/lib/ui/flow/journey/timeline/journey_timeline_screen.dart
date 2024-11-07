@@ -72,7 +72,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
             children: [
               Text(
                 selectedDate,
-                style: AppTextStyle.body1
+                style: AppTextStyle.body2
                     .copyWith(color: context.colorScheme.textPrimary),
               ),
               actionButton(

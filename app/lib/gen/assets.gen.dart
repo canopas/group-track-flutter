@@ -59,16 +59,15 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_empty_battery_icon.svg
   String get icEmptyBatteryIcon => 'assets/images/ic_empty_battery_icon.svg';
 
-  /// File path: assets/images/ic_timeline_end_location_flag_icon.png
-  AssetGenImage get icEndLocationDetailIcon =>
-      const AssetGenImage('assets/images/ic_timeline_end_location_flag_icon.png');
-
   /// File path: assets/images/ic_feed_location-pin.svg
   String get icFeedLocationPin => 'assets/images/ic_feed_location-pin.svg';
 
   /// File path: assets/images/ic_feed_location_icon.png
   AssetGenImage get icFeedLocationIcon =>
       const AssetGenImage('assets/images/ic_feed_location_icon.png');
+
+  /// File path: assets/images/ic_flag_icon.svg
+  String get icFlagIcon => 'assets/images/ic_flag_icon.svg';
 
   /// File path: assets/images/ic_full_bettery_icon.svg
   String get icFullBetteryIcon => 'assets/images/ic_full_bettery_icon.svg';
@@ -144,10 +143,6 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_sign_out.svg
   String get icSignOut => 'assets/images/ic_sign_out.svg';
 
-  /// File path: assets/images/ic_timeline_start_location_icon.png
-  AssetGenImage get icStartLocationDetailIcon =>
-      const AssetGenImage('assets/images/ic_timeline_start_location_icon.png');
-
   /// File path: assets/images/ic_subscription_check_icon.svg
   String get icSubscriptionCheckIcon =>
       'assets/images/ic_subscription_check_icon.svg';
@@ -163,9 +158,25 @@ class $AssetsImagesGen {
   String get icTimeLineHistoryIcon =>
       'assets/images/ic_time_line_history_icon.svg';
 
+  /// File path: assets/images/ic_timeline_end_location_flag_icon.png
+  AssetGenImage get icTimelineEndLocationFlagIcon => const AssetGenImage(
+      'assets/images/ic_timeline_end_location_flag_icon.png');
+
   /// File path: assets/images/ic_timeline_filter_icon.svg
   String get icTimelineFilterIcon =>
       'assets/images/ic_timeline_filter_icon.svg';
+
+  /// File path: assets/images/ic_timeline_journey_icon.svg
+  String get icTimelineJourneyIcon =>
+      'assets/images/ic_timeline_journey_icon.svg';
+
+  /// File path: assets/images/ic_timeline_location_pin_icon.svg
+  String get icTimelineLocationPinIcon =>
+      'assets/images/ic_timeline_location_pin_icon.svg';
+
+  /// File path: assets/images/ic_timeline_start_location_icon.png
+  AssetGenImage get icTimelineStartLocationIcon =>
+      const AssetGenImage('assets/images/ic_timeline_start_location_icon.png');
 
   /// File path: assets/images/ic_unknown_battery_icon.svg
   String get icUnknownBatteryIcon =>
@@ -184,14 +195,6 @@ class $AssetsImagesGen {
   AssetGenImage get introBg =>
       const AssetGenImage('assets/images/intro_bg.jpg');
 
-  /// File path: assets/images/ic_timeline_journey_icon.svg
-  String get icTimeLineJourneyIcon =>
-      'assets/images/ic_timeline_journey_icon.svg';
-
-  /// File path: assets/images/ic_timeline_location_pin_icon.svg
-  String get icTimeLineLocationPinIcon =>
-      'assets/images/ic_timeline_location_pin_icon.svg';
-
   /// List of all assets
   List<dynamic> get values => [
         appNameDark,
@@ -209,9 +212,9 @@ class $AssetsImagesGen {
         icDownArrowIcon,
         icEditProfile,
         icEmptyBatteryIcon,
-        icEndLocationDetailIcon,
         icFeedLocationPin,
         icFeedLocationIcon,
+        icFlagIcon,
         icFullBetteryIcon,
         icGeofenceIcon,
         icGoogleLogo,
@@ -236,19 +239,20 @@ class $AssetsImagesGen {
         icSendMessage,
         icSetting,
         icSignOut,
-        icStartLocationDetailIcon,
         icSubscriptionCheckIcon,
         icSubscriptionIcon,
         icSubscriptionUncheckIcon,
         icTimeLineHistoryIcon,
+        icTimelineEndLocationFlagIcon,
         icTimelineFilterIcon,
+        icTimelineJourneyIcon,
+        icTimelineLocationPinIcon,
+        icTimelineStartLocationIcon,
         icUnknownBatteryIcon,
         intro1,
         intro2,
         intro3,
-        introBg,
-        icTimeLineJourneyIcon,
-        icTimeLineLocationPinIcon
+        introBg
       ];
 }
 
