@@ -31,7 +31,6 @@ final homeViewStateProvider =
     ref.read(currentUserPod),
     ref.read(apiUserServiceProvider),
     ref.read(currentUserSessionPod),
-    ref.read(fetchCurrentLocation.notifier),
   ),
 );
 
@@ -43,7 +42,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final ApiUser? _currentUser;
   final ApiUserService userService;
   final ApiSession? _userSession;
-  final StateController<bool> _fetchCurrentLocation;
 
   HomeViewNotifier(
     this.spaceService,
@@ -53,7 +51,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this._currentUser,
     this.userService,
     this._userSession,
-    this._fetchCurrentLocation,
   ) : super(const HomeViewState()) {
     setDate();
     fetchCurrentLocation();
@@ -75,7 +72,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   }
 
   Future<void> fetchCurrentLocation() async {
-    if (!_fetchCurrentLocation.state) return;
     try {
       final location = await currentUserLocation();
 
@@ -83,8 +79,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
           _currentUser?.id ?? '', location);
       await journeyRepository.saveLocationJourney(
           location, _currentUser?.id ?? '');
-
-      _fetchCurrentLocation.state = false;
     } catch (error, stack) {
       logger.e('HomeViewNotifier: error while get and save current location',
           error: error, stackTrace: stack);
