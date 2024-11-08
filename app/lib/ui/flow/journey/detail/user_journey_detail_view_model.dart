@@ -1,5 +1,5 @@
 import 'dart:ui' as ui;
-import 'package:data/api/location/journey/api_journey_service.dart';
+
 import 'package:data/api/location/journey/journey.dart';
 import 'package:data/log/logger.dart';
 import 'package:flutter/services.dart';
@@ -13,16 +13,12 @@ import '../../../components/no_internet_screen.dart';
 part 'user_journey_detail_view_model.freezed.dart';
 
 final userJourneyDetailStateProvider = StateNotifierProvider.autoDispose<
-        UserJourneyDetailViewModel, UserJourneyDetailState>(
-    (ref) => UserJourneyDetailViewModel(
-          ref.read(journeyServiceProvider),
-        ));
+    UserJourneyDetailViewModel, UserJourneyDetailState>(
+  (ref) => UserJourneyDetailViewModel(),
+);
 
 class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
-  final ApiJourneyService journeyService;
-
-  UserJourneyDetailViewModel(this.journeyService)
-      : super(const UserJourneyDetailState());
+  UserJourneyDetailViewModel() : super(const UserJourneyDetailState());
 
   void loadData(ApiLocationJourney journey) async {
     final isNetworkOff = await _checkUserInternet();
@@ -103,7 +99,7 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
     final frameInfo = await codec.getNextFrame();
 
     final byteData =
-    await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
+        await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
     final resizedBytes = byteData!.buffer.asUint8List();
 
     return BitmapDescriptor.fromBytes(resizedBytes);
