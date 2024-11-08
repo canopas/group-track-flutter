@@ -208,10 +208,22 @@ void _startLocationUpdates(String userId) {
       distanceFilter: LOCATION_UPDATE_DISTANCE,
     ),
   ).listen((position) {
-    if (_previousPosition == null ||
-        (position.timestamp.difference(_previousPosition!.timestamp).inSeconds >
-            10)) {
+    if (_previousPosition == null) {
       _updateUserLocation(userId, position);
+    } else {
+      final distance = Geolocator.distanceBetween(
+        position.latitude,
+        position.longitude,
+        _previousPosition!.latitude,
+        _previousPosition!.longitude,
+      );
+
+      final timeDifference =
+          position.timestamp.difference(_previousPosition!.timestamp).inSeconds;
+
+      if (distance > LOCATION_UPDATE_DISTANCE || timeDifference > 10) {
+        _updateUserLocation(userId, position);
+      }
     }
   });
 }
