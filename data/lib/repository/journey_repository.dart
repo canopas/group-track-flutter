@@ -57,13 +57,13 @@ class JourneyRepository {
   }
 
   /// Start or restart the 5-minute timer when the user is steady.
-  void _startSteadyLocationTimer(LocationData position, String userId) {
+  void _startSteadyLocationTimer(LocationData position, String userId) async {
     var lastLocation =
         locationCache.getLastJourney(userId)?.toLocationFromSteadyJourney();
-    var lastLocationJourney = locationCache.getLastJourney(userId);
+    var lastLocationJourney = await getLastKnownLocation(userId, position);
     if (lastLocation != null &&
         _isSameLocation(position, lastLocation) ||
-        lastLocationJourney!.isSteadyLocation()) {
+        lastLocationJourney.isSteadyLocation()) {
       return;
     }
 
@@ -260,6 +260,11 @@ class JourneyRepository {
       LocationData extractedLocation,
       ApiLocationJourney lastKnownJourney,
       double distance) async {
+    journeyService.updateLastLocationJourney(
+        userId,
+        lastKnownJourney.copyWith(
+            update_at: DateTime.now().millisecondsSinceEpoch));
+
     String newJourneyId = await journeyService.saveCurrentJourney(
       userId: userId,
       fromLatitude: lastKnownJourney.from_latitude,
@@ -349,8 +354,7 @@ class JourneyRepository {
       user_id: userId,
       from_latitude: extractedLocation.latitude,
       from_longitude: extractedLocation.longitude,
-      created_at: DateTime.now().millisecondsSinceEpoch,
-      update_at: DateTime.now().millisecondsSinceEpoch,
+      created_at: lastKnownJourney.update_at,
     );
 
     locationCache.putLastJourney(steadyJourney, userId);
