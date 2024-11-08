@@ -1,5 +1,6 @@
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/location/journey/journey.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -58,7 +59,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
             ? context.l10n.journey_timeline_title_your_timeline
             : context.l10n.journey_timeline_title_other_user(
                 state.selectedUser?.first_name ?? '');
-    final selectedDate = _onSelectDatePickerDate(state.selectedTimeFrom);
 
     _observeShowDatePicker(state);
 
@@ -70,11 +70,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                selectedDate,
-                style: AppTextStyle.body2
-                    .copyWith(color: context.colorScheme.textPrimary),
-              ),
               actionButton(
                 context: context,
                 onPressed: () => notifier.showDatePicker(true),
@@ -95,6 +90,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Widget _body(JourneyTimelineState state) {
+    final selectedDate = _onSelectDatePickerDate(state.selectedTimeFrom);
+
     if (state.isNetworkOff) {
       return NoInternetScreen(onPressed: () {
         notifier.loadData(widget.selectedUser);
@@ -114,10 +111,23 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           right: 16,
           bottom: context.mediaQueryPadding.bottom,
         ),
-        itemCount: state.sortedJourney.length + 1,
+        itemCount: state.sortedJourney.length + 2,
         itemBuilder: (_, index) {
-          if (index < state.sortedJourney.length) {
-            final journey = state.sortedJourney[index];
+          if (index == 0) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Row(children: [
+                Text(selectedDate,
+                    style: AppTextStyle.subtitle1.copyWith(
+                      color: context.colorScheme.textDisabled,
+                    ))
+              ]),
+            );
+          }
+
+          final itemIndex = index - 1;
+          if (itemIndex < state.sortedJourney.length) {
+            final journey = state.sortedJourney[itemIndex];
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -193,7 +203,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                     _buildPlaceInfo(
                       location,
                       formattedTime,
-                      (isFirstItem) ? "" : steadyDuration,
+                      steadyDuration,
                     ),
                     const SizedBox(height: 8),
                     _appPlaceButton(location, spaceId),
