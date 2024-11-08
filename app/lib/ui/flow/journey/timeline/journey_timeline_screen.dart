@@ -1,6 +1,5 @@
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/location/journey/journey.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
