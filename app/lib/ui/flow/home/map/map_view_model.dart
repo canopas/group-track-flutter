@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:battery_plus/battery_plus.dart';
-import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/log/logger.dart';
@@ -35,7 +33,6 @@ final mapViewStateProvider =
     ref.read(permissionServiceProvider),
     ref.read(locationManagerProvider),
     ref.read(authServiceProvider),
-    ref.read(apiUserServiceProvider),
   );
 });
 
@@ -46,7 +43,6 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   final PermissionService permissionService;
   final LocationManager locationManager;
   final AuthService authService;
-  final ApiUserService userService;
 
   LatLng? _userLocation;
   StreamSubscription<List<ApiUserInfo>>? _userInfoSubscription;
@@ -59,7 +55,6 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     this.permissionService,
     this.locationManager,
     this.authService,
-    this.userService,
   ) : super(const MapViewState()) {
     checkUserPermission();
   }
@@ -209,10 +204,6 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
                 selectedMember.location!.longitude),
             zoom: defaultCameraZoomForSelectedUser)
         : null;
-
-    if (member.user.id == _currentUser!.id && _currentUser.updated_at! > FOUR_MIN_SECONDS) {
-      await userService.updateBatteryPct(_currentUser.id, await Battery().batteryLevel);
-    }
 
     state =
         state.copyWith(selectedUser: selectedMember, defaultPosition: position);
