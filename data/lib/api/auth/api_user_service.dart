@@ -223,6 +223,13 @@ class ApiUserService {
     await FirebaseAuth.instance.signOut();
   }
 
+  Future<void> updateBatteryPct(String userId, int batteryPct) async {
+    await _userRef.doc(userId).update({
+      "battery_pct": batteryPct,
+      "updated_at": DateTime.now().millisecondsSinceEpoch,
+    });
+  }
+
   void clearPreference() {
     locationManager.stopTrackingService();
     userJsonNotifier.state = null;

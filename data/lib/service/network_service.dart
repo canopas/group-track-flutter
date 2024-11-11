@@ -1,3 +1,4 @@
+import 'package:battery_plus/battery_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -22,6 +23,7 @@ class NetworkService {
       await _userRef.doc(id).update({
         "state": userState,
         "updated_at": DateTime.now().millisecondsSinceEpoch,
+        "battery_pct": await Battery().batteryLevel,
       });
     } else {
       logger.e("NetworkService: Error while update user network state");
