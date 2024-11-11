@@ -203,28 +203,31 @@ void _initializeService() {
 
 void _startLocationUpdates(String userId) {
   positionSubscription = Geolocator.getPositionStream(
-    locationSettings: const LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: LOCATION_UPDATE_DISTANCE,
-    ),
+    locationSettings: AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: LOCATION_UPDATE_DISTANCE,
+        intervalDuration: const Duration(seconds: 10)),
   ).listen((position) {
-    if (_previousPosition == null) {
-      _updateUserLocation(userId, position);
-    } else {
-      final distance = Geolocator.distanceBetween(
-        position.latitude,
-        position.longitude,
-        _previousPosition!.latitude,
-        _previousPosition!.longitude,
-      );
+    // print("XXX new location:$position");
 
-      final timeDifference =
-          position.timestamp.difference(_previousPosition!.timestamp).inSeconds;
+    // if (_previousPosition == null) {
+    //   _updateUserLocation(userId, position);
+    // } else {
+    //   final distance = Geolocator.distanceBetween(
+    //     position.latitude,
+    //     position.longitude,
+    //     _previousPosition!.latitude,
+    //     _previousPosition!.longitude,
+    //   );
+    //
+    //   final timeDifference =
+    //       position.timestamp.difference(_previousPosition!.timestamp).inSeconds;
+    //   print("XXX time:$timeDifference, $distance");
 
-      if (distance > LOCATION_UPDATE_DISTANCE || timeDifference > 10) {
-        _updateUserLocation(userId, position);
-      }
-    }
+    // if (distance > LOCATION_UPDATE_DISTANCE || timeDifference > 10) {
+    _updateUserLocation(userId, position);
+    // }
+    // }
   });
 }
 
