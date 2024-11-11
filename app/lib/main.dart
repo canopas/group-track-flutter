@@ -73,6 +73,7 @@ void updateSpaceUserNetworkState(
   if (userId != null && isTypeNetworkStatus) {
     networkService.updateUserNetworkState(userId);
   }
+  if (Platform.isIOS) userBatteryLevel(userId!, Battery(), batteryService);
 }
 
 void updateCurrentUserState(RemoteMessage message, NetworkService networkService) async {
@@ -86,8 +87,6 @@ void updateCurrentUserState(RemoteMessage message, NetworkService networkService
     final lastKnownJourney = await journeyRepository.getLastKnownLocation(userId, null);
     journeyRepository.checkAndSaveJourneyOnDayChange(null, lastKnownJourney, userId);
   }
-
-  if (Platform.isIOS) userBatteryLevel(userId!, Battery(), batteryService);
 }
 
 Future<ProviderContainer> _initContainer() async {
