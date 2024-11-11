@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:battery_plus/battery_plus.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/log/logger.dart';
@@ -205,12 +204,6 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
                 selectedMember.location!.longitude),
             zoom: defaultCameraZoomForSelectedUser)
         : null;
-
-    if (member.user.id == _currentUser!.id && _currentUser.updated_at! > FOUR_MIN_SECONDS) {
-      await authService.updateCurrentUser(_currentUser.copyWith(
-          battery_pct: await Battery().batteryLevel,
-          updated_at: DateTime.now().millisecondsSinceEpoch));
-    }
 
     state =
         state.copyWith(selectedUser: selectedMember, defaultPosition: position);

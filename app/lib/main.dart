@@ -2,13 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:battery_plus/battery_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/journey/api_journey_service.dart';
 import 'package:data/api/location/location.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/repository/journey_repository.dart';
-import 'package:data/service/battery_service.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/location_service.dart';
 import 'package:data/service/network_service.dart';
@@ -35,7 +33,6 @@ const platform = MethodChannel('com.grouptrack/location');
 late final LocationService locationService;
 late final JourneyRepository journeyRepository;
 late final ApiJourneyService journeyService;
-late final BatteryService batteryService;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -86,8 +83,6 @@ void updateCurrentUserState(RemoteMessage message, NetworkService networkService
     final lastKnownJourney = await journeyRepository.getLastKnownLocation(userId, null);
     journeyRepository.checkAndSaveJourneyOnDayChange(null, lastKnownJourney, userId);
   }
-
-  if (Platform.isIOS) userBatteryLevel(userId!, Battery(), batteryService);
 }
 
 Future<ProviderContainer> _initContainer() async {
@@ -100,7 +95,6 @@ Future<ProviderContainer> _initContainer() async {
   locationService = LocationService(FirebaseFirestore.instance);
   journeyService = ApiJourneyService(FirebaseFirestore.instance);
   journeyRepository = JourneyRepository(journeyService);
-  batteryService = BatteryService(FirebaseFirestore.instance);
 
   final prefs = await SharedPreferences.getInstance();
 
@@ -162,7 +156,6 @@ StreamSubscription<Position>? positionSubscription;
 Timer? _timer;
 Position? _position;
 Position? _previousPosition;
-int? _batteryLevel;
 
 @pragma('vm:entry-point')
 Future<void> onStart(ServiceInstance service) async {
@@ -183,9 +176,7 @@ Future<void> onStart(ServiceInstance service) async {
   locationService = LocationService(FirebaseFirestore.instance);
   journeyService = ApiJourneyService(FirebaseFirestore.instance);
   journeyRepository = JourneyRepository(journeyService);
-  final batteryService = BatteryService(FirebaseFirestore.instance);
   final userId = await _getUserIdFromPreferences();
-  final battery = Battery();
 
   if (userId != null) {
     _startLocationUpdates();
@@ -194,7 +185,6 @@ Future<void> onStart(ServiceInstance service) async {
       if (Platform.isAndroid) {
         _updateUserLocation(userId, _position);
       }
-      userBatteryLevel(userId, battery, batteryService);
     });
   }
 
@@ -267,22 +257,3 @@ bool onIosBackground(ServiceInstance service) {
   return true;
 }
 
-void userBatteryLevel(
-  String userId,
-  Battery battery,
-  BatteryService batteryService,
-) async {
-  try {
-    final level = await battery.batteryLevel;
-    if (level != _batteryLevel) {
-      await batteryService.updateBatteryPct(userId, level);
-      _batteryLevel = level;
-    }
-  } catch (error, stack) {
-    logger.e(
-      'Main: error while getting or updating battery level',
-      error: error,
-      stackTrace: stack,
-    );
-  }
-}
