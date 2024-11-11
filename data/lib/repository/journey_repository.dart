@@ -158,11 +158,11 @@ class JourneyRepository {
       userId: userId,
       fromLatitude: lastKnownJourney.from_latitude,
       fromLongitude: lastKnownJourney.from_longitude,
-      toLatitude: lastKnownJourney.to_latitude ?? 0,
-      toLongitude: lastKnownJourney.to_longitude ?? 0,
-      routeDistance: lastKnownJourney.route_distance,
+      toLatitude: lastKnownJourney.to_latitude,
+      toLongitude: lastKnownJourney.to_longitude,
+      routeDistance: lastKnownJourney.to_longitude == null ? 0 : lastKnownJourney.route_distance,
       routes: lastKnownJourney.routes,
-      routeDuration: lastKnownJourney.route_duration,
+      routeDuration: lastKnownJourney.to_longitude == null ? 0 : lastKnownJourney.route_duration,
     );
 
     var newJourney = lastKnownJourney.copyWith(
