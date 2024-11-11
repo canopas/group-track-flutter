@@ -243,14 +243,12 @@ class JourneyRepository {
             userId, extractedLocation, lastKnownJourney, distance);
       }
     } else {
-      if (distance > MIN_DISTANCE) {
         // Here, means last known journey is moving and user is still moving
         // Save journey for moving user and update last known journey.
         // Note: Need to use lastKnownJourney.id as journey id because we are updating the journey
 
         await _updateJourneyForContinuedMovingUser(
             userId, extractedLocation, lastKnownJourney, distance);
-      }
     }
   }
 
