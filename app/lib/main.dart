@@ -287,7 +287,6 @@ void _updateUserLocation(String userId, Position? position) async {
 }
 
 void _resetLocationSetting(bool state) async {
-  print("XXX reset");
   final userId = await _getUserIdFromPreferences();
   isSteady = state;
   distanceFilter = state ? STEADY_DISTANCE : MOVING_DISTANCE;
