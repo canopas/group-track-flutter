@@ -333,7 +333,7 @@ class JourneyRepository {
 
   bool _isOnlyOneDayChanged(LocationData? extractedLocation, ApiLocationJourney lastKnownJourney) {
     final lastKnownDate = DateTime.fromMillisecondsSinceEpoch(
-            lastKnownJourney.update_at!,
+            lastKnownJourney.update_at ?? DateTime.now().millisecondsSinceEpoch,
             isUtc: true)
         .toLocal();
     final currentDate = DateTime.fromMillisecondsSinceEpoch(

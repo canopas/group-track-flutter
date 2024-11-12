@@ -188,7 +188,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                         journey.isSteadyLocation(),
                         steadyDuration,
                         isFirstItem),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
                     _appPlaceButton(location, spaceId),
                     const SizedBox(height: 8),
                     Visibility(
@@ -342,30 +342,40 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          address,
-          style: AppTextStyle.body2
-              .copyWith(color: context.colorScheme.textPrimary),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
+        Flexible(
+          child: Text(
+            address,
+            style: AppTextStyle.body2
+                .copyWith(color: context.colorScheme.textPrimary),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
         const SizedBox(height: 8),
         Row(
-          mainAxisSize: MainAxisSize.max,
           children: [
-            Text(
-              formattedTime,
-              style: AppTextStyle.caption
-                  .copyWith(color: context.colorScheme.textDisabled),
+            Flexible(
+              child: Text(
+                formattedTime,
+                style: AppTextStyle.caption
+                    .copyWith(color: context.colorScheme.textDisabled),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             if (isSteadyLocation ?? false) ...[
-              Text(
-                  firstItem ?? false
-                      ? ''
-                      : context.l10n.journey_timeline_steady_duration_text(
-                          steadyDuration!),
-                  style: AppTextStyle.caption
-                      .copyWith(color: context.colorScheme.textSecondary)),
+              Flexible(
+                child: Text(
+                    firstItem ?? false
+                        ? ''
+                        : context.l10n.journey_timeline_steady_duration_text(
+                            steadyDuration!),
+                    style: AppTextStyle.caption
+                        .copyWith(color: context.colorScheme.textSecondary),
+                    maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ]
           ],
         ),
@@ -417,7 +427,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
       final time = createdAtDate.format(context, DateFormatType.time);
       return context.l10n.journey_timeline_Since_text(time);
     } else {
-      final dayTime = createdAtDate.format(context, DateFormatType.dayMonthFull);
+      final dayTime = createdAtDate.format(context, DateFormatType.dayMonthYear);
       return context.l10n.journey_timeline_Since_text(dayTime);
     }
   }
