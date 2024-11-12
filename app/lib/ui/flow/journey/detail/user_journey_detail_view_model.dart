@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+
 import 'package:data/api/location/journey/api_journey_service.dart';
 import 'package:data/api/location/journey/journey.dart';
 import 'package:data/log/logger.dart';
@@ -42,10 +43,8 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
       final toLatLng =
           LatLng(journey.to_latitude ?? 0.0, journey.to_longitude ?? 0.0);
 
-      final fromPlaceMarks = await placemarkFromCoordinates(
-          fromLatLng.latitude, fromLatLng.longitude);
-      final toPlaceMarks =
-          await placemarkFromCoordinates(toLatLng.latitude, toLatLng.longitude);
+      final fromPlaceMarks = await getPlaceMarkFromLatLng(fromLatLng);
+      final toPlaceMarks = await getPlaceMarkFromLatLng(toLatLng);
 
       state = state.copyWith(
         addressFrom: fromPlaceMarks,
@@ -60,6 +59,11 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
         stackTrace: stack,
       );
     }
+  }
+
+  Future<List<Placemark>> getPlaceMarkFromLatLng(LatLng latLng) async {
+    if (latLng.latitude == 0.0 && latLng.longitude == 0.0) return [];
+    return await placemarkFromCoordinates(latLng.latitude, latLng.longitude);
   }
 
   Future<bool> _checkUserInternet() async {
@@ -103,7 +107,7 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
     final frameInfo = await codec.getNextFrame();
 
     final byteData =
-    await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
+        await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
     final resizedBytes = byteData!.buffer.asUint8List();
 
     return BitmapDescriptor.fromBytes(resizedBytes);
