@@ -15,6 +15,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -32,7 +33,6 @@ const MOVING_DISTANCE = 10; // meters
 const STEADY_DISTANCE = 50; // meters
 
 const platform = MethodChannel('com.grouptrack/location');
-
 late final LocationService locationService;
 late final JourneyRepository journeyRepository;
 late final ApiJourneyService journeyService;
@@ -45,28 +45,28 @@ void main() async {
   }
 
   final container = await _initContainer();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   _initializeService();
 
   if (Platform.isAndroid) _startService();
 
-  if (Platform.isIOS) platform.setMethodCallHandler(_handleLocationUpdates);
+  platform.setMethodCallHandler(_handleLocationUpdates);
 
   runApp(
     UncontrolledProviderScope(container: container, child: const App()),
   );
 }
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   final networkService = NetworkService(FirebaseFirestore.instance);
-  _updateSpaceUserNetworkState(message, networkService);
-  _updateCurrentUserState(message, networkService);
+  updateSpaceUserNetworkState(message, networkService);
+  updateCurrentUserState(message, networkService);
 }
 
-void _updateSpaceUserNetworkState(
+void updateSpaceUserNetworkState(
     RemoteMessage message, NetworkService networkService) {
   final String? userId =
       message.data[NotificationNetworkStatusConst.KEY_USER_ID];
@@ -77,7 +77,7 @@ void _updateSpaceUserNetworkState(
   }
 }
 
-void _updateCurrentUserState(
+void updateCurrentUserState(
     RemoteMessage message, NetworkService networkService) async {
   final String? userId = message.data[NotificationUpdateStateConst.KEY_USER_ID];
   final bool isTypeUpdateState =
@@ -95,14 +95,10 @@ void _updateCurrentUserState(
 
 Future<ProviderContainer> _initContainer() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // if (!kDebugMode) { // uncommit when you don't want to send crashlytics log in debug mode.
+  if (!kDebugMode) {
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
     await FirebaseCrashlytics.instance.setCustomKey("app_type", "flutter");
-  // }
-
-  locationService = LocationService(FirebaseFirestore.instance);
-  journeyService = ApiJourneyService(FirebaseFirestore.instance);
-  journeyRepository = JourneyRepository(journeyService);
+  }
 
   final prefs = await SharedPreferences.getInstance();
 
@@ -147,6 +143,7 @@ Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
   }
 }
 
+// Android background location getting
 void _startService() async {
   await bgService.configure(
     androidConfiguration: AndroidConfiguration(
@@ -212,7 +209,7 @@ void _startLocationUpdates(String userId) {
 
     if (_previousPosition == null) {
       _updateUserLocation(userId, position);
-    } else if (timeDifference > MIN_TIME_DIFFERENCE) {
+    } else if (timeDifference > 10) {
       _manageSteadyLocationUpdates(userId, position);
     }
   });

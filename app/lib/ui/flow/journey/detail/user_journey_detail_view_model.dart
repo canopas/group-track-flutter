@@ -1,5 +1,4 @@
 import 'dart:ui' as ui;
-import 'package:data/api/location/journey/api_journey_service.dart';
 import 'package:data/api/location/journey/journey.dart';
 import 'package:data/log/logger.dart';
 import 'package:flutter/services.dart';
