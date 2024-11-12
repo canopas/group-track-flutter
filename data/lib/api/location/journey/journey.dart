@@ -59,16 +59,6 @@ class ApiLocationJourney with _$ApiLocationJourney {
   LocationData toLocationFromMovingJourney() {
     return LocationData(latitude: to_latitude ?? 0, longitude: to_longitude ?? 0, timestamp: DateTime.now());
   }
-
-  static ApiLocationJourney toLocationJourney(LocationData pos, String userId, String newJourneyId) {
-    return ApiLocationJourney(
-      id: newJourneyId,
-      user_id: userId,
-      from_latitude: pos.latitude,
-      from_longitude: pos.longitude,
-      created_at: pos.timestamp.millisecondsSinceEpoch,
-    );
-  }
 }
 
 @freezed
