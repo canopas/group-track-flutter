@@ -37,7 +37,8 @@ class JourneyRepository {
       _startSteadyLocationTimer(extractedLocation, userId);
 
       // Check and save location journey on day changed
-      checkAndSaveJourneyOnDayChange(extractedLocation, lastKnownJourney, userId);
+      checkAndSaveJourneyOnDayChange(
+          extractedLocation, lastKnownJourney, userId);
 
       // to get all route position between location a -> b for moving user journey
       locationCache.addLocation(extractedLocation, userId);
@@ -61,17 +62,14 @@ class JourneyRepository {
     var lastLocation =
         locationCache.getLastJourney(userId)?.toLocationFromSteadyJourney();
     var lastLocationJourney = locationCache.getLastJourney(userId);
-    if (lastLocation != null &&
-        _isSameLocation(position, lastLocation) ||
+    if (lastLocation != null && _isSameLocation(position, lastLocation) ||
         lastLocationJourney!.isSteadyLocation()) {
       return;
     }
 
     _steadyLocationTimer = Timer(const Duration(minutes: 5), () async {
       try {
-        await _saveSteadyLocation(position, userId);
-        _cancelSteadyLocationTimer();
-        locationCache.clearLocationCache(); // removing previous journey routes to get latest location route for next journey from start point to end
+        await saveSteadyLocation(position, userId);
       } catch (e, stack) {
         logger.e('Error saving steady location for user $userId: $e',
             stackTrace: stack);
@@ -83,9 +81,12 @@ class JourneyRepository {
     return loc1.latitude == loc2.latitude && loc1.longitude == loc2.longitude;
   }
 
-  Future<void> _saveSteadyLocation(LocationData position, String userId) async {
+  Future<void> saveSteadyLocation(LocationData position, String userId) async {
     var lastKnownJourney = await getLastKnownLocation(userId, position);
     await _saveJourneyOnJourneyStopped(userId, position, lastKnownJourney, 0);
+    _cancelSteadyLocationTimer();
+    // removing previous journey routes to get latest location route for next journey from start point to end
+    locationCache.clearLocationCache();
   }
 
   /// Cancel the timer if the user starts moving or a new location arrives before 5 minutes.
@@ -103,15 +104,16 @@ class JourneyRepository {
     if (dayChanged && extractedLocation != null) {
       var locations = locationCache.getLastFiveLocations(userId);
 
-      var geometricMedian = locations.isNotEmpty ? _geometricMedianCalculation(locations) : null;
+      var geometricMedian =
+          locations.isNotEmpty ? _geometricMedianCalculation(locations) : null;
 
       final lastKnownLocation = lasKnownJourney.isSteadyLocation()
           ? lasKnownJourney.toLocationFromSteadyJourney()
           : lasKnownJourney.toLocationFromMovingJourney();
 
       final distance = geometricMedian != null
-         ? _distanceBetween(geometricMedian, lastKnownLocation)
-         : _distanceBetween(extractedLocation, lastKnownLocation);
+          ? _distanceBetween(geometricMedian, lastKnownLocation)
+          : _distanceBetween(extractedLocation, lastKnownLocation);
 
       if (distance < MIN_DISTANCE) {
         // Here, means user is at same location on day changed

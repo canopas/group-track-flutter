@@ -166,7 +166,10 @@ void _startService() async {
 StreamSubscription<Position>? positionSubscription;
 Timer? _timer;
 Position? _previousPosition;
+Position? _movingPosition;
 int? _batteryLevel;
+bool isSteady = true;
+int distanceFilter = 10;
 
 @pragma('vm:entry-point')
 Future<void> onStart(ServiceInstance service) async {
@@ -205,14 +208,16 @@ void _startLocationUpdates(String userId) {
   positionSubscription = Geolocator.getPositionStream(
     locationSettings: AndroidSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: LOCATION_UPDATE_DISTANCE,
+        distanceFilter: distanceFilter,
         intervalDuration: const Duration(seconds: 10)),
   ).listen((position) {
-    // print("XXX new location:$position");
 
-    // if (_previousPosition == null) {
-    //   _updateUserLocation(userId, position);
-    // } else {
+    print("XXX new location:$position");
+
+    if (_previousPosition == null) {
+      _updateUserLocation(userId, position);
+    } else {
+      _manageSteadyLocationUpdates(userId, position);
     //   final distance = Geolocator.distanceBetween(
     //     position.latitude,
     //     position.longitude,
@@ -225,10 +230,58 @@ void _startLocationUpdates(String userId) {
     //   print("XXX time:$timeDifference, $distance");
 
     // if (distance > LOCATION_UPDATE_DISTANCE || timeDifference > 10) {
-    _updateUserLocation(userId, position);
-    // }
+
+    }
     // }
   });
+}
+
+void _manageSteadyLocationUpdates(String userId, Position position) {
+  final difference =
+      position.timestamp.difference(_previousPosition!.timestamp).inMinutes;
+
+  if (isSteady) {
+    print("XXX is steady true");
+    final distance = _distanceBetween(_previousPosition!, position);
+    if (_movingPosition != null) {
+      print("XXX moving location not null");
+      final movingDistance = _distanceBetween(_movingPosition!, position);
+      if (movingDistance > 50 && distance > 50) {
+        print("XXX reset and update moving location");
+        resetLocationConfig(userId);
+        _updateUserLocation(userId, _movingPosition);
+        _movingPosition = null;
+      }
+    } else if (distance > 50) {
+      print("XXX update moving location");
+      _movingPosition = position;
+    }
+  } else if (difference > 5) {
+    print("XXX difference is more then 5 min");
+    if (distanceFilter == 50) return;
+    print("XXX distanceFilter is not 50");
+    resetLocationConfig(userId);
+  } else {
+    print("XXX update location last");
+    _updateUserLocation(userId, position);
+  }
+}
+
+void resetLocationConfig(String userId) {
+  isSteady = !isSteady;
+  distanceFilter = (distanceFilter == 50 ? 10 : 50);
+  positionSubscription?.cancel();
+  positionSubscription = null;
+  _startLocationUpdates(userId);
+}
+
+double _distanceBetween(Position position1, Position position2) {
+  return Geolocator.distanceBetween(
+    position1.latitude,
+    position1.longitude,
+    position2.latitude,
+    position2.longitude,
+  );
 }
 
 void _updateUserLocation(String userId, Position? position) async {
