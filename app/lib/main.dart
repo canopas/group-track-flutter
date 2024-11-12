@@ -31,6 +31,9 @@ import 'package:yourspace_flutter/ui/app.dart';
 
 import 'domain/fcm/notification_handler.dart';
 
+const MOVING_DISTANCE = 10; // meters
+const STEADY_DISTANCE = 50; // meters
+
 const platform = MethodChannel('com.grouptrack/location');
 
 late final LocationService locationService;
@@ -164,11 +167,10 @@ void _startService() async {
 }
 
 StreamSubscription<Position>? positionSubscription;
-Timer? _timer;
 Position? _previousPosition;
 Position? _movingPosition;
 int? _batteryLevel;
-bool isSteady = true;
+bool isSteady = false;
 int distanceFilter = 10;
 
 @pragma('vm:entry-point')
@@ -186,12 +188,11 @@ Future<void> onStart(ServiceInstance service) async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   _initializeService();
-  final userId = await _getUserIdFromPreferences();
 
+  final userId = await _getUserIdFromPreferences();
   if (userId != null) _startLocationUpdates(userId);
 
   service.on('stopService').listen((event) {
-    _timer?.cancel();
     positionSubscription?.cancel();
     service.stopSelf();
   });
@@ -206,73 +207,44 @@ void _initializeService() {
 
 void _startLocationUpdates(String userId) {
   positionSubscription = Geolocator.getPositionStream(
-    locationSettings: AndroidSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: distanceFilter,
-        intervalDuration: const Duration(seconds: 10)),
+    locationSettings: LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: distanceFilter,
+    ),
   ).listen((position) {
-
-    print("XXX new location:$position");
+    final timeDifference = _previousPosition != null
+        ? position.timestamp.difference(_previousPosition!.timestamp).inSeconds
+        : 0;
 
     if (_previousPosition == null) {
       _updateUserLocation(userId, position);
-    } else {
+    } else if (timeDifference > MIN_TIME_DIFFERENCE) {
       _manageSteadyLocationUpdates(userId, position);
-    //   final distance = Geolocator.distanceBetween(
-    //     position.latitude,
-    //     position.longitude,
-    //     _previousPosition!.latitude,
-    //     _previousPosition!.longitude,
-    //   );
-    //
-    //   final timeDifference =
-    //       position.timestamp.difference(_previousPosition!.timestamp).inSeconds;
-    //   print("XXX time:$timeDifference, $distance");
-
-    // if (distance > LOCATION_UPDATE_DISTANCE || timeDifference > 10) {
-
     }
-    // }
   });
 }
 
 void _manageSteadyLocationUpdates(String userId, Position position) {
-  final difference =
-      position.timestamp.difference(_previousPosition!.timestamp).inMinutes;
-
   if (isSteady) {
-    print("XXX is steady true");
-    final distance = _distanceBetween(_previousPosition!, position);
-    if (_movingPosition != null) {
-      print("XXX moving location not null");
-      final movingDistance = _distanceBetween(_movingPosition!, position);
-      if (movingDistance > 50 && distance > 50) {
-        print("XXX reset and update moving location");
-        resetLocationConfig(userId);
-        _updateUserLocation(userId, _movingPosition);
-        _movingPosition = null;
-      }
-    } else if (distance > 50) {
-      print("XXX update moving location");
-      _movingPosition = position;
-    }
-  } else if (difference > 5) {
-    print("XXX difference is more then 5 min");
-    if (distanceFilter == 50) return;
-    print("XXX distanceFilter is not 50");
-    resetLocationConfig(userId);
+    _handleSteadyToMovingLocation(userId, position);
   } else {
-    print("XXX update location last");
     _updateUserLocation(userId, position);
   }
 }
 
-void resetLocationConfig(String userId) {
-  isSteady = !isSteady;
-  distanceFilter = (distanceFilter == 50 ? 10 : 50);
-  positionSubscription?.cancel();
-  positionSubscription = null;
-  _startLocationUpdates(userId);
+void _handleSteadyToMovingLocation(String userId, Position position) {
+  final distance = _distanceBetween(_previousPosition!, position);
+
+  if (_movingPosition != null) {
+    final movingDistance = _distanceBetween(_movingPosition!, position);
+
+    if (movingDistance > STEADY_DISTANCE && distance > STEADY_DISTANCE) {
+      _resetLocationSetting(false);
+      _updateUserLocation(userId, _movingPosition);
+    }
+  } else if (distance > STEADY_DISTANCE) {
+    _movingPosition = position;
+  }
 }
 
 double _distanceBetween(Position position1, Position position2) {
@@ -299,7 +271,11 @@ void _updateUserLocation(String userId, Position? position) async {
     );
     await locationService.saveCurrentLocation(userId, locationData);
 
-    await journeyRepository.saveLocationJourney(locationData, userId);
+    await journeyRepository.saveLocationJourney(
+      locationData,
+      userId,
+      reset: _resetLocationSetting,
+    );
     _userBatteryLevel(userId);
   } catch (error, stack) {
     logger.e(
@@ -308,6 +284,17 @@ void _updateUserLocation(String userId, Position? position) async {
       stackTrace: stack,
     );
   }
+}
+
+void _resetLocationSetting(bool state) async {
+  print("XXX reset");
+  final userId = await _getUserIdFromPreferences();
+  isSteady = state;
+  distanceFilter = state ? STEADY_DISTANCE : MOVING_DISTANCE;
+  _movingPosition = null;
+  positionSubscription?.cancel();
+  positionSubscription = null;
+  _startLocationUpdates(userId!);
 }
 
 Future<String?> _getUserIdFromPreferences() async {

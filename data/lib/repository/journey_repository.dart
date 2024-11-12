@@ -14,9 +14,8 @@ import '../storage/location_caches.dart';
 const MIN_DISTANCE = 150.0; // 150 meters
 const MIN_TIME_DIFFERENCE = 5 * 60 * 1000; // 5 minutes
 
-final journeyRepositoryProvider = Provider((ref) => JourneyRepository(
-      ref.read(journeyServiceProvider),
-    ));
+final journeyRepositoryProvider =
+    Provider((ref) => JourneyRepository(ref.read(journeyServiceProvider)));
 
 class JourneyRepository {
   final ApiJourneyService journeyService;
@@ -27,14 +26,15 @@ class JourneyRepository {
 
   Future<void> saveLocationJourney(
     LocationData extractedLocation,
-    String userId,
-  ) async {
+    String userId, {
+    void Function(bool state)? reset,
+  }) async {
     try {
       var lastKnownJourney =
           await getLastKnownLocation(userId, extractedLocation);
 
       _cancelSteadyLocationTimer();
-      _startSteadyLocationTimer(extractedLocation, userId);
+      _startSteadyLocationTimer(extractedLocation, userId, reset);
 
       // Check and save location journey on day changed
       checkAndSaveJourneyOnDayChange(
@@ -58,7 +58,11 @@ class JourneyRepository {
   }
 
   /// Start or restart the 5-minute timer when the user is steady.
-  void _startSteadyLocationTimer(LocationData position, String userId) {
+  void _startSteadyLocationTimer(
+    LocationData position,
+    String userId,
+    void Function(bool v)? reset,
+  ) {
     var lastLocation =
         locationCache.getLastJourney(userId)?.toLocationFromSteadyJourney();
     var lastLocationJourney = locationCache.getLastJourney(userId);
@@ -69,7 +73,11 @@ class JourneyRepository {
 
     _steadyLocationTimer = Timer(const Duration(minutes: 5), () async {
       try {
-        await saveSteadyLocation(position, userId);
+        await _saveSteadyLocation(position, userId);
+        _cancelSteadyLocationTimer();
+        // removing previous journey routes to get latest location route for next journey from start point to end
+        locationCache.clearLocationCache();
+        reset?.call(true);
       } catch (e, stack) {
         logger.e('Error saving steady location for user $userId: $e',
             stackTrace: stack);
@@ -81,12 +89,9 @@ class JourneyRepository {
     return loc1.latitude == loc2.latitude && loc1.longitude == loc2.longitude;
   }
 
-  Future<void> saveSteadyLocation(LocationData position, String userId) async {
+  Future<void> _saveSteadyLocation(LocationData position, String userId) async {
     var lastKnownJourney = await getLastKnownLocation(userId, position);
     await _saveJourneyOnJourneyStopped(userId, position, lastKnownJourney, 0);
-    _cancelSteadyLocationTimer();
-    // removing previous journey routes to get latest location route for next journey from start point to end
-    locationCache.clearLocationCache();
   }
 
   /// Cancel the timer if the user starts moving or a new location arrives before 5 minutes.

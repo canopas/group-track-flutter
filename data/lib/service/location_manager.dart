@@ -7,9 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-const LOCATION_UPDATE_INTERVAL = 60000; // 1 min
-const LOCATION_UPDATE_DISTANCE = 10; // meters
-
 final locationManagerProvider = Provider((ref) => LocationManager());
 
 final bgService = FlutterBackgroundService();
