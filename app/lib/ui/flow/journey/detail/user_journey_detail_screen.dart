@@ -82,8 +82,10 @@ class _UserJourneyDetailScreenState
   }
 
   Widget _journeyInfo(UserJourneyDetailState state) {
-    final distance = notifier.getDistanceString(state.journey!.route_distance ?? 0);
-    final duration = notifier.getRouteDurationString(state.journey!.route_duration ?? 0);
+    final distance =
+        notifier.getDistanceString(state.journey!.route_distance ?? 0);
+    final duration =
+        notifier.getRouteDurationString(state.journey!.route_duration ?? 0);
 
     return Padding(
       padding: EdgeInsets.only(
@@ -116,14 +118,14 @@ class _UserJourneyDetailScreenState
   Widget _journeyPlacesInfo(
     List<Placemark> placeMark,
     int? createdAt,
-    bool isLastItem,
+    bool isSteadyLocation,
   ) {
     return SizedBox(
       height: 86,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DottedLineView(isSteadyLocation: isLastItem, isLastItem: isLastItem),
+          DetailJourneyDottedLineView(isSteadyLocation: isSteadyLocation),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 16),
@@ -133,7 +135,7 @@ class _UserJourneyDetailScreenState
                   _placeInfo(placeMark, createdAt),
                   const SizedBox(height: 8),
                   Visibility(
-                      visible: !isLastItem,
+                      visible: !isSteadyLocation,
                       child: Divider(
                         thickness: 1,
                         color: context.colorScheme.outline,
@@ -149,7 +151,9 @@ class _UserJourneyDetailScreenState
 
   Widget _placeInfo(List<Placemark> placeMark, int? createdAt) {
     final formattedTime = _getDateAndTime(createdAt ?? 0);
-    final address = placeMark.isNotEmpty ? placeMark.getFormattedAddress() : context.l10n.journey_detail_getting_address_text;
+    final address = placeMark.isNotEmpty
+        ? placeMark.getFormattedAddress()
+        : context.l10n.journey_timeline_unknown_address_text;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,7 +178,10 @@ class _UserJourneyDetailScreenState
   String _getDateAndTime(int createdAt) {
     DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
     final startTime = createdAtDate.format(context, DateFormatType.time);
-    return '${createdAtDate.format(context, DateFormatType.dayMonthFull)} $startTime';
+    final date = createdAtDate.isToday
+        ? context.l10n.common_today
+        : createdAtDate.format(context, DateFormatType.dayMonthFull);
+    return '$date $startTime';
   }
 
   void _observeError() {
@@ -202,12 +209,12 @@ class _UserJourneyDetailScreenState
   }
 
   String _formattedAddress(
-      List<Placemark>? fromPlaces,
-      List<Placemark>? toPlaces,
-      ) {
+    List<Placemark>? fromPlaces,
+    List<Placemark>? toPlaces,
+  ) {
     if (fromPlaces == null || fromPlaces.isEmpty) return '';
     final fromPlace = fromPlaces.first;
-    final toPlace = toPlaces?.first;
+    final toPlace = toPlaces?.firstOrNull;
 
     final fromCity = fromPlace.locality ?? '';
     final toCity = toPlace?.locality ?? '';
@@ -233,9 +240,9 @@ class _UserJourneyDetailScreenState
 
   Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {
     final fromIcon = await notifier.createCustomIcon(
-        'assets/images/ic_start_location_detail_icon.png');
+        'assets/images/ic_timeline_start_location_icon.png');
     final toIcon = await notifier.createCustomIcon(
-        'assets/images/ic_end_location_detail_icon.png');
+        'assets/images/ic_timeline_end_location_flag_icon.png');
 
     final List<Marker> markers = [
       Marker(
