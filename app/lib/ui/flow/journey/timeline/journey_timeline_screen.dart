@@ -341,9 +341,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         builder: (_, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return _placeInfo(
-              context.l10n.journey_timeline_getting_address_text,
-              formattedTime,
-              "",
+              address: context.l10n.journey_timeline_getting_address_text,
+              formattedTime: formattedTime,
             );
           } else if (snapshot.hasData) {
             final address = snapshot.data ??
