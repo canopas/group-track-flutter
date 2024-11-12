@@ -60,7 +60,7 @@ void main() async {
   );
 }
 
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   final networkService = NetworkService(FirebaseFirestore.instance);
   _updateSpaceUserNetworkState(message, networkService);
@@ -115,16 +115,6 @@ Future<ProviderContainer> _initContainer() async {
   return container;
 }
 
-Future<String?> _getUserIdFromPreferences() async {
-  final prefs = await SharedPreferences.getInstance();
-  final encodedUser = prefs.getString("user_account");
-  if (encodedUser != null) {
-    final user = jsonDecode(encodedUser);
-    return user['id'];
-  }
-  return null;
-}
-
 Future<void> _handleLocationUpdates(MethodCall call) async {
   if (call.method == 'onLocationUpdate') {
     final Map<String, dynamic> locationData =
@@ -158,8 +148,7 @@ Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
   }
 }
 
-
-void startService() async {
+void _startService() async {
   await bgService.configure(
     androidConfiguration: AndroidConfiguration(
       onStart: onStart,
@@ -211,8 +200,7 @@ void _initializeService() {
   journeyRepository = JourneyRepository(journeyService);
 }
 
-
-void _startLocationUpdates() {
+void _startLocationUpdates(String userId) {
   positionSubscription = Geolocator.getPositionStream(
     locationSettings: LocationSettings(
       accuracy: LocationAccuracy.high,
@@ -263,10 +251,7 @@ double _distanceBetween(Position position1, Position position2) {
   );
 }
 
-void _updateUserLocation(
-  String userId,
-  Position? position,
-) async {
+void _updateUserLocation(String userId, Position? position) async {
   final isSame = _previousPosition?.latitude == position?.latitude &&
       _previousPosition?.longitude == position?.longitude;
 
@@ -286,7 +271,6 @@ void _updateUserLocation(
       userId,
       reset: _resetLocationSetting,
     );
-    _userBatteryLevel(userId);
   } catch (error, stack) {
     logger.e(
       'Main: error while getting ot update user location and journey',
@@ -311,4 +295,3 @@ Future<String?> _getUserIdFromPreferences() async {
   final encodedUser = prefs.getString("user_account");
   return encodedUser != null ? jsonDecode(encodedUser)['id'] : null;
 }
-
