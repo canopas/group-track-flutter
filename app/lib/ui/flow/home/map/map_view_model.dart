@@ -22,6 +22,8 @@ import 'map_screen.dart';
 
 part 'map_view_model.freezed.dart';
 
+const FOUR_MIN_SECONDS = 4 * 60 * 1000;
+
 final mapViewStateProvider =
     StateNotifierProvider.autoDispose<MapViewNotifier, MapViewState>((ref) {
   return MapViewNotifier(
@@ -193,7 +195,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     _onSelectUserMarker(null);
   }
 
-  void showMemberDetail(ApiUserInfo member) {
+  void showMemberDetail(ApiUserInfo member) async {
     final selectedMember =
         (state.selectedUser?.user.id == member.user.id) ? null : member;
     final position = (selectedMember != null && selectedMember.location != null)
