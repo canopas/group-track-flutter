@@ -27,7 +27,8 @@ class JourneyTimelineScreen extends ConsumerStatefulWidget {
   final ApiUser selectedUser;
   final int groupCreatedDate;
 
-  const JourneyTimelineScreen({super.key, required this.selectedUser, required this.groupCreatedDate});
+  const JourneyTimelineScreen(
+      {super.key, required this.selectedUser, required this.groupCreatedDate});
 
   @override
   ConsumerState<JourneyTimelineScreen> createState() =>
@@ -165,7 +166,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     final steadyDuration = notifier.getSteadyDuration(journey.created_at!, journey.update_at!);
     final formattedTime = (isFirstItem)
         ? _getFormattedLocationTimeForFirstItem(journey.created_at!)
-        : _getFormattedTimeForSteadyLocation(journey.created_at!, steadyDuration);
+        : _getFormattedTimeForSteadyLocation(journey.created_at!);
 
     return Padding(
       padding: EdgeInsets.only(top: isFirstItem ? 16 : 0),
@@ -181,7 +182,12 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildPlaceInfo(location, formattedTime),
+                    _buildPlaceInfo(
+                        location,
+                        formattedTime,
+                        journey.isSteadyLocation(),
+                        steadyDuration,
+                        isFirstItem),
                     const SizedBox(height: 8),
                     _appPlaceButton(location, spaceId),
                     const SizedBox(height: 8),
@@ -264,9 +270,15 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     );
   }
 
-  Widget _buildPlaceInfo(LatLng latLng, String formattedTime) {
+  Widget _buildPlaceInfo(LatLng latLng, String formattedTime,
+      bool isSteadyLocation, String steadyDuration, bool firstItem) {
     if (_addressCache.containsKey(latLng)) {
-      return _placeInfo(_addressCache[latLng]!, formattedTime);
+      return _placeInfo(
+          address: _addressCache[latLng]!,
+          formattedTime: formattedTime,
+          isSteadyLocation: isSteadyLocation,
+          steadyDuration: steadyDuration,
+          firstItem: firstItem);
     }
 
     return FutureBuilder(
@@ -274,8 +286,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
       builder: (_, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _placeInfo(
-            context.l10n.journey_timeline_getting_address_text,
-            formattedTime,
+            address: context.l10n.journey_timeline_getting_address_text,
+            formattedTime: formattedTime,
           );
         }
 
@@ -283,13 +295,19 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           final address = snapshot.data ??
               context.l10n.journey_timeline_unknown_address_text;
           _addressCache[latLng] = address;
-          return _placeInfo(address, formattedTime);
+          return _placeInfo(
+              address: address,
+              formattedTime: formattedTime,
+              isSteadyLocation: isSteadyLocation,
+              steadyDuration: steadyDuration,
+              firstItem: firstItem);
         } else if (snapshot.hasError) {
-          return _placeInfo("Request timeout", formattedTime);
+          return _placeInfo(
+              address: "Request timeout", formattedTime: formattedTime);
         } else {
           return _placeInfo(
-            context.l10n.journey_timeline_unknown_address_text,
-            formattedTime,
+            address: context.l10n.journey_timeline_unknown_address_text,
+            formattedTime: formattedTime,
           );
         }
       },
@@ -304,17 +322,23 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           if (snapshot.hasData) {
             final address = snapshot.data ??
                 context.l10n.journey_timeline_unknown_address_text;
-            return _placeInfo(address, formattedTime);
+            return _placeInfo(address: address, formattedTime: formattedTime);
           } else {
             return _placeInfo(
-              context.l10n.journey_timeline_getting_address_text,
-              formattedTime,
+              address: context.l10n.journey_timeline_getting_address_text,
+              formattedTime: formattedTime,
             );
           }
         });
   }
 
-  Widget _placeInfo(String address, String formattedTime) {
+  Widget _placeInfo({
+    required String address,
+    required String formattedTime,
+    bool? isSteadyLocation,
+    String? steadyDuration,
+    bool? firstItem,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -326,10 +350,24 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 8),
-        Text(
-          formattedTime,
-          style: AppTextStyle.caption
-              .copyWith(color: context.colorScheme.textDisabled),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Text(
+              formattedTime,
+              style: AppTextStyle.caption
+                  .copyWith(color: context.colorScheme.textDisabled),
+            ),
+            if (isSteadyLocation ?? false) ...[
+              Text(
+                  firstItem ?? false
+                      ? ''
+                      : context.l10n.journey_timeline_steady_duration_text(
+                          steadyDuration!),
+                  style: AppTextStyle.caption
+                      .copyWith(color: context.colorScheme.textSecondary)),
+            ]
+          ],
         ),
       ],
     );
@@ -412,15 +450,15 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     }
   }
 
-  String _getFormattedTimeForSteadyLocation(int createdAt, String steadyDuration) {
+  String _getFormattedTimeForSteadyLocation(int createdAt) {
     DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
     final startTime = createdAtDate.format(context, DateFormatType.time);
 
     if (createdAtDate.isToday) {
       final time = createdAtDate.format(context, DateFormatType.time);
-      return '${context.l10n.journey_timeline_today_text(time)} for $steadyDuration';
+      return context.l10n.journey_timeline_today_text(time);
     } else {
-      return '${createdAtDate.format(context, DateFormatType.dayMonthFull)} $startTime for $steadyDuration';
+      return '${createdAtDate.format(context, DateFormatType.dayMonthFull)} $startTime';
     }
   }
 

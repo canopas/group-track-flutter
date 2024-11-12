@@ -288,6 +288,14 @@
   "journey_timeline_Since_text": "Since {date}",
   "journey_timeline_today_text": "Today {date}",
   "journey_timeline_date_picker_select_text": "Select",
+  "journey_timeline_steady_duration_text": "  |  Steady for {duration}",
+  "@journey_timeline_steady_duration_text": {
+    "placeholders": {
+      "duration": {
+        "type": "String?"
+      }
+    }
+  },
 
   "journey_detail_getting_address_text": "Getting the address...",
 
