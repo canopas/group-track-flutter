@@ -2,13 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:battery_plus/battery_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/journey/api_journey_service.dart';
 import 'package:data/api/location/location.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/repository/journey_repository.dart';
-import 'package:data/service/battery_service.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/location_service.dart';
 import 'package:data/service/network_service.dart';
@@ -39,7 +37,6 @@ const platform = MethodChannel('com.grouptrack/location');
 late final LocationService locationService;
 late final JourneyRepository journeyRepository;
 late final ApiJourneyService journeyService;
-late final BatteryService batteryService;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,24 +60,7 @@ void main() async {
   );
 }
 
-Future<ProviderContainer> _initContainer() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  if (!kDebugMode) {
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-    await FirebaseCrashlytics.instance.setCustomKey("app_type", "flutter");
-  }
-
-  final prefs = await SharedPreferences.getInstance();
-
-  final container = ProviderContainer(
-    overrides: [
-      sharedPreferencesProvider.overrideWithValue(prefs),
-    ],
-  );
-  return container;
-}
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   final networkService = NetworkService(FirebaseFirestore.instance);
   _updateSpaceUserNetworkState(message, networkService);
@@ -112,11 +92,39 @@ void _updateCurrentUserState(
     journeyRepository.checkAndSaveJourneyOnDayChange(
         null, lastKnownJourney, userId);
   }
-
-  if (Platform.isIOS) _userBatteryLevel(userId!);
 }
 
-// iOS location updates in background
+Future<ProviderContainer> _initContainer() async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (!kDebugMode) {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+    await FirebaseCrashlytics.instance.setCustomKey("app_type", "flutter");
+  }
+
+  locationService = LocationService(FirebaseFirestore.instance);
+  journeyService = ApiJourneyService(FirebaseFirestore.instance);
+  journeyRepository = JourneyRepository(journeyService);
+
+  final prefs = await SharedPreferences.getInstance();
+
+  final container = ProviderContainer(
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(prefs),
+    ],
+  );
+  return container;
+}
+
+Future<String?> _getUserIdFromPreferences() async {
+  final prefs = await SharedPreferences.getInstance();
+  final encodedUser = prefs.getString("user_account");
+  if (encodedUser != null) {
+    final user = jsonDecode(encodedUser);
+    return user['id'];
+  }
+  return null;
+}
+
 Future<void> _handleLocationUpdates(MethodCall call) async {
   if (call.method == 'onLocationUpdate') {
     final Map<String, dynamic> locationData =
@@ -150,8 +158,8 @@ Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
   }
 }
 
-// Android Location updates in background
-void _startService() async {
+
+void startService() async {
   await bgService.configure(
     androidConfiguration: AndroidConfiguration(
       onStart: onStart,
@@ -169,7 +177,6 @@ void _startService() async {
 StreamSubscription<Position>? positionSubscription;
 Position? _previousPosition;
 Position? _movingPosition;
-int? _batteryLevel;
 bool isSteady = false;
 int distanceFilter = 10;
 
@@ -202,10 +209,10 @@ void _initializeService() {
   locationService = LocationService(FirebaseFirestore.instance);
   journeyService = ApiJourneyService(FirebaseFirestore.instance);
   journeyRepository = JourneyRepository(journeyService);
-  batteryService = BatteryService(FirebaseFirestore.instance);
 }
 
-void _startLocationUpdates(String userId) {
+
+void _startLocationUpdates() {
   positionSubscription = Geolocator.getPositionStream(
     locationSettings: LocationSettings(
       accuracy: LocationAccuracy.high,
@@ -256,7 +263,10 @@ double _distanceBetween(Position position1, Position position2) {
   );
 }
 
-void _updateUserLocation(String userId, Position? position) async {
+void _updateUserLocation(
+  String userId,
+  Position? position,
+) async {
   final isSame = _previousPosition?.latitude == position?.latitude &&
       _previousPosition?.longitude == position?.longitude;
 
@@ -302,18 +312,3 @@ Future<String?> _getUserIdFromPreferences() async {
   return encodedUser != null ? jsonDecode(encodedUser)['id'] : null;
 }
 
-void _userBatteryLevel(String userId) async {
-  try {
-    final level = await Battery().batteryLevel;
-    if (level != _batteryLevel) {
-      await batteryService.updateBatteryPct(userId, level);
-      _batteryLevel = level;
-    }
-  } catch (error, stack) {
-    logger.e(
-      'Main: error while getting or updating battery level',
-      error: error,
-      stackTrace: stack,
-    );
-  }
-}

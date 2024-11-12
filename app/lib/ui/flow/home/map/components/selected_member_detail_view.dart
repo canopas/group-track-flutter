@@ -151,7 +151,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
         const SizedBox(height: 12),
         _userAddressView(userInfo.location),
         const SizedBox(height: 4),
-        _userTimeAgo(userInfo.user.created_at)
+        _userTimeAgo(userInfo.location?.created_at ?? DateTime.now().millisecondsSinceEpoch)
       ],
     );
   }

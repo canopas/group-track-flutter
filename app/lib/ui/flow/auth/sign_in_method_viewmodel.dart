@@ -1,7 +1,6 @@
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/auth_service.dart';
-import 'package:data/storage/app_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -19,7 +18,6 @@ final signInMethodsStateProvider = StateNotifierProvider.autoDispose<
       ref.read(googleSignInProvider),
       ref.read(authServiceProvider),
       FirebaseAuth.instance,
-    ref.read(fetchCurrentLocation.notifier),
   );
 });
 
@@ -28,10 +26,9 @@ class SignInMethodsScreenViewNotifier
   final GoogleSignIn googleSignIn;
   final AuthService authService;
   final FirebaseAuth firebaseAuth;
-  final StateController<bool?> fetchCurrentLocation;
 
   SignInMethodsScreenViewNotifier(
-      this.googleSignIn, this.authService, this.firebaseAuth, this.fetchCurrentLocation)
+      this.googleSignIn, this.authService, this.firebaseAuth)
       : super(const SignInMethodsScreenState());
 
   Future<void> signInWithGoogle() async {
@@ -58,7 +55,6 @@ class SignInMethodsScreenViewNotifier
           isNewUser: isNewUser,
           error: null,
         );
-        fetchCurrentLocation.state = true;
       } else {
         state = state.copyWith(showGoogleLoading: false);
       }
@@ -112,7 +108,6 @@ class SignInMethodsScreenViewNotifier
           showAppleLoading: false,
           socialSignInCompleted: true,
           isNewUser: isNewUser);
-      fetchCurrentLocation.state = true;
     } catch (error, stack) {
       state =
           state.copyWith(showAppleLoading: false, socialSignInCompleted: false);
