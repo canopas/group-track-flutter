@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/button/action_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
@@ -88,6 +89,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Widget _body(JourneyTimelineState state) {
+    final selectedDate = _onSelectDatePickerDate(state.selectedTimeFrom);
+
     if (state.isNetworkOff) {
       return NoInternetScreen(onPressed: () {
         notifier.loadData(widget.selectedUser);
@@ -107,10 +110,23 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           right: 16,
           bottom: context.mediaQueryPadding.bottom,
         ),
-        itemCount: state.sortedJourney.length + 1,
+        itemCount: state.sortedJourney.length + 2,
         itemBuilder: (_, index) {
-          if (index < state.sortedJourney.length) {
-            final journey = state.sortedJourney[index];
+          if (index == 0) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Row(children: [
+                Text(selectedDate,
+                    style: AppTextStyle.subtitle1.copyWith(
+                      color: context.colorScheme.textDisabled,
+                    ))
+              ]),
+            );
+          }
+
+          final itemIndex = index - 1;
+          if (itemIndex < state.sortedJourney.length) {
+            final journey = state.sortedJourney[itemIndex];
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -163,7 +179,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     String? spaceId,
   ) {
     final location = LatLng(journey.from_latitude, journey.from_longitude);
-    final steadyDuration = notifier.getSteadyDuration(journey.created_at!, journey.update_at!);
+    final steadyDuration =
+        notifier.getSteadyDuration(journey.created_at!, journey.update_at!);
     final formattedTime = (isFirstItem)
         ? _getFormattedLocationTimeForFirstItem(journey.created_at!)
         : _getFormattedTimeForSteadyLocation(journey.created_at!);
@@ -315,11 +332,20 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Widget _buildMovingPlaceInfo(
-      LatLng fromLatLng, LatLng toLatLng, String formattedTime) {
+    LatLng fromLatLng,
+    LatLng toLatLng,
+    String formattedTime,
+  ) {
     return FutureBuilder(
         future: _getMovingJourneyAddress(fromLatLng, toLatLng),
         builder: (_, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _placeInfo(
+              context.l10n.journey_timeline_getting_address_text,
+              formattedTime,
+              "",
+            );
+          } else if (snapshot.hasData) {
             final address = snapshot.data ??
                 context.l10n.journey_timeline_unknown_address_text;
             return _placeInfo(address: address, formattedTime: formattedTime);
@@ -483,8 +509,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {
-    final fromIcon =
-        await notifier.createCustomIcon('assets/images/ic_feed_location_icon.png');
+    final fromIcon = await notifier
+        .createCustomIcon('assets/images/ic_feed_location_icon.png');
     final toIcon =
         await notifier.createCustomIcon('assets/images/ic_distance_icon.png');
 
@@ -518,7 +544,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         final pickedDate = await showDatePicker(
           context: context,
           initialDate: dateTime,
-          firstDate: DateTime.fromMillisecondsSinceEpoch(widget.groupCreatedDate),
+          firstDate:
+              DateTime.fromMillisecondsSinceEpoch(widget.groupCreatedDate),
           lastDate: DateTime.now(),
           confirmText: context.l10n.journey_timeline_date_picker_select_text,
         );
@@ -537,5 +564,17 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
 
   void _showSnackBar() {
     showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
+  }
+
+  String _onSelectDatePickerDate(int? timestamp) {
+    if (timestamp == null) return context.l10n.common_today;
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+    if (dateTime.isToday) {
+      return context.l10n.common_today;
+    } else {
+      final date = DateFormat('dd MMM').format(dateTime);
+      return date.toString();
+    }
   }
 }
