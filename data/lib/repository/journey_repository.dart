@@ -26,19 +26,17 @@ class JourneyRepository {
 
   JourneyRepository(this.journeyService);
 
-  Future<void> saveLocationJourney(
-    LocationData extractedLocation,
-    String userId,
-  ) async {
+  Future<void> saveLocationJourney({
+    required LocationData extractedLocation,
+    required String userId,
+    bool? fromHomeViewModel,
+  }) async {
     try {
       var lastKnownJourney =
           await getLastKnownLocation(userId, extractedLocation);
 
-      _cancelSteadyLocationTimer();
-      _startSteadyLocationTimer(extractedLocation, userId);
-
       // Check and save location journey on day changed
-      checkAndSaveJourneyOnDayChange(extractedLocation, lastKnownJourney, userId);
+      checkAndSaveJourneyOnDayChange(extractedLocation: extractedLocation, lastKnownJourney: lastKnownJourney, userId: userId);
 
       // to get all route position between location a -> b for moving user journey
       locationCache.addLocation(extractedLocation, userId);
@@ -49,6 +47,9 @@ class JourneyRepository {
       // Check and save location journey based on user state i.e., steady or moving
       await _checkAndSaveLocationJourney(
           userId, extractedLocation, lastKnownJourney);
+
+      _cancelSteadyLocationTimer();
+      _startSteadyLocationTimer(extractedLocation, userId);
     } catch (error, stack) {
       logger.e(
           'Journey Repository: Error while save journey, $extractedLocation',
@@ -97,8 +98,9 @@ class JourneyRepository {
     }
   }
 
-  Future<void> checkAndSaveJourneyOnDayChange(LocationData? extractedLocation,
-      ApiLocationJourney lastKnownJourney, String userId) async {
+  Future<void> checkAndSaveJourneyOnDayChange({required LocationData? extractedLocation,
+      required ApiLocationJourney lastKnownJourney, required String userId, bool? fromHomeViewModel}) async {
+    if (fromHomeViewModel ?? false) return;
     bool dayChanged = _isDayChanged(extractedLocation, lastKnownJourney);
     bool isOnlyOneDayChange = _isOnlyOneDayChanged(extractedLocation, lastKnownJourney);
 

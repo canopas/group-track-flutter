@@ -207,6 +207,10 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
 
     return BitmapDescriptor.fromBytes(resizedBytes);
   }
+
+  bool selectedDateIsTodayDate() {
+    return state.selectedTimeFrom == DateTime.now().startOfDay.millisecondsSinceEpoch;
+  }
 }
 
 @freezed

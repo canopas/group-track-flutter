@@ -80,7 +80,7 @@ void updateCurrentUserState(RemoteMessage message, NetworkService networkService
   }
   if (userId != null) {
     final lastKnownJourney = await journeyRepository.getLastKnownLocation(userId, null);
-    journeyRepository.checkAndSaveJourneyOnDayChange(null, lastKnownJourney, userId);
+    journeyRepository.checkAndSaveJourneyOnDayChange(extractedLocation: null, lastKnownJourney: lastKnownJourney, userId: userId);
   }
 }
 
@@ -211,7 +211,7 @@ Future<void> _updateUserLocationWithIOS(LocationData locationPosition) async {
     try {
       await locationService.saveCurrentLocation(userId, locationPosition);
 
-      await journeyRepository.saveLocationJourney(locationPosition, userId);
+      await journeyRepository.saveLocationJourney(extractedLocation: locationPosition, userId: userId);
     } catch (error, stack) {
       logger.e(
         'Error while updating user location and journey from native iOS location data',
@@ -240,7 +240,7 @@ void _updateUserLocation(
     );
     await locationService.saveCurrentLocation(userId, locationData);
 
-    await journeyRepository.saveLocationJourney(locationData, userId);
+    await journeyRepository.saveLocationJourney(extractedLocation: locationData, userId: userId);
   } catch (error, stack) {
     logger.e(
       'Main: error while getting ot update user location and journey',

@@ -367,39 +367,33 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Flexible(
-          child: Text(
-            address,
-            style: AppTextStyle.body2
-                .copyWith(color: context.colorScheme.textPrimary),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
+        Text(
+          address,
+          style: AppTextStyle.body2
+              .copyWith(color: context.colorScheme.textPrimary),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 8),
         Row(
           children: [
-            Flexible(
-              child: Text(
-                formattedTime,
-                style: AppTextStyle.caption
-                    .copyWith(color: context.colorScheme.textDisabled),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
+            Text(
+              formattedTime,
+              style: AppTextStyle.caption
+                  .copyWith(color: context.colorScheme.textDisabled),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             if (isSteadyLocation ?? false) ...[
-              Flexible(
-                child: Text(
-                    firstItem ?? false
-                        ? ''
-                        : context.l10n.journey_timeline_steady_duration_text(
-                            steadyDuration!),
-                    style: AppTextStyle.caption
-                        .copyWith(color: context.colorScheme.textSecondary),
-                    maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              Text(
+                  ((firstItem ?? false) && notifier.selectedDateIsTodayDate())
+                      ? ''
+                      : context.l10n.journey_timeline_steady_duration_text(
+                          steadyDuration!),
+                  style: AppTextStyle.caption
+                      .copyWith(color: context.colorScheme.textSecondary),
+                  maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ]
           ],
