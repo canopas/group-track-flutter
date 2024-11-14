@@ -43,7 +43,6 @@ class ApiUserService {
     this.locationManager,
   );
 
-  final LocationCache _locationCache = LocationCache();
 
   CollectionReference get _userRef =>
       _db.collection("users").withConverter<ApiUser>(
@@ -229,6 +228,5 @@ class ApiUserService {
     userSessionJsonNotifier.state = null;
     onBoardNotifier.state = false;
     currentUserSpaceId.state = null;
-    _locationCache.clear();
   }
 }
