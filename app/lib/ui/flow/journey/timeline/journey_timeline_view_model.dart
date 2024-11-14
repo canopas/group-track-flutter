@@ -45,7 +45,14 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       selectedUser: selectedUser,
       spaceId: _currentSpaceId.state,
     );
+    setSelectedTimeRange();
     _loadJourney();
+  }
+
+  void setSelectedTimeRange() {
+    state = state.copyWith(
+        selectedTimeFrom: DateTime.now().startOfDay.millisecondsSinceEpoch,
+        selectedTimeTo: DateTime.now().endOfDay.millisecondsSinceEpoch);
   }
 
   void _loadJourney({bool loadMore = false}) async {
@@ -199,6 +206,10 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     final resizedBytes = byteData!.buffer.asUint8List();
 
     return BitmapDescriptor.fromBytes(resizedBytes);
+  }
+
+  bool selectedDateIsTodayDate() {
+    return state.selectedTimeFrom == DateTime.now().startOfDay.millisecondsSinceEpoch;
   }
 }
 

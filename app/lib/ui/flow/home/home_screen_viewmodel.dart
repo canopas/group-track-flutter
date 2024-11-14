@@ -78,7 +78,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       await locationService.saveCurrentLocation(
           _currentUser?.id ?? '', location);
       await journeyRepository.saveLocationJourney(
-          location, _currentUser?.id ?? '');
+          extractedLocation: location, userId: _currentUser?.id ?? '', fromHomeViewModel: true);
     } catch (error, stack) {
       logger.e('HomeViewNotifier: error while get and save current location',
           error: error, stackTrace: stack);

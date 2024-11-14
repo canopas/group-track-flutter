@@ -200,11 +200,12 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildPlaceInfo(
-                      location,
-                      formattedTime,
-                      steadyDuration,
-                    ),
-                    const SizedBox(height: 8),
+                        location,
+                        formattedTime,
+                        journey.isSteadyLocation(),
+                        steadyDuration,
+                        isFirstItem),
+                    const SizedBox(height: 16),
                     _appPlaceButton(location, spaceId),
                     const SizedBox(height: 8),
                     Visibility(
@@ -286,13 +287,15 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     );
   }
 
-  Widget _buildPlaceInfo(
-    LatLng latLng,
-    String formattedTime,
-    String steadyDuration,
-  ) {
+  Widget _buildPlaceInfo(LatLng latLng, String formattedTime,
+      bool isSteadyLocation, String steadyDuration, bool firstItem) {
     if (_addressCache.containsKey(latLng)) {
-      return _placeInfo(_addressCache[latLng]!, formattedTime, steadyDuration);
+      return _placeInfo(
+          address: _addressCache[latLng]!,
+          formattedTime: formattedTime,
+          isSteadyLocation: isSteadyLocation,
+          steadyDuration: steadyDuration,
+          firstItem: firstItem);
     }
 
     return FutureBuilder(
@@ -300,9 +303,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
       builder: (_, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _placeInfo(
-            context.l10n.journey_timeline_getting_address_text,
-            formattedTime,
-            steadyDuration,
+            address: context.l10n.journey_timeline_getting_address_text,
+            formattedTime: formattedTime,
           );
         }
 
@@ -310,14 +312,19 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           final address = snapshot.data ??
               context.l10n.journey_timeline_unknown_address_text;
           _addressCache[latLng] = address;
-          return _placeInfo(address, formattedTime, steadyDuration);
+          return _placeInfo(
+              address: address,
+              formattedTime: formattedTime,
+              isSteadyLocation: isSteadyLocation,
+              steadyDuration: steadyDuration,
+              firstItem: firstItem);
         } else if (snapshot.hasError) {
-          return _placeInfo("Request timeout", formattedTime, steadyDuration);
+          return _placeInfo(
+              address: "Request timeout", formattedTime: formattedTime);
         } else {
           return _placeInfo(
-            context.l10n.journey_timeline_unknown_address_text,
-            formattedTime,
-            steadyDuration,
+            address: context.l10n.journey_timeline_unknown_address_text,
+            formattedTime: formattedTime,
           );
         }
       },
@@ -334,29 +341,29 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         builder: (_, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return _placeInfo(
-              context.l10n.journey_timeline_getting_address_text,
-              formattedTime,
-              "",
+              address: context.l10n.journey_timeline_getting_address_text,
+              formattedTime: formattedTime,
             );
           } else if (snapshot.hasData) {
             final address = snapshot.data ??
                 context.l10n.journey_timeline_unknown_address_text;
-            return _placeInfo(address, formattedTime, "");
+            return _placeInfo(address: address, formattedTime: formattedTime);
           } else {
             return _placeInfo(
-              context.l10n.journey_timeline_unknown_address_text,
-              formattedTime,
-              "",
+              address: context.l10n.journey_timeline_getting_address_text,
+              formattedTime: formattedTime,
             );
           }
         });
   }
 
-  Widget _placeInfo(
-    String address,
-    String formattedTime,
-    String steadyDuration,
-  ) {
+  Widget _placeInfo({
+    required String address,
+    required String formattedTime,
+    bool? isSteadyLocation,
+    String? steadyDuration,
+    bool? firstItem,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -374,15 +381,23 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
               formattedTime,
               style: AppTextStyle.caption
                   .copyWith(color: context.colorScheme.textDisabled),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            if (steadyDuration.isNotEmpty)
+            if (isSteadyLocation ?? false) ...[
               Text(
-                context.l10n.journey_timeline_steady_for_text(steadyDuration),
-                style: AppTextStyle.caption
-                    .copyWith(color: context.colorScheme.textSecondary),
+                  ((firstItem ?? false) && notifier.selectedDateIsTodayDate())
+                      ? ''
+                      : context.l10n.journey_timeline_steady_duration_text(
+                          steadyDuration!),
+                  style: AppTextStyle.caption
+                      .copyWith(color: context.colorScheme.textSecondary),
+                  maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
+            ]
           ],
-        )
+        ),
       ],
     );
   }
@@ -431,8 +446,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
       final time = createdAtDate.format(context, DateFormatType.time);
       return context.l10n.journey_timeline_Since_text(time);
     } else {
-      final dayTime =
-          createdAtDate.format(context, DateFormatType.dayMonthFull);
+      final dayTime = createdAtDate.format(context, DateFormatType.dayMonthYear);
       return context.l10n.journey_timeline_Since_text(dayTime);
     }
   }

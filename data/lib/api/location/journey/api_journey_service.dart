@@ -96,42 +96,32 @@ class ApiJourneyService {
     int? from,
     int? to,
   ) async {
-    if (from == null) {
-      final querySnapshot = await _journeyRef(userId)
-          .where('user_id', isEqualTo: userId)
-          .orderBy('created_at', descending: true)
-          .limit(20)
-          .get();
-      return querySnapshot.docs
-          .map((doc) =>
-              ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-    } else if (to == null) {
-      final querySnapshot = await _journeyRef(userId)
-          .where('user_id', isEqualTo: userId)
-          .where('created_at', isGreaterThanOrEqualTo: from)
-          .orderBy('created_at', descending: true)
-          .limit(20)
-          .get();
+    final querySnapshot = await _journeyRef(userId)
+        .where('user_id', isEqualTo: userId)
+        .where('created_at', isGreaterThanOrEqualTo: from)
+        .where('created_at', isLessThanOrEqualTo: to)
+        .orderBy('created_at', descending: true)
+        .limit(20)
+        .get();
 
-      return querySnapshot.docs
-          .map((doc) =>
-              ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-    } else {
-      final querySnapshot = await _journeyRef(userId)
-          .where('user_id', isEqualTo: userId)
-          .where('created_at', isGreaterThanOrEqualTo: from)
-          .where('created_at', isLessThanOrEqualTo: to)
-          .orderBy('created_at', descending: true)
-          .limit(20)
-          .get();
+    final currentDayJourney = querySnapshot.docs
+        .map((doc) =>
+            ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
 
-      return querySnapshot.docs
-          .map((doc) =>
-              ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
-    }
+    final previousDayJourneyQuery = await _journeyRef(userId)
+        .where('user_id', isEqualTo: userId)
+        .where('created_at', isLessThan: from)
+        .where('update_at', isGreaterThanOrEqualTo: from)
+        .limit(1)
+        .get();
+
+    final previousDayJourney = previousDayJourneyQuery.docs
+        .map((doc) =>
+            ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
+
+    return previousDayJourney + currentDayJourney;
   }
 
   Future<List<ApiLocationJourney>> getMoreJourneyHistory(

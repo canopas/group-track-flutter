@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:data/api/location/journey/journey.dart';
 import 'package:data/api/location/location.dart';
+import 'package:data/domain/location_data_extension.dart';
 import 'package:data/log/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -25,19 +26,17 @@ class JourneyRepository {
 
   JourneyRepository(this.journeyService);
 
-  Future<void> saveLocationJourney(
-    LocationData extractedLocation,
-    String userId,
-  ) async {
+  Future<void> saveLocationJourney({
+    required LocationData extractedLocation,
+    required String userId,
+    bool? fromHomeViewModel,
+  }) async {
     try {
       var lastKnownJourney =
           await getLastKnownLocation(userId, extractedLocation);
 
-      _cancelSteadyLocationTimer();
-      _startSteadyLocationTimer(extractedLocation, userId);
-
       // Check and save location journey on day changed
-      checkAndSaveJourneyOnDayChange(extractedLocation, lastKnownJourney, userId);
+      checkAndSaveJourneyOnDayChange(extractedLocation: extractedLocation, lastKnownJourney: lastKnownJourney, userId: userId);
 
       // to get all route position between location a -> b for moving user journey
       locationCache.addLocation(extractedLocation, userId);
@@ -48,6 +47,9 @@ class JourneyRepository {
       // Check and save location journey based on user state i.e., steady or moving
       await _checkAndSaveLocationJourney(
           userId, extractedLocation, lastKnownJourney);
+
+      _cancelSteadyLocationTimer();
+      _startSteadyLocationTimer(extractedLocation, userId);
     } catch (error, stack) {
       logger.e(
           'Journey Repository: Error while save journey, $extractedLocation',
@@ -96,80 +98,47 @@ class JourneyRepository {
     }
   }
 
-  Future<void> checkAndSaveJourneyOnDayChange(LocationData? extractedLocation,
-      ApiLocationJourney lasKnownJourney, String userId) async {
-    bool dayChanged = isDayChanged(extractedLocation, lasKnownJourney);
+  Future<void> checkAndSaveJourneyOnDayChange({required LocationData? extractedLocation,
+      required ApiLocationJourney lastKnownJourney, required String userId, bool? fromHomeViewModel}) async {
+    if (fromHomeViewModel ?? false) return;
+    bool dayChanged = _isDayChanged(extractedLocation, lastKnownJourney);
+    bool isOnlyOneDayChange = _isOnlyOneDayChanged(extractedLocation, lastKnownJourney);
 
-    if (dayChanged && extractedLocation != null) {
-      var locations = locationCache.getLastFiveLocations(userId);
-
-      var geometricMedian = locations.isNotEmpty ? _geometricMedianCalculation(locations) : null;
-
-      final lastKnownLocation = lasKnownJourney.isSteadyLocation()
-          ? lasKnownJourney.toLocationFromSteadyJourney()
-          : lasKnownJourney.toLocationFromMovingJourney();
-
-      final distance = geometricMedian != null
-         ? _distanceBetween(geometricMedian, lastKnownLocation)
-         : _distanceBetween(extractedLocation, lastKnownLocation);
-
-      if (distance < MIN_DISTANCE) {
-        // Here, means user is at same location on day changed
-        // Save last known journey with updated day
-        await _saveJourneyOnDayChanged(userId, lasKnownJourney);
-      } else {
-        // Here means, user has moved to new location on day changed
-        // Save new location journey with steady state
-        final newJourneyId = await journeyService.saveCurrentJourney(
-          userId: userId,
-          fromLatitude: extractedLocation.latitude,
-          fromLongitude: extractedLocation.longitude,
-          created_at: extractedLocation.timestamp.millisecondsSinceEpoch,
-        );
-
-        var locationJourney = ApiLocationJourney.toLocationJourney(
-            extractedLocation, userId, newJourneyId);
-        locationCache.putLastJourney(locationJourney, userId);
-      }
-      return;
-    } else if (dayChanged) {
-      await _saveJourneyOnDayChanged(userId, lasKnownJourney);
+    if (dayChanged && isOnlyOneDayChange) {
+      _updateJourneyOnDayChanged(userId, lastKnownJourney);
+    } else if (dayChanged && extractedLocation != null) {
+      _saveJourneyOnDayChanged(userId, extractedLocation);
     }
   }
 
-  bool isDayChanged(
-      LocationData? extractedLocation, ApiLocationJourney lastKnownJourney) {
-    DateTime lastKnownDate = DateTime.fromMillisecondsSinceEpoch(
-        lastKnownJourney.update_at ?? DateTime.now().millisecondsSinceEpoch);
-    int lastKnownDay = lastKnownDate.day;
-
-    DateTime currentDate = extractedLocation != null
-        ? DateTime.fromMillisecondsSinceEpoch(
-            extractedLocation.timestamp.millisecondsSinceEpoch)
-        : DateTime.now();
-    int currentDay = currentDate.day;
-
-    return lastKnownDay != currentDay;
-  }
-
-  Future<void> _saveJourneyOnDayChanged(
+  Future<void> _updateJourneyOnDayChanged(
       String userId, ApiLocationJourney lastKnownJourney) async {
-    String newJourneyId = await journeyService.saveCurrentJourney(
-      userId: userId,
-      fromLatitude: lastKnownJourney.from_latitude,
-      fromLongitude: lastKnownJourney.from_longitude,
-      toLatitude: lastKnownJourney.to_latitude,
-      toLongitude: lastKnownJourney.to_longitude,
-      routeDistance: lastKnownJourney.to_longitude == null ? 0 : lastKnownJourney.route_distance,
-      routes: lastKnownJourney.routes,
-      routeDuration: lastKnownJourney.to_longitude == null ? 0 : lastKnownJourney.route_duration,
+    await journeyService.updateLastLocationJourney(
+      userId,
+      lastKnownJourney.copyWith(
+        update_at: DateTime.now().millisecondsSinceEpoch,
+      ),
     );
 
-    var newJourney = lastKnownJourney.copyWith(
-      id: newJourneyId,
+    final newJourney = lastKnownJourney.copyWith(
       created_at: DateTime.now().millisecondsSinceEpoch,
       update_at: DateTime.now().millisecondsSinceEpoch,
     );
+
+    locationCache.putLastJourney(newJourney, userId);
+  }
+
+  Future<void> _saveJourneyOnDayChanged(
+      String userId, LocationData extractedLocation) async {
+    String newJourneyId = await journeyService.saveCurrentJourney(
+      userId: userId,
+      fromLatitude: extractedLocation.latitude,
+      fromLongitude: extractedLocation.longitude,
+    );
+
+    var newJourney = extractedLocation
+        .toLocationJourney(userId, newJourneyId)
+        .copyWith(id: newJourneyId);
 
     locationCache.putLastJourney(newJourney, userId);
   }
@@ -206,12 +175,7 @@ class JourneyRepository {
           fromLongitude: extractedLocation?.longitude ?? 0,
           created_at: DateTime.now().millisecondsSinceEpoch,
         );
-        var locationJourney = ApiLocationJourney.toLocationJourney(
-            extractedLocation ??
-                LocationData(
-                    latitude: 0, longitude: 0, timestamp: DateTime.now()),
-            userId,
-            newJourneyId);
+        var locationJourney = extractedLocation!.toLocationJourney(userId, newJourneyId);
         locationCache.putLastJourney(locationJourney, userId);
         return locationJourney;
       }
@@ -367,6 +331,36 @@ class JourneyRepository {
         longitude: location.longitude,
       );
     }).toList();
+  }
+
+  bool _isOnlyOneDayChanged(LocationData? extractedLocation, ApiLocationJourney lastKnownJourney) {
+    final lastKnownDate = DateTime.fromMillisecondsSinceEpoch(
+            lastKnownJourney.update_at ?? DateTime.now().millisecondsSinceEpoch,
+            isUtc: true)
+        .toLocal();
+    final currentDate = DateTime.fromMillisecondsSinceEpoch(
+            extractedLocation?.timestamp.millisecondsSinceEpoch ??
+                DateTime.now().millisecondsSinceEpoch,
+            isUtc: true)
+        .toLocal();
+
+    final daysPassed = currentDate.difference(lastKnownDate).inDays;
+    return daysPassed == 1;
+  }
+
+  bool _isDayChanged(
+      LocationData? extractedLocation, ApiLocationJourney lastKnownJourney) {
+    DateTime lastKnownDate = DateTime.fromMillisecondsSinceEpoch(
+        lastKnownJourney.update_at ?? DateTime.now().millisecondsSinceEpoch);
+    int lastKnownDay = lastKnownDate.day;
+
+    DateTime currentDate = extractedLocation != null
+        ? DateTime.fromMillisecondsSinceEpoch(
+        extractedLocation.timestamp.millisecondsSinceEpoch)
+        : DateTime.now();
+    int currentDay = currentDate.day;
+
+    return lastKnownDay != currentDay;
   }
 
   double _distanceBetween(LocationData loc1, LocationData loc2) {
