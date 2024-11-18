@@ -31,10 +31,11 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
   Future<void> joinSpace(String code) async {
     try {
       state = state.copyWith(verifying: true, errorInvalidInvitationCode: false, alreadySpaceMember: false);
-      final invitation = await spaceInvitationService.getInvitation(code);
+      final invitation = await getInvitation(code);
       if (invitation == null) {
         state =
             state.copyWith(errorInvalidInvitationCode: true, verifying: false);
+        _resetFlagsAfter30Sec();
         return;
       }
       var spaceId = invitation.space_id;
@@ -42,12 +43,12 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
 
       if (userSpaces.contains(spaceId)) {
         state = state.copyWith(verifying: false, alreadySpaceMember: true, error: null);
+        _resetFlagsAfter30Sec();
         return;
       }
 
       spaceService.joinSpace(spaceId);
-      final space = await spaceService.getSpace(spaceId);
-      state = state.copyWith(verifying: false, space: space, spaceJoined: true, error: null);
+      state = state.copyWith(verifying: false, spaceJoined: true, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error, verifying: false);
       logger.e(
@@ -56,6 +57,37 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
         stackTrace: stack,
       );
     }
+  }
+
+  Future<ApiSpaceInvitation?> getInvitation(String code) async {
+    try {
+      return await spaceInvitationService.getInvitation(code);
+    } catch (error, stack) {
+      logger.e('JoinSpaceViewNotifier: Error while get group invitation',
+          error: error, stackTrace: stack);
+      return null;
+    }
+  }
+
+  void getSpace(String code) async {
+    try {
+      final invitation = await getInvitation(code);
+      var spaceId = invitation?.space_id;
+      final space = await spaceService.getSpace(spaceId ?? '');
+      state = state.copyWith(space: space);
+    } catch (error, stack) {
+      logger.e('JoinSpaceViewNotifier: Error while get space',
+          error: error, stackTrace: stack);
+    }
+  }
+
+  void _resetFlagsAfter30Sec() {
+    Future.delayed(const Duration(seconds: 10), () {
+      state = state.copyWith(
+        errorInvalidInvitationCode: false,
+        alreadySpaceMember: false,
+      );
+    });
   }
 }
 
