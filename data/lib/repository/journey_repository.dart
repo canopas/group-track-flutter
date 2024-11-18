@@ -36,7 +36,11 @@ class JourneyRepository {
           await getLastKnownLocation(userId, extractedLocation);
 
       // Check and save location journey on day changed
-      checkAndSaveJourneyOnDayChange(extractedLocation: extractedLocation, lastKnownJourney: lastKnownJourney, userId: userId);
+      checkAndSaveJourneyOnDayChange(
+          extractedLocation: extractedLocation,
+          lastKnownJourney: lastKnownJourney,
+          userId: userId,
+          fromHomeViewModel: fromHomeViewModel);
 
       // to get all route position between location a -> b for moving user journey
       locationCache.addLocation(extractedLocation, userId);
