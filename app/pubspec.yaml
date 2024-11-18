@@ -48,11 +48,11 @@ dependencies:
   uuid: ^4.0.0
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
-  share_plus: ^9.0.0
+  share_plus: ^10.1.2
   visibility_detector: ^0.4.0+2
   cached_network_image: ^3.3.1
   image_picker: ^1.1.1
-  image_cropper: ^7.1.0
+  image_cropper: ^8.0.2
   fluttertoast: ^8.2.6
   http: ^1.2.1
   image: ^3.0.1
@@ -61,7 +61,7 @@ dependencies:
   flutter_slidable: ^3.1.0
   flutter_background_service: ^5.0.6
   url_launcher: ^6.3.0
-  battery_plus: ^6.0.2
+  battery_plus: ^6.2.0
 
   # map
   google_maps_flutter: ^2.3.1
@@ -69,18 +69,18 @@ dependencies:
   geolocator: ^12.0.0
 
   # auth
-  firebase_auth: ^4.20.0
-  firebase_core: ^2.23.0
-  firebase_storage: ^11.7.7
-  firebase_messaging: ^14.9.4
-  flutter_local_notifications: ^17.2.1+2
-  cloud_firestore: ^4.15.5
+  firebase_auth: ^5.3.3
+  firebase_core: ^3.8.0
+  firebase_storage: ^12.3.6
+  firebase_messaging: ^15.1.5
+  flutter_local_notifications: ^18.0.1
+  cloud_firestore: ^5.5.0
   google_sign_in: ^6.1.6
   logger: ^2.3.0
   flutter_svg: ^2.0.9
-  firebase_crashlytics: ^3.5.7
-  # picker
-  connectivity_plus: ^6.0.5
+  firebase_crashlytics: ^4.1.5
+
+  connectivity_plus: ^6.1.0
 
 dev_dependencies:
   flutter_test:
