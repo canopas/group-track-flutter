@@ -5,6 +5,7 @@ import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:style/animation/on_tap_scale.dart';
@@ -13,7 +14,9 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 
+import '../../../../gen/assets.gen.dart';
 import '../../../app_route.dart';
+import '../../../components/action_bottom_sheet.dart';
 import '../../../components/permission_dialog.dart';
 import 'components/space_user_footer.dart';
 import 'map_view_model.dart';
@@ -83,6 +86,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             buildingsEnabled: false,
             circles: _places.toSet(),
             markers: _markers.toSet(),
+            mapType: notifier.getMapTypeInfo().mapType,
           ),
         ),
         Positioned(bottom: 0, left: 0, right: 0, child: _bottomFooters(state)),
@@ -112,6 +116,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             notifier.showMemberDetail(member);
           },
           onRelocateTap: () => notifier.getUserLastLocation(),
+          onMapTypeTap: () => _openMapTypeSheet(context),
           onPlacesTap: () {
             final space = widget.space;
             if (space != null) {
@@ -219,6 +224,37 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         _mapStyle = null;
       }
     });
+  }
+
+  void _openMapTypeSheet(BuildContext context) {
+    showActionBottomSheet(
+      context: context,
+      showHorizontal: true,
+      selectedIndex: notifier.getMapTypeInfo().index,
+      items: [
+        BottomSheetAction(
+          title: context.l10n.home_map_selected_type_normal_text,
+          icon: SvgPicture.asset(Assets.images.icNormalMap),
+          onTap: () {
+            notifier.setMapType(context.l10n.home_map_selected_type_normal_text);
+          },
+        ),
+        BottomSheetAction(
+          title: context.l10n.home_map_selected_type_terrain_text,
+          icon: SvgPicture.asset(Assets.images.icTerrainMap),
+          onTap: () {
+            notifier.setMapType(context.l10n.home_map_selected_type_terrain_text);
+          },
+        ),
+        BottomSheetAction(
+          title: context.l10n.home_map_selected_type_satellite_text,
+          icon: SvgPicture.asset(Assets.images.icSatelliteMap),
+          onTap: () {
+            notifier.setMapType(context.l10n.home_map_selected_type_satellite_text);
+          },
+        ),
+      ],
+    );
   }
 
   void _observeMapCameraPosition() {

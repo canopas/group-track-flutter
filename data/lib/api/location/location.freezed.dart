@@ -27,8 +27,12 @@ mixin _$ApiLocation {
   int? get user_state => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
 
+  /// Serializes this ApiLocation to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiLocation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ApiLocationCopyWith<ApiLocation> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -58,6 +62,8 @@ class _$ApiLocationCopyWithImpl<$Res, $Val extends ApiLocation>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ApiLocation
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -122,6 +128,8 @@ class __$$ApiLocationImplCopyWithImpl<$Res>
       _$ApiLocationImpl _value, $Res Function(_$ApiLocationImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiLocation
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -211,12 +219,14 @@ class _$ApiLocationImpl extends _ApiLocation {
                 other.created_at == created_at));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, user_id, latitude, longitude, user_state, created_at);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiLocation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiLocationImplCopyWith<_$ApiLocationImpl> get copyWith =>
@@ -255,8 +265,11 @@ abstract class _ApiLocation extends ApiLocation {
   int? get user_state;
   @override
   int? get created_at;
+
+  /// Create a copy of ApiLocation
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiLocationImplCopyWith<_$ApiLocationImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

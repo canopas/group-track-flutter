@@ -9,7 +9,10 @@ Future<T?> showActionBottomSheet<T>({
   required BuildContext context,
   required List<BottomSheetAction> items,
   bool useRootNavigator = true,
+  bool showHorizontal = false,
+  int? selectedIndex,
 }) async {
+  ValueNotifier<int?> selectedIndexNotifier = ValueNotifier<int?>(selectedIndex);
   HapticFeedback.mediumImpact();
 
   return await showModalBottomSheet<T>(
@@ -21,27 +24,98 @@ Future<T?> showActionBottomSheet<T>({
     ),
     useRootNavigator: useRootNavigator,
     context: context,
-    builder: (context) => Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(16),
+    builder: (context) {
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(16),
+          ),
+          color: context.colorScheme.surface,
         ),
-        color: context.colorScheme.surface,
-      ),
-      padding: EdgeInsets.only(
-        bottom: context.mediaQueryPadding.bottom,
-      ),
-      child: ColumnBuilder.separated(
-        separatorBuilder: (index) => Divider(
-          height: 0,
-          thickness: 1,
-          color: context.colorScheme.outline,
+        padding: EdgeInsets.only(
+          bottom: context.mediaQueryPadding.bottom,
+          top: 16,
         ),
-        itemBuilder: (index) => items[index],
-        itemCount: items.length,
-        mainAxisSize: MainAxisSize.min,
+        child: showHorizontal
+            ? _buildHorizontalLayout(context, items, selectedIndexNotifier)
+            : _buildVerticalLayout(context, items),
+      );
+    },
+  );
+}
+
+Widget _buildHorizontalLayout(BuildContext context, List<BottomSheetAction> items, ValueNotifier<int?> selectedIndexNotifier) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Align(
+        alignment: Alignment.topRight,
+        child: IconButton(
+          icon: Icon(Icons.close, color: context.colorScheme.textSecondary),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: items.asMap().entries.map((entry) {
+          final index = entry.key;
+          final item = entry.value;
+
+          return Flexible(
+            child: GestureDetector(
+              onTap: () {
+                selectedIndexNotifier.value = index; // Update selectedIndex
+                item.onTap?.call();
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ValueListenableBuilder<int?>(
+                    valueListenable: selectedIndexNotifier,
+                    builder: (context, selectedIndex, _) {
+                      return Container(
+                          height: 100,
+                          width: 100,// Adjust the height as needed
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: selectedIndex == index
+                                  ? context.colorScheme.warning
+                                  : Colors.transparent,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                              child: item.icon!));
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    item.title,
+                    style: AppTextStyle.body2,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    ],
+  );
+}
+
+Widget _buildVerticalLayout(BuildContext context, List<BottomSheetAction> items) {
+  return ColumnBuilder.separated(
+    separatorBuilder: (index) => Divider(
+      height: 0,
+      thickness: 1,
+      color: context.colorScheme.positive,
     ),
+    itemBuilder: (index) => items[index],
+    itemCount: items.length,
+    mainAxisSize: MainAxisSize.min,
   );
 }
 

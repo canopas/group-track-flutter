@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/location/location.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/auth_service.dart';
@@ -33,6 +34,7 @@ final mapViewStateProvider =
     ref.read(permissionServiceProvider),
     ref.read(locationManagerProvider),
     ref.read(authServiceProvider),
+    ref.read(googleMapType.notifier),
   );
 });
 
@@ -43,19 +45,21 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   final PermissionService permissionService;
   final LocationManager locationManager;
   final AuthService authService;
+  final StateController<String> mapTypeController;
 
   LatLng? _userLocation;
   StreamSubscription<List<ApiUserInfo>>? _userInfoSubscription;
   StreamSubscription<List<ApiPlace>>? _placeSubscription;
 
   MapViewNotifier(
-    this._currentUser,
-    this.spaceService,
-    this.placeService,
-    this.permissionService,
-    this.locationManager,
-    this.authService,
-  ) : super(const MapViewState()) {
+      this._currentUser,
+      this.spaceService,
+      this.placeService,
+      this.permissionService,
+      this.locationManager,
+      this.authService,
+      this.mapTypeController,
+  ) : super(MapViewState(mapType: mapTypeController.state)) {
     checkUserPermission();
   }
 
@@ -318,6 +322,22 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     }
   }
 
+  void setMapType(String type) {
+    mapTypeController.state = type;
+    state = state.copyWith(mapType: type);
+  }
+
+  MapTypeInfo getMapTypeInfo() {
+    if (mapTypeController.state == 'Normal') {
+      return MapTypeInfo(MapType.normal, 0);
+    } else if (mapTypeController.state == 'Terrain') {
+      return MapTypeInfo(MapType.terrain, 1);
+    } else if (mapTypeController.state == 'Satellite') {
+      return MapTypeInfo(MapType.satellite, 2);
+    }
+    return MapTypeInfo(MapType.normal, 0);
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -341,6 +361,7 @@ class MapViewState with _$MapViewState {
     ApiUserInfo? selectedUser,
     CameraPosition? defaultPosition,
     @Default('') String spaceInvitationCode,
+    required String mapType,
     Object? error,
     DateTime? showLocationDialog,
   }) = _MapViewState;
