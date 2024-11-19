@@ -53,7 +53,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this._userSession,
   ) : super(const HomeViewState()) {
     setDate();
-    fetchCurrentLocation();
+    //fetchCurrentLocation();
   }
 
   StreamSubscription<List<SpaceInfo>>? _spacesSubscription;
@@ -71,18 +71,18 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     listenUserSession(_currentUser!.id, _userSession!.id);
   }
 
-  Future<void> fetchCurrentLocation() async {
-    try {
-      final location = await currentUserLocation();
-      await locationService.saveCurrentLocation(
-          _currentUser?.id ?? '', location);
-      await journeyRepository.saveLocationJourney(
-          extractedLocation: location, userId: _currentUser?.id ?? '');
-    } catch (error, stack) {
-      logger.e('HomeViewNotifier: error while get and save current location',
-          error: error, stackTrace: stack);
-    }
-  }
+  // Future<void> fetchCurrentLocation() async {
+  //   try {
+  //     final location = await currentUserLocation();
+  //     await locationService.saveCurrentLocation(
+  //         _currentUser?.id ?? '', location);
+  //     await journeyRepository.saveLocationJourney(
+  //         extractedLocation: location, userId: _currentUser?.id ?? '');
+  //   } catch (error, stack) {
+  //     logger.e('HomeViewNotifier: error while get and save current location',
+  //         error: error, stackTrace: stack);
+  //   }
+  // }
 
   Future<LocationData> currentUserLocation() async {
     if (Platform.isIOS) {
