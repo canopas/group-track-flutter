@@ -22,6 +22,7 @@ class SpaceUserFooter extends StatefulWidget {
   final void Function() onAddMemberTap;
   final void Function(ApiUserInfo) onMemberTap;
   final void Function() onRelocateTap;
+  final void Function() onMapTypeTap;
   final void Function() onPlacesTap;
   final void Function() onDismiss;
 
@@ -35,6 +36,7 @@ class SpaceUserFooter extends StatefulWidget {
     required this.onAddMemberTap,
     required this.onMemberTap,
     required this.onRelocateTap,
+    required this.onMapTypeTap,
     required this.onPlacesTap,
     required this.onDismiss,
   });
@@ -92,6 +94,15 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          _iconButton(
+            context: context,
+            icon: Assets.images.icMapType,
+            iconSize: 24,
+            foreground: context.colorScheme.primary,
+            background: context.colorScheme.surface,
+            onTap: widget.onMapTypeTap,
+          ),
+          const SizedBox(height: 16),
           _iconButton(
             context: context,
             icon: Assets.images.icRelocateIcon,

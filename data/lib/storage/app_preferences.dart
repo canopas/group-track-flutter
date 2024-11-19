@@ -21,6 +21,11 @@ final deviceIdPod = createPrefProvider<String>(
   defaultValue: const Uuid().v4(),
 );
 
+final googleMapType = createPrefProvider<String>(
+  prefKey: "google_map_type",
+  defaultValue: 'Normal',
+);
+
 final currentUserJsonPod = createPrefProvider<String?>(
   prefKey: "user_account",
   defaultValue: null,

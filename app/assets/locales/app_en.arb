@@ -68,6 +68,9 @@
   "home_select_space_text": "Select a group",
   "home_session_expired_title": "You've been logged out",
   "home_session_expired_message": "You need to sign in again to continue using the application.",
+  "home_map_selected_type_normal_text": "Normal",
+  "home_map_selected_type_terrain_text": "Terrain",
+  "home_map_selected_type_satellite_text": "Satellite",
 
   "map_selected_user_item_no_network_state_text": "No network or phone off",
   "map_selected_user_item_location_off_state_text": "Location off",
