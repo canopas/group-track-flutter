@@ -193,22 +193,29 @@ class JourneyRepository {
       String userId,
       LocationData extractedLocation,
       ApiLocationJourney lastKnownJourney) async {
-    var locations = locationCache.getLastFiveLocations(userId);
+    print('check and save location journey');
 
-    var geometricMedian =
-        locations.isNotEmpty ? _geometricMedianCalculation(locations) : null;
+    if (lastKnownJourney.isSteadyLocation()) {
+      print('distance between form steady location ${_distanceBetween(extractedLocation, lastKnownJourney.toLocationFromSteadyJourney())}');
+      print('to location from steady journey = ${lastKnownJourney.toLocationFromSteadyJourney().latitude} - ${lastKnownJourney.toLocationFromSteadyJourney().longitude}');
+    } else {
+      print('distance between from moving location ${_distanceBetween(extractedLocation, lastKnownJourney.toLocationFromMovingJourney())}');
+      print('to location from moving journey = ${lastKnownJourney.toLocationFromMovingJourney().latitude} - ${lastKnownJourney.toLocationFromMovingJourney().longitude}');
+    }
 
     double distance = lastKnownJourney.isSteadyLocation()
-        ? _distanceBetween(geometricMedian ?? extractedLocation,
+        ? _distanceBetween(extractedLocation,
             lastKnownJourney.toLocationFromSteadyJourney())
-        : _distanceBetween(geometricMedian ?? extractedLocation,
+        : _distanceBetween(extractedLocation,
             lastKnownJourney.toLocationFromMovingJourney());
 
+    print(distance);
     if (lastKnownJourney.isSteadyLocation()) {
       if (distance > MIN_DISTANCE) {
         // Here, means last known journey is steady and and now user has started moving
         // Save journey for moving user and update cache as well:
 
+        print('save journey hen user start moving');
         await _saveJourneyWhenUserStartsMoving(
             userId, extractedLocation, lastKnownJourney, distance);
       }
@@ -218,6 +225,7 @@ class JourneyRepository {
         // Note: Need to use lastKnownJourney.id as journey id because we are updating the journey
 
         if (distance > MIN_DISTANCE_FOR_MOVING) {
+          print('update journey for continued moving user');
           await _updateJourneyForContinuedMovingUser(
               userId, extractedLocation, lastKnownJourney, distance);
         }
@@ -243,6 +251,7 @@ class JourneyRepository {
       toLongitude: extractedLocation.longitude,
       routeDistance: distance,
       routeDuration: null,
+      created_at: extractedLocation.timestamp.millisecondsSinceEpoch,
     );
 
     var journey = ApiLocationJourney(
@@ -255,7 +264,7 @@ class JourneyRepository {
       routes: _getRoute(userId),
       route_distance: distance,
       route_duration: null,
-      created_at: DateTime.now().millisecondsSinceEpoch,
+      created_at: extractedLocation.timestamp.millisecondsSinceEpoch,
       update_at: DateTime.now().millisecondsSinceEpoch,
     );
 
@@ -282,7 +291,7 @@ class JourneyRepository {
           (lastKnownJourney.created_at ?? 0),
       routes: _getRoute(userId),
       created_at: lastKnownJourney.created_at,
-      update_at: DateTime.now().millisecondsSinceEpoch,
+      update_at: extractedLocation.timestamp.millisecondsSinceEpoch,
     );
 
     final lastJourneyUpdatedTime = locationCache.getLastJourneyUpdatedTime(userId);
@@ -349,31 +358,24 @@ class JourneyRepository {
   }
 
   bool _isOnlyOneDayChanged(LocationData? extractedLocation, ApiLocationJourney lastKnownJourney) {
-    final lastKnownDate = DateTime.fromMillisecondsSinceEpoch(
-            lastKnownJourney.update_at ?? DateTime.now().millisecondsSinceEpoch,
-            isUtc: true)
-        .toLocal();
+    final lastKnownDate = DateTime.fromMillisecondsSinceEpoch(lastKnownJourney.update_at!).toLocal();
     final currentDate = DateTime.fromMillisecondsSinceEpoch(
-            extractedLocation?.timestamp.millisecondsSinceEpoch ??
-                DateTime.now().millisecondsSinceEpoch,
-            isUtc: true)
-        .toLocal();
+      extractedLocation?.timestamp.millisecondsSinceEpoch ?? DateTime.now().millisecondsSinceEpoch,
+    ).toLocal();
 
     final daysPassed = currentDate.difference(lastKnownDate).inDays;
+
     return daysPassed == 1;
   }
 
-  bool _isDayChanged(
-      LocationData? extractedLocation, ApiLocationJourney lastKnownJourney) {
-    DateTime lastKnownDate = DateTime.fromMillisecondsSinceEpoch(
-        lastKnownJourney.update_at ?? DateTime.now().millisecondsSinceEpoch);
-    int lastKnownDay = lastKnownDate.day;
+  bool _isDayChanged( LocationData? extractedLocation, ApiLocationJourney lastKnownJourney) {
+    final lastKnownTime = DateTime.fromMillisecondsSinceEpoch(lastKnownJourney.update_at!);
+    final currentTime = DateTime.fromMillisecondsSinceEpoch(
+      extractedLocation?.timestamp.millisecondsSinceEpoch ?? DateTime.now().millisecondsSinceEpoch,
+    );
 
-    DateTime currentDate = extractedLocation != null
-        ? DateTime.fromMillisecondsSinceEpoch(
-        extractedLocation.timestamp.millisecondsSinceEpoch)
-        : DateTime.now();
-    int currentDay = currentDate.day;
+    final lastKnownDay = lastKnownTime.day;
+    final currentDay = currentTime.day;
 
     return lastKnownDay != currentDay;
   }
@@ -392,18 +394,5 @@ class JourneyRepository {
     var lastFiveLocations = locationCache.getLastFiveLocations(userId);
     lastFiveLocations.add(extractedLocation);
     locationCache.putLastFiveLocations(lastFiveLocations, userId);
-  }
-
-  LocationData _geometricMedianCalculation(List<LocationData> locations) {
-    LocationData result = locations.reduce((candidate, location) {
-      double candidateSum = locations.fold(
-          0.0, (sum, loc) => sum + _distanceBetween(candidate, loc));
-      double locationSum = locations.fold(
-          0.0, (sum, loc) => sum + _distanceBetween(location, loc));
-
-      return candidateSum < locationSum ? candidate : location;
-    });
-
-    return result;
   }
 }
