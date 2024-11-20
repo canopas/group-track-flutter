@@ -14,10 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api/location/location.dart';
 import '../log/logger.dart';
-import '../storage/location_caches.dart';
 
 const MOVING_DISTANCE = 10; // meters
-const STEADY_DISTANCE = 50; // meters
 
 final locationManagerProvider = Provider((ref) => LocationManager.instance);
 
@@ -28,7 +26,6 @@ class LocationManager {
 
   final LocationService _locationService;
   final JourneyRepository _journeyRepository;
-  final LocationCache locationCache = LocationCache();
 
   LocationManager(this._locationService, this._journeyRepository);
 
@@ -41,9 +38,7 @@ class LocationManager {
   }
 
   StreamSubscription<Position>? positionSubscription;
-  Position? _movingPosition;
   Position? _lastPosition;
-  bool isSteady = false;
 
   Future<bool> isServiceRunning() async {
     return await bgService.isRunning();
@@ -81,13 +76,10 @@ class LocationManager {
     final userId = await _getUserIdFromPreferences();
     if (userId == null) return;
 
-    print("XXX Start tracking...");
     positionSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,
-          distanceFilter:
-              MOVING_DISTANCE // isSteady ? STEADY_DISTANCE : MOVING_DISTANCE,
-          ),
+          distanceFilter: MOVING_DISTANCE),
     ).listen((position) {
       final timeDifference = _lastPosition != null
           ? position.timestamp.difference(_lastPosition!.timestamp).inSeconds
@@ -97,18 +89,11 @@ class LocationManager {
           ? _distanceBetween(_lastPosition!, position)
           : 0;
 
-      print("XXX location update distance $distance --- timeDifference $timeDifference");
-
-
       if (_lastPosition == null ||
           timeDifference >= 10 ||
           distance >= MOVING_DISTANCE) {
-        print("XXX _updateUserLocation $position");
         _updateUserLocation(position);
       }
-      // else if (timeDifference > 10) {
-      //    _manageSteadyLocationUpdates(userId, position);
-      //  }
     });
   }
 
@@ -148,38 +133,6 @@ class LocationManager {
         extractedLocation: null,
         lastKnownJourney: lastKnownJourney,
         userId: userId);
-  }
-
-  void _resetLocationSetting(bool state) async {
-    isSteady = state;
-    _movingPosition = null;
-
-    startTracking();
-  }
-
-  void _manageSteadyLocationUpdates(String userId, Position position) {
-    if (isSteady) {
-      _handleSteadyToMovingLocation(userId, position);
-    } else {
-      _updateUserLocation(position);
-    }
-  }
-
-  void _handleSteadyToMovingLocation(String userId, Position position) {
-    if (_lastPosition == null) return;
-
-    final distance = _distanceBetween(_lastPosition!, position);
-
-    if (_movingPosition != null) {
-      final movingDistance = _distanceBetween(_movingPosition!, position);
-
-      if (movingDistance > STEADY_DISTANCE && distance > STEADY_DISTANCE) {
-        _resetLocationSetting(false);
-        _updateUserLocation(_movingPosition);
-      }
-    } else if (distance > STEADY_DISTANCE) {
-      _movingPosition = position;
-    }
   }
 
   double _distanceBetween(Position position1, Position position2) {

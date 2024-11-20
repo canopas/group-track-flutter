@@ -9,6 +9,13 @@ class LocationCache {
   final Cache<String, List<LocationData>> _locationCache;
   final Cache<String, int> _lastJourneyUpdatedTime;
 
+  static LocationCache? _instance;
+
+  static LocationCache get instance {
+    _instance ??= LocationCache();
+    return _instance!;
+  }
+
   LocationCache({int cacheSize = 5, int locationCacheSize = 200, int timestampCacheSize = 1})
       : _lastJourneyCache = Cache<String, ApiLocationJourney>(cacheSize),
         _lastFiveLocationCache = Cache<String, List<LocationData>>(cacheSize),

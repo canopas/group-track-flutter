@@ -16,7 +16,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:geolocator/geolocator.dart';
 
-import '../../../main.dart';
 import '../../components/no_internet_screen.dart';
 
 part 'home_screen_viewmodel.freezed.dart';

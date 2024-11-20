@@ -21,7 +21,7 @@ class JourneyRepository {
   static JourneyRepository? _instance;
 
   final ApiJourneyService journeyService;
-  final LocationCache locationCache = LocationCache();
+  final LocationCache locationCache = LocationCache.instance;
   Timer? _steadyLocationTimer;
 
   JourneyRepository(this.journeyService);
@@ -45,8 +45,7 @@ class JourneyRepository {
       checkAndSaveJourneyOnDayChange(
           extractedLocation: extractedLocation,
           lastKnownJourney: lastKnownJourney,
-          userId: userId,
-          fromHomeViewModel: fromHomeViewModel);
+          userId: userId);
 
       // to get all route position between location a -> b for moving user journey
       locationCache.addLocation(extractedLocation, userId);
@@ -232,8 +231,10 @@ class JourneyRepository {
       // Save journey for moving user and update last known journey.
       // Note: Need to use lastKnownJourney.id as journey id because we are updating the journey
 
-      if (distance > MIN_DISTANCE_FOR_MOVING) {await _updateJourneyForContinuedMovingUser(
-          userId, extractedLocation, lastKnownJourney, distance);}
+      if (distance > MIN_DISTANCE_FOR_MOVING) {
+        await _updateJourneyForContinuedMovingUser(
+            userId, extractedLocation, lastKnownJourney, distance);
+      }
     }
   }
 
@@ -274,7 +275,8 @@ class JourneyRepository {
     );
 
     locationCache.putLastJourney(journey, userId);
-    locationCache.putLastJourneyUpdatedTime(DateTime.now().millisecondsSinceEpoch, userId);
+    locationCache.putLastJourneyUpdatedTime(
+        DateTime.now().millisecondsSinceEpoch, userId);
   }
 
   /// Update journey for continued moving user i.e., state is moving and user is still moving
@@ -305,12 +307,14 @@ class JourneyRepository {
       update_at: DateTime.now().millisecondsSinceEpoch,
     );
 
-    final lastJourneyUpdatedTime = locationCache.getLastJourneyUpdatedTime(userId);
+    final lastJourneyUpdatedTime =
+        locationCache.getLastJourneyUpdatedTime(userId);
     final timeDifference = journey.update_at! - lastJourneyUpdatedTime;
 
     if (timeDifference >= MIN_UPDATE_INTERVAL_MINUTE) {
       await journeyService.updateLastLocationJourney(userId, journey);
-      locationCache.putLastJourneyUpdatedTime(DateTime.now().millisecondsSinceEpoch, userId);
+      locationCache.putLastJourneyUpdatedTime(
+          DateTime.now().millisecondsSinceEpoch, userId);
     }
     locationCache.putLastJourney(journey, userId);
   }
@@ -424,9 +428,9 @@ class JourneyRepository {
   LocationData _geometricMedianCalculation(List<LocationData> locations) {
     LocationData result = locations.reduce((candidate, location) {
       double candidateSum = locations.fold(
-          0.0, (sum, loc) => sum + _distanceBetween(candidate, loc));
+          0.0, (double sum, loc) => sum + _distanceBetween(candidate, loc));
       double locationSum = locations.fold(
-          0.0, (sum, loc) => sum + _distanceBetween(location, loc));
+          0.0, (double sum, loc) => sum + _distanceBetween(location, loc));
 
       return candidateSum < locationSum ? candidate : location;
     });

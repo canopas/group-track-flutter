@@ -385,7 +385,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final img = await picture.toImage(markerSize.toInt(), markerSize.toInt());
     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
     final bitmapDescriptor =
-        BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
+        BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
 
     return bitmapDescriptor;
   }
@@ -451,7 +451,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final data = await imgData.toByteData(format: ui.ImageByteFormat.png);
 
     final bitmapDescriptor =
-        BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
+        BitmapDescriptor.bytes(data!.buffer.asUint8List());
 
     return bitmapDescriptor;
   }
@@ -515,7 +515,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
     final resizedBytes = byteData!.buffer.asUint8List();
 
-    return BitmapDescriptor.fromBytes(resizedBytes);
+    return BitmapDescriptor.bytes(resizedBytes);
   }
 
   void _clearPlacesAndPlaceMarkers() {

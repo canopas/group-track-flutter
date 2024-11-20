@@ -205,7 +205,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
     final resizedBytes = byteData!.buffer.asUint8List();
 
-    return BitmapDescriptor.fromBytes(resizedBytes);
+    return BitmapDescriptor.bytes(resizedBytes);
   }
 
   bool selectedDateIsTodayDate() {
