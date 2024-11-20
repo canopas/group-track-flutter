@@ -205,8 +205,8 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     final data = await rootBundle.load(assetPath);
     final codec = await ui.instantiateImageCodec(
       data.buffer.asUint8List(),
-      targetWidth: 38,
-      targetHeight: 54,
+      targetWidth: 42,
+      targetHeight: 58,
     );
     final frameInfo = await codec.getNextFrame();
 
