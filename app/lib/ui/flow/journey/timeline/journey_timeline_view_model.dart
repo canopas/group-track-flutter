@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/location/journey/api_journey_service.dart';
 import 'package:data/api/location/journey/journey.dart';
@@ -61,8 +62,10 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
       state = state.copyWith(
           isLoading: state.sortedJourney.isEmpty, appending: loadMore);
       final userId = state.selectedUser!.id;
-      final from = state.selectedTimeFrom ?? DateTime.now().startOfDay.millisecondsSinceEpoch;
-      final to = state.selectedTimeTo ?? DateTime.now().endOfDay.millisecondsSinceEpoch;
+      final from = state.selectedTimeFrom ??
+          DateTime.now().startOfDay.millisecondsSinceEpoch;
+      final to = state.selectedTimeTo ??
+          DateTime.now().endOfDay.millisecondsSinceEpoch;
       final lastJourneyTime = _getEarliestJourneyTime(state.sortedJourney);
 
       // Fetch journey history based on loadMore status
@@ -180,16 +183,22 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     final toState = toPlace?.administrativeArea ?? '';
 
     if (toPlace == null) {
-      return "$fromArea, $fromCity";
+      return formatAddress([fromArea, fromCity]);
     } else if (fromArea == toArea) {
-      return "$fromArea, $fromCity";
+      return formatAddress([fromArea, fromCity]);
     } else if (fromCity == toCity) {
-      return "$fromArea -> $toArea, $fromCity";
+      return "${formatAddress([fromArea])} -> ${formatAddress([toArea, fromCity])}";
     } else if (fromState == toState) {
-      return "$fromArea, $fromCity -> $toArea, $toCity";
+      return "${formatAddress([fromArea, fromCity])} -> "
+          "${formatAddress([toArea, toCity])}";
     } else {
-      return "$fromCity, $fromState -> $toCity, $toState";
+      return "${formatAddress([fromCity, fromState])} -> "
+          "${formatAddress([toCity, toState])}";
     }
+  }
+
+  String formatAddress(List<String> parts) {
+    return parts.map((part) => part.isNotEmpty ? part : "Unknown").join(', ');
   }
 
   Future<BitmapDescriptor> createCustomIcon(String assetPath) async {
@@ -202,7 +211,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     final frameInfo = await codec.getNextFrame();
 
     final byteData =
-    await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
+        await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
     final resizedBytes = byteData!.buffer.asUint8List();
 
     return BitmapDescriptor.fromBytes(resizedBytes);
