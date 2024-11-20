@@ -78,7 +78,9 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       await locationService.saveCurrentLocation(
           _currentUser?.id ?? '', location);
       await journeyRepository.saveLocationJourney(
-          extractedLocation: location, userId: _currentUser?.id ?? '', fromHomeViewModel: true);
+          extractedLocation: location,
+          userId: _currentUser?.id ?? '',
+          fromHomeViewModel: true);
     } catch (error, stack) {
       logger.e('HomeViewNotifier: error while get and save current location',
           error: error, stackTrace: stack);
@@ -192,7 +194,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
         state = state.copyWith(selectedSpace: selectedSpace);
       }
     }
-    if ((currentSpaceId?.isEmpty ?? false) && sortedSpaces.isNotEmpty) {
+    if (currentSpaceId == null && sortedSpaces.isNotEmpty) {
       _currentSpaceIdController.state = sortedSpaces.first.space.id;
       updateSelectedSpace(sortedSpaces.first);
       state = state.copyWith(selectedSpace: sortedSpaces.first);

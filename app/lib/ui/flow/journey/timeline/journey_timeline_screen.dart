@@ -72,12 +72,9 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
               actionButton(
                 context: context,
                 onPressed: () => notifier.showDatePicker(true),
-                icon: SvgPicture.asset(
-                  Assets.images.icTimelineFilterIcon,
-                  colorFilter: ColorFilter.mode(
-                    context.colorScheme.textPrimary,
-                    BlendMode.srcATop,
-                  ),
+                icon: Icon(
+                  Icons.calendar_month_outlined,
+                  color: context.colorScheme.textPrimary,
                 ),
               ),
             ],
@@ -386,13 +383,13 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
             ),
             if (isSteadyLocation ?? false) ...[
               Text(
-                  ((firstItem ?? false) && notifier.selectedDateIsTodayDate())
-                      ? ''
-                      : context.l10n.journey_timeline_steady_duration_text(
-                          steadyDuration!),
-                  style: AppTextStyle.caption
-                      .copyWith(color: context.colorScheme.textSecondary),
-                  maxLines: 2,
+                ((firstItem ?? false) && notifier.selectedDateIsTodayDate())
+                    ? ''
+                    : context.l10n
+                        .journey_timeline_steady_duration_text(steadyDuration!),
+                style: AppTextStyle.caption
+                    .copyWith(color: context.colorScheme.textSecondary),
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ]
@@ -446,7 +443,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
       final time = createdAtDate.format(context, DateFormatType.time);
       return context.l10n.journey_timeline_Since_text(time);
     } else {
-      final dayTime = createdAtDate.format(context, DateFormatType.dayMonthYear);
+      final dayTime =
+          createdAtDate.format(context, DateFormatType.dayMonthYear);
       return context.l10n.journey_timeline_Since_text(dayTime);
     }
   }
