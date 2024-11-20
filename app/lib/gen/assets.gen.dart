@@ -174,10 +174,6 @@ class $AssetsImagesGen {
   AssetGenImage get icTimelineEndLocationFlagIcon => const AssetGenImage(
       'assets/images/ic_timeline_end_location_flag_icon.png');
 
-  /// File path: assets/images/ic_timeline_filter_icon.svg
-  String get icTimelineFilterIcon =>
-      'assets/images/ic_timeline_filter_icon.svg';
-
   /// File path: assets/images/ic_timeline_journey_icon.svg
   String get icTimelineJourneyIcon =>
       'assets/images/ic_timeline_journey_icon.svg';
@@ -260,7 +256,6 @@ class $AssetsImagesGen {
         icTerrainMap,
         icTimeLineHistoryIcon,
         icTimelineEndLocationFlagIcon,
-        icTimelineFilterIcon,
         icTimelineJourneyIcon,
         icTimelineLocationPinIcon,
         icTimelineStartLocationIcon,
