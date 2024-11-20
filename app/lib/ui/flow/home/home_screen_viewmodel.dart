@@ -176,7 +176,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
         state = state.copyWith(selectedSpace: selectedSpace);
       }
     }
-    if ((currentSpaceId?.isEmpty ?? false) && sortedSpaces.isNotEmpty) {
+    if (currentSpaceId == null && sortedSpaces.isNotEmpty) {
       _currentSpaceIdController.state = sortedSpaces.first.space.id;
       updateSelectedSpace(sortedSpaces.first);
       state = state.copyWith(selectedSpace: sortedSpaces.first);
