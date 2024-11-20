@@ -42,31 +42,35 @@ extension LatLngExtensions on LatLng {
 
 extension PlacemarkExtensions on List<Placemark> {
   String getFormattedAddress() {
-    String address = '';
+
     var streets = map((placeMark) => placeMark.street)
         .where((street) => street != null)
         .where(
             (street) => street!.toLowerCase() != last.locality?.toLowerCase())
         .where((street) => !street!.contains('+'))
+        .map((street) => street!)
         .join(',');
-
-    if (streets.isNotEmpty) {
-      address += '$streets, ';
-    }
 
     final lastPlaceMark = last;
 
-    address += lastPlaceMark.subLocality ?? '';
-    address += ', ${lastPlaceMark.locality ?? ''}';
-    if (lastPlaceMark.subAdministrativeArea != null &&
-        lastPlaceMark.subAdministrativeArea!.toLowerCase() !=
-            lastPlaceMark.locality!.toLowerCase()) {
-      address += ', ${lastPlaceMark.subAdministrativeArea}';
-    }
-    address += ', ${lastPlaceMark.administrativeArea ?? ''}';
-    address += ', ${lastPlaceMark.postalCode ?? ''}';
-    address += ', ${lastPlaceMark.country ?? ''}';
+    List<String> addressParts = [
+      streets,
+      lastPlaceMark.subLocality ?? '',
+      lastPlaceMark.locality ?? '',
+      lastPlaceMark.subAdministrativeArea != null &&
+          lastPlaceMark.subAdministrativeArea!.toLowerCase() !=
+              lastPlaceMark.locality?.toLowerCase()
+          ? lastPlaceMark.subAdministrativeArea!
+          : '',
+      lastPlaceMark.administrativeArea ?? '',
+      lastPlaceMark.postalCode ?? '',
+      lastPlaceMark.country ?? '',
+    ];
 
-    return address;
+    return formatAddress(addressParts);
   }
+}
+
+String formatAddress(List<String> parts) {
+  return parts.where((part) => part.isNotEmpty).join(', ');
 }
