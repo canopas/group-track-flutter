@@ -236,21 +236,24 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           title: context.l10n.home_map_selected_type_normal_text,
           icon: SvgPicture.asset(Assets.images.icNormalMap),
           onTap: () {
-            notifier.setMapType(context.l10n.home_map_selected_type_normal_text);
+            notifier
+                .setMapType(context.l10n.home_map_selected_type_normal_text);
           },
         ),
         BottomSheetAction(
           title: context.l10n.home_map_selected_type_terrain_text,
           icon: SvgPicture.asset(Assets.images.icTerrainMap),
           onTap: () {
-            notifier.setMapType(context.l10n.home_map_selected_type_terrain_text);
+            notifier
+                .setMapType(context.l10n.home_map_selected_type_terrain_text);
           },
         ),
         BottomSheetAction(
           title: context.l10n.home_map_selected_type_satellite_text,
           icon: SvgPicture.asset(Assets.images.icSatelliteMap),
           onTap: () {
-            notifier.setMapType(context.l10n.home_map_selected_type_satellite_text);
+            notifier
+                .setMapType(context.l10n.home_map_selected_type_satellite_text);
           },
         ),
       ],
@@ -384,8 +387,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final picture = pictureRecorder.endRecording();
     final img = await picture.toImage(markerSize.toInt(), markerSize.toInt());
     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
-    final bitmapDescriptor =
-        BitmapDescriptor.bytes(byteData!.buffer.asUint8List());
+    final bitmapDescriptor = BitmapDescriptor.bytes(
+        byteData!.buffer.asUint8List(),
+        bitmapScaling: MapBitmapScaling.none);
 
     return bitmapDescriptor;
   }
@@ -450,8 +454,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         await picture.toImage(markerSize.toInt(), markerSize.toInt());
     final data = await imgData.toByteData(format: ui.ImageByteFormat.png);
 
-    final bitmapDescriptor =
-        BitmapDescriptor.bytes(data!.buffer.asUint8List());
+    final bitmapDescriptor = BitmapDescriptor.bytes(data!.buffer.asUint8List(),
+        bitmapScaling: MapBitmapScaling.none);
 
     return bitmapDescriptor;
   }
@@ -515,7 +519,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
     final resizedBytes = byteData!.buffer.asUint8List();
 
-    return BitmapDescriptor.bytes(resizedBytes);
+    return BitmapDescriptor.bytes(resizedBytes,
+        bitmapScaling: MapBitmapScaling.none);
   }
 
   void _clearPlacesAndPlaceMarkers() {

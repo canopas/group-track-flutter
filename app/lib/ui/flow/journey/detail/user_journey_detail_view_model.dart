@@ -110,7 +110,8 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
         await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
     final resizedBytes = byteData!.buffer.asUint8List();
 
-    return BitmapDescriptor.bytes(resizedBytes);
+    return BitmapDescriptor.bytes(resizedBytes,
+        bitmapScaling: MapBitmapScaling.none);
   }
 }
 
