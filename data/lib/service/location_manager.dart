@@ -81,21 +81,34 @@ class LocationManager {
     final userId = await _getUserIdFromPreferences();
     if (userId == null) return;
 
+    print("XXX Start tracking...");
     positionSubscription = Geolocator.getPositionStream(
-      locationSettings: LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: isSteady ? STEADY_DISTANCE : MOVING_DISTANCE,
-      ),
+      locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter:
+              MOVING_DISTANCE // isSteady ? STEADY_DISTANCE : MOVING_DISTANCE,
+          ),
     ).listen((position) {
       final timeDifference = _lastPosition != null
           ? position.timestamp.difference(_lastPosition!.timestamp).inSeconds
           : 0;
 
-     // if (_lastPosition == null) {
+      final distance = _lastPosition != null
+          ? _distanceBetween(_lastPosition!, position)
+          : 0;
+
+      print("XXX location update distance $distance --- timeDifference $timeDifference");
+
+
+      if (_lastPosition == null ||
+          timeDifference >= 10 ||
+          distance >= MOVING_DISTANCE) {
+        print("XXX _updateUserLocation $position");
         _updateUserLocation(position);
-      //} else if (timeDifference > 10) {
-    //    _manageSteadyLocationUpdates(userId, position);
-    //  }
+      }
+      // else if (timeDifference > 10) {
+      //    _manageSteadyLocationUpdates(userId, position);
+      //  }
     });
   }
 
