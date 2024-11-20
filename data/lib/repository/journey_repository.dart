@@ -14,6 +14,8 @@ import '../storage/location_caches.dart';
 
 const MIN_DISTANCE = 150.0; // 150 meters
 const MIN_TIME_DIFFERENCE = 5 * 60 * 1000; // 5 minutes
+const MIN_DISTANCE_FOR_MOVING = 10.0; // 10 meters
+const MIN_UPDATE_INTERVAL_MINUTE = 60 * 1000; // 1 minute
 
 class JourneyRepository {
   static JourneyRepository? _instance;
@@ -43,7 +45,8 @@ class JourneyRepository {
       checkAndSaveJourneyOnDayChange(
           extractedLocation: extractedLocation,
           lastKnownJourney: lastKnownJourney,
-          userId: userId);
+          userId: userId,
+          fromHomeViewModel: fromHomeViewModel);
 
       // to get all route position between location a -> b for moving user journey
       locationCache.addLocation(extractedLocation, userId);
@@ -229,8 +232,8 @@ class JourneyRepository {
       // Save journey for moving user and update last known journey.
       // Note: Need to use lastKnownJourney.id as journey id because we are updating the journey
 
-      await _updateJourneyForContinuedMovingUser(
-          userId, extractedLocation, lastKnownJourney, distance);
+      if (distance > MIN_DISTANCE_FOR_MOVING) {await _updateJourneyForContinuedMovingUser(
+          userId, extractedLocation, lastKnownJourney, distance);}
     }
   }
 
@@ -271,6 +274,7 @@ class JourneyRepository {
     );
 
     locationCache.putLastJourney(journey, userId);
+    locationCache.putLastJourneyUpdatedTime(DateTime.now().millisecondsSinceEpoch, userId);
   }
 
   /// Update journey for continued moving user i.e., state is moving and user is still moving
@@ -301,7 +305,13 @@ class JourneyRepository {
       update_at: DateTime.now().millisecondsSinceEpoch,
     );
 
-    await journeyService.updateLastLocationJourney(userId, journey);
+    final lastJourneyUpdatedTime = locationCache.getLastJourneyUpdatedTime(userId);
+    final timeDifference = journey.update_at! - lastJourneyUpdatedTime;
+
+    if (timeDifference >= MIN_UPDATE_INTERVAL_MINUTE) {
+      await journeyService.updateLastLocationJourney(userId, journey);
+      locationCache.putLastJourneyUpdatedTime(DateTime.now().millisecondsSinceEpoch, userId);
+    }
     locationCache.putLastJourney(journey, userId);
   }
 

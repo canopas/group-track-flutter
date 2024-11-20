@@ -91,11 +91,17 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_location_off.svg
   String get icLocationOff => 'assets/images/ic_location_off.svg';
 
+  /// File path: assets/images/ic_map_type.svg
+  String get icMapType => 'assets/images/ic_map_type.svg';
+
   /// File path: assets/images/ic_message.svg
   String get icMessage => 'assets/images/ic_message.svg';
 
   /// File path: assets/images/ic_no_connection_icon.svg
   String get icNoConnectionIcon => 'assets/images/ic_no_connection_icon.svg';
+
+  /// File path: assets/images/ic_normal_map.svg
+  String get icNormalMap => 'assets/images/ic_normal_map.svg';
 
   /// File path: assets/images/ic_place_marker_icon.png
   AssetGenImage get icPlaceMarkerIcon =>
@@ -131,6 +137,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_remove.svg
   String get icRemove => 'assets/images/ic_remove.svg';
 
+  /// File path: assets/images/ic_satellite_map.svg
+  String get icSatelliteMap => 'assets/images/ic_satellite_map.svg';
+
   /// File path: assets/images/ic_search_icon.svg
   String get icSearchIcon => 'assets/images/ic_search_icon.svg';
 
@@ -153,6 +162,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_subscription_uncheck_icon.svg
   String get icSubscriptionUncheckIcon =>
       'assets/images/ic_subscription_uncheck_icon.svg';
+
+  /// File path: assets/images/ic_terrain_map.svg
+  String get icTerrainMap => 'assets/images/ic_terrain_map.svg';
 
   /// File path: assets/images/ic_time_line_history_icon.svg
   String get icTimeLineHistoryIcon =>
@@ -222,8 +234,10 @@ class $AssetsImagesGen {
         icLocationFeedIcon,
         icLocation,
         icLocationOff,
+        icMapType,
         icMessage,
         icNoConnectionIcon,
+        icNormalMap,
         icPlaceMarkerIcon,
         icPlacesGymIcon,
         icPlacesHomeIcon,
@@ -235,6 +249,7 @@ class $AssetsImagesGen {
         icPrivacyPolicy,
         icRelocateIcon,
         icRemove,
+        icSatelliteMap,
         icSearchIcon,
         icSendMessage,
         icSetting,
@@ -242,6 +257,7 @@ class $AssetsImagesGen {
         icSubscriptionCheckIcon,
         icSubscriptionIcon,
         icSubscriptionUncheckIcon,
+        icTerrainMap,
         icTimeLineHistoryIcon,
         icTimelineEndLocationFlagIcon,
         icTimelineFilterIcon,

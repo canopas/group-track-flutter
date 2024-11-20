@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 part 'location.freezed.dart';
 part 'location.g.dart';
@@ -50,4 +51,11 @@ class LocationData {
   double distanceTo(LocationData other) {
     return Geolocator.distanceBetween(latitude, longitude, other.latitude, other.longitude);
   }
+}
+
+class MapTypeInfo {
+  final MapType mapType;
+  final int index;
+
+  MapTypeInfo(this.mapType, this.index);
 }

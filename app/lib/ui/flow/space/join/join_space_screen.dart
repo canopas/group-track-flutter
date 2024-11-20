@@ -51,6 +51,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     notifier = ref.watch(joinSpaceViewStateProvider.notifier);
     _observeError();
     _showCongratulationPrompt();
+    _observePop();
 
     return AppPage(
       title: widget.fromOnboard ? '' : context.l10n.join_space_title,
@@ -166,11 +167,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
               if (index < 5) {
                 _focusNodes[index + 1].requestFocus();
               } else {
-                final inviteCode = _controllers
-                    .map((controller) => controller.text.trim())
-                    .join();
                 FocusManager.instance.primaryFocus?.unfocus();
-                notifier.joinSpace(inviteCode);
               }
             }
             _updateJoinSpaceButtonState();
@@ -194,7 +191,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
               final inviteCode = _controllers
                   .map((controller) => controller.text.trim())
                   .join();
-              _checkInternet(inviteCode);
+              notifier.getSpace(inviteCode);
             },
           ),
           if (widget.fromOnboard) ...[
@@ -245,21 +242,29 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     });
   }
 
+  void _observePop() {
+    ref.listen(joinSpaceViewStateProvider.select((state) => state.spaceJoined), (previous, next) {
+      if (next) {
+        context.pop();
+      }
+    });
+  }
+
   void _showCongratulationPrompt() {
     ref.listen(joinSpaceViewStateProvider.select((state) => state.space),
         (previous, next) {
       if (next != null) {
-        showOkayConfirmation(
+        showConfirmation(
           context,
-          title: context.l10n.join_space_congratulation_title,
-          message: context.l10n.join_space_congratulation_subtitle(next.name),
-          onOkay: () {
-            if (widget.fromOnboard) {
-              AppRoute.home.go(context);
-            } else {
-              context.pop();
-            }
+          title: context.l10n.join_space_title,
+          message: context.l10n.join_space_prompt_subtitle(next.name),
+          onConfirm: () {
+            final inviteCode = _controllers
+                .map((controller) => controller.text.trim())
+                .join();
+            _checkInternet(inviteCode);
           },
+          onCancel: () => context.pop(),
         );
       }
     });
