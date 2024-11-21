@@ -198,7 +198,7 @@
   },
   "edit_space_leave_space_alert_confirm_button_text": "Leave",
   "edit_space_remove_user_title": "Remove member",
-  "edit_space_remove_user_subtitle": "This action cannot ne undone, are you sure you want to remove this member from group",
+  "edit_space_remove_user_subtitle": "This action cannot be undone, are you sure you want to remove this member from group",
 
   "contact_support_title": "Contact support",
   "contact_support_title_field": "Title",
