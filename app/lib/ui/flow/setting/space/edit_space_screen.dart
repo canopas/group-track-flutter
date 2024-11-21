@@ -2,6 +2,7 @@ import 'package:data/api/auth/auth_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/button/action_button.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/button/primary_button.dart';
@@ -181,6 +182,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                     context,
                     member,
                     member.isLocationEnabled,
+                    isAdmin: state.isAdmin,
                   ),
                 );
               }).toList(),
@@ -191,9 +193,9 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
     );
   }
 
-  Widget _locationSharingItem(
-      BuildContext context, ApiUserInfo member, bool isLocationEnabled,
-      {bool isCurrentUser = false}) {
+  Widget _locationSharingItem(BuildContext context, ApiUserInfo member,
+      bool isLocationEnabled, {bool isAdmin = false,
+      bool isCurrentUser = false}) {
     final profileImageUrl = member.user.profile_image ?? '';
     final firstLetter = member.user.firstChar;
     return Row(
@@ -205,12 +207,15 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           backgroundColor: context.colorScheme.primary,
         ),
         const SizedBox(width: 16),
-        Text(
-          member.user.fullName,
-          style: AppTextStyle.subtitle2
-              .copyWith(color: context.colorScheme.textPrimary),
+        Expanded(
+          child: Text(
+            member.user.fullName,
+            style: AppTextStyle.subtitle2
+                .copyWith(color: context.colorScheme.textPrimary),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
-        const Spacer(),
+        const SizedBox(width: 8),
         Switch(
           value: isLocationEnabled,
           onChanged: (bool value) {
@@ -225,6 +230,17 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
               WidgetStatePropertyAll(context.colorScheme.outline),
           trackOutlineWidth: const WidgetStatePropertyAll(0.5),
         ),
+        if (isAdmin && !isCurrentUser) ...[
+          const SizedBox(width: 8),
+          OnTapScale(
+            onTap: () => _showConfirmationToRemoveUserFromGroup(onTap: () {
+              notifier.leaveSpace(userId: member.user.id);
+              notifier.isAdminRemovingMember(true);
+            }),
+            child: Icon(Icons.remove_circle_outline_rounded,
+                  color: context.colorScheme.alert),
+          ),
+        ]
       ],
     );
   }
@@ -268,6 +284,19 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           });
         },
       ),
+    );
+  }
+
+  void _showConfirmationToRemoveUserFromGroup({required Function onTap}) {
+    showConfirmation(
+      context,
+      confirmBtnText: context.l10n.common_remove,
+      title: context.l10n.edit_space_remove_user_title,
+      message: context.l10n.edit_space_remove_user_subtitle,
+      popBack: false,
+      onConfirm: () {
+        _checkUserInternet(() => onTap());
+      },
     );
   }
 

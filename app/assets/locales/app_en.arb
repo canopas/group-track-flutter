@@ -25,6 +25,7 @@
   "common_go_to_setting": "Go to settings",
   "commonMembers": "{memberCount} {memberCount, plural, =1{Member} other{Members}}",
   "common_retry": "Retry",
+  "common_remove": "Remove",
   "@commonMembers": {
     "placeholders": {
       "memberCount": {}
@@ -196,6 +197,8 @@
     }
   },
   "edit_space_leave_space_alert_confirm_button_text": "Leave",
+  "edit_space_remove_user_title": "Remove member",
+  "edit_space_remove_user_subtitle": "This action cannot ne undone, are you sure you want to remove this member from group",
 
   "contact_support_title": "Contact support",
   "contact_support_title_field": "Title",
