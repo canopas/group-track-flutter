@@ -226,16 +226,33 @@ class _UserJourneyDetailScreenState
     final toState = toPlace?.administrativeArea ?? '';
 
     if (toPlace == null) {
-      return "$fromArea, $fromCity";
+      return formatAddress([fromArea, fromCity]);
     } else if (fromArea == toArea) {
-      return "$fromArea, $fromCity";
+      return formatAddress([fromArea, fromCity]);
     } else if (fromCity == toCity) {
-      return "$fromArea to $toArea, $fromCity";
+      return formatTwoPlaceAddress([fromArea], [toArea, fromCity]);
     } else if (fromState == toState) {
-      return "$fromArea, $fromCity to $toArea, $toCity";
+      return formatTwoPlaceAddress([fromArea, fromCity], [toArea, toCity]);
     } else {
-      return "$fromCity, $fromState to $toCity, $toState";
+      return formatTwoPlaceAddress([fromCity, fromState], [toCity, toState]);
     }
+  }
+
+  String formatTwoPlaceAddress(List<String> fromPlace, List<String> toPlace) {
+    bool isFromPlaceEmpty = fromPlace.every((part) => part.isEmpty);
+    bool isToPlaceEmpty = toPlace.every((part) => part.isEmpty);
+
+    if (!isFromPlaceEmpty && !isToPlaceEmpty) {
+      return "${formatAddress(fromPlace)} to ${formatAddress(toPlace)}";
+    } else if (!isFromPlaceEmpty && isToPlaceEmpty) {
+      return formatAddress(fromPlace);
+    } else {
+      return formatAddress(toPlace);
+    }
+  }
+
+  String formatAddress(List<String> parts) {
+    return parts.where((part) => part.isNotEmpty).join(', ');
   }
 
   Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {

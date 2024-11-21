@@ -158,8 +158,8 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
       if (image != null) {
         final resizedImage = img.copyResize(
           image,
-          width: placeSize.toInt(),
-          height: placeSize.toInt(),
+          width: (markerSize/1.25).toInt(),
+          height: (markerSize/1.25).toInt(),
         );
         final circularImage = img.copyCropCircle(resizedImage);
 
