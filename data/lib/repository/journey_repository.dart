@@ -38,6 +38,9 @@ class JourneyRepository {
     required String userId,
   }) async {
     try {
+      _steadyLocationTimer?.cancel();
+      _steadyLocationTimer = null;
+
       var lastKnownJourney =
           await getLastKnownLocation(userId, extractedLocation);
 
@@ -68,8 +71,6 @@ class JourneyRepository {
 
   // Start or restart the 5-minute timer when the user is steady.
   void _startSteadyLocationTimer(LocationData position, String userId) async {
-    _steadyLocationTimer?.cancel();
-    _steadyLocationTimer = null;
 
     var lastLocation =
         locationCache.getLastJourney(userId)?.toLocationFromSteadyJourney();
@@ -81,7 +82,7 @@ class JourneyRepository {
 
     _steadyLocationTimer = Timer(const Duration(minutes: 5), () async {
       try {
-        await _saveSteadyLocation(position, userId);
+        await _saveSteadyLocation(position, userId, lastLocationJourney);
         // removing previous journey routes to get latest location route for next journey from start point to end
         locationCache.clearLocationCache();
       } catch (e, stack) {
@@ -95,9 +96,11 @@ class JourneyRepository {
     return loc1.latitude == loc2.latitude && loc1.longitude == loc2.longitude;
   }
 
-  Future<void> _saveSteadyLocation(LocationData position, String userId) async {
+  Future<void> _saveSteadyLocation(LocationData position, String userId,
+      ApiLocationJourney? lastLocation) async {
     var lastKnownJourney = await getLastKnownLocation(userId, position);
 
+    if (lastKnownJourney.id != lastLocation?.id) return;
     if (lastKnownJourney.isSteadyLocation()) return;
 
     var locations = locationCache.getLastFiveLocations(userId);
@@ -325,25 +328,12 @@ class JourneyRepository {
       LocationData extractedLocation,
       ApiLocationJourney lastKnownJourney,
       double distance) async {
-    var movingJourney = ApiLocationJourney(
-      id: lastKnownJourney.id,
-      user_id: userId,
-      from_latitude: lastKnownJourney.from_latitude,
-      from_longitude: lastKnownJourney.from_longitude,
+    var movingJourney = lastKnownJourney.copyWith(
       to_latitude: extractedLocation.latitude,
       to_longitude: extractedLocation.longitude,
       route_distance: distance + (lastKnownJourney.route_distance ?? 0),
       route_duration: (lastKnownJourney.update_at ?? 0) -
           (lastKnownJourney.created_at ?? 0),
-      routes: lastKnownJourney.routes +
-          [
-            JourneyRoute(
-              latitude: extractedLocation.latitude,
-              longitude: extractedLocation.longitude,
-            )
-          ],
-      created_at: lastKnownJourney.created_at,
-      update_at: lastKnownJourney.update_at,
     );
 
     journeyService.updateLastLocationJourney(userId, movingJourney);
