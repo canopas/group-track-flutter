@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:style/animation/on_tap_scale.dart';
+import 'package:style/button/icon_primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -178,28 +179,22 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   }
 
   Widget _timeLineButtonView() {
-    return OnTapScale(
+    return IconPrimaryButton(
       onTap: () {
         AppRoute.journeyTimeline(widget.userInfo!.user, widget.groupCreatedDate).push(context);
       },
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: context.colorScheme.containerLow),
-        padding: const EdgeInsets.all(8),
-        child: SvgPicture.asset(
-          Assets.images.icTimeLineHistoryIcon,
-          colorFilter: ColorFilter.mode(
-            context.colorScheme.textPrimary,
-            BlendMode.srcATop,
-          ),
+      icon: SvgPicture.asset(
+        Assets.images.icTimeLineHistoryIcon,
+        colorFilter: ColorFilter.mode(
+          context.colorScheme.textPrimary,
+          BlendMode.srcATop,
         ),
       ),
     );
   }
 
   Widget _navigationAndShareLocationButtonView() {
-    return OnTapScale(
+    return IconPrimaryButton(
       onTap: () {
         if (widget.isCurrentUser) {
           final mapsLink =
@@ -213,17 +208,19 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
           launchUrl(Uri.parse(mapsLink), mode: LaunchMode.externalApplication);
         }
       },
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: context.colorScheme.containerLow),
-        padding: const EdgeInsets.all(8),
-        child: Icon(
-          widget.isCurrentUser ? Icons.ios_share : Icons.navigation_outlined,
-          color: context.colorScheme.textPrimary,
-          size: 20,
-        ),
-      ),
+      icon: widget.isCurrentUser
+          ? Icon(
+              Icons.navigation_outlined,
+              color: context.colorScheme.textPrimary,
+              size: 20,
+            )
+          : SvgPicture.asset(
+              Assets.images.icShareTwoLocation,
+              colorFilter: ColorFilter.mode(
+                context.colorScheme.textPrimary,
+                BlendMode.srcATop,
+              ),
+            ),
     );
   }
 
