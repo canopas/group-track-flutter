@@ -91,7 +91,7 @@ class LocationManager {
       if (_lastPosition == null ||
           timeDifference >= 10 ||
           distance >= MOVING_DISTANCE) {
-        print("XXX get location:$position");
+        logger.i("XXX get location:$position");
         _updateUserLocation(position);
       }
     });
