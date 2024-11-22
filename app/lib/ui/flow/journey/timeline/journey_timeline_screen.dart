@@ -438,18 +438,18 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     );
   }
 
-  String _getFormattedLocationTimeForFirstItem(int createdAt) {
-    DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
-
-    if (createdAtDate.isToday) {
-      final time = createdAtDate.format(context, DateFormatType.time);
-      return context.l10n.journey_timeline_Since_text(time);
-    } else {
-      final dayTime =
-          createdAtDate.format(context, DateFormatType.dayMonthYear);
-      return context.l10n.journey_timeline_Since_text(dayTime);
-    }
-  }
+  // String _getFormattedLocationTimeForFirstItem(int createdAt) {
+  //   DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
+  //
+  //   if (createdAtDate.isToday) {
+  //     final time = createdAtDate.format(context, DateFormatType.time);
+  //     return context.l10n.journey_timeline_Since_text(time);
+  //   } else {
+  //     final dayTime =
+  //         createdAtDate.format(context, DateFormatType.dayMonthYear);
+  //     return context.l10n.journey_timeline_Since_text(dayTime);
+  //   }
+  // }
 
   String _getFormattedJourneyTime(int startAt, int endAt) {
     DateTime startAtDate = DateTime.fromMillisecondsSinceEpoch(startAt);
@@ -479,17 +479,17 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     }
   }
 
-  String _getFormattedTimeForSteadyLocation(int createdAt) {
-    DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
-    final startTime = createdAtDate.format(context, DateFormatType.time);
-
-    if (createdAtDate.isToday) {
-      final time = createdAtDate.format(context, DateFormatType.time);
-      return context.l10n.journey_timeline_today_text(time);
-    } else {
-      return '${createdAtDate.format(context, DateFormatType.dayMonthFull)} $startTime';
-    }
-  }
+  // String _getFormattedTimeForSteadyLocation(int createdAt) {
+  //   DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
+  //   final startTime = createdAtDate.format(context, DateFormatType.time);
+  //
+  //   if (createdAtDate.isToday) {
+  //     final time = createdAtDate.format(context, DateFormatType.time);
+  //     return context.l10n.journey_timeline_today_text(time);
+  //   } else {
+  //     return '${createdAtDate.format(context, DateFormatType.dayMonthFull)} $startTime';
+  //   }
+  // }
 
   Future<String> _getMovingJourneyAddress(
       LatLng fromLatLng, LatLng toLatLng) async {
