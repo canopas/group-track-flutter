@@ -15,6 +15,7 @@ Future<void> showConfirmation(
       bool isDestructiveAction = true,
       String? cancelButtonText,
       VoidCallback? onCancel,
+      bool? popBack = true,
     }) {
   HapticFeedback.mediumImpact();
   return showAdaptiveDialog(
@@ -37,7 +38,9 @@ Future<void> showConfirmation(
             context: context,
             isDestructiveAction: isDestructiveAction,
             onPressed: () async {
-              context.pop();
+              if (popBack ?? true) {
+                context.pop();
+              }
               onConfirm();
             },
             child: Text(

@@ -30,7 +30,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
     if (isNetworkOff) return;
 
     try {
-      state = state.copyWith(loading: true);
+      state = state.copyWith(loading: state.space != null);
       final space = await spaceService.getSpaceInfo(spaceId);
       final currentUserInfo = space?.members.firstWhere(
         (member) => member.user.id == user?.id,
@@ -77,11 +77,14 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
     }
   }
 
-  void leaveSpace() async {
+  void leaveSpace({String? userId}) async {
     try {
       state = state.copyWith(deleting: true);
-      await spaceService.leaveSpace(state.space!.space.id);
+      await spaceService.leaveSpace(state.space!.space.id, userId: userId);
       state = state.copyWith(deleting: false, deleted: true, error: null);
+      if (state.adminRemovingMember) {
+        getSpaceDetails(state.space!.space.id);
+      }
     } catch (error, stack) {
       logger.e(
         'EditSpaceViewNotifier: error while leave space',
@@ -124,6 +127,10 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
     state = state.copyWith(isNetworkOff: isNetworkOff);
     return isNetworkOff;
   }
+
+  void isAdminRemovingMember(bool removeMember) {
+    state = state.copyWith(adminRemovingMember: removeMember);
+  }
 }
 
 @freezed
@@ -137,6 +144,7 @@ class EditSpaceViewState with _$EditSpaceViewState {
     @Default(false) bool deleted,
     @Default(false) bool locationEnabled,
     @Default(false) bool isNetworkOff,
+    @Default(false) bool adminRemovingMember,
     @Default('') String selectedSpaceName,
     @Default('') String currentUserId,
     ApiUserInfo? currentUserInfo,
