@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/location/location.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -209,11 +210,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
         }
       },
       icon: widget.isCurrentUser
-          ? Icon(
-              Icons.navigation_outlined,
-              color: context.colorScheme.textPrimary,
-              size: 20,
-            )
+          ? Icon(CupertinoIcons.paperplane, color: context.colorScheme.textPrimary, size: 18,)
           : SvgPicture.asset(
               Assets.images.icShareTwoLocation,
               colorFilter: ColorFilter.mode(
