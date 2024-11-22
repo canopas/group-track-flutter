@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:typed_data';
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:data/api/auth/auth_models.dart';
@@ -13,9 +13,11 @@ import 'package:data/service/place_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image/image.dart' as img;
 
@@ -61,6 +63,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
       this.mapTypeController,
   ) : super(MapViewState(mapType: mapTypeController.state)) {
     checkUserPermission();
+    _getCurrentUserLastLocation();
   }
 
   void loadData(String? spaceId) {
@@ -322,6 +325,27 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     }
   }
 
+  void _getCurrentUserLastLocation() async {
+    try {
+      final location = await _currentUserLocation();
+      state = state.copyWith(currentUserLocation: LatLng(location.latitude, location.longitude));
+    } catch (error, stack) {
+      logger.e('MapViewNotifier: error while get current location',
+      error: error, stackTrace: stack);
+    }
+  }
+
+  Future<LatLng> _currentUserLocation() async {
+    if (Platform.isIOS) {
+      const platform = MethodChannel('com.grouptrack/current_location');
+      final locationFromIOS = await platform.invokeMethod('getCurrentLocation');
+      return LatLng(locationFromIOS['latitude'], locationFromIOS['longitude']);
+    } else {
+      var location = await Geolocator.getCurrentPosition();
+      return LatLng(location.latitude, location.longitude);
+    }
+  }
+
   void setMapType(String type) {
     mapTypeController.state = type;
     state = state.copyWith(mapType: type);
@@ -344,6 +368,10 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     _userInfoSubscription?.cancel();
     _placeSubscription?.cancel();
   }
+
+  bool isCurrentUser() {
+    return _currentUser?.id == state.selectedUser?.user.id;
+  }
 }
 
 @freezed
@@ -359,6 +387,7 @@ class MapViewState with _$MapViewState {
     @Default([]) List<ApiPlace> places,
     @Default([]) List<UserMarker> markers,
     ApiUserInfo? selectedUser,
+    LatLng? currentUserLocation,
     CameraPosition? defaultPosition,
     @Default('') String spaceInvitationCode,
     required String mapType,
