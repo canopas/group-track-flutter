@@ -97,9 +97,6 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_message.svg
   String get icMessage => 'assets/images/ic_message.svg';
 
-  /// File path: assets/images/ic_navigation.svg
-  String get icNavigation => 'assets/images/ic_navigation.svg';
-
   /// File path: assets/images/ic_no_connection_icon.svg
   String get icNoConnectionIcon => 'assets/images/ic_no_connection_icon.svg';
 
@@ -238,7 +235,6 @@ class $AssetsImagesGen {
         icLocationOff,
         icMapType,
         icMessage,
-        icNavigation,
         icNoConnectionIcon,
         icNormalMap,
         icPlaceMarkerIcon,
