@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/journey/journey.dart';
@@ -38,6 +39,7 @@ class JourneyRepository {
     required String userId,
   }) async {
     try {
+      print("XXX first in saveLocationJourney");
       _steadyLocationTimer?.cancel();
       _steadyLocationTimer = null;
 
@@ -45,12 +47,16 @@ class JourneyRepository {
           await getLastKnownLocation(userId, extractedLocation);
 
       // Check and save location journey on day changed
+      print("XXX check on day change");
+
       checkAndSaveJourneyOnDayChange(
           extractedLocation: extractedLocation,
           lastKnownJourney: lastKnownJourney,
           userId: userId);
 
       // to get all route position between location a -> b for moving user journey
+      print("XXX add location");
+
       locationCache.addLocation(extractedLocation, userId);
 
       // Check add add extracted location to last five locations to calculate geometric median
@@ -61,6 +67,7 @@ class JourneyRepository {
           userId, extractedLocation, lastKnownJourney);
 
       _startSteadyLocationTimer(extractedLocation, userId);
+      print("XXX .........exit location update journey............");
     } catch (error, stack) {
       logger.e(
           'Journey Repository: Error while save journey, $extractedLocation',
@@ -71,17 +78,18 @@ class JourneyRepository {
 
   // Start or restart the 5-minute timer when the user is steady.
   void _startSteadyLocationTimer(LocationData position, String userId) async {
-
     var lastLocation =
         locationCache.getLastJourney(userId)?.toLocationFromSteadyJourney();
     var lastLocationJourney = await getLastKnownLocation(userId, position);
     if (lastLocation != null && _isSameLocation(position, lastLocation) ||
         lastLocationJourney.isSteadyLocation()) {
+      print("XXX time return");
       return;
     }
 
     _steadyLocationTimer = Timer(const Duration(minutes: 5), () async {
       try {
+        print("XXX timer call to set steady location");
         await _saveSteadyLocation(position, userId, lastLocationJourney);
         // removing previous journey routes to get latest location route for next journey from start point to end
         locationCache.clearLocationCache();
@@ -106,7 +114,7 @@ class JourneyRepository {
     var locations = locationCache.getLastFiveLocations(userId);
 
     var geometricMedian =
-        locations.isNotEmpty ? _geometricMedianCalculation(locations) : null;
+        locations.isNotEmpty ? _geometricMedian(locations) : null;
 
     double distance = _distanceBetween(geometricMedian ?? position,
         lastKnownJourney.toLocationFromSteadyJourney());
@@ -122,9 +130,14 @@ class JourneyRepository {
     bool isOnlyOneDayChange =
         _isOnlyOneDayChanged(extractedLocation, lastKnownJourney);
 
+    print("XXX is day changed $dayChanged, $isOnlyOneDayChange");
     if (dayChanged && isOnlyOneDayChange) {
+      print("XXX in if");
+
       _updateJourneyOnDayChanged(userId, lastKnownJourney);
     } else if (dayChanged && extractedLocation != null) {
+      print("XXX in else");
+
       _saveJourneyOnDayChanged(userId, extractedLocation);
     }
   }
@@ -171,18 +184,24 @@ class JourneyRepository {
     var lastKnownJourney = locationCache.getLastJourney(userId);
 
     if (lastKnownJourney != null) {
+      print("XXX get lastKnownJourney 1");
       // Return last location journey if available from cache
       return lastKnownJourney;
     } else {
       // Here, means no location journey available in cache
       // Fetch last location journey from remote database and save it to cache
+      print("XXX call api for get lastKnownJourney else");
 
       lastKnownJourney = await journeyService.getLastJourneyLocation(userId);
 
       if (lastKnownJourney != null) {
+        print("XXX get api data lastKnownJourney");
+
         locationCache.putLastJourney(lastKnownJourney, userId);
         return lastKnownJourney;
       } else {
+        print("XXX api data null for lastKnownJourney create new");
+
         // Here, means no location journey available in remote database as well
         // Possibly user is new or no location journey available
         // Save extracted location as new location journey with steady state in cache
@@ -206,10 +225,15 @@ class JourneyRepository {
       String userId,
       LocationData extractedLocation,
       ApiLocationJourney lastKnownJourney) async {
+    print("XXX _checkAndSaveLocationJourney");
     var locations = locationCache.getLastFiveLocations(userId);
+    for (var location in locations) {
+      print(
+          "XXX get last five location: ${location.latitude},${location.longitude}");
+    }
 
     var geometricMedian =
-        locations.isNotEmpty ? _geometricMedianCalculation(locations) : null;
+        locations.isNotEmpty ? _geometricMedian(locations) : null;
 
     double distance = lastKnownJourney.isSteadyLocation()
         ? _distanceBetween(geometricMedian ?? extractedLocation,
@@ -221,11 +245,15 @@ class JourneyRepository {
             extractedLocation.timestamp.millisecondsSinceEpoch) -
         (lastKnownJourney.update_at ?? 0);
 
+    print(
+        "XXX checkAndSaveLocationJourney: $geometricMedian, $lastKnownJourney");
+    print("XXX check item :$distance,:$timeDifference");
     if (lastKnownJourney.isSteadyLocation()) {
+      print("XXX get in steady");
       if (distance > MIN_DISTANCE) {
         // Here, means last known journey is steady and and now user has started moving
         // Save journey for moving user and update cache as well:
-
+        print("XXX get in steady distance is more then 150");
         await _saveJourneyWhenUserStartsMoving(userId, extractedLocation,
             lastKnownJourney, distance, timeDifference);
       }
@@ -233,8 +261,11 @@ class JourneyRepository {
       // Here, means last known journey is moving and user is still moving
       // Save journey for moving user and update last known journey.
       // Note: Need to use lastKnownJourney.id as journey id because we are updating the journey
+      print("XXX get in else");
 
       if (distance > MIN_DISTANCE_FOR_MOVING) {
+        print("XXX get in moving");
+
         await _updateJourneyForContinuedMovingUser(
             userId, extractedLocation, lastKnownJourney, distance);
       }
@@ -328,6 +359,7 @@ class JourneyRepository {
       LocationData extractedLocation,
       ApiLocationJourney lastKnownJourney,
       double distance) async {
+    print("XXX _saveJourneyOnJourneyStopped");
     var movingJourney = lastKnownJourney.copyWith(
       to_latitude: extractedLocation.latitude,
       to_longitude: extractedLocation.longitude,
@@ -335,6 +367,8 @@ class JourneyRepository {
       route_duration: (lastKnownJourney.update_at ?? 0) -
           (lastKnownJourney.created_at ?? 0),
     );
+
+    print("XXX save steady location:$movingJourney");
 
     journeyService.updateLastLocationJourney(userId, movingJourney);
 
@@ -353,6 +387,7 @@ class JourneyRepository {
       from_longitude: extractedLocation.longitude,
       created_at: lastKnownJourney.update_at,
     );
+    print("XXX update steady to cache location:$steadyJourney");
 
     locationCache.putLastJourney(steadyJourney, userId);
   }
@@ -410,21 +445,29 @@ class JourneyRepository {
 
   Future<void> _checkAndSaveLastFiveLocations(
       LocationData extractedLocation, String userId) async {
+    print("XXX save last five locations");
     var lastFiveLocations = locationCache.getLastFiveLocations(userId);
+    print("XXX last five locations:$lastFiveLocations");
     lastFiveLocations.add(extractedLocation);
     locationCache.putLastFiveLocations(lastFiveLocations, userId);
   }
 
-  LocationData _geometricMedianCalculation(List<LocationData> locations) {
-    LocationData result = locations.reduce((candidate, location) {
-      double candidateSum = locations.fold(
-          0.0, (double sum, loc) => sum + _distanceBetween(candidate, loc));
-      double locationSum = locations.fold(
-          0.0, (double sum, loc) => sum + _distanceBetween(location, loc));
+  double distance(LocationData loc1, LocationData loc2) {
+    final latDiff = loc1.latitude - loc2.latitude;
+    final lngDiff = loc1.longitude - loc2.longitude;
+    return sqrt(latDiff * latDiff + lngDiff * lngDiff);
+  }
 
-      return candidateSum < locationSum ? candidate : location;
+  LocationData _geometricMedian(List<LocationData> locations) {
+    return locations.reduce((candidate, current) {
+      double candidateSum = locations
+          .map((location) => distance(candidate, location))
+          .reduce((a, b) => a + b);
+      double currentSum = locations
+          .map((location) => distance(current, location))
+          .reduce((a, b) => a + b);
+
+      return candidateSum < currentSum ? candidate : current;
     });
-
-    return result;
   }
 }

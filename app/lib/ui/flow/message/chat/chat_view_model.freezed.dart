@@ -37,9 +37,7 @@ mixin _$ChatViewState {
   String get currentUserId => throw _privateConstructorUsedError;
   List<ThreadInfo> get threadList => throw _privateConstructorUsedError;
 
-  /// Create a copy of ChatViewState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $ChatViewStateCopyWith<ChatViewState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -86,8 +84,6 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ChatViewState
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -193,8 +189,6 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
     ) as $Val);
   }
 
-  /// Create a copy of ChatViewState
-  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SpaceInfoCopyWith<$Res>? get spaceInfo {
@@ -207,8 +201,6 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
     });
   }
 
-  /// Create a copy of ChatViewState
-  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ThreadInfoCopyWith<$Res>? get threadInfo {
@@ -266,8 +258,6 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
       _$ChatViewStateImpl _value, $Res Function(_$ChatViewStateImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ChatViewState
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -560,9 +550,7 @@ class _$ChatViewStateImpl implements _ChatViewState {
         const DeepCollectionEquality().hash(_threadList)
       ]);
 
-  /// Create a copy of ChatViewState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$ChatViewStateImplCopyWith<_$ChatViewStateImpl> get copyWith =>
@@ -632,11 +620,8 @@ abstract class _ChatViewState implements ChatViewState {
   String get currentUserId;
   @override
   List<ThreadInfo> get threadList;
-
-  /// Create a copy of ChatViewState
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$ChatViewStateImplCopyWith<_$ChatViewStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

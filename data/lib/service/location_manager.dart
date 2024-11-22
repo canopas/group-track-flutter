@@ -78,8 +78,7 @@ class LocationManager {
 
     positionSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          distanceFilter: MOVING_DISTANCE),
+          accuracy: LocationAccuracy.high, distanceFilter: MOVING_DISTANCE),
     ).listen((position) {
       final timeDifference = _lastPosition != null
           ? position.timestamp.difference(_lastPosition!.timestamp).inSeconds
@@ -92,6 +91,7 @@ class LocationManager {
       if (_lastPosition == null ||
           timeDifference >= 10 ||
           distance >= MOVING_DISTANCE) {
+        print("XXX get location:$position");
         _updateUserLocation(position);
       }
     });
