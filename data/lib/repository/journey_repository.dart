@@ -231,7 +231,7 @@ class JourneyRepository {
 
     logger.d(
         "XXX checkAndSaveLocationJourney: geo:${geometricMedian?.latitude},${geometricMedian?.longitude},");
-    logger.d("XXX checkAndSaveLocationJourney:last:${lastKnownJourney}");
+    logger.d("XXX checkAndSaveLocationJourney:last:$lastKnownJourney");
     logger.d("XXX check item :$distance,:$timeDifference");
 
     if (lastKnownJourney.isSteadyLocation()) {
