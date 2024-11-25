@@ -39,7 +39,7 @@ class JourneyRepository {
     required String userId,
   }) async {
     try {
-      logger.i("XXX first in saveLocationJourney");
+      logger.d("XXX first in saveLocationJourney");
       _steadyLocationTimer?.cancel();
       _steadyLocationTimer = null;
 
@@ -47,7 +47,7 @@ class JourneyRepository {
           await getLastKnownLocation(userId, extractedLocation);
 
       // Check and save location journey on day changed
-      logger.i("XXX check on day change");
+      logger.d("XXX check on day change");
 
       checkAndSaveJourneyOnDayChange(
           extractedLocation: extractedLocation,
@@ -55,8 +55,7 @@ class JourneyRepository {
           userId: userId);
 
       // to get all route position between location a -> b for moving user journey
-      logger.i("XXX add location");
-
+      logger.d("XXX add location");
       locationCache.addLocation(extractedLocation, userId);
 
       // Check add add extracted location to last five locations to calculate geometric median
@@ -66,8 +65,8 @@ class JourneyRepository {
       await _checkAndSaveLocationJourney(
           userId, extractedLocation, lastKnownJourney);
 
-      _startSteadyLocationTimer(extractedLocation, userId);
-      logger.i("XXX .........exit location update journey............");
+      await _startSteadyLocationTimer(extractedLocation, userId);
+      logger.d("XXX .........exit location update journey............");
     } catch (error, stack) {
       logger.e(
           'Journey Repository: Error while save journey, $extractedLocation',
@@ -77,20 +76,23 @@ class JourneyRepository {
   }
 
   // Start or restart the 5-minute timer when the user is steady.
-  void _startSteadyLocationTimer(LocationData position, String userId) async {
+  Future<void> _startSteadyLocationTimer(
+      LocationData position, String userId) async {
     var lastLocation =
         locationCache.getLastJourney(userId)?.toLocationFromSteadyJourney();
     var lastLocationJourney = await getLastKnownLocation(userId, position);
-    if (lastLocation != null && _isSameLocation(position, lastLocation) ||
-        lastLocationJourney.isSteadyLocation()) {
-      logger.i("XXX time return");
+    logger.d(
+        "XXX check condition:${lastLocation == null}, ${lastLocationJourney.isSteadyLocation()}");
+    if (lastLocation == null || lastLocationJourney.isSteadyLocation()) {
+      logger.d("XXX time return");
       return;
     }
 
+    logger.d("XXX start recode time for 5 min is active");
     _steadyLocationTimer = Timer(const Duration(minutes: 5), () async {
       try {
-        logger.i("XXX timer call to set steady location");
-        await _saveSteadyLocation(position, userId, lastLocationJourney);
+        logger.d("XXX timer call to set steady location");
+        await _saveSteadyLocation(position, userId);
         // removing previous journey routes to get latest location route for next journey from start point to end
         locationCache.clearLocationCache();
       } catch (e, stack) {
@@ -100,26 +102,10 @@ class JourneyRepository {
     });
   }
 
-  bool _isSameLocation(LocationData loc1, LocationData loc2) {
-    return loc1.latitude == loc2.latitude && loc1.longitude == loc2.longitude;
-  }
-
-  Future<void> _saveSteadyLocation(LocationData position, String userId,
-      ApiLocationJourney? lastLocation) async {
+  Future<void> _saveSteadyLocation(LocationData position, String userId) async {
     var lastKnownJourney = await getLastKnownLocation(userId, position);
-
-    if (lastKnownJourney.id != lastLocation?.id) return;
     if (lastKnownJourney.isSteadyLocation()) return;
-
-    var locations = locationCache.getLastFiveLocations(userId);
-
-    var geometricMedian =
-        locations.isNotEmpty ? _geometricMedian(locations) : null;
-
-    double distance = _distanceBetween(geometricMedian ?? position,
-        lastKnownJourney.toLocationFromSteadyJourney());
-    await _saveJourneyOnJourneyStopped(
-        userId, position, lastKnownJourney, distance);
+    await _saveJourneyOnJourneyStopped(userId, position, lastKnownJourney);
   }
 
   Future<void> checkAndSaveJourneyOnDayChange(
@@ -130,14 +116,12 @@ class JourneyRepository {
     bool isOnlyOneDayChange =
         _isOnlyOneDayChanged(extractedLocation, lastKnownJourney);
 
-    logger.i("XXX is day changed $dayChanged, $isOnlyOneDayChange");
+    logger.d("XXX is day changed $dayChanged, $isOnlyOneDayChange");
     if (dayChanged && isOnlyOneDayChange) {
-      logger.i("XXX in if");
-
+      logger.d("XXX in if");
       _updateJourneyOnDayChanged(userId, lastKnownJourney);
     } else if (dayChanged && extractedLocation != null) {
-      logger.i("XXX in else");
-
+      logger.d("XXX in else");
       _saveJourneyOnDayChanged(userId, extractedLocation);
     }
   }
@@ -184,23 +168,23 @@ class JourneyRepository {
     var lastKnownJourney = locationCache.getLastJourney(userId);
 
     if (lastKnownJourney != null) {
-      logger.i("XXX get lastKnownJourney 1");
+      logger.d("XXX get lastKnownJourney 1");
       // Return last location journey if available from cache
       return lastKnownJourney;
     } else {
       // Here, means no location journey available in cache
       // Fetch last location journey from remote database and save it to cache
-      logger.i("XXX call api for get lastKnownJourney else");
+      logger.d("XXX call api for get last Journey else");
 
       lastKnownJourney = await journeyService.getLastJourneyLocation(userId);
 
       if (lastKnownJourney != null) {
-        logger.i("XXX get api data lastKnownJourney");
+        logger.d("XXX get api data lastKnownJourney");
 
         locationCache.putLastJourney(lastKnownJourney, userId);
         return lastKnownJourney;
       } else {
-        logger.i("XXX api data null for lastKnownJourney create new");
+        logger.d("XXX api data null for lastKnownJourney create new");
 
         // Here, means no location journey available in remote database as well
         // Possibly user is new or no location journey available
@@ -225,15 +209,15 @@ class JourneyRepository {
       String userId,
       LocationData extractedLocation,
       ApiLocationJourney lastKnownJourney) async {
-    logger.i("XXX _checkAndSaveLocationJourney");
+    logger.d("XXX _checkAndSaveLocationJourney");
     var locations = locationCache.getLastFiveLocations(userId);
     for (var location in locations) {
-      logger.i(
+      logger.d(
           "XXX get last five location: ${location.latitude},${location.longitude}");
     }
 
     var geometricMedian =
-        locations.isNotEmpty ? _geometricMedian(locations) : null;
+        locations.isNotEmpty ? _geometricMedianCalculation(locations) : null;
 
     double distance = lastKnownJourney.isSteadyLocation()
         ? _distanceBetween(geometricMedian ?? extractedLocation,
@@ -245,29 +229,30 @@ class JourneyRepository {
             extractedLocation.timestamp.millisecondsSinceEpoch) -
         (lastKnownJourney.update_at ?? 0);
 
-    logger.i(
-        "XXX checkAndSaveLocationJourney: $geometricMedian, $lastKnownJourney");
-    logger.i("XXX check item :$distance,:$timeDifference");
+    logger.d(
+        "XXX checkAndSaveLocationJourney: geo:${geometricMedian?.latitude},${geometricMedian?.longitude},");
+    logger.d("XXX checkAndSaveLocationJourney:last:${lastKnownJourney}");
+    logger.d("XXX check item :$distance,:$timeDifference");
+
     if (lastKnownJourney.isSteadyLocation()) {
-      logger.i("XXX get in steady");
+      logger.d("XXX get in steady");
       if (distance > MIN_DISTANCE) {
         // Here, means last known journey is steady and and now user has started moving
         // Save journey for moving user and update cache as well:
-        logger.i("XXX get in steady distance is more then 150");
-        await _saveJourneyWhenUserStartsMoving(userId, extractedLocation,
-            lastKnownJourney, distance, timeDifference);
+        logger.d("XXX get in steady distance is more then 150");
+        await _saveJourneyWhenUserStartsMoving(
+            userId, extractedLocation, lastKnownJourney, timeDifference);
       }
     } else {
       // Here, means last known journey is moving and user is still moving
       // Save journey for moving user and update last known journey.
       // Note: Need to use lastKnownJourney.id as journey id because we are updating the journey
-      logger.i("XXX get in else");
-
+      logger.d("XXX get in else");
       if (distance > MIN_DISTANCE_FOR_MOVING) {
-        logger.i("XXX get in moving");
+        logger.d("XXX get in moving");
 
         await _updateJourneyForContinuedMovingUser(
-            userId, extractedLocation, lastKnownJourney, distance);
+            userId, extractedLocation, lastKnownJourney);
       }
     }
   }
@@ -277,8 +262,10 @@ class JourneyRepository {
       String userId,
       LocationData extractedLocation,
       ApiLocationJourney lastKnownJourney,
-      double distance,
       int duration) async {
+    final distance = _distanceBetween(
+        lastKnownJourney.toLocationFromSteadyJourney(), extractedLocation);
+
     journeyService.updateLastLocationJourney(
         userId,
         lastKnownJourney.copyWith(
@@ -318,8 +305,10 @@ class JourneyRepository {
     String userId,
     LocationData extractedLocation,
     ApiLocationJourney lastKnownJourney,
-    double distance,
   ) async {
+    final distance = _distanceBetween(
+        lastKnownJourney.toLocationFromMovingJourney(), extractedLocation);
+
     var journey = ApiLocationJourney(
       id: lastKnownJourney.id,
       user_id: userId,
@@ -341,6 +330,8 @@ class JourneyRepository {
       update_at: DateTime.now().millisecondsSinceEpoch,
     );
 
+    logger.d("XXX update moving journey:$journey");
+
     final lastJourneyUpdatedTime =
         locationCache.getLastJourneyUpdatedTime(userId);
     final timeDifference = journey.update_at! - lastJourneyUpdatedTime;
@@ -357,18 +348,27 @@ class JourneyRepository {
   Future<void> _saveJourneyOnJourneyStopped(
       String userId,
       LocationData extractedLocation,
-      ApiLocationJourney lastKnownJourney,
-      double distance) async {
-    logger.i("XXX _saveJourneyOnJourneyStopped");
+      ApiLocationJourney lastKnownJourney) async {
+    final distance = _distanceBetween(
+        lastKnownJourney.toLocationFromMovingJourney(), extractedLocation);
+
+    logger.d("XXX _saveJourneyOnJourneyStopped");
     var movingJourney = lastKnownJourney.copyWith(
       to_latitude: extractedLocation.latitude,
       to_longitude: extractedLocation.longitude,
       route_distance: distance + (lastKnownJourney.route_distance ?? 0),
       route_duration: (lastKnownJourney.update_at ?? 0) -
           (lastKnownJourney.created_at ?? 0),
+      routes: lastKnownJourney.routes +
+          [
+            JourneyRoute(
+              latitude: extractedLocation.latitude,
+              longitude: extractedLocation.longitude,
+            )
+          ],
     );
 
-    logger.i("XXX save steady location:$movingJourney");
+    logger.d("XXX save steady location:$movingJourney");
 
     journeyService.updateLastLocationJourney(userId, movingJourney);
 
@@ -387,7 +387,7 @@ class JourneyRepository {
       from_longitude: extractedLocation.longitude,
       created_at: lastKnownJourney.update_at,
     );
-    logger.i("XXX update steady to cache location:$steadyJourney");
+    logger.d("XXX update steady to cache location:$steadyJourney");
 
     locationCache.putLastJourney(steadyJourney, userId);
   }
@@ -445,9 +445,9 @@ class JourneyRepository {
 
   Future<void> _checkAndSaveLastFiveLocations(
       LocationData extractedLocation, String userId) async {
-    logger.i("XXX save last five locations");
+    logger.d("XXX save last five locations");
     var lastFiveLocations = locationCache.getLastFiveLocations(userId);
-    logger.i("XXX last five locations:$lastFiveLocations");
+    logger.d("XXX last five locations:$lastFiveLocations");
     lastFiveLocations.add(extractedLocation);
     locationCache.putLastFiveLocations(lastFiveLocations, userId);
   }
@@ -458,7 +458,7 @@ class JourneyRepository {
     return sqrt(latDiff * latDiff + lngDiff * lngDiff);
   }
 
-  LocationData _geometricMedian(List<LocationData> locations) {
+  LocationData _geometricMedianCalculation(List<LocationData> locations) {
     return locations.reduce((candidate, current) {
       double candidateSum = locations
           .map((location) => distance(candidate, location))
@@ -466,7 +466,6 @@ class JourneyRepository {
       double currentSum = locations
           .map((location) => distance(current, location))
           .reduce((a, b) => a + b);
-
       return candidateSum < currentSum ? candidate : current;
     });
   }
