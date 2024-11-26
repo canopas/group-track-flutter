@@ -28,6 +28,8 @@ import 'package:yourspace_flutter/ui/app.dart';
 
 import 'domain/fcm/notification_handler.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 const platform = MethodChannel('com.grouptrack/location');
 late final LocationService locationService;
 late final JourneyRepository journeyRepository;
@@ -44,12 +46,13 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
+  await FCMNotificationHandler().configuration();
   startService();
 
   platform.setMethodCallHandler(_handleLocationUpdates);
 
   runApp(
-    UncontrolledProviderScope(container: container, child: const App()),
+    UncontrolledProviderScope(container: container, key: navigatorKey, child: const App()),
   );
 }
 

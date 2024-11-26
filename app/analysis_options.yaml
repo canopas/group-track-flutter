@@ -10,6 +10,7 @@
 analyzer:
   errors:
     constant_identifier_names: ignore
+    depend_on_referenced_packages: ignore
     file_names: ignore
 include: package:flutter_lints/flutter.yaml
 

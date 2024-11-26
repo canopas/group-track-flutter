@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/repository/geofence_repository.dart';
 import 'package:data/service/geofence_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
+import 'package:yourspace_flutter/domain/fcm/notification_handler.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
@@ -16,7 +18,6 @@ import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/home/home_screen_viewmodel.dart';
 import 'package:yourspace_flutter/ui/flow/home/map/map_view_model.dart';
 
-import '../../../domain/fcm/notification_handler.dart';
 import '../../components/alert.dart';
 import '../../components/no_internet_screen.dart';
 import '../../components/permission_dialog.dart';
@@ -33,15 +34,22 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late HomeViewNotifier notifier;
   late MapViewNotifier mapNotifier;
-  late NotificationHandler notificationHandler;
   late GeofenceRepository geofenceRepository;
 
   @override
   void initState() {
     super.initState();
     runPostFrame(() {
-      notificationHandler = ref.read(notificationHandlerProvider);
-      notificationHandler.init(context);
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        final data = message.data;
+        FCMNotificationHandler().handleIncomingFCMNotification(data);
+      });
+
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        final data = message.data;
+        // ignore: use_build_context_synchronously
+        FCMNotificationHandler().onNotificationTap(context, data);
+      });
 
       notifier = ref.watch(homeViewStateProvider.notifier);
 

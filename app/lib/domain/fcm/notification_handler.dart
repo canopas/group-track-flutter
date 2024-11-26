@@ -1,23 +1,13 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:data/api/auth/api_user_service.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:data/log/logger.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
+
+import '../../main.dart';
 
 const YOUR_SPACE_CHANNEL_MESSAGE = "your_space_notification_channel_messages";
 const YOUR_SPACE_CHANNEL_PLACES = "your_space_notification_channel_places";
 const YOUR_SPACE_CHANNEL_GEOFENCE = "your_space_notification_channel_geofence";
-
-const _androidChannel = AndroidNotificationChannel(
-  'notification_channel_your_space_regional',
-  'YourSpace Notification',
-  importance: Importance.max,
-);
 
 const NOTIFICATION_ID = 101;
 
@@ -51,89 +41,104 @@ class NotificationUpdateStateConst {
   static const KEY_USER_ID = "userId";
 }
 
-final notificationHandlerProvider = StateProvider.autoDispose(
-    (ref) => NotificationHandler(ref.read(apiUserServiceProvider)));
+class FCMNotificationHandler {
+  // Private constructor
+  FCMNotificationHandler._();
 
-class NotificationHandler {
-  final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  final ApiUserService userService;
+  // Singleton instance
+  static final FCMNotificationHandler _instance = FCMNotificationHandler._();
 
-  NotificationHandler(this.userService) {
-    _flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(_androidChannel);
-  }
+  // Public factory constructor to access the singleton
+  factory FCMNotificationHandler() => _instance;
 
-  Future<void> init(BuildContext context) async {
-    _initFcm(context);
-    if (context.mounted) await _initLocalNotifications(context);
-  }
+  final AwesomeNotifications awesomeNotifications = AwesomeNotifications();
 
-  void _initFcm(BuildContext context) {
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
-      if (message != null && context.mounted) {
-        _onNotificationTap(context, message.data);
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      if (context.mounted) {
-        _onNotificationTap(context, event.data);
-      }
-    });
-
-    if (Platform.isAndroid) {
-      FirebaseMessaging.onMessage.listen((event) {
-        showLocalNotification(event);
-      });
-    }
-  }
-
-  Future<void> _initLocalNotifications(BuildContext context) async {
-    _flutterLocalNotificationsPlugin.initialize(
-      const InitializationSettings(
-        android: AndroidInitializationSettings('app_logo'),
-        iOS: DarwinInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false,
+  Future<void> configuration() async {
+    await awesomeNotifications.initialize(
+      null,
+      [
+        NotificationChannel(
+          channelKey: YOUR_SPACE_CHANNEL_MESSAGE,
+          channelName: 'Message Notifications',
+          channelDescription: 'Notifications for chat messages',
+          importance: NotificationImportance.High,
+          channelShowBadge: true,
         ),
+        NotificationChannel(
+          channelKey: YOUR_SPACE_CHANNEL_PLACES,
+          channelName: 'Place Notifications',
+          channelDescription: 'Notifications for places',
+          importance: NotificationImportance.High,
+          channelShowBadge: true,
+        ),
+        NotificationChannel(
+          channelKey: YOUR_SPACE_CHANNEL_GEOFENCE,
+          channelName: 'Geofence Notifications',
+          channelDescription: 'Notifications for geofencing',
+          importance: NotificationImportance.High,
+          channelShowBadge: true,
+        ),
+      ],
+      debug: true,
+    );
+    awesomeNotifications.setListeners(onActionReceivedMethod: _onNotificationTapHandler);
+  }
+
+  Future<void> createLocalInstantNotification({
+    required String title,
+    required String body,
+    Map<String, String>? payload,
+  }) async {
+    await awesomeNotifications.createNotification(
+      content: NotificationContent(
+        id: -1,
+        channelKey: 'your_space_notification_channel',
+        title: title,
+        body: body,
+        payload: payload,
       ),
-      onDidReceiveNotificationResponse: (response) {
-        if (response.payload != null && context.mounted) {
-          _onNotificationTap(context, jsonDecode(response.payload!));
-        }
-      },
+      actionButtons: [
+        NotificationActionButton(
+          key: 'REPLY',
+          label: 'Reply to chat message',
+          requireInputText: true,
+          actionType: ActionType.SilentAction,
+        )
+      ]
     );
   }
 
-  void showLocalNotification(RemoteMessage event) {
-    final notification = event.notification;
-    final data = event.data;
-    final title = notification?.title;
-    final body = notification?.body;
+  void handleIncomingFCMNotification(Map<String, dynamic> data) {
+    final String? title = data['notification']['title'];
+    final String? body = data['notification']['body'];
+    final Map<String, String> payload = data.cast<String, String>();
 
     if (title != null && body != null) {
-      _flutterLocalNotificationsPlugin.show(
-        DateTime.now().microsecondsSinceEpoch ~/ 1000000,
-        title,
-        body,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            _androidChannel.id,
-            _androidChannel.name,
-            importance: Importance.low,
-          ),
-        ),
-        payload: jsonEncode(data),
+      createLocalInstantNotification(
+        title: title,
+        body: body,
+        payload: payload,
       );
     }
   }
-}
 
-extension on NotificationHandler {
-  void _onNotificationTap(
+  Future<void> _onNotificationTapHandler(ReceivedAction action) async {
+    final data = action.payload ?? {};
+    final context = navigatorKey.currentContext;
+
+    if (context == null) {
+      logger.e("Context is null. Cannot handle notification tap.");
+      return;
+    }
+
+    if (action.buttonKeyInput == 'REPLY') {
+      String replyMessage = action.body ?? '';
+      logger.d("Reply received: $replyMessage");
+    }
+
+    FCMNotificationHandler().onNotificationTap(context, data);
+  }
+  void onNotificationTap(
       BuildContext context, Map<String, dynamic> data) async {
     logger.d("Notification handler - _onNotificationTap with data $data");
 
@@ -153,7 +158,9 @@ extension on NotificationHandler {
         break;
     }
   }
+}
 
+extension on FCMNotificationHandler {
   void _handlePlaceAdded(BuildContext context, Map<String, dynamic> data) {
     if (!context.mounted) return;
     final String? spaceId = data[NotificationPlaceConst.KEY_SPACE_ID];
