@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/repository/journey_repository.dart';
@@ -16,6 +17,7 @@ import '../api/location/location.dart';
 import '../log/logger.dart';
 
 const MOVING_DISTANCE = 10; // meters
+const STEADY_DISTANCE = 50; // meters
 
 final locationManagerProvider = Provider((ref) => LocationManager.instance);
 
@@ -39,6 +41,9 @@ class LocationManager {
 
   StreamSubscription<Position>? positionSubscription;
   Position? _lastPosition;
+  Position? _movingPosition;
+  bool isMoving = false;
+  int movingDistance = STEADY_DISTANCE;
 
   Future<bool> isServiceRunning() async {
     return await bgService.isRunning();
@@ -77,23 +82,40 @@ class LocationManager {
     if (userId == null) return;
 
     positionSubscription = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high, distanceFilter: MOVING_DISTANCE),
+      locationSettings: LocationSettings(
+          accuracy: LocationAccuracy.high, distanceFilter: movingDistance),
     ).listen((position) {
-      final timeDifference = _lastPosition != null
-          ? position.timestamp.difference(_lastPosition!.timestamp).inSeconds
-          : 0;
-
-      final distance = _lastPosition != null
-          ? _distanceBetween(_lastPosition!, position)
-          : 0;
-
-      if (_lastPosition == null ||
-          timeDifference >= 10 ||
-          distance >= MOVING_DISTANCE) {
+      if (_lastPosition == null) {
         _updateUserLocation(position);
+      } else if (isMoving) {
+        updateMovingJourney(position);
+      } else {
+        updateSteadyJourney(position);
       }
     });
+  }
+
+  void updateMovingJourney(Position position) async {
+    final timeDifference =
+        position.timestamp.difference(_lastPosition!.timestamp).inSeconds;
+    final distance = _distanceBetween(_lastPosition!, position);
+
+    if (_lastPosition == null || timeDifference >= 10 || distance >= 10) {
+      _updateUserLocation(position);
+    }
+  }
+
+  void updateSteadyJourney(Position position) async {
+    final distance = _distanceBetween(_lastPosition!, position);
+
+    if (_movingPosition != null) {
+      final movingDistance = _distanceBetween(_movingPosition!, position);
+      if (movingDistance > STEADY_DISTANCE && distance > STEADY_DISTANCE) {
+        updateLocationRequest(true);
+      }
+    } else if (distance > STEADY_DISTANCE) {
+      _movingPosition = position;
+    }
   }
 
   void _updateUserLocation(Position? position) {
@@ -141,5 +163,15 @@ class LocationManager {
       position2.latitude,
       position2.longitude,
     );
+  }
+
+  void updateLocationRequest(bool isMoving) {
+    if (Platform.isIOS) return;
+    positionSubscription?.cancel();
+    positionSubscription = null;
+    _movingPosition = null;
+    this.isMoving = isMoving;
+    movingDistance = isMoving ? MOVING_DISTANCE : STEADY_DISTANCE;
+    startTracking();
   }
 }

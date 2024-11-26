@@ -8,6 +8,7 @@ import 'package:data/api/location/journey/journey.dart';
 import 'package:data/api/location/location.dart';
 import 'package:data/domain/location_data_extension.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/service/location_manager.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../api/location/journey/api_journey_service.dart';
@@ -85,6 +86,7 @@ class JourneyRepository {
         await _saveSteadyLocation(position, userId);
         // removing previous journey routes to get latest location route for next journey from start point to end
         locationCache.clearLocationCache();
+        LocationManager.instance.updateLocationRequest(false);
       } catch (e, stack) {
         logger.e('Error saving steady location for user $userId: $e',
             stackTrace: stack);
