@@ -1,9 +1,11 @@
 import UIKit
+import IosAwnCore
 import FirebaseMessaging
 import Flutter
 import GoogleMaps
 import flutter_background_service_ios
 import CoreLocation
+import UserNotifications
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -18,9 +20,27 @@ import CoreLocation
     ) -> Bool {
         UIDevice.current.isBatteryMonitoringEnabled = true
         
+        AwesomeNotifications().initialize()
         if #available(iOS 10.0, *) {
             UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
         }
+        
+        let replyCategory = UNNotificationCategory(
+            identifier: "REPLY_CATEGORY",
+            actions: [
+                UNTextInputNotificationAction(
+                    identifier: "REPLY_ACTION",
+                    title: "Reply",
+                    options: [],
+                    textInputButtonTitle: "Send",
+                    textInputPlaceholder: "Type your message here"
+                )
+            ],
+            intentIdentifiers: [],
+            options: []
+        )
+        
+        UNUserNotificationCenter.current().setNotificationCategories([replyCategory])
 
         setUpLocation()
 

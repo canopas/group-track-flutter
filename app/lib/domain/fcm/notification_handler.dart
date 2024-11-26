@@ -79,7 +79,7 @@ class FCMNotificationHandler {
           channelShowBadge: true,
         ),
       ],
-      debug: true,
+      debug: false,
     );
     awesomeNotifications.setListeners(onActionReceivedMethod: _onNotificationTapHandler);
   }
@@ -89,22 +89,31 @@ class FCMNotificationHandler {
     required String body,
     Map<String, String>? payload,
   }) async {
+    List<NotificationActionButton> actionButtons = [];
+
+    if (payload?[KEY_NOTIFICATION_TYPE] == NotificationChatConst.NOTIFICATION_TYPE_CHAT) {
+      actionButtons.add(
+        NotificationActionButton(
+          key: 'REPLY_ACTION',
+          label: 'Reply',
+          requireInputText: true,
+          actionType: ActionType.SilentAction,
+        ),
+      );
+    }
+
     await awesomeNotifications.createNotification(
       content: NotificationContent(
         id: -1,
         channelKey: 'your_space_notification_channel',
         title: title,
         body: body,
-        payload: payload,
+        payload: {
+          ...(payload ?? {}),
+          'category': 'REPLY_CATEGORY',
+        },
       ),
-      actionButtons: [
-        NotificationActionButton(
-          key: 'REPLY',
-          label: 'Reply to chat message',
-          requireInputText: true,
-          actionType: ActionType.SilentAction,
-        )
-      ]
+      actionButtons: actionButtons,
     );
   }
 
@@ -122,22 +131,6 @@ class FCMNotificationHandler {
     }
   }
 
-  Future<void> _onNotificationTapHandler(ReceivedAction action) async {
-    final data = action.payload ?? {};
-    final context = navigatorKey.currentContext;
-
-    if (context == null) {
-      logger.e("Context is null. Cannot handle notification tap.");
-      return;
-    }
-
-    if (action.buttonKeyInput == 'REPLY') {
-      String replyMessage = action.body ?? '';
-      logger.d("Reply received: $replyMessage");
-    }
-
-    FCMNotificationHandler().onNotificationTap(context, data);
-  }
   void onNotificationTap(
       BuildContext context, Map<String, dynamic> data) async {
     logger.d("Notification handler - _onNotificationTap with data $data");
@@ -184,4 +177,22 @@ extension on FCMNotificationHandler {
       logger.e("Thread ID is null for chat notification");
     }
   }
+}
+
+@pragma("vm:entry-point")
+Future<void> _onNotificationTapHandler(ReceivedAction action) async {
+  final data = action.payload ?? {};
+  final context = navigatorKey.currentContext;
+
+  if (context == null) {
+    logger.e("Context is null. Cannot handle notification tap.");
+    return;
+  }
+
+  if (action.buttonKeyInput == 'REPLY') {
+    String replyMessage = action.body ?? '';
+    logger.d("Reply received: $replyMessage");
+  }
+
+  FCMNotificationHandler().onNotificationTap(context, data);
 }
