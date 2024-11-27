@@ -5,6 +5,7 @@ import GoogleMaps
 import flutter_background_service_ios
 import CoreLocation
 import UserNotifications
+import IosAwnCore
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -19,10 +20,10 @@ import UserNotifications
     ) -> Bool {
         UIDevice.current.isBatteryMonitoringEnabled = true
         
-        AwesomeNotifications().initialize()
-        if #available(iOS 10.0, *) {
-            UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
-        }
+//         AwesomeNotifications().initialize()
+//         if #available(iOS 10.0, *) {
+//             UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
+//         }
 
         setUpLocation()
 

@@ -1,9 +1,13 @@
+import 'dart:isolate';
+import 'dart:ui';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:data/log/logger.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:yourspace_flutter/ui/app.dart';
 
-import '../../main.dart';
+import 'package:yourspace_flutter/ui/app_route.dart';
 
 const YOUR_SPACE_CHANNEL_MESSAGE = "your_space_notification_channel_messages";
 const YOUR_SPACE_CHANNEL_PLACES = "your_space_notification_channel_places";
@@ -42,94 +46,96 @@ class NotificationUpdateStateConst {
 }
 
 class FCMNotificationHandler {
-  // Private constructor
-  FCMNotificationHandler._();
+  static ReceivedAction? initialAction;
 
-  // Singleton instance
-  static final FCMNotificationHandler _instance = FCMNotificationHandler._();
-
-  // Public factory constructor to access the singleton
-  factory FCMNotificationHandler() => _instance;
-
-  final AwesomeNotifications awesomeNotifications = AwesomeNotifications();
-
-  Future<void> configuration() async {
-    await awesomeNotifications.initialize(
-      null,
-      [
-        NotificationChannel(
-          channelKey: YOUR_SPACE_CHANNEL_MESSAGE,
-          channelName: 'Message Notifications',
-          channelDescription: 'Notifications for chat messages',
-          importance: NotificationImportance.High,
-          channelShowBadge: true,
-        ),
-        NotificationChannel(
-          channelKey: YOUR_SPACE_CHANNEL_PLACES,
-          channelName: 'Place Notifications',
-          channelDescription: 'Notifications for places',
-          importance: NotificationImportance.High,
-          channelShowBadge: true,
-        ),
-        NotificationChannel(
-          channelKey: YOUR_SPACE_CHANNEL_GEOFENCE,
-          channelName: 'Geofence Notifications',
-          channelDescription: 'Notifications for geofencing',
-          importance: NotificationImportance.High,
-          channelShowBadge: true,
-        ),
-      ],
-      debug: false,
-    );
-    awesomeNotifications.setListeners(onActionReceivedMethod: _onNotificationTapHandler);
+  static Future<void> initializeLocalNotifications() async {
+    await AwesomeNotifications().initialize(
+        null,
+        [
+          NotificationChannel(
+              channelKey: 'alerts',
+              channelName: 'Alerts',
+              channelDescription: 'Notification tests as alerts',
+              importance: NotificationImportance.High,
+              defaultPrivacy: NotificationPrivacy.Private,)
+        ],
+        debug: true);
+    initialAction = await AwesomeNotifications()
+        .getInitialNotificationAction(removeFromActionEvents: false);
   }
 
-  Future<void> createLocalInstantNotification({
-    required String title,
-    required String body,
-    Map<String, String>? payload,
-  }) async {
-    List<NotificationActionButton> actionButtons = [];
+  static ReceivePort? receivePort;
+  static Future<void> initializeIsolateReceivePort() async {
+    receivePort = ReceivePort('Notification action port in main isolate')
+      ..listen(
+              (silentData) => _onNotificationTapHandler(silentData));
 
-    if (payload?[KEY_NOTIFICATION_TYPE] == NotificationChatConst.NOTIFICATION_TYPE_CHAT) {
-      actionButtons.add(
-        NotificationActionButton(
-          key: 'REPLY',
-          label: 'Reply',
-          requireInputText: true,
-          actionType: ActionType.SilentAction,
-        ),
-      );
-    }
-
-    await awesomeNotifications.createNotification(
-      content: NotificationContent(
-        id: -1,
-        channelKey: 'your_space_notification_channel',
-        title: title,
-        body: body,
-        payload: {
-          ...(payload ?? {}),
-          'category': 'REPLY_CATEGORY',
-        },
-      ),
-      actionButtons: actionButtons,
-    );
+    // This initialization only happens on main isolate
+    IsolateNameServer.registerPortWithName(
+        receivePort!.sendPort, 'notification_action_port');
   }
 
-  void handleIncomingFCMNotification(Map<String, dynamic> data) {
-    final String? title = data['notification']['title'];
-    final String? body = data['notification']['body'];
-    final Map<String, String> payload = data.cast<String, String>();
+  static Future<void> startListeningNotificationEvents() async {
+    AwesomeNotifications()
+        .setListeners(onActionReceivedMethod: onActionReceivedMethod);
+  }
 
-    if (title != null && body != null) {
-      createLocalInstantNotification(
-        title: title,
-        body: body,
-        payload: payload,
-      );
+  @pragma('vm:entry-point')
+  static Future<void> onActionReceivedMethod(
+      ReceivedAction receivedAction) async {
+    if (receivedAction.actionType == ActionType.SilentAction ||
+        receivedAction.actionType == ActionType.SilentBackgroundAction) {
+      // For background actions, you must hold the execution until the end
+      logger.d(
+          'Message sent via notification input: "${receivedAction.buttonKeyInput}"');
+    } else {
+      // this process is only necessary when you need to redirect the user
+      // to a new page or use a valid context, since parallel isolates do not
+      // have valid context, so you need redirect the execution to main isolate
+      if (receivePort == null) {
+        logger.d(
+            'onActionReceivedMethod was called inside a parallel dart isolate.');
+        SendPort? sendPort =
+        IsolateNameServer.lookupPortByName('notification_action_port');
+
+        if (sendPort != null) {
+          logger.d('Redirecting the execution to main isolate process.');
+          sendPort.send(receivedAction);
+          return;
+        }
+      }
+
+      return onActionReceivedImplementationMethod(receivedAction);
     }
   }
+
+  static Future<void> onActionReceivedImplementationMethod(
+      ReceivedAction receivedAction) async {
+    AwesomeNotifications()
+        .setListeners(onActionReceivedMethod: onActionReceivedMethod);
+  }
+
+  static Future<void> createNewNotification(RemoteMessage event) async {
+    final notification = event.notification;
+    final title = notification?.title;
+    final body = notification?.body;
+    await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: -1, // -1 is replaced by a random number
+            channelKey: 'alerts',
+            title: title,
+            body: body,
+          payload: {'jsonEncode(data)' : '1243567'},
+           ),
+        actionButtons: [
+          NotificationActionButton(
+              key: 'REPLY',
+              label: 'Reply Message',
+              requireInputText: true,
+              actionType: ActionType.SilentAction),
+        ]);
+  }
+
 
   void onNotificationTap(
       BuildContext context, Map<String, dynamic> data) async {
@@ -179,15 +185,18 @@ extension on FCMNotificationHandler {
   }
 }
 
+/// Notification action handler
 @pragma("vm:entry-point")
 Future<void> _onNotificationTapHandler(ReceivedAction action) async {
   final data = action.payload ?? {};
-  final context = navigatorKey.currentContext;
+  final context = App.navigatorKey.currentContext;
 
   if (context == null) {
     logger.e("Context is null. Cannot handle notification tap.");
     return;
   }
+
+  logger.d("Notification action received: ${action.buttonKeyPressed}");
 
   if (action.buttonKeyPressed == 'REPLY') {
     String replyMessage = action.buttonKeyInput;

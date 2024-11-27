@@ -46,13 +46,14 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
-  await FCMNotificationHandler().configuration();
+  await FCMNotificationHandler.initializeLocalNotifications();
+  await FCMNotificationHandler.initializeIsolateReceivePort();
   startService();
 
   platform.setMethodCallHandler(_handleLocationUpdates);
 
   runApp(
-    UncontrolledProviderScope(container: container, key: navigatorKey, child: const App()),
+    UncontrolledProviderScope(container: container, child: const App()),
   );
 }
 

@@ -41,8 +41,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     runPostFrame(() {
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        final data = message.data;
-        FCMNotificationHandler().handleIncomingFCMNotification(data);
+        FCMNotificationHandler.createNewNotification(message);
       });
 
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {

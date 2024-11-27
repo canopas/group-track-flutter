@@ -952,9 +952,9 @@ PODS:
   - AppAuth/Core (1.7.6)
   - AppAuth/ExternalUserAgent (1.7.6):
     - AppAuth/Core
-  - awesome_notifications (0.10.0):
+  - awesome_notifications (0.9.3):
     - Flutter
-    - IosAwnCore (~> 0.10.0)
+    - IosAwnCore (~> 0.9.3)
   - battery_plus (1.0.0):
     - Flutter
   - BoringSSL-GRPC (0.0.32):
@@ -1252,7 +1252,7 @@ PODS:
     - TOCropViewController (~> 2.7.4)
   - image_picker_ios (0.0.1):
     - Flutter
-  - IosAwnCore (0.10.0)
+  - IosAwnCore (0.9.3)
   - leveldb-library (1.22.6)
   - nanopb (2.30910.0):
     - nanopb/decode (= 2.30910.0)
@@ -1414,7 +1414,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   abseil: d121da9ef7e2ff4cab7666e76c5a3e0915ae08c3
   AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
-  awesome_notifications: dd5518ff1c80be03d4f1c40f04da9d9cc2a37af5
+  awesome_notifications: 66d28ab7174ca2823b04d275cb043e0a4a3eb9cf
   battery_plus: 1ff2e16ba75af2a78387f65476057a390b47885e
   BoringSSL-GRPC: 1e2348957acdbcad360b80a264a90799984b2ba6
   cloud_firestore: 003d53b6b8b392600b7769acf9421cc4f23e5911
@@ -1462,7 +1462,7 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   image_cropper: 37d40f62177c101ff4c164906d259ea2c3aa70cf
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
-  IosAwnCore: 653786a911089012092ce831f2945cd339855a89
+  IosAwnCore: b8601fbb37f7b3560f31b84ebf55a72f65812e05
   leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c

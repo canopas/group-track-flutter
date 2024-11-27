@@ -20,6 +20,9 @@ import 'app_route.dart';
 class App extends ConsumerStatefulWidget {
   const App({super.key});
 
+  static final GlobalKey<NavigatorState> navigatorKey =
+  GlobalKey<NavigatorState>();
+
   @override
   ConsumerState<App> createState() => _AppState();
 }
