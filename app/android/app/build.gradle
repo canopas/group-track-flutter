@@ -27,7 +27,7 @@ if (flutterVersionName == null) {
 android {
     namespace "com.canopas.yourspace"
     compileSdkVersion 34
-    ndkVersion "25.1.8937393"
+    ndkVersion 23
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
