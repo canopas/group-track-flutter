@@ -1,5 +1,4 @@
 import UIKit
-import IosAwnCore
 import FirebaseMessaging
 import Flutter
 import GoogleMaps
@@ -24,23 +23,6 @@ import UserNotifications
         if #available(iOS 10.0, *) {
             UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
         }
-        
-        let replyCategory = UNNotificationCategory(
-            identifier: "REPLY",
-            actions: [
-                UNTextInputNotificationAction(
-                    identifier: "REPLY",
-                    title: "Reply",
-                    options: [],
-                    textInputButtonTitle: "Send",
-                    textInputPlaceholder: "Type your message here"
-                )
-            ],
-            intentIdentifiers: [],
-            options: []
-        )
-        
-        UNUserNotificationCenter.current().setNotificationCategories([replyCategory])
 
         setUpLocation()
 
