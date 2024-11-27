@@ -1,23 +1,17 @@
-import 'dart:convert';
-import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
 
-import 'package:data/api/auth/api_user_service.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:data/log/logger.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
+import 'package:yourspace_flutter/ui/app.dart';
+
 import 'package:yourspace_flutter/ui/app_route.dart';
 
 const YOUR_SPACE_CHANNEL_MESSAGE = "your_space_notification_channel_messages";
 const YOUR_SPACE_CHANNEL_PLACES = "your_space_notification_channel_places";
 const YOUR_SPACE_CHANNEL_GEOFENCE = "your_space_notification_channel_geofence";
-
-const _androidChannel = AndroidNotificationChannel(
-  'notification_channel_your_space_regional',
-  'YourSpace Notification',
-  importance: Importance.max,
-);
 
 const NOTIFICATION_ID = 101;
 
@@ -51,89 +45,100 @@ class NotificationUpdateStateConst {
   static const KEY_USER_ID = "userId";
 }
 
-final notificationHandlerProvider = StateProvider.autoDispose(
-    (ref) => NotificationHandler(ref.read(apiUserServiceProvider)));
+class FCMNotificationHandler {
+  static ReceivedAction? initialAction;
 
-class NotificationHandler {
-  final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  final ApiUserService userService;
-
-  NotificationHandler(this.userService) {
-    _flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(_androidChannel);
+  static Future<void> initializeLocalNotifications() async {
+    await AwesomeNotifications().initialize(
+        null,
+        [
+          NotificationChannel(
+              channelKey: 'alerts',
+              channelName: 'Alerts',
+              channelDescription: 'Notification tests as alerts',
+              importance: NotificationImportance.High,
+              defaultPrivacy: NotificationPrivacy.Private,)
+        ],
+        debug: true);
+    initialAction = await AwesomeNotifications()
+        .getInitialNotificationAction(removeFromActionEvents: false);
   }
 
-  Future<void> init(BuildContext context) async {
-    _initFcm(context);
-    if (context.mounted) await _initLocalNotifications(context);
+  static ReceivePort? receivePort;
+  static Future<void> initializeIsolateReceivePort() async {
+    receivePort = ReceivePort('Notification action port in main isolate')
+      ..listen(
+              (silentData) => _onNotificationTapHandler(silentData));
+
+    // This initialization only happens on main isolate
+    IsolateNameServer.registerPortWithName(
+        receivePort!.sendPort, 'notification_action_port');
   }
 
-  void _initFcm(BuildContext context) {
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
-      if (message != null && context.mounted) {
-        _onNotificationTap(context, message.data);
-      }
-    });
+  static Future<void> startListeningNotificationEvents() async {
+    AwesomeNotifications()
+        .setListeners(onActionReceivedMethod: onActionReceivedMethod);
+  }
 
-    FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      if (context.mounted) {
-        _onNotificationTap(context, event.data);
-      }
-    });
+  @pragma('vm:entry-point')
+  static Future<void> onActionReceivedMethod(
+      ReceivedAction receivedAction) async {
+    if (receivedAction.actionType == ActionType.SilentAction ||
+        receivedAction.actionType == ActionType.SilentBackgroundAction) {
+      // For background actions, you must hold the execution until the end
+      logger.d(
+          'Message sent via notification input: "${receivedAction.buttonKeyInput}"');
+    } else {
+      // this process is only necessary when you need to redirect the user
+      // to a new page or use a valid context, since parallel isolates do not
+      // have valid context, so you need redirect the execution to main isolate
+      if (receivePort == null) {
+        logger.d(
+            'onActionReceivedMethod was called inside a parallel dart isolate.');
+        SendPort? sendPort =
+        IsolateNameServer.lookupPortByName('notification_action_port');
 
-    if (Platform.isAndroid) {
-      FirebaseMessaging.onMessage.listen((event) {
-        showLocalNotification(event);
-      });
+        if (sendPort != null) {
+          logger.d('Redirecting the execution to main isolate process.');
+          sendPort.send(receivedAction);
+          return;
+        }
+      }
+
+      return onActionReceivedImplementationMethod(receivedAction);
     }
   }
 
-  Future<void> _initLocalNotifications(BuildContext context) async {
-    _flutterLocalNotificationsPlugin.initialize(
-      const InitializationSettings(
-        android: AndroidInitializationSettings('app_logo'),
-        iOS: DarwinInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false,
-        ),
-      ),
-      onDidReceiveNotificationResponse: (response) {
-        if (response.payload != null && context.mounted) {
-          _onNotificationTap(context, jsonDecode(response.payload!));
-        }
-      },
-    );
+  static Future<void> onActionReceivedImplementationMethod(
+      ReceivedAction receivedAction) async {
+    _onNotificationTapHandler(receivedAction);
   }
 
-  void showLocalNotification(RemoteMessage event) {
+  static Future<void> createNewNotification(RemoteMessage event) async {
     final notification = event.notification;
-    final data = event.data;
     final title = notification?.title;
     final body = notification?.body;
-
-    if (title != null && body != null) {
-      _flutterLocalNotificationsPlugin.show(
-        DateTime.now().microsecondsSinceEpoch ~/ 1000000,
-        title,
-        body,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            _androidChannel.id,
-            _androidChannel.name,
-            importance: Importance.low,
-          ),
-        ),
-        payload: jsonEncode(data),
-      );
-    }
+    await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: -1, // -1 is replaced by a random number
+            channelKey: 'alerts',
+            title: title,
+            body: body,
+          payload: {'jsonEncode(data)' : '1243567'},
+           ),
+        actionButtons: [
+          if (event.data[KEY_NOTIFICATION_TYPE] == NotificationChatConst.NOTIFICATION_TYPE_CHAT) ...[
+            NotificationActionButton(
+                key: 'REPLY',
+                label: 'Reply Message',
+                requireInputText: true,
+                actionType: ActionType.SilentAction),
+          ]
+        ]);
   }
-}
 
-extension on NotificationHandler {
-  void _onNotificationTap(
+
+  void onNotificationTap(
       BuildContext context, Map<String, dynamic> data) async {
     logger.d("Notification handler - _onNotificationTap with data $data");
 
@@ -153,7 +158,9 @@ extension on NotificationHandler {
         break;
     }
   }
+}
 
+extension on FCMNotificationHandler {
   void _handlePlaceAdded(BuildContext context, Map<String, dynamic> data) {
     if (!context.mounted) return;
     final String? spaceId = data[NotificationPlaceConst.KEY_SPACE_ID];
@@ -177,4 +184,25 @@ extension on NotificationHandler {
       logger.e("Thread ID is null for chat notification");
     }
   }
+}
+
+/// Notification action handler
+@pragma("vm:entry-point")
+Future<void> _onNotificationTapHandler(ReceivedAction action) async {
+  final data = action.payload ?? {};
+  final context = App.navigatorKey.currentContext;
+
+  if (context == null) {
+    logger.e("Context is null. Cannot handle notification tap.");
+    return;
+  }
+
+  logger.d("Notification action received: ${action.buttonKeyPressed}");
+
+  if (action.buttonKeyPressed == 'REPLY') {
+    String replyMessage = action.buttonKeyInput;
+    logger.d("Reply received: $replyMessage");
+  }
+
+  FCMNotificationHandler().onNotificationTap(context, data);
 }
