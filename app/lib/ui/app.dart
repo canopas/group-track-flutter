@@ -13,6 +13,7 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/theme/colors.dart';
 import 'package:style/theme/theme.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/domain/fcm/notification_handler.dart';
 
 import '../domain/extenstions/widget_extensions.dart';
 import 'app_route.dart';
@@ -46,6 +47,8 @@ class _AppState extends ConsumerState<App> {
 
     _router =
         GoRouter(routes: AppRoute.routes, initialLocation: initialRoute.path);
+
+    FCMNotificationHandler.startListeningNotificationEvents();
   }
 
   @override

@@ -111,8 +111,7 @@ class FCMNotificationHandler {
 
   static Future<void> onActionReceivedImplementationMethod(
       ReceivedAction receivedAction) async {
-    AwesomeNotifications()
-        .setListeners(onActionReceivedMethod: onActionReceivedMethod);
+    _onNotificationTapHandler(receivedAction);
   }
 
   static Future<void> createNewNotification(RemoteMessage event) async {
@@ -128,11 +127,13 @@ class FCMNotificationHandler {
           payload: {'jsonEncode(data)' : '1243567'},
            ),
         actionButtons: [
-          NotificationActionButton(
-              key: 'REPLY',
-              label: 'Reply Message',
-              requireInputText: true,
-              actionType: ActionType.SilentAction),
+          if (event.data[KEY_NOTIFICATION_TYPE] == NotificationChatConst.NOTIFICATION_TYPE_CHAT) ...[
+            NotificationActionButton(
+                key: 'REPLY',
+                label: 'Reply Message',
+                requireInputText: true,
+                actionType: ActionType.SilentAction),
+          ]
         ]);
   }
 
