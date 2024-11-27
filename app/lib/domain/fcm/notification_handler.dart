@@ -94,7 +94,7 @@ class FCMNotificationHandler {
     if (payload?[KEY_NOTIFICATION_TYPE] == NotificationChatConst.NOTIFICATION_TYPE_CHAT) {
       actionButtons.add(
         NotificationActionButton(
-          key: 'REPLY_ACTION',
+          key: 'REPLY',
           label: 'Reply',
           requireInputText: true,
           actionType: ActionType.SilentAction,
@@ -189,8 +189,8 @@ Future<void> _onNotificationTapHandler(ReceivedAction action) async {
     return;
   }
 
-  if (action.buttonKeyInput == 'REPLY') {
-    String replyMessage = action.body ?? '';
+  if (action.buttonKeyPressed == 'REPLY') {
+    String replyMessage = action.buttonKeyInput;
     logger.d("Reply received: $replyMessage");
   }
 

@@ -26,10 +26,10 @@ import UserNotifications
         }
         
         let replyCategory = UNNotificationCategory(
-            identifier: "REPLY_CATEGORY",
+            identifier: "REPLY",
             actions: [
                 UNTextInputNotificationAction(
-                    identifier: "REPLY_ACTION",
+                    identifier: "REPLY",
                     title: "Reply",
                     options: [],
                     textInputButtonTitle: "Send",

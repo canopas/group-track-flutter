@@ -61,10 +61,10 @@ packages:
     dependency: "direct main"
     description:
       name: awesome_notifications
-      sha256: d051ffb694a53da216ff13d02c8ec645d75320048262f7e6b3c1d95a4f54c902
+      sha256: d9e46ce7f5171ee1e9b1c5bc6dc40bd77528561f592842ce97ce3a0a9ae155ef
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.0"
+    version: "0.9.3+1"
   battery_plus:
     dependency: "direct main"
     description:
@@ -537,7 +537,7 @@ packages:
     source: hosted
     version: "3.6.35"
   firebase_messaging:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: firebase_messaging
       sha256: a1662cc95d9750a324ad9df349b873360af6f11414902021f130c68ec02267c4
