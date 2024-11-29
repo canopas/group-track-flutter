@@ -407,6 +407,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
         threadListViewStateProvider(widget.spaceInfo.space.id)
             .select((state) => state.spaceInvitationCode), (previous, next) {
       if (next.isNotEmpty) {
+        notifier.cleanSpaceInvitationCode();
         AppRoute.inviteCode(code: next, spaceName: widget.spaceInfo.space.name)
             .push(context);
       }

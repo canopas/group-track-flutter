@@ -121,6 +121,10 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
     }
   }
 
+  void cleanSpaceInvitationCode() {
+    state = state.copyWith(spaceInvitationCode: '');
+  }
+
   void deleteThread(ApiThread thread) async {
     try {
       state = state.copyWith(deleting: true);
