@@ -53,7 +53,7 @@ class PermissionViewNotifier extends StateNotifier<PermissionViewState> {
           await permissionService.requestBackgroundLocationPermission();
       state = state.copyWith(isBackGroundLocationGranted: granted);
       if (granted) {
-        locationManager.startTrackingService();
+        locationManager.startService();
       }
     } else {
       state = state.copyWith(bgAction: DateTime.now());

@@ -264,7 +264,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   void startLocationService(bool isPermission) async {
     final isRunning = await locationManager.isServiceRunning();
     if (isPermission && !isRunning) {
-      locationManager.startTrackingService();
+      locationManager.startService();
     }
   }
 

@@ -178,9 +178,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     final location = LatLng(journey.from_latitude, journey.from_longitude);
     final steadyDuration =
         notifier.getSteadyDuration(journey.created_at!, journey.update_at!);
-    final formattedTime = (isFirstItem)
-        ? _getFormattedLocationTimeForFirstItem(journey.created_at!)
-        : _getFormattedTimeForSteadyLocation(journey.created_at!);
+    final formattedTime = _getFormattedJourneyTime(
+        journey.created_at ?? 0, journey.update_at ?? 0);
 
     return Padding(
       padding: EdgeInsets.only(top: isFirstItem ? 16 : 0),
@@ -436,19 +435,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     );
   }
 
-  String _getFormattedLocationTimeForFirstItem(int createdAt) {
-    DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
-
-    if (createdAtDate.isToday) {
-      final time = createdAtDate.format(context, DateFormatType.time);
-      return context.l10n.journey_timeline_Since_text(time);
-    } else {
-      final dayTime =
-          createdAtDate.format(context, DateFormatType.dayMonthYear);
-      return context.l10n.journey_timeline_Since_text(dayTime);
-    }
-  }
-
   String _getFormattedJourneyTime(int startAt, int endAt) {
     DateTime startAtDate = DateTime.fromMillisecondsSinceEpoch(startAt);
     DateTime endAtDate = DateTime.fromMillisecondsSinceEpoch(endAt);
@@ -466,18 +452,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   String _getFormattedLocationTime(int createdAt) {
-    DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
-    final startTime = createdAtDate.format(context, DateFormatType.time);
-
-    if (createdAtDate.isToday) {
-      final time = createdAtDate.format(context, DateFormatType.time);
-      return context.l10n.journey_timeline_today_text(time);
-    } else {
-      return '${createdAtDate.format(context, DateFormatType.dayMonthFull)} $startTime';
-    }
-  }
-
-  String _getFormattedTimeForSteadyLocation(int createdAt) {
     DateTime createdAtDate = DateTime.fromMillisecondsSinceEpoch(createdAt);
     final startTime = createdAtDate.format(context, DateFormatType.time);
 
