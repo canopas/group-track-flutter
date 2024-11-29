@@ -26,6 +26,7 @@ mixin _$MapViewState {
   List<ApiPlace> get places => throw _privateConstructorUsedError;
   List<UserMarker> get markers => throw _privateConstructorUsedError;
   ApiUserInfo? get selectedUser => throw _privateConstructorUsedError;
+  LatLng? get currentUserLocation => throw _privateConstructorUsedError;
   CameraPosition? get defaultPosition => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
   String get mapType => throw _privateConstructorUsedError;
@@ -54,6 +55,7 @@ abstract class $MapViewStateCopyWith<$Res> {
       List<ApiPlace> places,
       List<UserMarker> markers,
       ApiUserInfo? selectedUser,
+      LatLng? currentUserLocation,
       CameraPosition? defaultPosition,
       String spaceInvitationCode,
       String mapType,
@@ -86,6 +88,7 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
     Object? places = null,
     Object? markers = null,
     Object? selectedUser = freezed,
+    Object? currentUserLocation = freezed,
     Object? defaultPosition = freezed,
     Object? spaceInvitationCode = null,
     Object? mapType = null,
@@ -133,6 +136,10 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
           ? _value.selectedUser
           : selectedUser // ignore: cast_nullable_to_non_nullable
               as ApiUserInfo?,
+      currentUserLocation: freezed == currentUserLocation
+          ? _value.currentUserLocation
+          : currentUserLocation // ignore: cast_nullable_to_non_nullable
+              as LatLng?,
       defaultPosition: freezed == defaultPosition
           ? _value.defaultPosition
           : defaultPosition // ignore: cast_nullable_to_non_nullable
@@ -185,6 +192,7 @@ abstract class _$$MapViewStateImplCopyWith<$Res>
       List<ApiPlace> places,
       List<UserMarker> markers,
       ApiUserInfo? selectedUser,
+      LatLng? currentUserLocation,
       CameraPosition? defaultPosition,
       String spaceInvitationCode,
       String mapType,
@@ -216,6 +224,7 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
     Object? places = null,
     Object? markers = null,
     Object? selectedUser = freezed,
+    Object? currentUserLocation = freezed,
     Object? defaultPosition = freezed,
     Object? spaceInvitationCode = null,
     Object? mapType = null,
@@ -260,6 +269,10 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
           ? _value.selectedUser
           : selectedUser // ignore: cast_nullable_to_non_nullable
               as ApiUserInfo?,
+      currentUserLocation: freezed == currentUserLocation
+          ? _value.currentUserLocation
+          : currentUserLocation // ignore: cast_nullable_to_non_nullable
+              as LatLng?,
       defaultPosition: freezed == defaultPosition
           ? _value.defaultPosition
           : defaultPosition // ignore: cast_nullable_to_non_nullable
@@ -295,6 +308,7 @@ class _$MapViewStateImpl implements _MapViewState {
       final List<ApiPlace> places = const [],
       final List<UserMarker> markers = const [],
       this.selectedUser,
+      this.currentUserLocation,
       this.defaultPosition,
       this.spaceInvitationCode = '',
       required this.mapType,
@@ -352,6 +366,8 @@ class _$MapViewStateImpl implements _MapViewState {
   @override
   final ApiUserInfo? selectedUser;
   @override
+  final LatLng? currentUserLocation;
+  @override
   final CameraPosition? defaultPosition;
   @override
   @JsonKey()
@@ -365,7 +381,7 @@ class _$MapViewStateImpl implements _MapViewState {
 
   @override
   String toString() {
-    return 'MapViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, hasLocationEnabled: $hasLocationEnabled, hasLocationServiceEnabled: $hasLocationServiceEnabled, hasNotificationEnabled: $hasNotificationEnabled, hasFineLocationEnabled: $hasFineLocationEnabled, userInfo: $userInfo, places: $places, markers: $markers, selectedUser: $selectedUser, defaultPosition: $defaultPosition, spaceInvitationCode: $spaceInvitationCode, mapType: $mapType, error: $error, showLocationDialog: $showLocationDialog)';
+    return 'MapViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, hasLocationEnabled: $hasLocationEnabled, hasLocationServiceEnabled: $hasLocationServiceEnabled, hasNotificationEnabled: $hasNotificationEnabled, hasFineLocationEnabled: $hasFineLocationEnabled, userInfo: $userInfo, places: $places, markers: $markers, selectedUser: $selectedUser, currentUserLocation: $currentUserLocation, defaultPosition: $defaultPosition, spaceInvitationCode: $spaceInvitationCode, mapType: $mapType, error: $error, showLocationDialog: $showLocationDialog)';
   }
 
   @override
@@ -390,6 +406,8 @@ class _$MapViewStateImpl implements _MapViewState {
             const DeepCollectionEquality().equals(other._markers, _markers) &&
             (identical(other.selectedUser, selectedUser) ||
                 other.selectedUser == selectedUser) &&
+            (identical(other.currentUserLocation, currentUserLocation) ||
+                other.currentUserLocation == currentUserLocation) &&
             (identical(other.defaultPosition, defaultPosition) ||
                 other.defaultPosition == defaultPosition) &&
             (identical(other.spaceInvitationCode, spaceInvitationCode) ||
@@ -413,6 +431,7 @@ class _$MapViewStateImpl implements _MapViewState {
       const DeepCollectionEquality().hash(_places),
       const DeepCollectionEquality().hash(_markers),
       selectedUser,
+      currentUserLocation,
       defaultPosition,
       spaceInvitationCode,
       mapType,
@@ -438,6 +457,7 @@ abstract class _MapViewState implements MapViewState {
       final List<ApiPlace> places,
       final List<UserMarker> markers,
       final ApiUserInfo? selectedUser,
+      final LatLng? currentUserLocation,
       final CameraPosition? defaultPosition,
       final String spaceInvitationCode,
       required final String mapType,
@@ -464,6 +484,8 @@ abstract class _MapViewState implements MapViewState {
   List<UserMarker> get markers;
   @override
   ApiUserInfo? get selectedUser;
+  @override
+  LatLng? get currentUserLocation;
   @override
   CameraPosition? get defaultPosition;
   @override

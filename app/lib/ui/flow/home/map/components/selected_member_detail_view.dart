@@ -2,12 +2,16 @@ import 'dart:async';
 
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/location/location.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:style/animation/on_tap_scale.dart';
+import 'package:style/button/icon_primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 import 'package:yourspace_flutter/domain/extenstions/time_ago_extenstions.dart';
@@ -21,12 +25,16 @@ class SelectedMemberDetailView extends StatefulWidget {
   final int groupCreatedDate;
   final ApiUserInfo? userInfo;
   final void Function() onDismiss;
+  final bool isCurrentUser;
+  final LatLng currentUserLocation;
 
   const SelectedMemberDetailView({
     super.key,
     required this.groupCreatedDate,
     required this.userInfo,
     required this.onDismiss,
+    required this.isCurrentUser,
+    required this.currentUserLocation,
   });
 
   @override
@@ -97,7 +105,11 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
           padding: const EdgeInsets.only(top: 24, right: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: [_timeLineButtonView()],
+            children: [
+              _timeLineButtonView(),
+              const SizedBox(width: 8),
+              _navigationAndShareLocationButtonView(),
+            ],
           ),
         ),
         OnTapScale(
@@ -168,27 +180,48 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   }
 
   Widget _timeLineButtonView() {
-    return OnTapScale(
+    return IconPrimaryButton(
       onTap: () {
         AppRoute.journeyTimeline(widget.userInfo!.user, widget.groupCreatedDate).push(context);
       },
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30),
-            color: context.colorScheme.containerLow),
-        padding: const EdgeInsets.all(8),
-        child: SvgPicture.asset(
-          Assets.images.icTimeLineHistoryIcon,
-          colorFilter: ColorFilter.mode(
-            context.colorScheme.textPrimary,
-            BlendMode.srcATop,
-          ),
+      icon: SvgPicture.asset(
+        Assets.images.icTimeLineHistoryIcon,
+        colorFilter: ColorFilter.mode(
+          context.colorScheme.textPrimary,
+          BlendMode.srcATop,
         ),
       ),
     );
   }
 
-  Widget _userTimeAgo(int? createdAt) {
+  Widget _navigationAndShareLocationButtonView() {
+    return IconPrimaryButton(
+      onTap: () {
+        if (widget.isCurrentUser) {
+          final mapsLink =
+              'https://www.google.com/maps/search/?api=1&query=${widget.userInfo!.location?.latitude},${widget.userInfo!.location?.longitude}';
+          Share.share('Check out my location: $mapsLink');
+        } else {
+          final origin = '${widget.currentUserLocation.latitude}, ${widget.currentUserLocation.longitude}';
+          final destination = '${widget.userInfo!.location?.latitude},${widget.userInfo!.location?.longitude}';
+          final mapsLink =
+              'https://www.google.com/maps/dir/?api=1&origin=$origin&destination=$destination';
+          launchUrl(Uri.parse(mapsLink), mode: LaunchMode.externalApplication);
+        }
+      },
+      icon: widget.isCurrentUser
+          ? Icon(CupertinoIcons.paperplane, color: context.colorScheme.textPrimary, size: 18,)
+          : SvgPicture.asset(
+              Assets.images.icShareTwoLocation,
+              colorFilter: ColorFilter.mode(
+                context.colorScheme.textPrimary,
+                BlendMode.srcATop,
+              ),
+            ),
+    );
+  }
+
+  Widget _userTimeAgo(int? updateAt) {
     return Row(
       children: [
         Icon(
@@ -198,7 +231,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
         ),
         const SizedBox(width: 4),
         Text(
-          createdAt.timeAgo(),
+          updateAt.timeAgo(),
           style: AppTextStyle.caption
               .copyWith(color: context.colorScheme.textDisabled),
         )

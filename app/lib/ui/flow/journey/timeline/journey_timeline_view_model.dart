@@ -187,16 +187,24 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     } else if (fromArea == toArea) {
       return formatAddress([fromArea, fromCity]);
     } else if (fromCity == toCity) {
-      return "${formatAddress([fromArea])} -> ${formatAddress([
-            toArea,
-            fromCity
-          ])}";
+      return formatTwoPlaceAddress([fromArea], [toArea, fromCity]);
     } else if (fromState == toState) {
-      return "${formatAddress([fromArea, fromCity])} -> "
-          "${formatAddress([toArea, toCity])}";
+      return formatTwoPlaceAddress([fromArea, fromCity], [toArea, toCity]);
     } else {
-      return "${formatAddress([fromCity, fromState])} -> "
-          "${formatAddress([toCity, toState])}";
+      return formatTwoPlaceAddress([fromCity, fromState], [toCity, toState]);
+    }
+  }
+
+  String formatTwoPlaceAddress(List<String> fromPlace, List<String> toPlace) {
+    bool isFromPlaceEmpty = fromPlace.every((part) => part.isEmpty);
+    bool isToPlaceEmpty = toPlace.every((part) => part.isEmpty);
+
+    if (!isFromPlaceEmpty && !isToPlaceEmpty) {
+      return "${formatAddress(fromPlace)} -> ${formatAddress(toPlace)}";
+    } else if (!isFromPlaceEmpty && isToPlaceEmpty) {
+      return formatAddress(fromPlace);
+    } else {
+      return formatAddress(toPlace);
     }
   }
 

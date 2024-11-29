@@ -224,9 +224,9 @@ class SpaceService {
     _currentSpaceIdController.state = null;
   }
 
-  Future<void> leaveSpace(String spaceId) async {
-    final userId = currentUser?.id ?? '';
-    await spaceService.removeUserFromSpace(spaceId, userId);
+  Future<void> leaveSpace(String spaceId, {String? userId}) async {
+    final currentUserId = currentUser?.id ?? '';
+    await spaceService.removeUserFromSpace(spaceId, userId ?? currentUserId);
     _currentSpaceIdController.state = null;
   }
 

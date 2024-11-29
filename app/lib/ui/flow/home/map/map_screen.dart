@@ -107,6 +107,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           selectedUser: state.selectedUser,
           isEnabled: !state.loading,
           fetchingInviteCode: state.fetchingInviteCode,
+          isCurrentUser: notifier.isCurrentUser(),
           onAddMemberTap: () {
             if (widget.space != null) {
               notifier.onAddMemberTap(widget.space!.space.id);
@@ -124,6 +125,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             }
           },
           onDismiss: () => notifier.onDismissMemberDetail(),
+          currentUserLocation: state.currentUserLocation ?? const LatLng(0.0, 0.0),
         ),
         Visibility(visible: enabled, child: _permissionFooter(state))
       ],

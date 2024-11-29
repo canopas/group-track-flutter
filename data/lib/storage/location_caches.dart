@@ -92,4 +92,6 @@ class Cache<K, V> {
   void clear() {
     _cache.clear();
   }
+
+  Iterable<MapEntry<K, V>> get entries => _cache.entries;
 }

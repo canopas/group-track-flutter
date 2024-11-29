@@ -2,6 +2,7 @@ import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/button/icon_primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
@@ -19,6 +20,8 @@ class SpaceUserFooter extends StatefulWidget {
   final ApiUserInfo? selectedUser;
   final bool isEnabled;
   final bool fetchingInviteCode;
+  final bool isCurrentUser;
+  final LatLng currentUserLocation;
   final void Function() onAddMemberTap;
   final void Function(ApiUserInfo) onMemberTap;
   final void Function() onRelocateTap;
@@ -33,6 +36,8 @@ class SpaceUserFooter extends StatefulWidget {
     this.selectedUser,
     required this.isEnabled,
     required this.fetchingInviteCode,
+    required this.isCurrentUser,
+    required this.currentUserLocation,
     required this.onAddMemberTap,
     required this.onMemberTap,
     required this.onRelocateTap,
@@ -70,6 +75,8 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                     groupCreatedDate: widget.selectedSpace?.space.created_at ?? 0,
                     userInfo: widget.selectedUser,
                     onDismiss: widget.onDismiss,
+                    isCurrentUser: widget.isCurrentUser,
+                    currentUserLocation: widget.currentUserLocation,
                   )
                 : const SizedBox.shrink(
                     key: ValueKey('emptyBox'),

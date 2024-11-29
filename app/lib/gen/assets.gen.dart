@@ -149,6 +149,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_setting.svg
   String get icSetting => 'assets/images/ic_setting.svg';
 
+  /// File path: assets/images/ic_share_two_location.svg
+  String get icShareTwoLocation => 'assets/images/ic_share_two_location.svg';
+
   /// File path: assets/images/ic_sign_out.svg
   String get icSignOut => 'assets/images/ic_sign_out.svg';
 
@@ -249,6 +252,7 @@ class $AssetsImagesGen {
         icSearchIcon,
         icSendMessage,
         icSetting,
+        icShareTwoLocation,
         icSignOut,
         icSubscriptionCheckIcon,
         icSubscriptionIcon,

@@ -187,7 +187,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     return Padding(
       padding: EdgeInsets.only(top: isFirstItem ? 16 : 0),
       child: SizedBox(
-        height: 130,
+        height: 142,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -308,8 +308,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         }
 
         if (snapshot.hasData) {
-          final address = snapshot.data ??
-              context.l10n.journey_timeline_unknown_address_text;
+          final address = snapshot.data ?? '';
           _addressCache[latLng] = address;
           return _placeInfo(
               address: address,
@@ -318,8 +317,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
               steadyDuration: steadyDuration,
               firstItem: firstItem);
         } else if (snapshot.hasError) {
-          return _placeInfo(
-              address: "Request timeout", formattedTime: formattedTime);
+          return _placeInfo(address: "", formattedTime: formattedTime);
         } else {
           return _placeInfo(
             address: context.l10n.journey_timeline_unknown_address_text,
@@ -363,39 +361,41 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     String? steadyDuration,
     bool? firstItem,
   }) {
+    final steadyText = (isSteadyLocation ?? false)
+        ? ((firstItem ?? false) && notifier.selectedDateIsTodayDate())
+            ? ''
+            : context.l10n
+                .journey_timeline_steady_duration_text(steadyDuration!)
+        : '';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          address,
+          address.isEmpty ? context.l10n.journey_timeline_unknown_address_text : address,
           style: AppTextStyle.body2
               .copyWith(color: context.colorScheme.textPrimary),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 8),
-        Row(
-          children: [
-            Text(
-              formattedTime,
-              style: AppTextStyle.caption
-                  .copyWith(color: context.colorScheme.textDisabled),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            if (isSteadyLocation ?? false) ...[
-              Text(
-                ((firstItem ?? false) && notifier.selectedDateIsTodayDate())
-                    ? ''
-                    : context.l10n
-                        .journey_timeline_steady_duration_text(steadyDuration!),
+        Text.rich(
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+          TextSpan(
+            children: [
+              TextSpan(
+                text: formattedTime,
+                style: AppTextStyle.caption
+                    .copyWith(color: context.colorScheme.textDisabled),
+              ),
+              TextSpan(
+                text: steadyText,
                 style: AppTextStyle.caption
                     .copyWith(color: context.colorScheme.textSecondary),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
-            ]
-          ],
+            ],
+          ),
         ),
       ],
     );
