@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,6 +25,8 @@ import 'package:yourspace_flutter/ui/app.dart';
 import 'domain/fcm/notification_handler.dart';
 
 const platform = MethodChannel('com.grouptrack/location');
+const NOTIFICATION_ID = 112233;
+const NOTIFICATION_CHANNEL_ID = "high_importance_channel";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -94,7 +97,6 @@ Future<ProviderContainer> _initContainer() async {
 }
 
 Future<void> _handleLocationUpdates(MethodCall call) async {
-
   if (call.method == 'onLocationUpdate') {
     final Map<String, dynamic> locationData =
         Map<String, dynamic>.from(call.arguments);
@@ -117,6 +119,8 @@ void _configureService() async {
       onStart: onStart,
       autoStart: false,
       isForegroundMode: true,
+      notificationChannelId: NOTIFICATION_CHANNEL_ID,
+      foregroundServiceNotificationId: NOTIFICATION_ID,
     ),
     iosConfiguration: IosConfiguration(autoStart: false),
   );
@@ -131,12 +135,25 @@ Future<void> onStart(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!await Permission.location.isGranted) return;
 
+  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
   if (service is AndroidServiceInstance) {
-    service.setForegroundNotificationInfo(
-      title: "Your space Location",
-      content: "Location is being tracked",
-    );
-    service.setAsForegroundService();
+    if (await service.isForegroundService()) {
+      flutterLocalNotificationsPlugin.show(
+        NOTIFICATION_ID,
+        'Your space Location',
+        'Location is being tracked',
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            NOTIFICATION_CHANNEL_ID,
+            'MY FOREGROUND SERVICE',
+            icon: "app_icon",
+            ongoing: true,
+            color: Color(0xFF1679AB),
+          ),
+        ),
+      );
+    }
   }
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
