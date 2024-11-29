@@ -180,9 +180,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         notifier.getSteadyDuration(journey.created_at!, journey.update_at!);
     final formattedTime = _getFormattedJourneyTime(
         journey.created_at ?? 0, journey.update_at ?? 0);
-    // final formattedTime = (isFirstItem)
-    //     ? _getFormattedLocationTimeForFirstItem(journey.created_at!)
-    //     : _getFormattedTimeForSteadyLocation(journey.created_at!);
 
     return Padding(
       padding: EdgeInsets.only(top: isFirstItem ? 16 : 0),
