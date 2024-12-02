@@ -52,7 +52,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
             currentUserId: currentUser?.id ?? ''));
 
   void onChange(String value) {
-    if (value.isNotEmpty && value.trim().isEmpty) {
+    if (value.trim().isEmpty) {
       state = state.copyWith(message: TextEditingController(text: ''));
     }
     state = state.copyWith(allowSend: value.trim().isNotEmpty);
