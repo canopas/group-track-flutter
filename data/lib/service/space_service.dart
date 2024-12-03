@@ -77,22 +77,26 @@ class SpaceService {
             return CombineLatestStream.combine2(
               userService.getUserStream(member.user_id),
               Stream.value(member.location_enabled),
-              (user, isLocationEnabled) {
-                return user != null
-                    ? ApiUserInfo(
-                        user: user,
-                        isLocationEnabled: isLocationEnabled,
-                      )
-                    : null;
+                  (user, isLocationEnabled) {
+                return user;
               },
             );
           }).toList();
 
           return CombineLatestStream.list(memberInfoStreams)
-              .map((memberInfoList) {
+              .switchMap((memberInfoList) {
             final nonNullMembers =
-                memberInfoList.whereType<ApiUserInfo>().toList();
-            return SpaceInfo(space: space, members: nonNullMembers);
+            memberInfoList.whereType<ApiUser>().toList();
+
+            return spaceService.getStreamSpaceMemberBySpaceId(space.id).map(
+                  (spaceMember) {
+                return SpaceInfo(
+                  space: space,
+                  members: nonNullMembers,
+                  spaceMember: spaceMember,
+                );
+              },
+            );
           });
         });
       }).toList();
@@ -106,40 +110,17 @@ class SpaceService {
     });
   }
 
-  Future<SpaceInfo?> getCurrentSpaceInfo() async {
-    final currentSpace = await getCurrentSpace();
-    if (currentSpace == null) return null;
-    final members = await spaceService.getMembersBySpaceId(currentSpace.id);
-    return SpaceInfo(
-      space: currentSpace,
-      members: members
-          .map((member) async {
-            final user = await userService.getUser(member.user_id);
-            return user != null
-                ? ApiUserInfo(
-                    user: user, isLocationEnabled: member.location_enabled)
-                : null;
-          })
-          .whereType<ApiUserInfo>()
-          .toList(),
-    );
-  }
-
   Future<SpaceInfo?> getSpaceInfo(String spaceId) async {
     final space = await getSpace(spaceId);
     if (space == null) return null;
 
     final members = await spaceService.getMembersBySpaceId(space.id);
-    final memberInfo = await Future.wait(members.map((member) async {
-      final user = await userService.getUser(member.user_id);
-      return user != null
-          ? ApiUserInfo(user: user, isLocationEnabled: member.location_enabled)
-          : null;
-    }).toList());
+    final spaceMember = await spaceService.getSpaceMemberBySpaceId(spaceId);
 
     return SpaceInfo(
       space: space,
-      members: memberInfo.whereType<ApiUserInfo>().toList(),
+      members: members.whereType<ApiUser>().toList(),
+      spaceMember: spaceMember,
     );
   }
 
@@ -234,37 +215,33 @@ class SpaceService {
     await spaceService.updateSpace(newSpace);
   }
 
-  Stream<List<ApiUserInfo>> getMemberWithLocation(String spaceId) {
-    if (spaceId.isEmpty) {
-      return Stream.value([]);
-    }
-
+  Stream<SpaceInfo> getMemberWithLocation(String spaceId) {
     return spaceService
         .getStreamSpaceMemberBySpaceId(spaceId)
         .switchMap((members) {
-      if (members.isEmpty) {
-        return Stream.value([]);
-      }
 
-      List<Stream<ApiUserInfo>> userInfoStreams = members.map((member) {
+      List<Stream<ApiUser>> userInfoStreams = members.map((member) {
         return CombineLatestStream.combine4(
           userService.getUserStream(member.user_id),
-          locationService.getCurrentLocationStream(member.user_id),
+          locationService.getCurrentLocationStream(userId: member.user_id, spaceId: spaceId),
           Stream.value(member.location_enabled),
           userService.getUserSessionStream(member.user_id),
-          (user, location, isLocationEnabled, session) {
-            return ApiUserInfo(
-              user: user!,
-              location: location?.firstOrNull,
-              isLocationEnabled: isLocationEnabled,
-              session: session,
-            );
+              (user, location, isLocationEnabled, session) {
+            return user!;
           },
         );
       }).toList();
 
       return CombineLatestStream.list(userInfoStreams)
-          .map((userInfoList) => userInfoList.toList());
+          .switchMap((userInfoList) {
+        return spaceService.getSpace(spaceId).then((space) {
+          return SpaceInfo(
+            space: space!,
+            members: userInfoList,
+            spaceMember: members,
+          );
+        }).asStream();
+      });
     });
   }
 

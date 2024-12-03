@@ -1,8 +1,10 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:data/api/auth/auth_models.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:data/api/location/location.dart';
+
+import '../auth/auth_models.dart';
 
 part 'space_models.freezed.dart';
 part 'space_models.g.dart';
@@ -16,6 +18,8 @@ class ApiSpace with _$ApiSpace {
     required String admin_id,
     required String name,
     int? created_at,
+    required String? group_key,
+    ApiSpaceArchivedKeys? archived_keys,
   }) = _ApiSpace;
 
   factory ApiSpace.fromJson(Map<String, dynamic> data) =>
@@ -32,6 +36,28 @@ class ApiSpace with _$ApiSpace {
 }
 
 @freezed
+class ApiSpaceArchivedKeys with _$ApiSpaceArchivedKeys {
+  const ApiSpaceArchivedKeys._();
+
+  const factory ApiSpaceArchivedKeys({
+    required String key,
+    required int timestamp,
+  }) = _ApiSpaceArchivedKeys;
+
+  factory ApiSpaceArchivedKeys.fromJson(Map<String, dynamic> data) =>
+      _$ApiSpaceArchivedKeysFromJson(data);
+
+  factory ApiSpaceArchivedKeys.fromFireStore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    Map<String, dynamic>? data = snapshot.data();
+    return ApiSpaceArchivedKeys.fromJson(data!);
+  }
+
+  Map<String, dynamic> toFireStore(ApiSpace space) => space.toJson();
+}
+
+@freezed
 class ApiSpaceMember with _$ApiSpaceMember {
   const ApiSpaceMember._();
 
@@ -41,6 +67,7 @@ class ApiSpaceMember with _$ApiSpaceMember {
     required String user_id,
     required int role,
     required bool location_enabled,
+    ApiLocation? location,
     int? created_at,
   }) = _ApiSpaceMember;
 
@@ -96,7 +123,8 @@ class SpaceInfo with _$SpaceInfo {
 
   const factory SpaceInfo({
     required ApiSpace space,
-    required List<ApiUserInfo> members,
+    required List<ApiUser> members,
+    required List<ApiSpaceMember> spaceMember,
   }) = _SpaceInfo;
 
   factory SpaceInfo.fromJson(Map<String, dynamic> data) =>

@@ -22,10 +22,11 @@ mixin _$MapViewState {
   bool get hasLocationServiceEnabled => throw _privateConstructorUsedError;
   bool get hasNotificationEnabled => throw _privateConstructorUsedError;
   bool get hasFineLocationEnabled => throw _privateConstructorUsedError;
-  List<ApiUserInfo> get userInfo => throw _privateConstructorUsedError;
+  List<ApiSpaceMember> get spaceMember => throw _privateConstructorUsedError;
+  List<ApiUser> get userInfo => throw _privateConstructorUsedError;
   List<ApiPlace> get places => throw _privateConstructorUsedError;
   List<UserMarker> get markers => throw _privateConstructorUsedError;
-  ApiUserInfo? get selectedUser => throw _privateConstructorUsedError;
+  ApiUser? get selectedUser => throw _privateConstructorUsedError;
   LatLng? get currentUserLocation => throw _privateConstructorUsedError;
   CameraPosition? get defaultPosition => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
@@ -51,10 +52,11 @@ abstract class $MapViewStateCopyWith<$Res> {
       bool hasLocationServiceEnabled,
       bool hasNotificationEnabled,
       bool hasFineLocationEnabled,
-      List<ApiUserInfo> userInfo,
+      List<ApiSpaceMember> spaceMember,
+      List<ApiUser> userInfo,
       List<ApiPlace> places,
       List<UserMarker> markers,
-      ApiUserInfo? selectedUser,
+      ApiUser? selectedUser,
       LatLng? currentUserLocation,
       CameraPosition? defaultPosition,
       String spaceInvitationCode,
@@ -62,7 +64,7 @@ abstract class $MapViewStateCopyWith<$Res> {
       Object? error,
       DateTime? showLocationDialog});
 
-  $ApiUserInfoCopyWith<$Res>? get selectedUser;
+  $ApiUserCopyWith<$Res>? get selectedUser;
 }
 
 /// @nodoc
@@ -84,6 +86,7 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
     Object? hasLocationServiceEnabled = null,
     Object? hasNotificationEnabled = null,
     Object? hasFineLocationEnabled = null,
+    Object? spaceMember = null,
     Object? userInfo = null,
     Object? places = null,
     Object? markers = null,
@@ -120,10 +123,14 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
           ? _value.hasFineLocationEnabled
           : hasFineLocationEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
+      spaceMember: null == spaceMember
+          ? _value.spaceMember
+          : spaceMember // ignore: cast_nullable_to_non_nullable
+              as List<ApiSpaceMember>,
       userInfo: null == userInfo
           ? _value.userInfo
           : userInfo // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
+              as List<ApiUser>,
       places: null == places
           ? _value.places
           : places // ignore: cast_nullable_to_non_nullable
@@ -135,7 +142,7 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
       selectedUser: freezed == selectedUser
           ? _value.selectedUser
           : selectedUser // ignore: cast_nullable_to_non_nullable
-              as ApiUserInfo?,
+              as ApiUser?,
       currentUserLocation: freezed == currentUserLocation
           ? _value.currentUserLocation
           : currentUserLocation // ignore: cast_nullable_to_non_nullable
@@ -162,12 +169,12 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
 
   @override
   @pragma('vm:prefer-inline')
-  $ApiUserInfoCopyWith<$Res>? get selectedUser {
+  $ApiUserCopyWith<$Res>? get selectedUser {
     if (_value.selectedUser == null) {
       return null;
     }
 
-    return $ApiUserInfoCopyWith<$Res>(_value.selectedUser!, (value) {
+    return $ApiUserCopyWith<$Res>(_value.selectedUser!, (value) {
       return _then(_value.copyWith(selectedUser: value) as $Val);
     });
   }
@@ -188,10 +195,11 @@ abstract class _$$MapViewStateImplCopyWith<$Res>
       bool hasLocationServiceEnabled,
       bool hasNotificationEnabled,
       bool hasFineLocationEnabled,
-      List<ApiUserInfo> userInfo,
+      List<ApiSpaceMember> spaceMember,
+      List<ApiUser> userInfo,
       List<ApiPlace> places,
       List<UserMarker> markers,
-      ApiUserInfo? selectedUser,
+      ApiUser? selectedUser,
       LatLng? currentUserLocation,
       CameraPosition? defaultPosition,
       String spaceInvitationCode,
@@ -200,7 +208,7 @@ abstract class _$$MapViewStateImplCopyWith<$Res>
       DateTime? showLocationDialog});
 
   @override
-  $ApiUserInfoCopyWith<$Res>? get selectedUser;
+  $ApiUserCopyWith<$Res>? get selectedUser;
 }
 
 /// @nodoc
@@ -220,6 +228,7 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
     Object? hasLocationServiceEnabled = null,
     Object? hasNotificationEnabled = null,
     Object? hasFineLocationEnabled = null,
+    Object? spaceMember = null,
     Object? userInfo = null,
     Object? places = null,
     Object? markers = null,
@@ -253,10 +262,14 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
           ? _value.hasFineLocationEnabled
           : hasFineLocationEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
+      spaceMember: null == spaceMember
+          ? _value._spaceMember
+          : spaceMember // ignore: cast_nullable_to_non_nullable
+              as List<ApiSpaceMember>,
       userInfo: null == userInfo
           ? _value._userInfo
           : userInfo // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
+              as List<ApiUser>,
       places: null == places
           ? _value._places
           : places // ignore: cast_nullable_to_non_nullable
@@ -268,7 +281,7 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
       selectedUser: freezed == selectedUser
           ? _value.selectedUser
           : selectedUser // ignore: cast_nullable_to_non_nullable
-              as ApiUserInfo?,
+              as ApiUser?,
       currentUserLocation: freezed == currentUserLocation
           ? _value.currentUserLocation
           : currentUserLocation // ignore: cast_nullable_to_non_nullable
@@ -304,7 +317,8 @@ class _$MapViewStateImpl implements _MapViewState {
       this.hasLocationServiceEnabled = false,
       this.hasNotificationEnabled = false,
       this.hasFineLocationEnabled = false,
-      final List<ApiUserInfo> userInfo = const [],
+      final List<ApiSpaceMember> spaceMember = const [],
+      final List<ApiUser> userInfo = const [],
       final List<ApiPlace> places = const [],
       final List<UserMarker> markers = const [],
       this.selectedUser,
@@ -314,7 +328,8 @@ class _$MapViewStateImpl implements _MapViewState {
       required this.mapType,
       this.error,
       this.showLocationDialog})
-      : _userInfo = userInfo,
+      : _spaceMember = spaceMember,
+        _userInfo = userInfo,
         _places = places,
         _markers = markers;
 
@@ -336,10 +351,19 @@ class _$MapViewStateImpl implements _MapViewState {
   @override
   @JsonKey()
   final bool hasFineLocationEnabled;
-  final List<ApiUserInfo> _userInfo;
+  final List<ApiSpaceMember> _spaceMember;
   @override
   @JsonKey()
-  List<ApiUserInfo> get userInfo {
+  List<ApiSpaceMember> get spaceMember {
+    if (_spaceMember is EqualUnmodifiableListView) return _spaceMember;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_spaceMember);
+  }
+
+  final List<ApiUser> _userInfo;
+  @override
+  @JsonKey()
+  List<ApiUser> get userInfo {
     if (_userInfo is EqualUnmodifiableListView) return _userInfo;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_userInfo);
@@ -364,7 +388,7 @@ class _$MapViewStateImpl implements _MapViewState {
   }
 
   @override
-  final ApiUserInfo? selectedUser;
+  final ApiUser? selectedUser;
   @override
   final LatLng? currentUserLocation;
   @override
@@ -381,7 +405,7 @@ class _$MapViewStateImpl implements _MapViewState {
 
   @override
   String toString() {
-    return 'MapViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, hasLocationEnabled: $hasLocationEnabled, hasLocationServiceEnabled: $hasLocationServiceEnabled, hasNotificationEnabled: $hasNotificationEnabled, hasFineLocationEnabled: $hasFineLocationEnabled, userInfo: $userInfo, places: $places, markers: $markers, selectedUser: $selectedUser, currentUserLocation: $currentUserLocation, defaultPosition: $defaultPosition, spaceInvitationCode: $spaceInvitationCode, mapType: $mapType, error: $error, showLocationDialog: $showLocationDialog)';
+    return 'MapViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, hasLocationEnabled: $hasLocationEnabled, hasLocationServiceEnabled: $hasLocationServiceEnabled, hasNotificationEnabled: $hasNotificationEnabled, hasFineLocationEnabled: $hasFineLocationEnabled, spaceMember: $spaceMember, userInfo: $userInfo, places: $places, markers: $markers, selectedUser: $selectedUser, currentUserLocation: $currentUserLocation, defaultPosition: $defaultPosition, spaceInvitationCode: $spaceInvitationCode, mapType: $mapType, error: $error, showLocationDialog: $showLocationDialog)';
   }
 
   @override
@@ -401,6 +425,8 @@ class _$MapViewStateImpl implements _MapViewState {
                 other.hasNotificationEnabled == hasNotificationEnabled) &&
             (identical(other.hasFineLocationEnabled, hasFineLocationEnabled) ||
                 other.hasFineLocationEnabled == hasFineLocationEnabled) &&
+            const DeepCollectionEquality()
+                .equals(other._spaceMember, _spaceMember) &&
             const DeepCollectionEquality().equals(other._userInfo, _userInfo) &&
             const DeepCollectionEquality().equals(other._places, _places) &&
             const DeepCollectionEquality().equals(other._markers, _markers) &&
@@ -427,6 +453,7 @@ class _$MapViewStateImpl implements _MapViewState {
       hasLocationServiceEnabled,
       hasNotificationEnabled,
       hasFineLocationEnabled,
+      const DeepCollectionEquality().hash(_spaceMember),
       const DeepCollectionEquality().hash(_userInfo),
       const DeepCollectionEquality().hash(_places),
       const DeepCollectionEquality().hash(_markers),
@@ -453,10 +480,11 @@ abstract class _MapViewState implements MapViewState {
       final bool hasLocationServiceEnabled,
       final bool hasNotificationEnabled,
       final bool hasFineLocationEnabled,
-      final List<ApiUserInfo> userInfo,
+      final List<ApiSpaceMember> spaceMember,
+      final List<ApiUser> userInfo,
       final List<ApiPlace> places,
       final List<UserMarker> markers,
-      final ApiUserInfo? selectedUser,
+      final ApiUser? selectedUser,
       final LatLng? currentUserLocation,
       final CameraPosition? defaultPosition,
       final String spaceInvitationCode,
@@ -477,13 +505,15 @@ abstract class _MapViewState implements MapViewState {
   @override
   bool get hasFineLocationEnabled;
   @override
-  List<ApiUserInfo> get userInfo;
+  List<ApiSpaceMember> get spaceMember;
+  @override
+  List<ApiUser> get userInfo;
   @override
   List<ApiPlace> get places;
   @override
   List<UserMarker> get markers;
   @override
-  ApiUserInfo? get selectedUser;
+  ApiUser? get selectedUser;
   @override
   LatLng? get currentUserLocation;
   @override

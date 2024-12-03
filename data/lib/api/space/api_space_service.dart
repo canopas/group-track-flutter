@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/network/client.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+import 'package:libsignal_protocol_dart/libsignal_protocol_dart.dart';
 
 import '../auth/api_user_service.dart';
 import '../auth/auth_models.dart';
@@ -34,12 +37,15 @@ class ApiSpaceService {
   }
 
   Future<String> createSpace(String name) async {
+    final identityKeyPair = generateIdentityKeyPair();
+
     final doc = _spaceRef.doc();
     final adminId = _currentUser?.id ?? "";
     final space = ApiSpace(
         id: doc.id,
         admin_id: adminId,
         name: name,
+        group_key: base64Encode(identityKeyPair.getPublicKey().serialize()),
         created_at: DateTime.now().millisecondsSinceEpoch);
     await doc.set(space);
     joinSpace(doc.id);
@@ -56,6 +62,8 @@ class ApiSpaceService {
 
   Future<void> joinSpace(String spaceId,
       {int role = SPACE_MEMBER_ROLE_MEMBER}) async {
+    final identityKeyPair = generateIdentityKeyPair();
+
     final userId = _currentUser?.id ?? '';
 
     final member = ApiSpaceMember(
@@ -67,6 +75,15 @@ class ApiSpaceService {
       created_at: DateTime.now().millisecondsSinceEpoch,
     );
 
+    final space = await getSpace(spaceId);
+    if (space != null) {
+      await updateSpace(space.copyWith(
+          archived_keys: ApiSpaceArchivedKeys(
+              key: space.group_key ?? '',
+              timestamp: DateTime.now().millisecondsSinceEpoch)));
+      await updateSpace(space.copyWith(
+          group_key: base64Encode(identityKeyPair.getPublicKey().serialize())));
+    }
     await spaceMemberRef(spaceId).doc(userId).set(member.toJson());
     await userService.addSpaceId(userId, spaceId);
   }
@@ -89,6 +106,14 @@ class ApiSpaceService {
             .map((doc) =>
                 ApiSpaceMember.fromJson(doc.data() as Map<String, dynamic>))
             .toList());
+  }
+
+  Future<List<ApiSpaceMember>> getSpaceMemberBySpaceId(String spaceId) async {
+    final querySnapshot = await spaceMemberRef(spaceId).get();
+    return querySnapshot.docs
+        .map((doc) =>
+        ApiSpaceMember.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
   }
 
   Future<List<ApiSpaceMember>> getSpaceMemberByUserId(String userId) async {
@@ -144,11 +169,22 @@ class ApiSpaceService {
   }
 
   Future<void> removeUserFromSpace(String spaceId, String userId) async {
+    final identityKeyPair = generateIdentityKeyPair();
+
     final querySnapshot =
         await spaceMemberRef(spaceId).where("user_id", isEqualTo: userId).get();
 
     for (final doc in querySnapshot.docs) {
       await doc.reference.delete();
+    }
+    final space = await getSpace(spaceId);
+    if (space != null) {
+      await updateSpace(space.copyWith(
+          archived_keys: ApiSpaceArchivedKeys(
+              key: space.group_key ?? '',
+              timestamp: DateTime.now().millisecondsSinceEpoch)));
+      await updateSpace(space.copyWith(
+          group_key: base64Encode(identityKeyPair.getPublicKey().serialize())));
     }
   }
 

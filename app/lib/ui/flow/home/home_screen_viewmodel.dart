@@ -188,13 +188,13 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   void updateSelectedSpace(SpaceInfo space) {
     if (space != state.selectedSpace) {
       final members = space.members
-          .where((member) => member.user.id == _currentUser!.id)
+          .where((member) => member.id == _currentUser!.id)
           .toList();
       state = state.copyWith(
         selectedSpace: space,
         locationEnabled: members.isEmpty
             ? _currentUser?.location_enabled ?? true
-            : members.first.isLocationEnabled,
+            : members.first.location_enabled ?? false,
       );
       _currentSpaceIdController.state = space.space.id;
     }

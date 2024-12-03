@@ -74,14 +74,13 @@ class ApiMessageService {
     return snapshot.docs.map((doc) => ApiThreadMessage.fromJson(doc.data() as Map<String, dynamic>)).toList();
   }
 
-  Future<List<ApiUserInfo>> getLatestMessagesMembers(ApiThread thread) async {
-    final List<ApiUserInfo?> memberInfoList = [];
+  Future<List<ApiUser>> getLatestMessagesMembers(ApiThread thread) async {
+    final List<ApiUser?> memberInfoList = [];
     for (String memberId in thread.member_ids) {
       final member = await userService.getUser(memberId);
-      final memberInfo = member != null ? ApiUserInfo(user: member, isLocationEnabled: member.location_enabled ?? false) : null;
-      memberInfoList.add(memberInfo);
+      memberInfoList.add(member);
     }
-    final List<ApiUserInfo> filteredMemberInfoList = memberInfoList.where((info) => info != null).cast<ApiUserInfo>().toList();
+    final List<ApiUser> filteredMemberInfoList = memberInfoList.where((info) => info != null).cast<ApiUser>().toList();
 
     return filteredMemberInfoList;
   }
@@ -137,14 +136,13 @@ class ApiMessageService {
       if (threads.isEmpty) return Stream.value([]);
 
       final futures = threads.map((thread) async {
-        final List<ApiUserInfo?> memberInfoList = [];
+        final List<ApiUser?> memberInfoList = [];
         for (String memberId in thread.member_ids) {
           final user = await userService.getUser(memberId);
-          final memberInfo = user != null ? ApiUserInfo(user: user, isLocationEnabled: user.location_enabled ?? false) : null;
-          memberInfoList.add(memberInfo);
+          memberInfoList.add(user);
         }
 
-        final List<ApiUserInfo> filteredMemberInfoList = memberInfoList.where((info) => info != null).cast<ApiUserInfo>().toList();
+        final List<ApiUser> filteredMemberInfoList = memberInfoList.where((info) => info != null).cast<ApiUser>().toList();
 
         return ThreadInfo(
           thread: thread,

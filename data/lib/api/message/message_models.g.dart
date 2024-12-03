@@ -72,7 +72,7 @@ _$ThreadInfoImpl _$$ThreadInfoImplFromJson(Map<String, dynamic> json) =>
           .map((e) => ApiThreadMessage.fromJson(e as Map<String, dynamic>))
           .toList(),
       members: (json['members'] as List<dynamic>)
-          .map((e) => ApiUserInfo.fromJson(e as Map<String, dynamic>))
+          .map((e) => ApiUser.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

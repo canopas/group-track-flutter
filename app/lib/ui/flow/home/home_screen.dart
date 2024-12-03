@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:style/extenstions/context_extenstions.dart';
+import 'package:style/indicator/progress_indicator.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
@@ -97,29 +98,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       });
     }
 
-    return Padding(
-      padding: context.mediaQueryPadding,
-      child: Stack(
-        children: [
-          MapScreen(space: state.selectedSpace),
-          HomeTopBar(
-            spaces: state.spaceList,
-            onSpaceItemTap: (name) => notifier.updateSelectedSpace(name),
-            onAddMemberTap: () {
-              _checkUserInternet(() => notifier.onAddMemberTap());
-            },
-            onToggleLocation: () {
-              _checkUserInternet(() => notifier.toggleLocation());
-            },
-            selectedSpace: state.selectedSpace,
-            loading: state.loading,
-            fetchingInviteCode: state.fetchingInviteCode,
-            locationEnabled: state.locationEnabled,
-            enablingLocation: state.enablingLocation,
-          ),
-        ],
-      ),
-    );
+    if (state.selectedSpace == null) {
+      return const AppProgressIndicator(size: AppProgressIndicatorSize.small,);
+    } else {
+      return Padding(
+        padding: context.mediaQueryPadding,
+        child: Stack(
+          children: [
+            MapScreen(space: state.selectedSpace),
+            HomeTopBar(
+              spaces: state.spaceList,
+              onSpaceItemTap: (name) => notifier.updateSelectedSpace(name),
+              onAddMemberTap: () {
+                _checkUserInternet(() => notifier.onAddMemberTap());
+              },
+              onToggleLocation: () {
+                _checkUserInternet(() => notifier.toggleLocation());
+              },
+              selectedSpace: state.selectedSpace,
+              loading: state.loading,
+              fetchingInviteCode: state.fetchingInviteCode,
+              locationEnabled: state.locationEnabled,
+              enablingLocation: state.enablingLocation,
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   void _observeNavigation(HomeViewState state) {

@@ -23,7 +23,8 @@ import '../../../../components/user_battery_status.dart';
 
 class SelectedMemberDetailView extends StatefulWidget {
   final int groupCreatedDate;
-  final ApiUserInfo? userInfo;
+  final ApiLocation location;
+  final ApiUser? userInfo;
   final void Function() onDismiss;
   final bool isCurrentUser;
   final LatLng currentUserLocation;
@@ -31,6 +32,7 @@ class SelectedMemberDetailView extends StatefulWidget {
   const SelectedMemberDetailView({
     super.key,
     required this.groupCreatedDate,
+    required this.location,
     required this.userInfo,
     required this.onDismiss,
     required this.isCurrentUser,
@@ -49,7 +51,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   @override
   void initState() {
     super.initState();
-    getAddressDebounced(widget.userInfo?.location);
+    getAddressDebounced(widget.location);
   }
 
   @override
@@ -62,14 +64,14 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   void didUpdateWidget(covariant SelectedMemberDetailView oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.userInfo?.user.id != widget.userInfo?.user.id) {
+    if (oldWidget.userInfo?.id != widget.userInfo?.id) {
       _debounce?.cancel();
 
       setState(() {
         address = '';
       });
 
-      getAddressDebounced(widget.userInfo?.location);
+      getAddressDebounced(widget.location);
     }
   }
 
@@ -79,7 +81,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
     return userInfo != null ? _userDetailCardView(userInfo) : Container();
   }
 
-  Widget _userDetailCardView(ApiUserInfo userInfo) {
+  Widget _userDetailCardView(ApiUser userInfo) {
     return Stack(
       alignment: Alignment.topCenter,
       children: [
@@ -132,13 +134,13 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
     );
   }
 
-  Widget _userProfileView(ApiUserInfo userInfo) {
+  Widget _userProfileView(ApiUser userInfo) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ProfileImage(
-          profileImageUrl: userInfo.user.profile_image!,
-          firstLetter: userInfo.user.firstChar,
+          profileImageUrl: userInfo.profile_image!,
+          firstLetter: userInfo.firstChar,
           size: 48,
           backgroundColor: context.colorScheme.primary,
         ),
@@ -148,22 +150,22 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
     );
   }
 
-  Widget _userDetailView(ApiUserInfo userInfo) {
-    final (userState, textColor) = selectedUserState(userInfo.user);
+  Widget _userDetailView(ApiUser userInfo) {
+    final (userState, textColor) = selectedUserState(userInfo);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          userInfo.user.fullName,
+          userInfo.fullName,
           style: AppTextStyle.subtitle2
               .copyWith(color: context.colorScheme.textPrimary),
         ),
         const SizedBox(height: 4),
         Text(userState, style: AppTextStyle.caption.copyWith(color: textColor)),
         const SizedBox(height: 12),
-        _userAddressView(userInfo.location),
+        _userAddressView(widget.location),
         const SizedBox(height: 4),
-        _userTimeAgo(userInfo.location?.created_at ?? DateTime.now().millisecondsSinceEpoch)
+        _userTimeAgo(widget.location.created_at ?? DateTime.now().millisecondsSinceEpoch)
       ],
     );
   }
@@ -182,7 +184,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   Widget _timeLineButtonView() {
     return IconPrimaryButton(
       onTap: () {
-        AppRoute.journeyTimeline(widget.userInfo!.user, widget.groupCreatedDate).push(context);
+        AppRoute.journeyTimeline(widget.userInfo!, widget.groupCreatedDate).push(context);
       },
       icon: SvgPicture.asset(
         Assets.images.icTimeLineHistoryIcon,
@@ -199,11 +201,11 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
       onTap: () {
         if (widget.isCurrentUser) {
           final mapsLink =
-              'https://www.google.com/maps/search/?api=1&query=${widget.userInfo!.location?.latitude},${widget.userInfo!.location?.longitude}';
+              'https://www.google.com/maps/search/?api=1&query=${widget.location.latitude},${widget.location.longitude}';
           Share.share('Check out my location: $mapsLink');
         } else {
           final origin = '${widget.currentUserLocation.latitude}, ${widget.currentUserLocation.longitude}';
-          final destination = '${widget.userInfo!.location?.latitude},${widget.userInfo!.location?.longitude}';
+          final destination = '${widget.location.latitude},${widget.location.longitude}';
           final mapsLink =
               'https://www.google.com/maps/dir/?api=1&origin=$origin&destination=$destination';
           launchUrl(Uri.parse(mapsLink), mode: LaunchMode.externalApplication);

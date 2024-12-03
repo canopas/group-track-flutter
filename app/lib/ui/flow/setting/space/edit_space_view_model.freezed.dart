@@ -27,8 +27,8 @@ mixin _$EditSpaceViewState {
   bool get adminRemovingMember => throw _privateConstructorUsedError;
   String get selectedSpaceName => throw _privateConstructorUsedError;
   String get currentUserId => throw _privateConstructorUsedError;
-  ApiUserInfo? get currentUserInfo => throw _privateConstructorUsedError;
-  List<ApiUserInfo> get userInfo => throw _privateConstructorUsedError;
+  ApiUser? get currentUserInfo => throw _privateConstructorUsedError;
+  List<ApiUser> get userInfo => throw _privateConstructorUsedError;
   TextEditingController get spaceName => throw _privateConstructorUsedError;
   SpaceInfo? get space => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
@@ -56,13 +56,13 @@ abstract class $EditSpaceViewStateCopyWith<$Res> {
       bool adminRemovingMember,
       String selectedSpaceName,
       String currentUserId,
-      ApiUserInfo? currentUserInfo,
-      List<ApiUserInfo> userInfo,
+      ApiUser? currentUserInfo,
+      List<ApiUser> userInfo,
       TextEditingController spaceName,
       SpaceInfo? space,
       Object? error});
 
-  $ApiUserInfoCopyWith<$Res>? get currentUserInfo;
+  $ApiUserCopyWith<$Res>? get currentUserInfo;
   $SpaceInfoCopyWith<$Res>? get space;
 }
 
@@ -144,11 +144,11 @@ class _$EditSpaceViewStateCopyWithImpl<$Res, $Val extends EditSpaceViewState>
       currentUserInfo: freezed == currentUserInfo
           ? _value.currentUserInfo
           : currentUserInfo // ignore: cast_nullable_to_non_nullable
-              as ApiUserInfo?,
+              as ApiUser?,
       userInfo: null == userInfo
           ? _value.userInfo
           : userInfo // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
+              as List<ApiUser>,
       spaceName: null == spaceName
           ? _value.spaceName
           : spaceName // ignore: cast_nullable_to_non_nullable
@@ -163,12 +163,12 @@ class _$EditSpaceViewStateCopyWithImpl<$Res, $Val extends EditSpaceViewState>
 
   @override
   @pragma('vm:prefer-inline')
-  $ApiUserInfoCopyWith<$Res>? get currentUserInfo {
+  $ApiUserCopyWith<$Res>? get currentUserInfo {
     if (_value.currentUserInfo == null) {
       return null;
     }
 
-    return $ApiUserInfoCopyWith<$Res>(_value.currentUserInfo!, (value) {
+    return $ApiUserCopyWith<$Res>(_value.currentUserInfo!, (value) {
       return _then(_value.copyWith(currentUserInfo: value) as $Val);
     });
   }
@@ -206,14 +206,14 @@ abstract class _$$EditSpaceViewStateImplCopyWith<$Res>
       bool adminRemovingMember,
       String selectedSpaceName,
       String currentUserId,
-      ApiUserInfo? currentUserInfo,
-      List<ApiUserInfo> userInfo,
+      ApiUser? currentUserInfo,
+      List<ApiUser> userInfo,
       TextEditingController spaceName,
       SpaceInfo? space,
       Object? error});
 
   @override
-  $ApiUserInfoCopyWith<$Res>? get currentUserInfo;
+  $ApiUserCopyWith<$Res>? get currentUserInfo;
   @override
   $SpaceInfoCopyWith<$Res>? get space;
 }
@@ -294,11 +294,11 @@ class __$$EditSpaceViewStateImplCopyWithImpl<$Res>
       currentUserInfo: freezed == currentUserInfo
           ? _value.currentUserInfo
           : currentUserInfo // ignore: cast_nullable_to_non_nullable
-              as ApiUserInfo?,
+              as ApiUser?,
       userInfo: null == userInfo
           ? _value._userInfo
           : userInfo // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
+              as List<ApiUser>,
       spaceName: null == spaceName
           ? _value.spaceName
           : spaceName // ignore: cast_nullable_to_non_nullable
@@ -328,7 +328,7 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
       this.selectedSpaceName = '',
       this.currentUserId = '',
       this.currentUserInfo,
-      final List<ApiUserInfo> userInfo = const [],
+      final List<ApiUser> userInfo = const [],
       required this.spaceName,
       this.space,
       this.error})
@@ -368,11 +368,11 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
   @JsonKey()
   final String currentUserId;
   @override
-  final ApiUserInfo? currentUserInfo;
-  final List<ApiUserInfo> _userInfo;
+  final ApiUser? currentUserInfo;
+  final List<ApiUser> _userInfo;
   @override
   @JsonKey()
-  List<ApiUserInfo> get userInfo {
+  List<ApiUser> get userInfo {
     if (_userInfo is EqualUnmodifiableListView) return _userInfo;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_userInfo);
@@ -463,8 +463,8 @@ abstract class _EditSpaceViewState implements EditSpaceViewState {
       final bool adminRemovingMember,
       final String selectedSpaceName,
       final String currentUserId,
-      final ApiUserInfo? currentUserInfo,
-      final List<ApiUserInfo> userInfo,
+      final ApiUser? currentUserInfo,
+      final List<ApiUser> userInfo,
       required final TextEditingController spaceName,
       final SpaceInfo? space,
       final Object? error}) = _$EditSpaceViewStateImpl;
@@ -492,9 +492,9 @@ abstract class _EditSpaceViewState implements EditSpaceViewState {
   @override
   String get currentUserId;
   @override
-  ApiUserInfo? get currentUserInfo;
+  ApiUser? get currentUserInfo;
   @override
-  List<ApiUserInfo> get userInfo;
+  List<ApiUser> get userInfo;
   @override
   TextEditingController get spaceName;
   @override

@@ -3,7 +3,6 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:data/api/location/location.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_models.freezed.dart';
@@ -31,6 +30,9 @@ class ApiUser with _$ApiUser {
     @Default([]) List<String>? space_ids,
     int? battery_pct,
     @Default("") String? fcm_token,
+    String? public_key,
+    String? private_key_encrypted,
+    ApiUserPreKeyBundle? pre_key_bundle,
     int? state,
     int? created_at,
     int? updated_at,
@@ -67,6 +69,31 @@ class ApiUser with _$ApiUser {
 }
 
 @freezed
+class ApiUserPreKeyBundle with _$ApiUserPreKeyBundle {
+  const ApiUserPreKeyBundle._();
+
+  const factory ApiUserPreKeyBundle({
+    required String identity_key,
+    required List<String> signed_prekeys,
+    required List<String> one_time_prekeys,
+  }) = _ApiUserPreKeyBundle;
+
+  factory ApiUserPreKeyBundle.fromJson(Map<String, dynamic> json) =>
+      _$ApiUserPreKeyBundleFromJson(json);
+
+  factory ApiUserPreKeyBundle.fromFireStore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    Map<String, dynamic>? data = snapshot.data();
+    return ApiUserPreKeyBundle.fromJson(data!);
+  }
+
+  String toJsonString() => jsonEncode(toJson());
+
+  Map<String, dynamic> toFireStore(ApiUserPreKeyBundle instance) => instance.toJson();
+}
+
+@freezed
 class ApiSession with _$ApiSession {
   const ApiSession._();
 
@@ -93,30 +120,4 @@ class ApiSession with _$ApiSession {
   String toJsonString() => jsonEncode(toJson());
 
   Map<String, dynamic> toFireStore(ApiSession instance) => instance.toJson();
-}
-
-@freezed
-class ApiUserInfo with _$ApiUserInfo {
-  const ApiUserInfo._();
-
-  const factory ApiUserInfo({
-    required ApiUser user,
-    ApiLocation? location,
-    required bool isLocationEnabled,
-    ApiSession? session,
-  }) = _ApiUserInfo;
-
-  factory ApiUserInfo.fromJson(Map<String, dynamic> json) =>
-      _$ApiUserInfoFromJson(json);
-
-  factory ApiUserInfo.fromFireStore(
-      DocumentSnapshot<Map<String, dynamic>> snapshot,
-      SnapshotOptions? options) {
-    Map<String, dynamic>? data = snapshot.data();
-    return ApiUserInfo.fromJson(data!);
-  }
-
-  String toJsonString() => jsonEncode(toJson());
-
-  Map<String, dynamic> toFireStore(ApiUserInfo instance) => instance.toJson();
 }

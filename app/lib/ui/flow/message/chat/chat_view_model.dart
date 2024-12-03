@@ -84,7 +84,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
       final space = await spaceService.getSpaceInfo(spaceId);
       final userList = space?.members
           .where(
-            (user) => user.user.id != currentUser?.id,
+            (user) => user.id != currentUser?.id,
           )
           .toList();
       state = state.copyWith(
@@ -107,7 +107,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
       _getThreadMembers(threadInfo!.thread);
       final userList = threadInfo.members
           .where(
-            (user) => user.user.id != currentUser?.id,
+            (user) => user.id != currentUser?.id,
           )
           .toList();
       _formatMemberNames(threadId.isEmpty ? [] : userList);
@@ -225,7 +225,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
       }
       List<String>? threadMembersIds = state.selectedMember.isNotEmpty
           ? selectedMembers
-          : state.spaceInfo?.members.map((members) => members.user.id).toList();
+          : state.spaceInfo?.members.map((members) => members.id).toList();
 
       final threadId = await messageService.createThread(
           state.spaceInfo!.space.id,
@@ -266,7 +266,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
       state = state.copyWith(
           threadInfo: thread, sender: thread.members, error: null);
       final filteredMembers = thread.members
-          .where((member) => member.user.id != state.currentUserId)
+          .where((member) => member.id != state.currentUserId)
           .toList();
       _formatMemberNames(filteredMembers);
     } catch (error, stack) {
@@ -276,14 +276,14 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   }
 
   void _selectExistingThread() {
-    final userList = state.users.map((e) => e.user.id).toList();
+    final userList = state.users.map((e) => e.id).toList();
     final List<String> selectedMembers = List.from(
         state.selectedMember.isEmpty ? userList : state.selectedMember);
     selectedMembers.add(currentUser?.id ?? '');
 
     final List<List<String>> threadMembers = state.threadList
         .map((threads) =>
-            threads.members.map((e) => e.user.id.toString()).toList())
+            threads.members.map((e) => e.id.toString()).toList())
         .toList();
 
     bool hasMatchingThread = threadMembers.any((threadMember) =>
@@ -291,7 +291,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     if (hasMatchingThread) {
       final matchingThreads = state.threadList.where((thread) {
         final List<String> threadMemberIds =
-            thread.members.map((member) => member.user.id.toString()).toList();
+            thread.members.map((member) => member.id.toString()).toList();
         return _listsContainSameMembers(selectedMembers, threadMemberIds);
       }).toList();
       if (matchingThreads.isNotEmpty) {
@@ -356,22 +356,22 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     return message.sender_id != currentUser?.id;
   }
 
-  void _formatMemberNames(List<ApiUserInfo>? members) {
+  void _formatMemberNames(List<ApiUser>? members) {
     final filteredMembers = members ??
         state.threadInfo!.members
-            .where((member) => member.user.id != state.currentUserId)
+            .where((member) => member.id != state.currentUserId)
             .toList();
     state = state.copyWith(title: '');
     if (filteredMembers.length > 2) {
       state = state.copyWith(
           title:
-              '${filteredMembers[0].user.first_name}, ${filteredMembers[1].user.first_name} +${filteredMembers.length - 2}');
+              '${filteredMembers[0].first_name}, ${filteredMembers[1].first_name} +${filteredMembers.length - 2}');
     } else if (filteredMembers.length == 2) {
       state = state.copyWith(
           title:
-              '${filteredMembers[0].user.first_name}, ${filteredMembers[1].user.first_name}');
+              '${filteredMembers[0].first_name}, ${filteredMembers[1].first_name}');
     } else if (filteredMembers.length == 1) {
-      state = state.copyWith(title: filteredMembers[0].user.first_name ?? '');
+      state = state.copyWith(title: filteredMembers[0].first_name ?? '');
     } else {
       state = state.copyWith(title: 'Start a new chat');
     }
@@ -462,12 +462,12 @@ class ChatViewState with _$ChatViewState {
     @Default(false) bool showMemberSelectionView,
     @Default(false) bool isNewThread,
     @Default(false) bool isNetworkOff,
-    @Default([]) List<ApiUserInfo> users,
+    @Default([]) List<ApiUser> users,
     @Default('') String threadId,
     @Default('') String title,
     required TextEditingController message,
     @Default([]) List<ApiThreadMessage> messages,
-    @Default([]) List<ApiUserInfo> sender,
+    @Default([]) List<ApiUser> sender,
     @Default([]) List<String> selectedMember,
     Object? error,
     SpaceInfo? spaceInfo,

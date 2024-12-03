@@ -107,7 +107,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
       itemBuilder: (context, index) {
         final thread = mutableThreads[index];
         final members = thread.members
-            .where((member) => member.user.id != notifier.currentUser?.id)
+            .where((member) => member.id != notifier.currentUser?.id)
             .toList();
         final filteredMessages =
             index < threadMessages.length ? threadMessages[index] : [];
@@ -167,8 +167,8 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
 
   Widget _threadItem({
     required BuildContext context,
-    required List<ApiUserInfo> members,
-    required List<ApiUserInfo> displayedMembers,
+    required List<ApiUser> members,
+    required List<ApiUser> displayedMembers,
     required String message,
     required DateTime date,
     required bool hasUnreadMessage,
@@ -226,8 +226,8 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
 
   Widget _threadNamesAndMessage({
     required BuildContext context,
-    required List<ApiUserInfo> members,
-    required List<ApiUserInfo> displayedMembers,
+    required List<ApiUser> members,
+    required List<ApiUser> displayedMembers,
     required String message,
   }) {
     final remainingCount = members.length - displayedMembers.length;
@@ -240,7 +240,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
               Row(
                 children: [
                   Text(
-                    displayedMembers[i].user.first_name ?? '',
+                    displayedMembers[i].first_name ?? '',
                     style: AppTextStyle.subtitle2.copyWith(
                       color: context.colorScheme.textPrimary,
                     ),
@@ -272,7 +272,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
     );
   }
 
-  Widget _threadProfile(BuildContext context, List<ApiUserInfo> members) {
+  Widget _threadProfile(BuildContext context, List<ApiUser> members) {
     if (members.length == 1) {
       return _profileImageView(context, members[0], size: 50);
     } else {
@@ -295,10 +295,10 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
     }
   }
 
-  Widget _profileImageView(BuildContext context, ApiUserInfo member,
+  Widget _profileImageView(BuildContext context, ApiUser member,
       {required double size, bool isMoreMember = false, int count = 0}) {
-    final profileImageUrl = member.user.profile_image ?? '';
-    final firstLetter = member.user.firstChar;
+    final profileImageUrl = member.profile_image ?? '';
+    final firstLetter = member.firstChar;
 
     return SizedBox(
       width: size,

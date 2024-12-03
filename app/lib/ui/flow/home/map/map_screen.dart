@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 
+import 'package:data/api/location/location.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -113,8 +114,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               notifier.onAddMemberTap(widget.space!.space.id);
             }
           },
-          onMemberTap: (member) {
-            notifier.showMemberDetail(member);
+          onMemberTap: (member, spaceMember) {
+            notifier.showMemberDetail(member: member, spaceMember: spaceMember);
           },
           onRelocateTap: () => notifier.getUserLastLocation(),
           onMapTypeTap: () => _openMapTypeSheet(context),
@@ -126,6 +127,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           },
           onDismiss: () => notifier.onDismissMemberDetail(),
           currentUserLocation: state.currentUserLocation ?? const LatLng(0.0, 0.0),
+          spaceMembers: widget.space!.spaceMember,
+          location: const ApiLocation(id: 'id', user_id: 'user_id', latitude: 37.3877, longitude: -122.0761),
         ),
         Visibility(visible: enabled, child: _permissionFooter(state))
       ],

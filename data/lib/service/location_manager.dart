@@ -133,7 +133,7 @@ class LocationManager {
     final userId = await _getUserIdFromPreferences();
     if (userId != null) {
       try {
-        await _locationService.saveCurrentLocation(userId, locationPosition);
+        await _locationService.saveCurrentLocation(userId: userId, locationData: locationPosition);
 
         await _journeyRepository.saveLocationJourney(
             extractedLocation: locationPosition, userId: userId);

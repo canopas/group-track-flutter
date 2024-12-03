@@ -1,4 +1,5 @@
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/location/location.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,14 +17,16 @@ import 'selected_member_detail_view.dart';
 
 class SpaceUserFooter extends StatefulWidget {
   final SpaceInfo? selectedSpace;
-  final List<ApiUserInfo>? members;
-  final ApiUserInfo? selectedUser;
+  final List<ApiUser>? members;
+  final List<ApiSpaceMember> spaceMembers;
+  final ApiUser? selectedUser;
   final bool isEnabled;
   final bool fetchingInviteCode;
   final bool isCurrentUser;
   final LatLng currentUserLocation;
+  final ApiLocation location;
   final void Function() onAddMemberTap;
-  final void Function(ApiUserInfo) onMemberTap;
+  final void Function(ApiUser, ApiSpaceMember) onMemberTap;
   final void Function() onRelocateTap;
   final void Function() onMapTypeTap;
   final void Function() onPlacesTap;
@@ -33,11 +36,13 @@ class SpaceUserFooter extends StatefulWidget {
     super.key,
     this.selectedSpace,
     required this.members,
+    required this.spaceMembers,
     this.selectedUser,
     required this.isEnabled,
     required this.fetchingInviteCode,
     required this.isCurrentUser,
     required this.currentUserLocation,
+    required this.location,
     required this.onAddMemberTap,
     required this.onMemberTap,
     required this.onRelocateTap,
@@ -77,6 +82,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                     onDismiss: widget.onDismiss,
                     isCurrentUser: widget.isCurrentUser,
                     currentUserLocation: widget.currentUserLocation,
+                    location: widget.location,
                   )
                 : const SizedBox.shrink(
                     key: ValueKey('emptyBox'),
@@ -89,6 +95,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
               child: selectedSpaceMemberView(
                 context: context,
                 members: widget.members,
+                spaceMembers: widget.spaceMembers,
               )),
         ],
       ),
@@ -162,7 +169,8 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
 
   Widget selectedSpaceMemberView({
     required BuildContext context,
-    required List<ApiUserInfo>? members,
+    required List<ApiUser>? members,
+    required List<ApiSpaceMember> spaceMembers,
   }) {
     if (members == null || members.isEmpty) return Container();
     return Container(
@@ -184,7 +192,10 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                 itemCount: members.length,
                 shrinkWrap: true,
                 itemBuilder: (_, index) {
-                  return spaceMemberItem(context, members[index]);
+                  final spaceMember = spaceMembers.firstWhere(
+                        (spaceMember) => spaceMember.user_id == members[index].id,
+                  );
+                  return spaceMemberItem(context, members[index], spaceMember);
                 },
               ),
             ),
@@ -238,14 +249,12 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
   }
 
   Widget spaceMemberItem(
-    BuildContext context,
-    ApiUserInfo userInfo,
-  ) {
+      BuildContext context, ApiUser userInfo, ApiSpaceMember spaceMember) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: OnTapScale(
         onTap: () {
-          widget.onMemberTap(userInfo);
+          widget.onMemberTap(userInfo, spaceMember);
         },
         child: SizedBox(
           width: 40,
@@ -254,14 +263,14 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ProfileImage(
-                profileImageUrl: userInfo.user.profile_image!,
-                firstLetter: userInfo.user.firstChar,
+                profileImageUrl: userInfo.profile_image!,
+                firstLetter: userInfo.firstChar,
                 size: 40,
                 backgroundColor: context.colorScheme.primary,
               ),
               const SizedBox(height: 2),
               Text(
-                userInfo.user.first_name ?? '',
+                userInfo.first_name ?? '',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: AppTextStyle.caption

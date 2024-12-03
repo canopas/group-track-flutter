@@ -661,7 +661,7 @@ mixin _$ThreadInfo {
   ApiThread get thread => throw _privateConstructorUsedError;
   List<ApiThreadMessage> get threadMessage =>
       throw _privateConstructorUsedError;
-  List<ApiUserInfo> get members => throw _privateConstructorUsedError;
+  List<ApiUser> get members => throw _privateConstructorUsedError;
 
   /// Serializes this ThreadInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -682,7 +682,7 @@ abstract class $ThreadInfoCopyWith<$Res> {
   $Res call(
       {ApiThread thread,
       List<ApiThreadMessage> threadMessage,
-      List<ApiUserInfo> members});
+      List<ApiUser> members});
 
   $ApiThreadCopyWith<$Res> get thread;
 }
@@ -718,7 +718,7 @@ class _$ThreadInfoCopyWithImpl<$Res, $Val extends ThreadInfo>
       members: null == members
           ? _value.members
           : members // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
+              as List<ApiUser>,
     ) as $Val);
   }
 
@@ -744,7 +744,7 @@ abstract class _$$ThreadInfoImplCopyWith<$Res>
   $Res call(
       {ApiThread thread,
       List<ApiThreadMessage> threadMessage,
-      List<ApiUserInfo> members});
+      List<ApiUser> members});
 
   @override
   $ApiThreadCopyWith<$Res> get thread;
@@ -779,7 +779,7 @@ class __$$ThreadInfoImplCopyWithImpl<$Res>
       members: null == members
           ? _value._members
           : members // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
+              as List<ApiUser>,
     ));
   }
 }
@@ -790,7 +790,7 @@ class _$ThreadInfoImpl extends _ThreadInfo {
   const _$ThreadInfoImpl(
       {required this.thread,
       required final List<ApiThreadMessage> threadMessage,
-      required final List<ApiUserInfo> members})
+      required final List<ApiUser> members})
       : _threadMessage = threadMessage,
         _members = members,
         super._();
@@ -808,9 +808,9 @@ class _$ThreadInfoImpl extends _ThreadInfo {
     return EqualUnmodifiableListView(_threadMessage);
   }
 
-  final List<ApiUserInfo> _members;
+  final List<ApiUser> _members;
   @override
-  List<ApiUserInfo> get members {
+  List<ApiUser> get members {
     if (_members is EqualUnmodifiableListView) return _members;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_members);
@@ -860,7 +860,7 @@ abstract class _ThreadInfo extends ThreadInfo {
   const factory _ThreadInfo(
       {required final ApiThread thread,
       required final List<ApiThreadMessage> threadMessage,
-      required final List<ApiUserInfo> members}) = _$ThreadInfoImpl;
+      required final List<ApiUser> members}) = _$ThreadInfoImpl;
   const _ThreadInfo._() : super._();
 
   factory _ThreadInfo.fromJson(Map<String, dynamic> json) =
@@ -871,7 +871,7 @@ abstract class _ThreadInfo extends ThreadInfo {
   @override
   List<ApiThreadMessage> get threadMessage;
   @override
-  List<ApiUserInfo> get members;
+  List<ApiUser> get members;
 
   /// Create a copy of ThreadInfo
   /// with the given fields replaced by the non-null parameter values.

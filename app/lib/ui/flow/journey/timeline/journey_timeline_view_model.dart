@@ -70,8 +70,8 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
 
       // Fetch journey history based on loadMore status
       final journeys = (loadMore)
-          ? await journeyService.getMoreJourneyHistory(userId, lastJourneyTime)
-          : await journeyService.getJourneyHistory(userId, from, to);
+          ? await journeyService.getMoreJourneyHistory(spaceId: state.spaceId ?? '', userId: userId, from: lastJourneyTime)
+          : await journeyService.getJourneyHistory(spaceId: state.spaceId ?? '', userId: userId, from: from, to: to);
 
       // Filter by date range
       final filteredJourneys = journeys.where((journey) {
