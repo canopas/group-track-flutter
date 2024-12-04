@@ -24,7 +24,7 @@ class SpaceUserFooter extends StatefulWidget {
   final bool fetchingInviteCode;
   final bool isCurrentUser;
   final LatLng currentUserLocation;
-  final ApiLocation location;
+  final ApiLocation selectedUserLocation;
   final void Function() onAddMemberTap;
   final void Function(ApiUser, ApiSpaceMember) onMemberTap;
   final void Function() onRelocateTap;
@@ -42,7 +42,7 @@ class SpaceUserFooter extends StatefulWidget {
     required this.fetchingInviteCode,
     required this.isCurrentUser,
     required this.currentUserLocation,
-    required this.location,
+    required this.selectedUserLocation,
     required this.onAddMemberTap,
     required this.onMemberTap,
     required this.onRelocateTap,
@@ -82,7 +82,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                     onDismiss: widget.onDismiss,
                     isCurrentUser: widget.isCurrentUser,
                     currentUserLocation: widget.currentUserLocation,
-                    location: widget.location,
+                    location: widget.selectedUserLocation,
                   )
                 : const SizedBox.shrink(
                     key: ValueKey('emptyBox'),

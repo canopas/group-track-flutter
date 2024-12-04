@@ -115,11 +115,15 @@ class SpaceService {
     if (space == null) return null;
 
     final members = await spaceService.getMembersBySpaceId(space.id);
+    final memberInfo = await Future.wait(members.map((member) async {
+      final user = await userService.getUser(member.user_id);
+      return user;
+    }).toList());
     final spaceMember = await spaceService.getSpaceMemberBySpaceId(spaceId);
 
     return SpaceInfo(
       space: space,
-      members: members.whereType<ApiUser>().toList(),
+      members: memberInfo.whereType<ApiUser>().toList(),
       spaceMember: spaceMember,
     );
   }
@@ -216,24 +220,15 @@ class SpaceService {
   }
 
   Stream<SpaceInfo> getMemberWithLocation(String spaceId) {
-    return spaceService
-        .getStreamSpaceMemberBySpaceId(spaceId)
-        .switchMap((members) {
+    return spaceService.getStreamSpaceMemberBySpaceId(spaceId).switchMap((members) {
 
       List<Stream<ApiUser>> userInfoStreams = members.map((member) {
-        return CombineLatestStream.combine4(
-          userService.getUserStream(member.user_id),
-          locationService.getCurrentLocationStream(userId: member.user_id, spaceId: spaceId),
-          Stream.value(member.location_enabled),
-          userService.getUserSessionStream(member.user_id),
-              (user, location, isLocationEnabled, session) {
-            return user!;
-          },
-        );
+        return userService.getUserStream(member.user_id).map((user) {
+          return user!;
+        });
       }).toList();
 
-      return CombineLatestStream.list(userInfoStreams)
-          .switchMap((userInfoList) {
+      return CombineLatestStream.list(userInfoStreams).switchMap((userInfoList) {
         return spaceService.getSpace(spaceId).then((space) {
           return SpaceInfo(
             space: space!,

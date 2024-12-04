@@ -128,7 +128,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           onDismiss: () => notifier.onDismissMemberDetail(),
           currentUserLocation: state.currentUserLocation ?? const LatLng(0.0, 0.0),
           spaceMembers: widget.space!.spaceMember,
-          location: const ApiLocation(id: 'id', user_id: 'user_id', latitude: 37.3877, longitude: -122.0761),
+          selectedUserLocation: notifier.getSelectedUserLocation() ??
+              const ApiLocation(id: '', user_id: '', latitude: 0, longitude: 0),
         ),
         Visibility(visible: enabled, child: _permissionFooter(state))
       ],
