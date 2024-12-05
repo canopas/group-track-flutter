@@ -1,20 +1,16 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
-import 'package:data/api/location/location.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/permission_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:geolocator/geolocator.dart';
 
 import '../../components/no_internet_screen.dart';
 
@@ -67,25 +63,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
     if (_currentUser == null && _userSession == null) return;
     listenUserSession(_currentUser!.id, _userSession!.id);
-  }
-
-  Future<LocationData> currentUserLocation() async {
-    if (Platform.isIOS) {
-      const platform = MethodChannel('com.grouptrack/current_location');
-      final locationFromIOS = await platform.invokeMethod('getCurrentLocation');
-      return LocationData(
-        latitude: locationFromIOS['latitude'],
-        longitude: locationFromIOS['longitude'],
-        timestamp: DateTime.fromMillisecondsSinceEpoch(
-            locationFromIOS['timestamp'].toInt()),
-      );
-    } else {
-      var location = await Geolocator.getCurrentPosition();
-      return LocationData(
-          latitude: location.latitude,
-          longitude: location.longitude,
-          timestamp: DateTime.now());
-    }
   }
 
   void listenSpaceMember() async {

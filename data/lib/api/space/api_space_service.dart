@@ -62,7 +62,6 @@ class ApiSpaceService {
 
   Future<void> joinSpace(String spaceId,
       {int role = SPACE_MEMBER_ROLE_MEMBER}) async {
-    final identityKeyPair = generateIdentityKeyPair();
 
     final userId = _currentUser?.id ?? '';
 
@@ -75,15 +74,6 @@ class ApiSpaceService {
       created_at: DateTime.now().millisecondsSinceEpoch,
     );
 
-    final space = await getSpace(spaceId);
-    if (space != null) {
-      await updateSpace(space.copyWith(
-          archived_keys: ApiSpaceArchivedKeys(
-              key: space.group_key ?? '',
-              timestamp: DateTime.now().millisecondsSinceEpoch)));
-      await updateSpace(space.copyWith(
-          group_key: base64Encode(identityKeyPair.getPublicKey().serialize())));
-    }
     await spaceMemberRef(spaceId).doc(userId).set(member.toJson());
     await userService.addSpaceId(userId, spaceId);
   }

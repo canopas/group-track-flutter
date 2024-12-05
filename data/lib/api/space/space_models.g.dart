@@ -50,9 +50,6 @@ _$ApiSpaceMemberImpl _$$ApiSpaceMemberImplFromJson(Map<String, dynamic> json) =>
       user_id: json['user_id'] as String,
       role: (json['role'] as num).toInt(),
       location_enabled: json['location_enabled'] as bool,
-      location: json['location'] == null
-          ? null
-          : ApiLocation.fromJson(json['location'] as Map<String, dynamic>),
       created_at: (json['created_at'] as num?)?.toInt(),
     );
 
@@ -64,7 +61,6 @@ Map<String, dynamic> _$$ApiSpaceMemberImplToJson(
       'user_id': instance.user_id,
       'role': instance.role,
       'location_enabled': instance.location_enabled,
-      'location': instance.location?.toJson(),
       'created_at': instance.created_at,
     };
 
@@ -95,6 +91,9 @@ _$SpaceInfoImpl _$$SpaceInfoImplFromJson(Map<String, dynamic> json) =>
       spaceMember: (json['spaceMember'] as List<dynamic>)
           .map((e) => ApiSpaceMember.fromJson(e as Map<String, dynamic>))
           .toList(),
+      location: json['location'] == null
+          ? null
+          : ApiLocation.fromJson(json['location'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$SpaceInfoImplToJson(_$SpaceInfoImpl instance) =>
@@ -102,4 +101,5 @@ Map<String, dynamic> _$$SpaceInfoImplToJson(_$SpaceInfoImpl instance) =>
       'space': instance.space.toJson(),
       'members': instance.members.map((e) => e.toJson()).toList(),
       'spaceMember': instance.spaceMember.map((e) => e.toJson()).toList(),
+      'location': instance.location?.toJson(),
     };

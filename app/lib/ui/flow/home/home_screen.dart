@@ -98,7 +98,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       });
     }
 
-    if (state.selectedSpace == null) {
+    if (state.selectedSpace == null && state.spaceList.isNotEmpty) {
       return const AppProgressIndicator(size: AppProgressIndicatorSize.small,);
     } else {
       return Padding(

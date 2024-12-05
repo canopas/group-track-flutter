@@ -24,13 +24,20 @@ class ApiJourneyService {
           fromFirestore: ApiSpace.fromFireStore,
           toFirestore: (space, options) => space.toJson());
 
-  CollectionReference _spaceMemberRef(String spaceId) =>
-      _spaceRef.doc(spaceId).collection('space_members');
+  CollectionReference _spaceMemberRef(String spaceId) => _spaceRef
+      .doc(spaceId)
+      .collection("space_members")
+      .withConverter<ApiSpaceMember>(
+      fromFirestore: ApiSpaceMember.fromFireStore,
+      toFirestore: (member, _) => member.toJson());
 
   CollectionReference _userJourneyRef(String spaceId, String userId) =>
-      _spaceMemberRef(spaceId).doc(userId).collection('user_journey');
+      _spaceMemberRef(spaceId)
+          .doc(userId)
+          .collection("user_journeys");
 
-  Future<String> saveCurrentJourney({
+
+  Future<List<String>> saveCurrentJourney({
     required String userId,
     required double fromLatitude,
     required double fromLongitude,
@@ -50,6 +57,8 @@ class ApiJourneyService {
 
     final spaces = await getUserSpaces(userId);
 
+    final journeyIds = <String>[];
+
     for (final space in spaces) {
       final docRef = _userJourneyRef(space!.id, userId).doc();
 
@@ -68,12 +77,12 @@ class ApiJourneyService {
       );
 
       await docRef.set(journey.toJson());
-      return docRef.id;
+      journeyIds.add(docRef.id);
     }
-    return '';
+    return journeyIds;
   }
 
-  Future<void> updateLastLocationJourney(String userId,ApiLocationJourney journey) async {
+  Future<void> updateLastLocationJourney(String userId, ApiLocationJourney journey) async {
     try {
       final spaces = await getUserSpaces(userId);
       for (final space in spaces) {

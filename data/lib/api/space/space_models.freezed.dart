@@ -476,7 +476,6 @@ mixin _$ApiSpaceMember {
   String get user_id => throw _privateConstructorUsedError;
   int get role => throw _privateConstructorUsedError;
   bool get location_enabled => throw _privateConstructorUsedError;
-  ApiLocation? get location => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
 
   /// Serializes this ApiSpaceMember to a JSON map.
@@ -501,10 +500,7 @@ abstract class $ApiSpaceMemberCopyWith<$Res> {
       String user_id,
       int role,
       bool location_enabled,
-      ApiLocation? location,
       int? created_at});
-
-  $ApiLocationCopyWith<$Res>? get location;
 }
 
 /// @nodoc
@@ -527,7 +523,6 @@ class _$ApiSpaceMemberCopyWithImpl<$Res, $Val extends ApiSpaceMember>
     Object? user_id = null,
     Object? role = null,
     Object? location_enabled = null,
-    Object? location = freezed,
     Object? created_at = freezed,
   }) {
     return _then(_value.copyWith(
@@ -551,29 +546,11 @@ class _$ApiSpaceMemberCopyWithImpl<$Res, $Val extends ApiSpaceMember>
           ? _value.location_enabled
           : location_enabled // ignore: cast_nullable_to_non_nullable
               as bool,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as ApiLocation?,
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
               as int?,
     ) as $Val);
-  }
-
-  /// Create a copy of ApiSpaceMember
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ApiLocationCopyWith<$Res>? get location {
-    if (_value.location == null) {
-      return null;
-    }
-
-    return $ApiLocationCopyWith<$Res>(_value.location!, (value) {
-      return _then(_value.copyWith(location: value) as $Val);
-    });
   }
 }
 
@@ -591,11 +568,7 @@ abstract class _$$ApiSpaceMemberImplCopyWith<$Res>
       String user_id,
       int role,
       bool location_enabled,
-      ApiLocation? location,
       int? created_at});
-
-  @override
-  $ApiLocationCopyWith<$Res>? get location;
 }
 
 /// @nodoc
@@ -616,7 +589,6 @@ class __$$ApiSpaceMemberImplCopyWithImpl<$Res>
     Object? user_id = null,
     Object? role = null,
     Object? location_enabled = null,
-    Object? location = freezed,
     Object? created_at = freezed,
   }) {
     return _then(_$ApiSpaceMemberImpl(
@@ -640,10 +612,6 @@ class __$$ApiSpaceMemberImplCopyWithImpl<$Res>
           ? _value.location_enabled
           : location_enabled // ignore: cast_nullable_to_non_nullable
               as bool,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as ApiLocation?,
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -661,7 +629,6 @@ class _$ApiSpaceMemberImpl extends _ApiSpaceMember {
       required this.user_id,
       required this.role,
       required this.location_enabled,
-      this.location,
       this.created_at})
       : super._();
 
@@ -679,13 +646,11 @@ class _$ApiSpaceMemberImpl extends _ApiSpaceMember {
   @override
   final bool location_enabled;
   @override
-  final ApiLocation? location;
-  @override
   final int? created_at;
 
   @override
   String toString() {
-    return 'ApiSpaceMember(id: $id, space_id: $space_id, user_id: $user_id, role: $role, location_enabled: $location_enabled, location: $location, created_at: $created_at)';
+    return 'ApiSpaceMember(id: $id, space_id: $space_id, user_id: $user_id, role: $role, location_enabled: $location_enabled, created_at: $created_at)';
   }
 
   @override
@@ -700,16 +665,14 @@ class _$ApiSpaceMemberImpl extends _ApiSpaceMember {
             (identical(other.role, role) || other.role == role) &&
             (identical(other.location_enabled, location_enabled) ||
                 other.location_enabled == location_enabled) &&
-            (identical(other.location, location) ||
-                other.location == location) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, space_id, user_id, role,
-      location_enabled, location, created_at);
+  int get hashCode => Object.hash(
+      runtimeType, id, space_id, user_id, role, location_enabled, created_at);
 
   /// Create a copy of ApiSpaceMember
   /// with the given fields replaced by the non-null parameter values.
@@ -735,7 +698,6 @@ abstract class _ApiSpaceMember extends ApiSpaceMember {
       required final String user_id,
       required final int role,
       required final bool location_enabled,
-      final ApiLocation? location,
       final int? created_at}) = _$ApiSpaceMemberImpl;
   const _ApiSpaceMember._() : super._();
 
@@ -752,8 +714,6 @@ abstract class _ApiSpaceMember extends ApiSpaceMember {
   int get role;
   @override
   bool get location_enabled;
-  @override
-  ApiLocation? get location;
   @override
   int? get created_at;
 
@@ -984,6 +944,7 @@ mixin _$SpaceInfo {
   ApiSpace get space => throw _privateConstructorUsedError;
   List<ApiUser> get members => throw _privateConstructorUsedError;
   List<ApiSpaceMember> get spaceMember => throw _privateConstructorUsedError;
+  ApiLocation? get location => throw _privateConstructorUsedError;
 
   /// Serializes this SpaceInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1003,9 +964,11 @@ abstract class $SpaceInfoCopyWith<$Res> {
   $Res call(
       {ApiSpace space,
       List<ApiUser> members,
-      List<ApiSpaceMember> spaceMember});
+      List<ApiSpaceMember> spaceMember,
+      ApiLocation? location});
 
   $ApiSpaceCopyWith<$Res> get space;
+  $ApiLocationCopyWith<$Res>? get location;
 }
 
 /// @nodoc
@@ -1026,6 +989,7 @@ class _$SpaceInfoCopyWithImpl<$Res, $Val extends SpaceInfo>
     Object? space = null,
     Object? members = null,
     Object? spaceMember = null,
+    Object? location = freezed,
   }) {
     return _then(_value.copyWith(
       space: null == space
@@ -1040,6 +1004,10 @@ class _$SpaceInfoCopyWithImpl<$Res, $Val extends SpaceInfo>
           ? _value.spaceMember
           : spaceMember // ignore: cast_nullable_to_non_nullable
               as List<ApiSpaceMember>,
+      location: freezed == location
+          ? _value.location
+          : location // ignore: cast_nullable_to_non_nullable
+              as ApiLocation?,
     ) as $Val);
   }
 
@@ -1050,6 +1018,20 @@ class _$SpaceInfoCopyWithImpl<$Res, $Val extends SpaceInfo>
   $ApiSpaceCopyWith<$Res> get space {
     return $ApiSpaceCopyWith<$Res>(_value.space, (value) {
       return _then(_value.copyWith(space: value) as $Val);
+    });
+  }
+
+  /// Create a copy of SpaceInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ApiLocationCopyWith<$Res>? get location {
+    if (_value.location == null) {
+      return null;
+    }
+
+    return $ApiLocationCopyWith<$Res>(_value.location!, (value) {
+      return _then(_value.copyWith(location: value) as $Val);
     });
   }
 }
@@ -1065,10 +1047,13 @@ abstract class _$$SpaceInfoImplCopyWith<$Res>
   $Res call(
       {ApiSpace space,
       List<ApiUser> members,
-      List<ApiSpaceMember> spaceMember});
+      List<ApiSpaceMember> spaceMember,
+      ApiLocation? location});
 
   @override
   $ApiSpaceCopyWith<$Res> get space;
+  @override
+  $ApiLocationCopyWith<$Res>? get location;
 }
 
 /// @nodoc
@@ -1087,6 +1072,7 @@ class __$$SpaceInfoImplCopyWithImpl<$Res>
     Object? space = null,
     Object? members = null,
     Object? spaceMember = null,
+    Object? location = freezed,
   }) {
     return _then(_$SpaceInfoImpl(
       space: null == space
@@ -1101,6 +1087,10 @@ class __$$SpaceInfoImplCopyWithImpl<$Res>
           ? _value._spaceMember
           : spaceMember // ignore: cast_nullable_to_non_nullable
               as List<ApiSpaceMember>,
+      location: freezed == location
+          ? _value.location
+          : location // ignore: cast_nullable_to_non_nullable
+              as ApiLocation?,
     ));
   }
 }
@@ -1111,7 +1101,8 @@ class _$SpaceInfoImpl extends _SpaceInfo {
   const _$SpaceInfoImpl(
       {required this.space,
       required final List<ApiUser> members,
-      required final List<ApiSpaceMember> spaceMember})
+      required final List<ApiSpaceMember> spaceMember,
+      this.location})
       : _members = members,
         _spaceMember = spaceMember,
         super._();
@@ -1138,8 +1129,11 @@ class _$SpaceInfoImpl extends _SpaceInfo {
   }
 
   @override
+  final ApiLocation? location;
+
+  @override
   String toString() {
-    return 'SpaceInfo(space: $space, members: $members, spaceMember: $spaceMember)';
+    return 'SpaceInfo(space: $space, members: $members, spaceMember: $spaceMember, location: $location)';
   }
 
   @override
@@ -1150,7 +1144,9 @@ class _$SpaceInfoImpl extends _SpaceInfo {
             (identical(other.space, space) || other.space == space) &&
             const DeepCollectionEquality().equals(other._members, _members) &&
             const DeepCollectionEquality()
-                .equals(other._spaceMember, _spaceMember));
+                .equals(other._spaceMember, _spaceMember) &&
+            (identical(other.location, location) ||
+                other.location == location));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1159,7 +1155,8 @@ class _$SpaceInfoImpl extends _SpaceInfo {
       runtimeType,
       space,
       const DeepCollectionEquality().hash(_members),
-      const DeepCollectionEquality().hash(_spaceMember));
+      const DeepCollectionEquality().hash(_spaceMember),
+      location);
 
   /// Create a copy of SpaceInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -1181,7 +1178,8 @@ abstract class _SpaceInfo extends SpaceInfo {
   const factory _SpaceInfo(
       {required final ApiSpace space,
       required final List<ApiUser> members,
-      required final List<ApiSpaceMember> spaceMember}) = _$SpaceInfoImpl;
+      required final List<ApiSpaceMember> spaceMember,
+      final ApiLocation? location}) = _$SpaceInfoImpl;
   const _SpaceInfo._() : super._();
 
   factory _SpaceInfo.fromJson(Map<String, dynamic> json) =
@@ -1193,6 +1191,8 @@ abstract class _SpaceInfo extends SpaceInfo {
   List<ApiUser> get members;
   @override
   List<ApiSpaceMember> get spaceMember;
+  @override
+  ApiLocation? get location;
 
   /// Create a copy of SpaceInfo
   /// with the given fields replaced by the non-null parameter values.

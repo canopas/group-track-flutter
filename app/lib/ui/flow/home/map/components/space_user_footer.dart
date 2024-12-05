@@ -18,7 +18,6 @@ import 'selected_member_detail_view.dart';
 class SpaceUserFooter extends StatefulWidget {
   final SpaceInfo? selectedSpace;
   final List<ApiUser>? members;
-  final List<ApiSpaceMember> spaceMembers;
   final ApiUser? selectedUser;
   final bool isEnabled;
   final bool fetchingInviteCode;
@@ -26,7 +25,7 @@ class SpaceUserFooter extends StatefulWidget {
   final LatLng currentUserLocation;
   final ApiLocation selectedUserLocation;
   final void Function() onAddMemberTap;
-  final void Function(ApiUser, ApiSpaceMember) onMemberTap;
+  final void Function(ApiUser) onMemberTap;
   final void Function() onRelocateTap;
   final void Function() onMapTypeTap;
   final void Function() onPlacesTap;
@@ -36,7 +35,6 @@ class SpaceUserFooter extends StatefulWidget {
     super.key,
     this.selectedSpace,
     required this.members,
-    required this.spaceMembers,
     this.selectedUser,
     required this.isEnabled,
     required this.fetchingInviteCode,
@@ -95,7 +93,6 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
               child: selectedSpaceMemberView(
                 context: context,
                 members: widget.members,
-                spaceMembers: widget.spaceMembers,
               )),
         ],
       ),
@@ -170,7 +167,6 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
   Widget selectedSpaceMemberView({
     required BuildContext context,
     required List<ApiUser>? members,
-    required List<ApiSpaceMember> spaceMembers,
   }) {
     if (members == null || members.isEmpty) return Container();
     return Container(
@@ -192,10 +188,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                 itemCount: members.length,
                 shrinkWrap: true,
                 itemBuilder: (_, index) {
-                  final spaceMember = spaceMembers.firstWhere(
-                        (spaceMember) => spaceMember.user_id == members[index].id,
-                  );
-                  return spaceMemberItem(context, members[index], spaceMember);
+                  return spaceMemberItem(context, members[index]);
                 },
               ),
             ),
@@ -249,12 +242,12 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
   }
 
   Widget spaceMemberItem(
-      BuildContext context, ApiUser userInfo, ApiSpaceMember spaceMember) {
+      BuildContext context, ApiUser userInfo) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: OnTapScale(
         onTap: () {
-          widget.onMemberTap(userInfo, spaceMember);
+          widget.onMemberTap(userInfo);
         },
         child: SizedBox(
           width: 40,

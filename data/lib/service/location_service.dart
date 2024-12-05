@@ -31,19 +31,22 @@ class LocationService {
   CollectionReference _userLocationRef(String spaceId, String userId) =>
       _spaceMemberRef(spaceId)
           .doc(userId)
-          .collection("user_location")
+          .collection("user_locations")
           .withConverter<ApiLocation>(
           fromFirestore: ApiLocation.fromFireStore,
           toFirestore: (location, _) => location.toJson());
 
-  Stream<List<ApiLocation>?> getCurrentLocationStream({required String userId, required String spaceId}) {
+  Stream<ApiLocation?> streamUserLatestLocation({
+    required String userId,
+    required String spaceId,
+  }) {
     return _userLocationRef(spaceId, userId)
         .orderBy('created_at', descending: true)
         .limit(1)
         .snapshots()
-        .map((snapshot) {
-      if (snapshot.docs.isNotEmpty) {
-        return snapshot.docs.map((doc) => doc.data() as ApiLocation).toList();
+        .map((querySnapshot) {
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first.data() as ApiLocation;
       }
       return null;
     });
@@ -61,14 +64,31 @@ class LocationService {
 
       final location = ApiLocation(
         id: docRef.id,
-        user_id: userId,
         latitude: locationData.latitude,
         longitude: locationData.longitude,
         created_at: DateTime.now().millisecondsSinceEpoch,
+        user_id: userId,
       );
-
       await docRef.set(location);
     }
+  }
+
+  Future<void> saveCurrentLocationWithSpaceId({
+    required String spaceId,
+    required String userId,
+    required LocationData locationData,
+  }) async {
+    final docRef = _userLocationRef(spaceId, userId).doc();
+
+    final location = ApiLocation(
+      id: docRef.id,
+      latitude: locationData.latitude,
+      longitude: locationData.longitude,
+      created_at: DateTime.now().millisecondsSinceEpoch,
+      user_id: userId,
+    );
+
+    await docRef.set(location);
   }
 
   Future<List<ApiSpace?>> getUserSpaces(String userId) async {

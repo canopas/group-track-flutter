@@ -48,12 +48,14 @@ class SpaceService {
     _currentSpaceIdController.state = value;
   }
 
-  Future<String> createSpaceAndGetInviteCode(String spaceName) async {
+  Future<Map<String, String>> createSpaceAndGetInviteCode(String spaceName) async {
     final spaceId = await spaceService.createSpace(spaceName);
-    final generatedCode =
-        await spaceInvitationService.createInvitation(spaceId);
+    final generatedCode = await spaceInvitationService.createInvitation(spaceId);
     currentSpaceId = spaceId;
-    return generatedCode;
+    return {
+      'spaceId': spaceId,
+      'generatedCode': generatedCode,
+    };
   }
 
   Future<void> joinSpace(String spaceId) async {
@@ -223,19 +225,22 @@ class SpaceService {
     return spaceService.getStreamSpaceMemberBySpaceId(spaceId).switchMap((members) {
 
       List<Stream<ApiUser>> userInfoStreams = members.map((member) {
-        return userService.getUserStream(member.user_id).map((user) {
-          return user!;
-        });
+        return userService.getUserStream(member.user_id).map((user) => user!);
       }).toList();
 
       return CombineLatestStream.list(userInfoStreams).switchMap((userInfoList) {
-        return spaceService.getSpace(spaceId).then((space) {
-          return SpaceInfo(
-            space: space!,
-            members: userInfoList,
-            spaceMember: members,
-          );
-        }).asStream();
+        return spaceService.getSpace(spaceId).asStream().switchMap((space) {
+          return locationService
+              .streamUserLatestLocation(userId: currentUser?.id ?? '', spaceId: spaceId)
+              .map((currentUserLocation) {
+            return SpaceInfo(
+              space: space!,
+              members: userInfoList,
+              spaceMember: members,
+              location: currentUserLocation,
+            );
+          });
+        });
       });
     });
   }
