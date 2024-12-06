@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/api/space/api_space_service.dart';
@@ -26,6 +28,7 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
   final PlaceService placeService;
   final SpaceService spaceService;
   final ApiSpaceService apiSpaceService;
+  late StreamSubscription<List<ApiSpaceMember>> _spaceMemberSubscription;
 
   PlacesListViewNotifier(
       currentUser, this.placeService, this.spaceService, this.apiSpaceService)
@@ -52,12 +55,15 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
 
   void getSpaceMember(String spaceId) {
     try {
-      apiSpaceService.getStreamSpaceMemberBySpaceId(spaceId).listen((member) {
+      _spaceMemberSubscription = apiSpaceService
+          .getStreamSpaceMemberBySpaceId(spaceId)
+          .listen((member) {
         if (mounted) {
           state = state.copyWith(spaceMember: member);
         }
       });
     } catch (error, stack) {
+      state = state.copyWith(error: error);
       logger.e('PlaceListViewNotifier: error while stream space info',
           error: error, stackTrace: stack);
     }
@@ -131,6 +137,12 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
         stackTrace: stack,
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _spaceMemberSubscription.cancel();
+    super.dispose();
   }
 }
 
