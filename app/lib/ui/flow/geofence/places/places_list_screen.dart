@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:style/animation/on_tap_scale.dart';
+import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
@@ -35,6 +36,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
     runPostFrame(() {
       notifier = ref.watch(placesListViewStateProvider.notifier);
       notifier.loadPlaces(widget.spaceId);
+      notifier.getSpaceMember(widget.spaceId);
     });
   }
 
@@ -44,6 +46,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
 
     _observeError();
     _observeShowDeletePlaceDialog();
+    _observeInviteScreenNavigation();
 
     return AppPage(title: context.l10n.places_list_title, body: _body(state));
   }
@@ -55,6 +58,17 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
       );
     }
 
+    if (state.spaceMember.length <= 1) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: _emptyViewWith0Member(context, state),
+      );
+    }
+
+    return _listView(state);
+  }
+
+  Widget _listView(PlacesListState state) {
     final placeLength = (state.places.isEmpty) ? 0 : state.places.length + 1;
     return SafeArea(
       child: Column(
@@ -218,6 +232,45 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
     );
   }
 
+  Widget _emptyViewWith0Member(
+      BuildContext context, PlacesListState state) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            Assets.images.icGeofenceIcon,
+            colorFilter: ColorFilter.mode(
+              context.colorScheme.textPrimary,
+              BlendMode.srcATop,
+            ),
+            width: 80,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            context.l10n.place_list_add_member_to_add_places_title,
+            style: AppTextStyle.header3.copyWith(
+              color: context.colorScheme.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            context.l10n.place_list_add_member_to_add_places_subtitle,
+            style: AppTextStyle.subtitle1.copyWith(
+              color: context.colorScheme.textDisabled,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          PrimaryButton(context.l10n.message_add_new_member_title,
+              progress: state.fetchingInviteCode, onPressed: () {
+            notifier.onAddNewMemberTap(widget.spaceId);
+          }),
+        ],
+      ),
+    );
+  }
+
   String _getPlacesIcon(String name) {
     if (name == 'Home') {
       return Assets.images.icPlacesHomeIcon;
@@ -264,6 +317,16 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
               final isNetworkOff = await checkInternetConnectivity();
               isNetworkOff ? _showSnackBar() : notifier.deletePlace();
             });
+      }
+    });
+  }
+
+  void _observeInviteScreenNavigation() {
+    ref.listen(
+        placesListViewStateProvider
+            .select((state) => state.spaceInvitationCode), (previous, next) {
+      if (next.isNotEmpty) {
+        AppRoute.inviteCode(code: next, spaceName: '').push(context);
       }
     });
   }

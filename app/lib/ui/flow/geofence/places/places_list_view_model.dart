@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/place/api_place.dart';
+import 'package:data/api/space/api_space_service.dart';
+import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/place_service.dart';
+import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -14,13 +19,19 @@ final placesListViewStateProvider =
   return PlacesListViewNotifier(
     ref.read(currentUserPod),
     ref.read(placeServiceProvider),
+    ref.read(spaceServiceProvider),
+    ref.read(apiSpaceServiceProvider),
   );
 });
 
 class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
   final PlaceService placeService;
+  final SpaceService spaceService;
+  final ApiSpaceService apiSpaceService;
+  late StreamSubscription<List<ApiSpaceMember>> _spaceMemberSubscription;
 
-  PlacesListViewNotifier(currentUser, this.placeService)
+  PlacesListViewNotifier(
+      currentUser, this.placeService, this.spaceService, this.apiSpaceService)
       : super(PlacesListState(currentUser: currentUser));
 
   void loadPlaces(String spaceId) async {
@@ -39,6 +50,22 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
         error: error,
         stackTrace: stack,
       );
+    }
+  }
+
+  void getSpaceMember(String spaceId) {
+    try {
+      _spaceMemberSubscription = apiSpaceService
+          .getStreamSpaceMemberBySpaceId(spaceId)
+          .listen((member) {
+        if (mounted) {
+          state = state.copyWith(spaceMember: member);
+        }
+      });
+    } catch (error, stack) {
+      state = state.copyWith(error: error);
+      logger.e('PlaceListViewNotifier: error while stream space info',
+          error: error, stackTrace: stack);
     }
   }
 
@@ -92,6 +119,31 @@ class PlacesListViewNotifier extends StateNotifier<PlacesListState> {
       );
     }
   }
+
+  void onAddNewMemberTap(String spaceId) async {
+    try {
+      state = state.copyWith(fetchingInviteCode: true);
+      final code =
+      await spaceService.getInviteCode(spaceId);
+      state = state.copyWith(
+          spaceInvitationCode: code ?? '',
+          fetchingInviteCode: false,
+          error: null);
+    } catch (error, stack) {
+      state = state.copyWith(error: error);
+      logger.e(
+        'MessageViewNotifier: Error while getting invitation code',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _spaceMemberSubscription.cancel();
+    super.dispose();
+  }
 }
 
 @freezed
@@ -99,12 +151,15 @@ class PlacesListState with _$PlacesListState {
   const factory PlacesListState({
     @Default(false) bool loading,
     @Default(false) bool deletingPlaces,
+    @Default(false) bool fetchingInviteCode,
+    @Default('') String spaceInvitationCode,
     String? spaceId,
     DateTime? showDeletePlaceDialog,
     ApiPlace? placesToDelete,
     ApiUser? currentUser,
     @Default([]) List<ApiPlace> places,
     @Default([]) List<String> suggestions,
+    @Default([]) List<ApiSpaceMember> spaceMember,
     Object? error,
   }) = _PlacesListState;
 }
