@@ -239,13 +239,14 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SvgPicture.asset(
-            Assets.images.icSendMessage,
+            Assets.images.icGeofenceIcon,
             colorFilter: ColorFilter.mode(
               context.colorScheme.textPrimary,
               BlendMode.srcATop,
             ),
+            width: 80,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           Text(
             context.l10n.place_list_add_member_to_add_places_title,
             style: AppTextStyle.header3.copyWith(
