@@ -18,12 +18,15 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$PlacesListState {
   bool get loading => throw _privateConstructorUsedError;
   bool get deletingPlaces => throw _privateConstructorUsedError;
+  bool get fetchingInviteCode => throw _privateConstructorUsedError;
+  String get spaceInvitationCode => throw _privateConstructorUsedError;
   String? get spaceId => throw _privateConstructorUsedError;
   DateTime? get showDeletePlaceDialog => throw _privateConstructorUsedError;
   ApiPlace? get placesToDelete => throw _privateConstructorUsedError;
   ApiUser? get currentUser => throw _privateConstructorUsedError;
   List<ApiPlace> get places => throw _privateConstructorUsedError;
   List<String> get suggestions => throw _privateConstructorUsedError;
+  List<ApiSpaceMember> get spaceMember => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -40,12 +43,15 @@ abstract class $PlacesListStateCopyWith<$Res> {
   $Res call(
       {bool loading,
       bool deletingPlaces,
+      bool fetchingInviteCode,
+      String spaceInvitationCode,
       String? spaceId,
       DateTime? showDeletePlaceDialog,
       ApiPlace? placesToDelete,
       ApiUser? currentUser,
       List<ApiPlace> places,
       List<String> suggestions,
+      List<ApiSpaceMember> spaceMember,
       Object? error});
 
   $ApiPlaceCopyWith<$Res>? get placesToDelete;
@@ -67,12 +73,15 @@ class _$PlacesListStateCopyWithImpl<$Res, $Val extends PlacesListState>
   $Res call({
     Object? loading = null,
     Object? deletingPlaces = null,
+    Object? fetchingInviteCode = null,
+    Object? spaceInvitationCode = null,
     Object? spaceId = freezed,
     Object? showDeletePlaceDialog = freezed,
     Object? placesToDelete = freezed,
     Object? currentUser = freezed,
     Object? places = null,
     Object? suggestions = null,
+    Object? spaceMember = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -84,6 +93,14 @@ class _$PlacesListStateCopyWithImpl<$Res, $Val extends PlacesListState>
           ? _value.deletingPlaces
           : deletingPlaces // ignore: cast_nullable_to_non_nullable
               as bool,
+      fetchingInviteCode: null == fetchingInviteCode
+          ? _value.fetchingInviteCode
+          : fetchingInviteCode // ignore: cast_nullable_to_non_nullable
+              as bool,
+      spaceInvitationCode: null == spaceInvitationCode
+          ? _value.spaceInvitationCode
+          : spaceInvitationCode // ignore: cast_nullable_to_non_nullable
+              as String,
       spaceId: freezed == spaceId
           ? _value.spaceId
           : spaceId // ignore: cast_nullable_to_non_nullable
@@ -108,6 +125,10 @@ class _$PlacesListStateCopyWithImpl<$Res, $Val extends PlacesListState>
           ? _value.suggestions
           : suggestions // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      spaceMember: null == spaceMember
+          ? _value.spaceMember
+          : spaceMember // ignore: cast_nullable_to_non_nullable
+              as List<ApiSpaceMember>,
       error: freezed == error ? _value.error : error,
     ) as $Val);
   }
@@ -148,12 +169,15 @@ abstract class _$$PlacesListStateImplCopyWith<$Res>
   $Res call(
       {bool loading,
       bool deletingPlaces,
+      bool fetchingInviteCode,
+      String spaceInvitationCode,
       String? spaceId,
       DateTime? showDeletePlaceDialog,
       ApiPlace? placesToDelete,
       ApiUser? currentUser,
       List<ApiPlace> places,
       List<String> suggestions,
+      List<ApiSpaceMember> spaceMember,
       Object? error});
 
   @override
@@ -175,12 +199,15 @@ class __$$PlacesListStateImplCopyWithImpl<$Res>
   $Res call({
     Object? loading = null,
     Object? deletingPlaces = null,
+    Object? fetchingInviteCode = null,
+    Object? spaceInvitationCode = null,
     Object? spaceId = freezed,
     Object? showDeletePlaceDialog = freezed,
     Object? placesToDelete = freezed,
     Object? currentUser = freezed,
     Object? places = null,
     Object? suggestions = null,
+    Object? spaceMember = null,
     Object? error = freezed,
   }) {
     return _then(_$PlacesListStateImpl(
@@ -192,6 +219,14 @@ class __$$PlacesListStateImplCopyWithImpl<$Res>
           ? _value.deletingPlaces
           : deletingPlaces // ignore: cast_nullable_to_non_nullable
               as bool,
+      fetchingInviteCode: null == fetchingInviteCode
+          ? _value.fetchingInviteCode
+          : fetchingInviteCode // ignore: cast_nullable_to_non_nullable
+              as bool,
+      spaceInvitationCode: null == spaceInvitationCode
+          ? _value.spaceInvitationCode
+          : spaceInvitationCode // ignore: cast_nullable_to_non_nullable
+              as String,
       spaceId: freezed == spaceId
           ? _value.spaceId
           : spaceId // ignore: cast_nullable_to_non_nullable
@@ -216,6 +251,10 @@ class __$$PlacesListStateImplCopyWithImpl<$Res>
           ? _value._suggestions
           : suggestions // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      spaceMember: null == spaceMember
+          ? _value._spaceMember
+          : spaceMember // ignore: cast_nullable_to_non_nullable
+              as List<ApiSpaceMember>,
       error: freezed == error ? _value.error : error,
     ));
   }
@@ -227,15 +266,19 @@ class _$PlacesListStateImpl implements _PlacesListState {
   const _$PlacesListStateImpl(
       {this.loading = false,
       this.deletingPlaces = false,
+      this.fetchingInviteCode = false,
+      this.spaceInvitationCode = '',
       this.spaceId,
       this.showDeletePlaceDialog,
       this.placesToDelete,
       this.currentUser,
       final List<ApiPlace> places = const [],
       final List<String> suggestions = const [],
+      final List<ApiSpaceMember> spaceMember = const [],
       this.error})
       : _places = places,
-        _suggestions = suggestions;
+        _suggestions = suggestions,
+        _spaceMember = spaceMember;
 
   @override
   @JsonKey()
@@ -243,6 +286,12 @@ class _$PlacesListStateImpl implements _PlacesListState {
   @override
   @JsonKey()
   final bool deletingPlaces;
+  @override
+  @JsonKey()
+  final bool fetchingInviteCode;
+  @override
+  @JsonKey()
+  final String spaceInvitationCode;
   @override
   final String? spaceId;
   @override
@@ -269,12 +318,21 @@ class _$PlacesListStateImpl implements _PlacesListState {
     return EqualUnmodifiableListView(_suggestions);
   }
 
+  final List<ApiSpaceMember> _spaceMember;
+  @override
+  @JsonKey()
+  List<ApiSpaceMember> get spaceMember {
+    if (_spaceMember is EqualUnmodifiableListView) return _spaceMember;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_spaceMember);
+  }
+
   @override
   final Object? error;
 
   @override
   String toString() {
-    return 'PlacesListState(loading: $loading, deletingPlaces: $deletingPlaces, spaceId: $spaceId, showDeletePlaceDialog: $showDeletePlaceDialog, placesToDelete: $placesToDelete, currentUser: $currentUser, places: $places, suggestions: $suggestions, error: $error)';
+    return 'PlacesListState(loading: $loading, deletingPlaces: $deletingPlaces, fetchingInviteCode: $fetchingInviteCode, spaceInvitationCode: $spaceInvitationCode, spaceId: $spaceId, showDeletePlaceDialog: $showDeletePlaceDialog, placesToDelete: $placesToDelete, currentUser: $currentUser, places: $places, suggestions: $suggestions, spaceMember: $spaceMember, error: $error)';
   }
 
   @override
@@ -285,6 +343,10 @@ class _$PlacesListStateImpl implements _PlacesListState {
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.deletingPlaces, deletingPlaces) ||
                 other.deletingPlaces == deletingPlaces) &&
+            (identical(other.fetchingInviteCode, fetchingInviteCode) ||
+                other.fetchingInviteCode == fetchingInviteCode) &&
+            (identical(other.spaceInvitationCode, spaceInvitationCode) ||
+                other.spaceInvitationCode == spaceInvitationCode) &&
             (identical(other.spaceId, spaceId) || other.spaceId == spaceId) &&
             (identical(other.showDeletePlaceDialog, showDeletePlaceDialog) ||
                 other.showDeletePlaceDialog == showDeletePlaceDialog) &&
@@ -295,6 +357,8 @@ class _$PlacesListStateImpl implements _PlacesListState {
             const DeepCollectionEquality().equals(other._places, _places) &&
             const DeepCollectionEquality()
                 .equals(other._suggestions, _suggestions) &&
+            const DeepCollectionEquality()
+                .equals(other._spaceMember, _spaceMember) &&
             const DeepCollectionEquality().equals(other.error, error));
   }
 
@@ -303,12 +367,15 @@ class _$PlacesListStateImpl implements _PlacesListState {
       runtimeType,
       loading,
       deletingPlaces,
+      fetchingInviteCode,
+      spaceInvitationCode,
       spaceId,
       showDeletePlaceDialog,
       placesToDelete,
       currentUser,
       const DeepCollectionEquality().hash(_places),
       const DeepCollectionEquality().hash(_suggestions),
+      const DeepCollectionEquality().hash(_spaceMember),
       const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
@@ -323,18 +390,25 @@ abstract class _PlacesListState implements PlacesListState {
   const factory _PlacesListState(
       {final bool loading,
       final bool deletingPlaces,
+      final bool fetchingInviteCode,
+      final String spaceInvitationCode,
       final String? spaceId,
       final DateTime? showDeletePlaceDialog,
       final ApiPlace? placesToDelete,
       final ApiUser? currentUser,
       final List<ApiPlace> places,
       final List<String> suggestions,
+      final List<ApiSpaceMember> spaceMember,
       final Object? error}) = _$PlacesListStateImpl;
 
   @override
   bool get loading;
   @override
   bool get deletingPlaces;
+  @override
+  bool get fetchingInviteCode;
+  @override
+  String get spaceInvitationCode;
   @override
   String? get spaceId;
   @override
@@ -347,6 +421,8 @@ abstract class _PlacesListState implements PlacesListState {
   List<ApiPlace> get places;
   @override
   List<String> get suggestions;
+  @override
+  List<ApiSpaceMember> get spaceMember;
   @override
   Object? get error;
   @override

@@ -106,25 +106,6 @@ class SpaceService {
     });
   }
 
-  Future<SpaceInfo?> getCurrentSpaceInfo() async {
-    final currentSpace = await getCurrentSpace();
-    if (currentSpace == null) return null;
-    final members = await spaceService.getMembersBySpaceId(currentSpace.id);
-    return SpaceInfo(
-      space: currentSpace,
-      members: members
-          .map((member) async {
-            final user = await userService.getUser(member.user_id);
-            return user != null
-                ? ApiUserInfo(
-                    user: user, isLocationEnabled: member.location_enabled)
-                : null;
-          })
-          .whereType<ApiUserInfo>()
-          .toList(),
-    );
-  }
-
   Future<SpaceInfo?> getSpaceInfo(String spaceId) async {
     final space = await getSpace(spaceId);
     if (space == null) return null;
@@ -143,15 +124,6 @@ class SpaceService {
     );
   }
 
-  Future<ApiSpace?> getCurrentSpace() async {
-    final spaceId = currentSpaceId;
-    if (spaceId!.isEmpty) {
-      final userId = currentUser?.id ?? '';
-      final userSpaces = await getUserSpaces(userId);
-      return userSpaces.firstOrNull;
-    }
-    return getSpace(spaceId);
-  }
 
   Future<List<ApiSpace?>> getUserSpaces(String userId) async {
     final spaceMembers = await spaceService.getSpaceMemberByUserId(userId);
