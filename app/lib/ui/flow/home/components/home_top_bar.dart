@@ -298,9 +298,9 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
       return const SizedBox();
     }
     final admin = space.members.where(
-      (member) => member.user.id == space.space.admin_id,
+      (member) => member.id == space.space.admin_id,
     );
-    final fullName = admin.isEmpty ? "" : admin.first.user.fullName;
+    final fullName = admin.isEmpty ? "" : admin.first.fullName;
 
     return GestureDetector(
       onTap: () {

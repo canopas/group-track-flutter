@@ -62,6 +62,8 @@ dependencies:
   flutter_background_service: ^5.0.6
   url_launcher: ^6.3.0
   battery_plus: ^6.2.0
+  libsignal_protocol_dart: ^0.7.1
+  encrypt: ^5.0.3
 
   # map
   google_maps_flutter: ^2.3.1

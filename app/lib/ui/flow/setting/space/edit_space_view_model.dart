@@ -33,11 +33,11 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
       state = state.copyWith(loading: state.space != null);
       final space = await spaceService.getSpaceInfo(spaceId);
       final currentUserInfo = space?.members.firstWhere(
-        (member) => member.user.id == user?.id,
+        (member) => member.id == user?.id,
       );
       final otherMembers = space?.members
           .where(
-            (member) => member.user.id != user?.id,
+            (member) => member.id != user?.id,
           )
           .toList();
 
@@ -46,7 +46,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         currentUserInfo: currentUserInfo,
         userInfo: otherMembers ?? [],
         isAdmin: space?.space.admin_id == user?.id,
-        locationEnabled: currentUserInfo?.isLocationEnabled ?? false,
+        locationEnabled: currentUserInfo?.location_enabled ?? false,
         spaceName: TextEditingController(text: space?.space.name),
         loading: false,
         error: null,
@@ -65,9 +65,9 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         await spaceService.updateSpace(
             state.space!.space.copyWith(name: state.spaceName.text.trim()));
       }
-      if (state.currentUserInfo!.isLocationEnabled != state.locationEnabled) {
+      if (state.currentUserInfo!.location_enabled != state.locationEnabled) {
         await spaceService.enableLocation(state.space!.space.id,
-            state.currentUserInfo!.user.id, state.locationEnabled);
+            state.currentUserInfo!.id, state.locationEnabled);
       }
       state = state.copyWith(saving: false, allowSave: false, error: null);
     } catch (error, stack) {
@@ -119,7 +119,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
   void toggleLocationSharing(bool isEnabled) {
     state = state.copyWith(
         locationEnabled: isEnabled,
-        allowSave: state.currentUserInfo!.isLocationEnabled != isEnabled);
+        allowSave: state.currentUserInfo!.location_enabled != isEnabled);
   }
 
   Future<bool> _checkUserInternet() async {
@@ -147,8 +147,8 @@ class EditSpaceViewState with _$EditSpaceViewState {
     @Default(false) bool adminRemovingMember,
     @Default('') String selectedSpaceName,
     @Default('') String currentUserId,
-    ApiUserInfo? currentUserInfo,
-    @Default([]) List<ApiUserInfo> userInfo,
+    ApiUser? currentUserInfo,
+    @Default([]) List<ApiUser> userInfo,
     required TextEditingController spaceName,
     SpaceInfo? space,
     Object? error,

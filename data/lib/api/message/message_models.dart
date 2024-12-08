@@ -74,7 +74,7 @@ class ThreadInfo with _$ThreadInfo {
   const factory ThreadInfo({
     required ApiThread thread,
     required List<ApiThreadMessage> threadMessage,
-    required List<ApiUserInfo> members,
+    required List<ApiUser> members,
   }) = _ThreadInfo;
 
   factory ThreadInfo.fromJson(Map<String, dynamic> data) =>

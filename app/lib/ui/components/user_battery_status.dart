@@ -8,13 +8,13 @@ import 'package:style/text/app_text_dart.dart';
 import '../../gen/assets.gen.dart';
 
 class UserBatteryStatus extends StatelessWidget {
-  final ApiUserInfo userInfo;
+  final ApiUser userInfo;
 
   const UserBatteryStatus({super.key, required this.userInfo});
 
   @override
   Widget build(BuildContext context) {
-    final batteryPct = userInfo.user.battery_pct ?? 0;
+    final batteryPct = userInfo.battery_pct ?? 0;
     String icon;
     Color color;
 

@@ -27,7 +27,7 @@ mixin _$EditPlaceState {
   ApiPlace? get updatedPlace => throw _privateConstructorUsedError;
   ApiPlaceMemberSetting? get updatedSetting =>
       throw _privateConstructorUsedError;
-  List<ApiUserInfo> get membersInfo => throw _privateConstructorUsedError;
+  List<ApiUser> get membersInfo => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
   double? get radius => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
@@ -56,7 +56,7 @@ abstract class $EditPlaceStateCopyWith<$Res> {
       String? placeId,
       ApiPlace? updatedPlace,
       ApiPlaceMemberSetting? updatedSetting,
-      List<ApiUserInfo> membersInfo,
+      List<ApiUser> membersInfo,
       String? address,
       double? radius,
       Object? error,
@@ -141,7 +141,7 @@ class _$EditPlaceStateCopyWithImpl<$Res, $Val extends EditPlaceState>
       membersInfo: null == membersInfo
           ? _value.membersInfo
           : membersInfo // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
+              as List<ApiUser>,
       address: freezed == address
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -207,7 +207,7 @@ abstract class _$$EditPlaceStateImplCopyWith<$Res>
       String? placeId,
       ApiPlace? updatedPlace,
       ApiPlaceMemberSetting? updatedSetting,
-      List<ApiUserInfo> membersInfo,
+      List<ApiUser> membersInfo,
       String? address,
       double? radius,
       Object? error,
@@ -292,7 +292,7 @@ class __$$EditPlaceStateImplCopyWithImpl<$Res>
       membersInfo: null == membersInfo
           ? _value._membersInfo
           : membersInfo // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
+              as List<ApiUser>,
       address: freezed == address
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -328,7 +328,7 @@ class _$EditPlaceStateImpl implements _EditPlaceState {
       this.placeId,
       this.updatedPlace,
       this.updatedSetting,
-      final List<ApiUserInfo> membersInfo = const [],
+      final List<ApiUser> membersInfo = const [],
       this.address,
       this.radius,
       this.error,
@@ -363,10 +363,10 @@ class _$EditPlaceStateImpl implements _EditPlaceState {
   final ApiPlace? updatedPlace;
   @override
   final ApiPlaceMemberSetting? updatedSetting;
-  final List<ApiUserInfo> _membersInfo;
+  final List<ApiUser> _membersInfo;
   @override
   @JsonKey()
-  List<ApiUserInfo> get membersInfo {
+  List<ApiUser> get membersInfo {
     if (_membersInfo is EqualUnmodifiableListView) return _membersInfo;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_membersInfo);
@@ -460,7 +460,7 @@ abstract class _EditPlaceState implements EditPlaceState {
       final String? placeId,
       final ApiPlace? updatedPlace,
       final ApiPlaceMemberSetting? updatedSetting,
-      final List<ApiUserInfo> membersInfo,
+      final List<ApiUser> membersInfo,
       final String? address,
       final double? radius,
       final Object? error,
@@ -488,7 +488,7 @@ abstract class _EditPlaceState implements EditPlaceState {
   @override
   ApiPlaceMemberSetting? get updatedSetting;
   @override
-  List<ApiUserInfo> get membersInfo;
+  List<ApiUser> get membersInfo;
   @override
   String? get address;
   @override

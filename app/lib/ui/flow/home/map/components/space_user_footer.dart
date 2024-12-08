@@ -1,4 +1,5 @@
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/location/location.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,14 +17,15 @@ import 'selected_member_detail_view.dart';
 
 class SpaceUserFooter extends StatefulWidget {
   final SpaceInfo? selectedSpace;
-  final List<ApiUserInfo>? members;
-  final ApiUserInfo? selectedUser;
+  final List<ApiUser>? members;
+  final ApiUser? selectedUser;
   final bool isEnabled;
   final bool fetchingInviteCode;
   final bool isCurrentUser;
   final LatLng currentUserLocation;
+  final ApiLocation selectedUserLocation;
   final void Function() onAddMemberTap;
-  final void Function(ApiUserInfo) onMemberTap;
+  final void Function(ApiUser) onMemberTap;
   final void Function() onRelocateTap;
   final void Function() onMapTypeTap;
   final void Function() onPlacesTap;
@@ -38,6 +40,7 @@ class SpaceUserFooter extends StatefulWidget {
     required this.fetchingInviteCode,
     required this.isCurrentUser,
     required this.currentUserLocation,
+    required this.selectedUserLocation,
     required this.onAddMemberTap,
     required this.onMemberTap,
     required this.onRelocateTap,
@@ -77,6 +80,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                     onDismiss: widget.onDismiss,
                     isCurrentUser: widget.isCurrentUser,
                     currentUserLocation: widget.currentUserLocation,
+                    location: widget.selectedUserLocation,
                   )
                 : const SizedBox.shrink(
                     key: ValueKey('emptyBox'),
@@ -162,7 +166,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
 
   Widget selectedSpaceMemberView({
     required BuildContext context,
-    required List<ApiUserInfo>? members,
+    required List<ApiUser>? members,
   }) {
     if (members == null || members.isEmpty) return Container();
     return Container(
@@ -238,9 +242,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
   }
 
   Widget spaceMemberItem(
-    BuildContext context,
-    ApiUserInfo userInfo,
-  ) {
+      BuildContext context, ApiUser userInfo) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: OnTapScale(
@@ -254,14 +256,14 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ProfileImage(
-                profileImageUrl: userInfo.user.profile_image!,
-                firstLetter: userInfo.user.firstChar,
+                profileImageUrl: userInfo.profile_image!,
+                firstLetter: userInfo.firstChar,
                 size: 40,
                 backgroundColor: context.colorScheme.primary,
               ),
               const SizedBox(height: 2),
               Text(
-                userInfo.user.first_name ?? '',
+                userInfo.first_name ?? '',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: AppTextStyle.caption

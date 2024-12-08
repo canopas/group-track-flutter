@@ -22,6 +22,12 @@ _$ApiUserImpl _$$ApiUserImplFromJson(Map<String, dynamic> json) =>
           const [],
       battery_pct: (json['battery_pct'] as num?)?.toInt(),
       fcm_token: json['fcm_token'] as String? ?? "",
+      public_key: json['public_key'] as String?,
+      private_key_encrypted: json['private_key_encrypted'] as String?,
+      pre_key_bundle: json['pre_key_bundle'] == null
+          ? null
+          : ApiUserPreKeyBundle.fromJson(
+              json['pre_key_bundle'] as Map<String, dynamic>),
       state: (json['state'] as num?)?.toInt(),
       created_at: (json['created_at'] as num?)?.toInt(),
       updated_at: (json['updated_at'] as num?)?.toInt(),
@@ -40,9 +46,32 @@ Map<String, dynamic> _$$ApiUserImplToJson(_$ApiUserImpl instance) =>
       'space_ids': instance.space_ids,
       'battery_pct': instance.battery_pct,
       'fcm_token': instance.fcm_token,
+      'public_key': instance.public_key,
+      'private_key_encrypted': instance.private_key_encrypted,
+      'pre_key_bundle': instance.pre_key_bundle?.toJson(),
       'state': instance.state,
       'created_at': instance.created_at,
       'updated_at': instance.updated_at,
+    };
+
+_$ApiUserPreKeyBundleImpl _$$ApiUserPreKeyBundleImplFromJson(
+        Map<String, dynamic> json) =>
+    _$ApiUserPreKeyBundleImpl(
+      identity_key: json['identity_key'] as String,
+      signed_prekeys: (json['signed_prekeys'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      one_time_prekeys: (json['one_time_prekeys'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+    );
+
+Map<String, dynamic> _$$ApiUserPreKeyBundleImplToJson(
+        _$ApiUserPreKeyBundleImpl instance) =>
+    <String, dynamic>{
+      'identity_key': instance.identity_key,
+      'signed_prekeys': instance.signed_prekeys,
+      'one_time_prekeys': instance.one_time_prekeys,
     };
 
 _$ApiSessionImpl _$$ApiSessionImplFromJson(Map<String, dynamic> json) =>
@@ -67,24 +96,4 @@ Map<String, dynamic> _$$ApiSessionImplToJson(_$ApiSessionImpl instance) =>
       'device_id': instance.device_id,
       'created_at': instance.created_at,
       'app_version': instance.app_version,
-    };
-
-_$ApiUserInfoImpl _$$ApiUserInfoImplFromJson(Map<String, dynamic> json) =>
-    _$ApiUserInfoImpl(
-      user: ApiUser.fromJson(json['user'] as Map<String, dynamic>),
-      location: json['location'] == null
-          ? null
-          : ApiLocation.fromJson(json['location'] as Map<String, dynamic>),
-      isLocationEnabled: json['isLocationEnabled'] as bool,
-      session: json['session'] == null
-          ? null
-          : ApiSession.fromJson(json['session'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$$ApiUserInfoImplToJson(_$ApiUserInfoImpl instance) =>
-    <String, dynamic>{
-      'user': instance.user.toJson(),
-      'location': instance.location?.toJson(),
-      'isLocationEnabled': instance.isLocationEnabled,
-      'session': instance.session?.toJson(),
     };

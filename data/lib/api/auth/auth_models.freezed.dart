@@ -31,6 +31,9 @@ mixin _$ApiUser {
   List<String>? get space_ids => throw _privateConstructorUsedError;
   int? get battery_pct => throw _privateConstructorUsedError;
   String? get fcm_token => throw _privateConstructorUsedError;
+  String? get public_key => throw _privateConstructorUsedError;
+  String? get private_key_encrypted => throw _privateConstructorUsedError;
+  ApiUserPreKeyBundle? get pre_key_bundle => throw _privateConstructorUsedError;
   int? get state => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
   int? get updated_at => throw _privateConstructorUsedError;
@@ -61,9 +64,14 @@ abstract class $ApiUserCopyWith<$Res> {
       List<String>? space_ids,
       int? battery_pct,
       String? fcm_token,
+      String? public_key,
+      String? private_key_encrypted,
+      ApiUserPreKeyBundle? pre_key_bundle,
       int? state,
       int? created_at,
       int? updated_at});
+
+  $ApiUserPreKeyBundleCopyWith<$Res>? get pre_key_bundle;
 }
 
 /// @nodoc
@@ -92,6 +100,9 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
     Object? space_ids = freezed,
     Object? battery_pct = freezed,
     Object? fcm_token = freezed,
+    Object? public_key = freezed,
+    Object? private_key_encrypted = freezed,
+    Object? pre_key_bundle = freezed,
     Object? state = freezed,
     Object? created_at = freezed,
     Object? updated_at = freezed,
@@ -141,6 +152,18 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
           ? _value.fcm_token
           : fcm_token // ignore: cast_nullable_to_non_nullable
               as String?,
+      public_key: freezed == public_key
+          ? _value.public_key
+          : public_key // ignore: cast_nullable_to_non_nullable
+              as String?,
+      private_key_encrypted: freezed == private_key_encrypted
+          ? _value.private_key_encrypted
+          : private_key_encrypted // ignore: cast_nullable_to_non_nullable
+              as String?,
+      pre_key_bundle: freezed == pre_key_bundle
+          ? _value.pre_key_bundle
+          : pre_key_bundle // ignore: cast_nullable_to_non_nullable
+              as ApiUserPreKeyBundle?,
       state: freezed == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -154,6 +177,20 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
           : updated_at // ignore: cast_nullable_to_non_nullable
               as int?,
     ) as $Val);
+  }
+
+  /// Create a copy of ApiUser
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ApiUserPreKeyBundleCopyWith<$Res>? get pre_key_bundle {
+    if (_value.pre_key_bundle == null) {
+      return null;
+    }
+
+    return $ApiUserPreKeyBundleCopyWith<$Res>(_value.pre_key_bundle!, (value) {
+      return _then(_value.copyWith(pre_key_bundle: value) as $Val);
+    });
   }
 }
 
@@ -176,9 +213,15 @@ abstract class _$$ApiUserImplCopyWith<$Res> implements $ApiUserCopyWith<$Res> {
       List<String>? space_ids,
       int? battery_pct,
       String? fcm_token,
+      String? public_key,
+      String? private_key_encrypted,
+      ApiUserPreKeyBundle? pre_key_bundle,
       int? state,
       int? created_at,
       int? updated_at});
+
+  @override
+  $ApiUserPreKeyBundleCopyWith<$Res>? get pre_key_bundle;
 }
 
 /// @nodoc
@@ -205,6 +248,9 @@ class __$$ApiUserImplCopyWithImpl<$Res>
     Object? space_ids = freezed,
     Object? battery_pct = freezed,
     Object? fcm_token = freezed,
+    Object? public_key = freezed,
+    Object? private_key_encrypted = freezed,
+    Object? pre_key_bundle = freezed,
     Object? state = freezed,
     Object? created_at = freezed,
     Object? updated_at = freezed,
@@ -254,6 +300,18 @@ class __$$ApiUserImplCopyWithImpl<$Res>
           ? _value.fcm_token
           : fcm_token // ignore: cast_nullable_to_non_nullable
               as String?,
+      public_key: freezed == public_key
+          ? _value.public_key
+          : public_key // ignore: cast_nullable_to_non_nullable
+              as String?,
+      private_key_encrypted: freezed == private_key_encrypted
+          ? _value.private_key_encrypted
+          : private_key_encrypted // ignore: cast_nullable_to_non_nullable
+              as String?,
+      pre_key_bundle: freezed == pre_key_bundle
+          ? _value.pre_key_bundle
+          : pre_key_bundle // ignore: cast_nullable_to_non_nullable
+              as ApiUserPreKeyBundle?,
       state: freezed == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -285,6 +343,9 @@ class _$ApiUserImpl extends _ApiUser {
       final List<String>? space_ids = const [],
       this.battery_pct,
       this.fcm_token = "",
+      this.public_key,
+      this.private_key_encrypted,
+      this.pre_key_bundle,
       this.state,
       this.created_at,
       this.updated_at})
@@ -328,6 +389,12 @@ class _$ApiUserImpl extends _ApiUser {
   @JsonKey()
   final String? fcm_token;
   @override
+  final String? public_key;
+  @override
+  final String? private_key_encrypted;
+  @override
+  final ApiUserPreKeyBundle? pre_key_bundle;
+  @override
   final int? state;
   @override
   final int? created_at;
@@ -336,7 +403,7 @@ class _$ApiUserImpl extends _ApiUser {
 
   @override
   String toString() {
-    return 'ApiUser(id: $id, first_name: $first_name, last_name: $last_name, email: $email, provider_firebase_id_token: $provider_firebase_id_token, auth_type: $auth_type, profile_image: $profile_image, location_enabled: $location_enabled, space_ids: $space_ids, battery_pct: $battery_pct, fcm_token: $fcm_token, state: $state, created_at: $created_at, updated_at: $updated_at)';
+    return 'ApiUser(id: $id, first_name: $first_name, last_name: $last_name, email: $email, provider_firebase_id_token: $provider_firebase_id_token, auth_type: $auth_type, profile_image: $profile_image, location_enabled: $location_enabled, space_ids: $space_ids, battery_pct: $battery_pct, fcm_token: $fcm_token, public_key: $public_key, private_key_encrypted: $private_key_encrypted, pre_key_bundle: $pre_key_bundle, state: $state, created_at: $created_at, updated_at: $updated_at)';
   }
 
   @override
@@ -366,6 +433,12 @@ class _$ApiUserImpl extends _ApiUser {
                 other.battery_pct == battery_pct) &&
             (identical(other.fcm_token, fcm_token) ||
                 other.fcm_token == fcm_token) &&
+            (identical(other.public_key, public_key) ||
+                other.public_key == public_key) &&
+            (identical(other.private_key_encrypted, private_key_encrypted) ||
+                other.private_key_encrypted == private_key_encrypted) &&
+            (identical(other.pre_key_bundle, pre_key_bundle) ||
+                other.pre_key_bundle == pre_key_bundle) &&
             (identical(other.state, state) || other.state == state) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at) &&
@@ -388,6 +461,9 @@ class _$ApiUserImpl extends _ApiUser {
       const DeepCollectionEquality().hash(_space_ids),
       battery_pct,
       fcm_token,
+      public_key,
+      private_key_encrypted,
+      pre_key_bundle,
       state,
       created_at,
       updated_at);
@@ -421,6 +497,9 @@ abstract class _ApiUser extends ApiUser {
       final List<String>? space_ids,
       final int? battery_pct,
       final String? fcm_token,
+      final String? public_key,
+      final String? private_key_encrypted,
+      final ApiUserPreKeyBundle? pre_key_bundle,
       final int? state,
       final int? created_at,
       final int? updated_at}) = _$ApiUserImpl;
@@ -451,6 +530,12 @@ abstract class _ApiUser extends ApiUser {
   @override
   String? get fcm_token;
   @override
+  String? get public_key;
+  @override
+  String? get private_key_encrypted;
+  @override
+  ApiUserPreKeyBundle? get pre_key_bundle;
+  @override
   int? get state;
   @override
   int? get created_at;
@@ -462,6 +547,224 @@ abstract class _ApiUser extends ApiUser {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiUserImplCopyWith<_$ApiUserImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+ApiUserPreKeyBundle _$ApiUserPreKeyBundleFromJson(Map<String, dynamic> json) {
+  return _ApiUserPreKeyBundle.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ApiUserPreKeyBundle {
+  String get identity_key => throw _privateConstructorUsedError;
+  List<String> get signed_prekeys => throw _privateConstructorUsedError;
+  List<String> get one_time_prekeys => throw _privateConstructorUsedError;
+
+  /// Serializes this ApiUserPreKeyBundle to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ApiUserPreKeyBundle
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ApiUserPreKeyBundleCopyWith<ApiUserPreKeyBundle> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ApiUserPreKeyBundleCopyWith<$Res> {
+  factory $ApiUserPreKeyBundleCopyWith(
+          ApiUserPreKeyBundle value, $Res Function(ApiUserPreKeyBundle) then) =
+      _$ApiUserPreKeyBundleCopyWithImpl<$Res, ApiUserPreKeyBundle>;
+  @useResult
+  $Res call(
+      {String identity_key,
+      List<String> signed_prekeys,
+      List<String> one_time_prekeys});
+}
+
+/// @nodoc
+class _$ApiUserPreKeyBundleCopyWithImpl<$Res, $Val extends ApiUserPreKeyBundle>
+    implements $ApiUserPreKeyBundleCopyWith<$Res> {
+  _$ApiUserPreKeyBundleCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ApiUserPreKeyBundle
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? identity_key = null,
+    Object? signed_prekeys = null,
+    Object? one_time_prekeys = null,
+  }) {
+    return _then(_value.copyWith(
+      identity_key: null == identity_key
+          ? _value.identity_key
+          : identity_key // ignore: cast_nullable_to_non_nullable
+              as String,
+      signed_prekeys: null == signed_prekeys
+          ? _value.signed_prekeys
+          : signed_prekeys // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      one_time_prekeys: null == one_time_prekeys
+          ? _value.one_time_prekeys
+          : one_time_prekeys // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ApiUserPreKeyBundleImplCopyWith<$Res>
+    implements $ApiUserPreKeyBundleCopyWith<$Res> {
+  factory _$$ApiUserPreKeyBundleImplCopyWith(_$ApiUserPreKeyBundleImpl value,
+          $Res Function(_$ApiUserPreKeyBundleImpl) then) =
+      __$$ApiUserPreKeyBundleImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String identity_key,
+      List<String> signed_prekeys,
+      List<String> one_time_prekeys});
+}
+
+/// @nodoc
+class __$$ApiUserPreKeyBundleImplCopyWithImpl<$Res>
+    extends _$ApiUserPreKeyBundleCopyWithImpl<$Res, _$ApiUserPreKeyBundleImpl>
+    implements _$$ApiUserPreKeyBundleImplCopyWith<$Res> {
+  __$$ApiUserPreKeyBundleImplCopyWithImpl(_$ApiUserPreKeyBundleImpl _value,
+      $Res Function(_$ApiUserPreKeyBundleImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ApiUserPreKeyBundle
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? identity_key = null,
+    Object? signed_prekeys = null,
+    Object? one_time_prekeys = null,
+  }) {
+    return _then(_$ApiUserPreKeyBundleImpl(
+      identity_key: null == identity_key
+          ? _value.identity_key
+          : identity_key // ignore: cast_nullable_to_non_nullable
+              as String,
+      signed_prekeys: null == signed_prekeys
+          ? _value._signed_prekeys
+          : signed_prekeys // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      one_time_prekeys: null == one_time_prekeys
+          ? _value._one_time_prekeys
+          : one_time_prekeys // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ApiUserPreKeyBundleImpl extends _ApiUserPreKeyBundle {
+  const _$ApiUserPreKeyBundleImpl(
+      {required this.identity_key,
+      required final List<String> signed_prekeys,
+      required final List<String> one_time_prekeys})
+      : _signed_prekeys = signed_prekeys,
+        _one_time_prekeys = one_time_prekeys,
+        super._();
+
+  factory _$ApiUserPreKeyBundleImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ApiUserPreKeyBundleImplFromJson(json);
+
+  @override
+  final String identity_key;
+  final List<String> _signed_prekeys;
+  @override
+  List<String> get signed_prekeys {
+    if (_signed_prekeys is EqualUnmodifiableListView) return _signed_prekeys;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_signed_prekeys);
+  }
+
+  final List<String> _one_time_prekeys;
+  @override
+  List<String> get one_time_prekeys {
+    if (_one_time_prekeys is EqualUnmodifiableListView)
+      return _one_time_prekeys;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_one_time_prekeys);
+  }
+
+  @override
+  String toString() {
+    return 'ApiUserPreKeyBundle(identity_key: $identity_key, signed_prekeys: $signed_prekeys, one_time_prekeys: $one_time_prekeys)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ApiUserPreKeyBundleImpl &&
+            (identical(other.identity_key, identity_key) ||
+                other.identity_key == identity_key) &&
+            const DeepCollectionEquality()
+                .equals(other._signed_prekeys, _signed_prekeys) &&
+            const DeepCollectionEquality()
+                .equals(other._one_time_prekeys, _one_time_prekeys));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      identity_key,
+      const DeepCollectionEquality().hash(_signed_prekeys),
+      const DeepCollectionEquality().hash(_one_time_prekeys));
+
+  /// Create a copy of ApiUserPreKeyBundle
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ApiUserPreKeyBundleImplCopyWith<_$ApiUserPreKeyBundleImpl> get copyWith =>
+      __$$ApiUserPreKeyBundleImplCopyWithImpl<_$ApiUserPreKeyBundleImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ApiUserPreKeyBundleImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ApiUserPreKeyBundle extends ApiUserPreKeyBundle {
+  const factory _ApiUserPreKeyBundle(
+          {required final String identity_key,
+          required final List<String> signed_prekeys,
+          required final List<String> one_time_prekeys}) =
+      _$ApiUserPreKeyBundleImpl;
+  const _ApiUserPreKeyBundle._() : super._();
+
+  factory _ApiUserPreKeyBundle.fromJson(Map<String, dynamic> json) =
+      _$ApiUserPreKeyBundleImpl.fromJson;
+
+  @override
+  String get identity_key;
+  @override
+  List<String> get signed_prekeys;
+  @override
+  List<String> get one_time_prekeys;
+
+  /// Create a copy of ApiUserPreKeyBundle
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ApiUserPreKeyBundleImplCopyWith<_$ApiUserPreKeyBundleImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -765,272 +1068,5 @@ abstract class _ApiSession extends ApiSession {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiSessionImplCopyWith<_$ApiSessionImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-ApiUserInfo _$ApiUserInfoFromJson(Map<String, dynamic> json) {
-  return _ApiUserInfo.fromJson(json);
-}
-
-/// @nodoc
-mixin _$ApiUserInfo {
-  ApiUser get user => throw _privateConstructorUsedError;
-  ApiLocation? get location => throw _privateConstructorUsedError;
-  bool get isLocationEnabled => throw _privateConstructorUsedError;
-  ApiSession? get session => throw _privateConstructorUsedError;
-
-  /// Serializes this ApiUserInfo to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of ApiUserInfo
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $ApiUserInfoCopyWith<ApiUserInfo> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $ApiUserInfoCopyWith<$Res> {
-  factory $ApiUserInfoCopyWith(
-          ApiUserInfo value, $Res Function(ApiUserInfo) then) =
-      _$ApiUserInfoCopyWithImpl<$Res, ApiUserInfo>;
-  @useResult
-  $Res call(
-      {ApiUser user,
-      ApiLocation? location,
-      bool isLocationEnabled,
-      ApiSession? session});
-
-  $ApiUserCopyWith<$Res> get user;
-  $ApiLocationCopyWith<$Res>? get location;
-  $ApiSessionCopyWith<$Res>? get session;
-}
-
-/// @nodoc
-class _$ApiUserInfoCopyWithImpl<$Res, $Val extends ApiUserInfo>
-    implements $ApiUserInfoCopyWith<$Res> {
-  _$ApiUserInfoCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of ApiUserInfo
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? user = null,
-    Object? location = freezed,
-    Object? isLocationEnabled = null,
-    Object? session = freezed,
-  }) {
-    return _then(_value.copyWith(
-      user: null == user
-          ? _value.user
-          : user // ignore: cast_nullable_to_non_nullable
-              as ApiUser,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as ApiLocation?,
-      isLocationEnabled: null == isLocationEnabled
-          ? _value.isLocationEnabled
-          : isLocationEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      session: freezed == session
-          ? _value.session
-          : session // ignore: cast_nullable_to_non_nullable
-              as ApiSession?,
-    ) as $Val);
-  }
-
-  /// Create a copy of ApiUserInfo
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ApiUserCopyWith<$Res> get user {
-    return $ApiUserCopyWith<$Res>(_value.user, (value) {
-      return _then(_value.copyWith(user: value) as $Val);
-    });
-  }
-
-  /// Create a copy of ApiUserInfo
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ApiLocationCopyWith<$Res>? get location {
-    if (_value.location == null) {
-      return null;
-    }
-
-    return $ApiLocationCopyWith<$Res>(_value.location!, (value) {
-      return _then(_value.copyWith(location: value) as $Val);
-    });
-  }
-
-  /// Create a copy of ApiUserInfo
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ApiSessionCopyWith<$Res>? get session {
-    if (_value.session == null) {
-      return null;
-    }
-
-    return $ApiSessionCopyWith<$Res>(_value.session!, (value) {
-      return _then(_value.copyWith(session: value) as $Val);
-    });
-  }
-}
-
-/// @nodoc
-abstract class _$$ApiUserInfoImplCopyWith<$Res>
-    implements $ApiUserInfoCopyWith<$Res> {
-  factory _$$ApiUserInfoImplCopyWith(
-          _$ApiUserInfoImpl value, $Res Function(_$ApiUserInfoImpl) then) =
-      __$$ApiUserInfoImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {ApiUser user,
-      ApiLocation? location,
-      bool isLocationEnabled,
-      ApiSession? session});
-
-  @override
-  $ApiUserCopyWith<$Res> get user;
-  @override
-  $ApiLocationCopyWith<$Res>? get location;
-  @override
-  $ApiSessionCopyWith<$Res>? get session;
-}
-
-/// @nodoc
-class __$$ApiUserInfoImplCopyWithImpl<$Res>
-    extends _$ApiUserInfoCopyWithImpl<$Res, _$ApiUserInfoImpl>
-    implements _$$ApiUserInfoImplCopyWith<$Res> {
-  __$$ApiUserInfoImplCopyWithImpl(
-      _$ApiUserInfoImpl _value, $Res Function(_$ApiUserInfoImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of ApiUserInfo
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? user = null,
-    Object? location = freezed,
-    Object? isLocationEnabled = null,
-    Object? session = freezed,
-  }) {
-    return _then(_$ApiUserInfoImpl(
-      user: null == user
-          ? _value.user
-          : user // ignore: cast_nullable_to_non_nullable
-              as ApiUser,
-      location: freezed == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as ApiLocation?,
-      isLocationEnabled: null == isLocationEnabled
-          ? _value.isLocationEnabled
-          : isLocationEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      session: freezed == session
-          ? _value.session
-          : session // ignore: cast_nullable_to_non_nullable
-              as ApiSession?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$ApiUserInfoImpl extends _ApiUserInfo {
-  const _$ApiUserInfoImpl(
-      {required this.user,
-      this.location,
-      required this.isLocationEnabled,
-      this.session})
-      : super._();
-
-  factory _$ApiUserInfoImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ApiUserInfoImplFromJson(json);
-
-  @override
-  final ApiUser user;
-  @override
-  final ApiLocation? location;
-  @override
-  final bool isLocationEnabled;
-  @override
-  final ApiSession? session;
-
-  @override
-  String toString() {
-    return 'ApiUserInfo(user: $user, location: $location, isLocationEnabled: $isLocationEnabled, session: $session)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$ApiUserInfoImpl &&
-            (identical(other.user, user) || other.user == user) &&
-            (identical(other.location, location) ||
-                other.location == location) &&
-            (identical(other.isLocationEnabled, isLocationEnabled) ||
-                other.isLocationEnabled == isLocationEnabled) &&
-            (identical(other.session, session) || other.session == session));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode =>
-      Object.hash(runtimeType, user, location, isLocationEnabled, session);
-
-  /// Create a copy of ApiUserInfo
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$ApiUserInfoImplCopyWith<_$ApiUserInfoImpl> get copyWith =>
-      __$$ApiUserInfoImplCopyWithImpl<_$ApiUserInfoImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$ApiUserInfoImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _ApiUserInfo extends ApiUserInfo {
-  const factory _ApiUserInfo(
-      {required final ApiUser user,
-      final ApiLocation? location,
-      required final bool isLocationEnabled,
-      final ApiSession? session}) = _$ApiUserInfoImpl;
-  const _ApiUserInfo._() : super._();
-
-  factory _ApiUserInfo.fromJson(Map<String, dynamic> json) =
-      _$ApiUserInfoImpl.fromJson;
-
-  @override
-  ApiUser get user;
-  @override
-  ApiLocation? get location;
-  @override
-  bool get isLocationEnabled;
-  @override
-  ApiSession? get session;
-
-  /// Create a copy of ApiUserInfo
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ApiUserInfoImplCopyWith<_$ApiUserInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

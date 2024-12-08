@@ -47,7 +47,7 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
           place.id, place.space_id, _currentUser!.id);
 
       final membersInfo = spaceInfo?.members
-          .where((member) => member.user.id != _currentUser.id)
+          .where((member) => member.id != _currentUser.id)
           .toList();
 
       _place = place;
@@ -233,7 +233,7 @@ class EditPlaceState with _$EditPlaceState {
     String? placeId,
     ApiPlace? updatedPlace,
     ApiPlaceMemberSetting? updatedSetting,
-    @Default([]) List<ApiUserInfo> membersInfo,
+    @Default([]) List<ApiUser> membersInfo,
     String? address,
     double? radius,
     Object? error,

@@ -12,6 +12,11 @@ _$ApiSpaceImpl _$$ApiSpaceImplFromJson(Map<String, dynamic> json) =>
       admin_id: json['admin_id'] as String,
       name: json['name'] as String,
       created_at: (json['created_at'] as num?)?.toInt(),
+      group_key: json['group_key'] as String?,
+      archived_keys: json['archived_keys'] == null
+          ? null
+          : ApiSpaceArchivedKeys.fromJson(
+              json['archived_keys'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$ApiSpaceImplToJson(_$ApiSpaceImpl instance) =>
@@ -20,6 +25,22 @@ Map<String, dynamic> _$$ApiSpaceImplToJson(_$ApiSpaceImpl instance) =>
       'admin_id': instance.admin_id,
       'name': instance.name,
       'created_at': instance.created_at,
+      'group_key': instance.group_key,
+      'archived_keys': instance.archived_keys?.toJson(),
+    };
+
+_$ApiSpaceArchivedKeysImpl _$$ApiSpaceArchivedKeysImplFromJson(
+        Map<String, dynamic> json) =>
+    _$ApiSpaceArchivedKeysImpl(
+      key: json['key'] as String,
+      timestamp: (json['timestamp'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$$ApiSpaceArchivedKeysImplToJson(
+        _$ApiSpaceArchivedKeysImpl instance) =>
+    <String, dynamic>{
+      'key': instance.key,
+      'timestamp': instance.timestamp,
     };
 
 _$ApiSpaceMemberImpl _$$ApiSpaceMemberImplFromJson(Map<String, dynamic> json) =>
@@ -65,12 +86,20 @@ _$SpaceInfoImpl _$$SpaceInfoImplFromJson(Map<String, dynamic> json) =>
     _$SpaceInfoImpl(
       space: ApiSpace.fromJson(json['space'] as Map<String, dynamic>),
       members: (json['members'] as List<dynamic>)
-          .map((e) => ApiUserInfo.fromJson(e as Map<String, dynamic>))
+          .map((e) => ApiUser.fromJson(e as Map<String, dynamic>))
           .toList(),
+      spaceMember: (json['spaceMember'] as List<dynamic>)
+          .map((e) => ApiSpaceMember.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      location: json['location'] == null
+          ? null
+          : ApiLocation.fromJson(json['location'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$SpaceInfoImplToJson(_$SpaceInfoImpl instance) =>
     <String, dynamic>{
       'space': instance.space.toJson(),
       'members': instance.members.map((e) => e.toJson()).toList(),
+      'spaceMember': instance.spaceMember.map((e) => e.toJson()).toList(),
+      'location': instance.location?.toJson(),
     };

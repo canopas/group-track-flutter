@@ -181,7 +181,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                   child: _locationSharingItem(
                     context,
                     member,
-                    member.isLocationEnabled,
+                    member.location_enabled ?? false,
                     isAdmin: state.isAdmin,
                   ),
                 );
@@ -193,11 +193,11 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
     );
   }
 
-  Widget _locationSharingItem(BuildContext context, ApiUserInfo member,
+  Widget _locationSharingItem(BuildContext context, ApiUser member,
       bool isLocationEnabled, {bool isAdmin = false,
       bool isCurrentUser = false}) {
-    final profileImageUrl = member.user.profile_image ?? '';
-    final firstLetter = member.user.firstChar;
+    final profileImageUrl = member.profile_image ?? '';
+    final firstLetter = member.firstChar;
     return Row(
       children: [
         ProfileImage(
@@ -209,7 +209,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         const SizedBox(width: 16),
         Expanded(
           child: Text(
-            member.user.fullName,
+            member.fullName,
             style: AppTextStyle.subtitle2
                 .copyWith(color: context.colorScheme.textPrimary),
             overflow: TextOverflow.ellipsis,
@@ -234,7 +234,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           const SizedBox(width: 8),
           OnTapScale(
             onTap: () => _showConfirmationToRemoveUserFromGroup(onTap: () {
-              notifier.leaveSpace(userId: member.user.id);
+              notifier.leaveSpace(userId: member.id);
               notifier.isAdminRemovingMember(true);
             }),
             child: Icon(Icons.remove_circle_outline_rounded,

@@ -310,7 +310,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            context.l10n.edit_place_get_notified_title_text,
+            widget.place.space_member_ids.length == 1 ? '' : context.l10n.edit_place_get_notified_title_text,
             style: AppTextStyle.subtitle1
                 .copyWith(color: context.colorScheme.textDisabled),
           ),
@@ -326,11 +326,11 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
   }
 
   Widget _memberItemView(
-    ApiUserInfo member,
+    ApiUser member,
     ApiPlaceMemberSetting? setting,
     bool isLast,
   ) {
-    final user = member.user;
+    final user = member;
     final enableArrives = setting?.arrival_alert_for.contains(user.id) ?? false;
     final enableLeaves = setting?.leave_alert_for.contains(user.id) ?? false;
 

@@ -134,15 +134,15 @@ class JourneyRepository {
 
   Future<void> _saveJourneyOnDayChanged(
       String userId, LocationData extractedLocation) async {
-    String newJourneyId = await journeyService.saveCurrentJourney(
+    List<String> newJourneyId = await journeyService.saveCurrentJourney(
       userId: userId,
       fromLatitude: extractedLocation.latitude,
       fromLongitude: extractedLocation.longitude,
     );
 
     var newJourney = extractedLocation
-        .toLocationJourney(userId, newJourneyId)
-        .copyWith(id: newJourneyId);
+        .toLocationJourney(userId, newJourneyId.first)
+        .copyWith(id: newJourneyId.first);
 
     locationCache.putLastJourney(newJourney, userId);
   }
@@ -172,14 +172,14 @@ class JourneyRepository {
         // Possibly user is new or no location journey available
         // Save extracted location as new location journey with steady state in cache
 
-        String newJourneyId = await journeyService.saveCurrentJourney(
+        List<String> newJourneyId = await journeyService.saveCurrentJourney(
           userId: userId,
           fromLatitude: extractedLocation?.latitude ?? 0,
           fromLongitude: extractedLocation?.longitude ?? 0,
           created_at: DateTime.now().millisecondsSinceEpoch,
         );
         var locationJourney =
-            extractedLocation!.toLocationJourney(userId, newJourneyId);
+            extractedLocation!.toLocationJourney(userId, newJourneyId.first);
         locationCache.putLastJourney(locationJourney, userId);
         return locationJourney;
       }
@@ -216,10 +216,8 @@ class JourneyRepository {
       // Here, means last known journey is moving and user is still moving
       // Save journey for moving user and update last known journey.
       // Note: Need to use lastKnownJourney.id as journey id because we are updating the journey
-      if (distance > MIN_DISTANCE_FOR_MOVING) {
         await _updateJourneyForContinuedMovingUser(
             userId, extractedLocation, lastKnownJourney);
-      }
     }
   }
 
@@ -237,7 +235,7 @@ class JourneyRepository {
         lastKnownJourney.copyWith(
             update_at: DateTime.now().millisecondsSinceEpoch));
 
-    String newJourneyId = await journeyService.saveCurrentJourney(
+    List<String> newJourneyId = await journeyService.saveCurrentJourney(
       userId: userId,
       fromLatitude: lastKnownJourney.from_latitude,
       fromLongitude: lastKnownJourney.from_longitude,
@@ -248,7 +246,7 @@ class JourneyRepository {
     );
 
     var journey = ApiLocationJourney(
-      id: newJourneyId,
+      id: newJourneyId.first,
       user_id: userId,
       from_latitude: lastKnownJourney.from_latitude,
       from_longitude: lastKnownJourney.from_longitude,
@@ -262,8 +260,6 @@ class JourneyRepository {
     );
 
     locationCache.putLastJourney(journey, userId);
-    locationCache.putLastJourneyUpdatedTime(
-        DateTime.now().millisecondsSinceEpoch, userId);
   }
 
   /// Update journey for continued moving user i.e., state is moving and user is still moving
@@ -296,15 +292,7 @@ class JourneyRepository {
       update_at: DateTime.now().millisecondsSinceEpoch,
     );
 
-    final lastJourneyUpdatedTime =
-        locationCache.getLastJourneyUpdatedTime(userId);
-    final timeDifference = journey.update_at! - lastJourneyUpdatedTime;
-
-    if (timeDifference >= MIN_UPDATE_INTERVAL_MINUTE) {
-      await journeyService.updateLastLocationJourney(userId, journey);
-      locationCache.putLastJourneyUpdatedTime(
-          DateTime.now().millisecondsSinceEpoch, userId);
-    }
+    await journeyService.updateLastLocationJourney(userId, journey);
     locationCache.putLastJourney(journey, userId);
   }
 
@@ -334,7 +322,7 @@ class JourneyRepository {
     journeyService.updateLastLocationJourney(userId, movingJourney);
 
     // Save journey for steady user and update cache as well:
-    var newJourneyId = await journeyService.saveCurrentJourney(
+    List<String> newJourneyId = await journeyService.saveCurrentJourney(
       userId: userId,
       fromLatitude: extractedLocation.latitude,
       fromLongitude: extractedLocation.longitude,
@@ -342,7 +330,7 @@ class JourneyRepository {
     );
 
     var steadyJourney = ApiLocationJourney(
-      id: newJourneyId,
+      id: newJourneyId.first,
       user_id: userId,
       from_latitude: extractedLocation.latitude,
       from_longitude: extractedLocation.longitude,

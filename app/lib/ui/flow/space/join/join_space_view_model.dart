@@ -1,10 +1,17 @@
+import 'dart:io';
+
+import 'package:data/api/location/location.dart';
 import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/space_models.dart';
+import 'package:data/repository/journey_repository.dart';
 import 'package:data/service/auth_service.dart';
+import 'package:data/service/location_service.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/log/logger.dart';
+import 'package:geolocator/geolocator.dart';
 
 part 'join_space_view_model.freezed.dart';
 
@@ -14,6 +21,7 @@ final joinSpaceViewStateProvider = StateNotifierProvider.autoDispose<
     ref.read(spaceServiceProvider),
     ref.read(apiSpaceInvitationServiceProvider),
     ref.read(authServiceProvider),
+    ref.read(locationServiceProvider),
   );
 });
 
@@ -21,11 +29,14 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
   final SpaceService spaceService;
   final ApiSpaceInvitationService spaceInvitationService;
   final AuthService authService;
+  final LocationService locationService;
+  final JourneyRepository journeyRepository = JourneyRepository.instance;
 
   JoinSpaceViewNotifier(
     this.spaceService,
     this.spaceInvitationService,
     this.authService,
+    this.locationService,
   ) : super(const JoinSpaceViewState());
 
   Future<void> joinSpace(String code) async {
@@ -48,6 +59,7 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
       }
 
       spaceService.joinSpace(spaceId);
+      await _saveCurrentUserLocation(spaceId);
       state = state.copyWith(verifying: false, spaceJoined: true, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error, verifying: false);
@@ -88,6 +100,41 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
         alreadySpaceMember: false,
       );
     });
+  }
+
+  Future<void> _saveCurrentUserLocation(String spaceId) async {
+    try {
+      if (Platform.isIOS) {
+        const platform = MethodChannel('com.grouptrack/current_location');
+        final locationFromIOS =
+            await platform.invokeMethod('getCurrentLocation');
+        final locationData = LocationData(
+            latitude: locationFromIOS['latitude'],
+            longitude: locationFromIOS['longitude'],
+            timestamp: DateTime.now());
+        await locationService.saveCurrentLocationWithSpaceId(
+            spaceId: spaceId,
+            userId: authService.currentUser?.id ?? '',
+            locationData: locationData);
+        await journeyRepository.saveLocationJourney(extractedLocation: locationData, userId: authService.currentUser?.id ?? '');
+      } else {
+        var location = await Geolocator.getCurrentPosition();
+        final locationData = LocationData(
+            latitude: location.latitude,
+            longitude: location.longitude,
+            timestamp: DateTime.now());
+        await locationService.saveCurrentLocationWithSpaceId(
+            spaceId: spaceId,
+            userId: authService.currentUser?.id ?? '',
+            locationData: locationData);
+        await journeyRepository.saveLocationJourney(extractedLocation: locationData, userId: authService.currentUser?.id ?? '');
+      }
+    } catch (error, stack) {
+      logger.e(
+          'JoinSpaceViewNotifier: error while save current location in space',
+          error: error,
+          stackTrace: stack);
+    }
   }
 }
 

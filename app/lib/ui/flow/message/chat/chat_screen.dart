@@ -114,7 +114,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget _chatList(
       BuildContext context,
       List<ApiThreadMessage> messages,
-      List<ApiUserInfo>? sender,
+      List<ApiUser>? sender,
       bool loadingMessage,
       String threadId,
       String currentUserId,
@@ -143,14 +143,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             messages[index + 1].sender_id != message.sender_id;
         final senderInfo = sender.isNotEmpty && sender.length > 2
             ? sender
-                .firstWhere((member) => member.user.id == message.sender_id)
-                .user
+                .firstWhere((member) => member.id == message.sender_id)
             : null;
 
         final seenBy = threadInfo?.members
             .where((member) =>
-                message.seen_by.contains(member.user.id) &&
-                member.user.id != currentUserId)
+                message.seen_by.contains(member.id) &&
+                member.id != currentUserId)
             .toList();
 
         final showSeenText = notifier.isSender(message) &&
@@ -189,7 +188,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               Text(
                 sender.length > 2
                     ? context.l10n.chat_seen_by_message_text(
-                        seenBy!.map((e) => e.user.first_name).join(', '))
+                        seenBy!.map((e) => e.first_name).join(', '))
                     : context.l10n.chat_seen_message_text,
                 style: AppTextStyle.caption.copyWith(
                   color: context.colorScheme.textDisabled,
@@ -371,11 +370,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               itemBuilder: (context, index) {
                 final member = state.users[index];
                 final isSelected =
-                    state.selectedMember.contains(member.user.id);
+                    state.selectedMember.contains(member.id);
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      notifier.toggleMemberSelection(member.user.id);
+                      notifier.toggleMemberSelection(member.id);
                     });
                   },
                   child: Padding(
@@ -386,11 +385,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         if (isSelected) ...[
                           _selectedView(context),
                         ] else ...[
-                          _profileImageView(context, member.user),
+                          _profileImageView(context, member),
                         ],
                         const SizedBox(height: 8),
                         Text(
-                          member.user.first_name ?? '',
+                          member.first_name ?? '',
                           style: AppTextStyle.caption
                               .copyWith(color: context.colorScheme.textPrimary),
                         ),

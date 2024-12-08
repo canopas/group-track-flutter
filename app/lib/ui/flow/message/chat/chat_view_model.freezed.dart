@@ -24,12 +24,12 @@ mixin _$ChatViewState {
   bool get showMemberSelectionView => throw _privateConstructorUsedError;
   bool get isNewThread => throw _privateConstructorUsedError;
   bool get isNetworkOff => throw _privateConstructorUsedError;
-  List<ApiUserInfo> get users => throw _privateConstructorUsedError;
+  List<ApiUser> get users => throw _privateConstructorUsedError;
   String get threadId => throw _privateConstructorUsedError;
   String get title => throw _privateConstructorUsedError;
   TextEditingController get message => throw _privateConstructorUsedError;
   List<ApiThreadMessage> get messages => throw _privateConstructorUsedError;
-  List<ApiUserInfo> get sender => throw _privateConstructorUsedError;
+  List<ApiUser> get sender => throw _privateConstructorUsedError;
   List<String> get selectedMember => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   SpaceInfo? get spaceInfo => throw _privateConstructorUsedError;
@@ -57,12 +57,12 @@ abstract class $ChatViewStateCopyWith<$Res> {
       bool showMemberSelectionView,
       bool isNewThread,
       bool isNetworkOff,
-      List<ApiUserInfo> users,
+      List<ApiUser> users,
       String threadId,
       String title,
       TextEditingController message,
       List<ApiThreadMessage> messages,
-      List<ApiUserInfo> sender,
+      List<ApiUser> sender,
       List<String> selectedMember,
       Object? error,
       SpaceInfo? spaceInfo,
@@ -144,7 +144,7 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
       users: null == users
           ? _value.users
           : users // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
+              as List<ApiUser>,
       threadId: null == threadId
           ? _value.threadId
           : threadId // ignore: cast_nullable_to_non_nullable
@@ -164,7 +164,7 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
       sender: null == sender
           ? _value.sender
           : sender // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
+              as List<ApiUser>,
       selectedMember: null == selectedMember
           ? _value.selectedMember
           : selectedMember // ignore: cast_nullable_to_non_nullable
@@ -231,12 +231,12 @@ abstract class _$$ChatViewStateImplCopyWith<$Res>
       bool showMemberSelectionView,
       bool isNewThread,
       bool isNetworkOff,
-      List<ApiUserInfo> users,
+      List<ApiUser> users,
       String threadId,
       String title,
       TextEditingController message,
       List<ApiThreadMessage> messages,
-      List<ApiUserInfo> sender,
+      List<ApiUser> sender,
       List<String> selectedMember,
       Object? error,
       SpaceInfo? spaceInfo,
@@ -318,7 +318,7 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
       users: null == users
           ? _value._users
           : users // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
+              as List<ApiUser>,
       threadId: null == threadId
           ? _value.threadId
           : threadId // ignore: cast_nullable_to_non_nullable
@@ -338,7 +338,7 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
       sender: null == sender
           ? _value._sender
           : sender // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
+              as List<ApiUser>,
       selectedMember: null == selectedMember
           ? _value._selectedMember
           : selectedMember // ignore: cast_nullable_to_non_nullable
@@ -376,12 +376,12 @@ class _$ChatViewStateImpl implements _ChatViewState {
       this.showMemberSelectionView = false,
       this.isNewThread = false,
       this.isNetworkOff = false,
-      final List<ApiUserInfo> users = const [],
+      final List<ApiUser> users = const [],
       this.threadId = '',
       this.title = '',
       required this.message,
       final List<ApiThreadMessage> messages = const [],
-      final List<ApiUserInfo> sender = const [],
+      final List<ApiUser> sender = const [],
       final List<String> selectedMember = const [],
       this.error,
       this.spaceInfo,
@@ -418,10 +418,10 @@ class _$ChatViewStateImpl implements _ChatViewState {
   @override
   @JsonKey()
   final bool isNetworkOff;
-  final List<ApiUserInfo> _users;
+  final List<ApiUser> _users;
   @override
   @JsonKey()
-  List<ApiUserInfo> get users {
+  List<ApiUser> get users {
     if (_users is EqualUnmodifiableListView) return _users;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_users);
@@ -444,10 +444,10 @@ class _$ChatViewStateImpl implements _ChatViewState {
     return EqualUnmodifiableListView(_messages);
   }
 
-  final List<ApiUserInfo> _sender;
+  final List<ApiUser> _sender;
   @override
   @JsonKey()
-  List<ApiUserInfo> get sender {
+  List<ApiUser> get sender {
     if (_sender is EqualUnmodifiableListView) return _sender;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_sender);
@@ -567,12 +567,12 @@ abstract class _ChatViewState implements ChatViewState {
       final bool showMemberSelectionView,
       final bool isNewThread,
       final bool isNetworkOff,
-      final List<ApiUserInfo> users,
+      final List<ApiUser> users,
       final String threadId,
       final String title,
       required final TextEditingController message,
       final List<ApiThreadMessage> messages,
-      final List<ApiUserInfo> sender,
+      final List<ApiUser> sender,
       final List<String> selectedMember,
       final Object? error,
       final SpaceInfo? spaceInfo,
@@ -597,7 +597,7 @@ abstract class _ChatViewState implements ChatViewState {
   @override
   bool get isNetworkOff;
   @override
-  List<ApiUserInfo> get users;
+  List<ApiUser> get users;
   @override
   String get threadId;
   @override
@@ -607,7 +607,7 @@ abstract class _ChatViewState implements ChatViewState {
   @override
   List<ApiThreadMessage> get messages;
   @override
-  List<ApiUserInfo> get sender;
+  List<ApiUser> get sender;
   @override
   List<String> get selectedMember;
   @override
