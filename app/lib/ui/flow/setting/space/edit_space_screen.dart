@@ -257,7 +257,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
   Widget _deleteSpaceButton(BuildContext context, EditSpaceViewState state) {
     return BottomStickyOverlay(
       child: PrimaryButton(
-        state.isAdmin
+        state.space?.members.length == 1
             ? context.l10n.edit_space_delete_space_title
             : context.l10n.edit_space_leave_space_title,
         expanded: false,
@@ -268,19 +268,19 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         background: context.colorScheme.containerLowOnSurface,
         onPressed: () {
           showConfirmation(context,
-              confirmBtnText: state.isAdmin
+              confirmBtnText: state.space?.members.length == 1
                   ? context.l10n.common_delete
                   : context
                       .l10n.edit_space_leave_space_alert_confirm_button_text,
-              title: state.isAdmin
+              title: state.space?.members.length == 1
                   ? context.l10n.edit_space_delete_space_title
                   : context.l10n.edit_space_leave_space_title,
-              message: state.isAdmin
+              message: state.space?.members.length == 1
                   ? context.l10n.edit_space_delete_space_alert_message
                   : context.l10n.edit_space_leave_space_alert_message,
               onConfirm: () {
             _checkUserInternet(() =>
-                state.isAdmin ? notifier.deleteSpace() : notifier.leaveSpace());
+            state.space?.members.length == 1 ? notifier.deleteSpace() : notifier.leaveSpace());
           });
         },
       ),

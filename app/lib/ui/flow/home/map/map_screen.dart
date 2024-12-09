@@ -23,7 +23,7 @@ import 'map_view_model.dart';
 
 const defaultCameraZoom = 15.0;
 const defaultCameraZoomForSelectedUser = 17.0;
-const markerSize = 124.0;
+const markerSize = 50.0;
 const placeSize = 80;
 
 class MapScreen extends ConsumerStatefulWidget {
@@ -376,10 +376,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     canvas.drawRRect(
       RRect.fromRectAndCorners(
         const Rect.fromLTWH(0.0, 0.0, markerSize, markerSize),
-        topLeft: const Radius.circular(60),
-        topRight: const Radius.circular(60),
+        topLeft: const Radius.circular(20),
+        topRight: const Radius.circular(20),
         bottomLeft: const Radius.circular(0),
-        bottomRight: const Radius.circular(60),
+        bottomRight: const Radius.circular(20),
       ),
       Paint()..color = markerBgColor,
     );
@@ -399,12 +399,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   void _drawUserName(Canvas canvas, String userName, Color bgColor) {
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
 
-    canvas.drawCircle(const Offset(markerSize / 2, markerSize / 2), 50,
+    canvas.drawCircle(const Offset(markerSize / 2, markerSize / 2), 20,
         Paint()..color = bgColor);
 
     textPainter.text = TextSpan(
       text: userName.isNotEmpty ? userName[0] : '',
-      style: const TextStyle(fontSize: 70, color: Colors.white),
+      style: const TextStyle(fontSize: 30, color: Colors.white),
     );
     textPainter.layout();
     textPainter.paint(
@@ -435,10 +435,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     canvas.drawRRect(
       RRect.fromRectAndCorners(
         const Rect.fromLTWH(0.0, 0.0, markerSize, markerSize),
-        topLeft: const Radius.circular(60),
-        topRight: const Radius.circular(60),
+        topLeft: const Radius.circular(20),
+        topRight: const Radius.circular(20),
         bottomLeft: const Radius.circular(0),
-        bottomRight: const Radius.circular(60),
+        bottomRight: const Radius.circular(20),
       ),
       Paint()..color = markerBgColor,
     );
