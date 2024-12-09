@@ -101,8 +101,8 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
     final data = await rootBundle.load(assetPath);
     final codec = await ui.instantiateImageCodec(
       data.buffer.asUint8List(),
-      targetWidth: 200,
-      targetHeight: 200,
+      targetWidth: 100,
+      targetHeight: 100,
     );
     final frameInfo = await codec.getNextFrame();
 

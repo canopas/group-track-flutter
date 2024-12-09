@@ -79,11 +79,20 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
 
   void leaveSpace({String? userId}) async {
     try {
-      state = state.copyWith(deleting: true);
-      await spaceService.leaveSpace(state.space!.space.id, userId: userId);
-      state = state.copyWith(deleting: false, deleted: true, error: null);
-      if (state.adminRemovingMember) {
-        getSpaceDetails(state.space!.space.id);
+      if (state.isAdmin) {
+        state = state.copyWith(deleting: true);
+        await spaceService.updateSpace(
+          state.space!.space.copyWith(admin_id: state.userInfo.first.user.id),
+        );
+        await spaceService.leaveSpace(state.space!.space.id, userId: userId);
+        state = state.copyWith(deleting: false, deleted: true, error: null);
+      } else {
+        state = state.copyWith(deleting: true);
+        await spaceService.leaveSpace(state.space!.space.id, userId: userId);
+        state = state.copyWith(deleting: false, deleted: true, error: null);
+        if (state.adminRemovingMember) {
+          getSpaceDetails(state.space!.space.id);
+        }
       }
     } catch (error, stack) {
       logger.e(
