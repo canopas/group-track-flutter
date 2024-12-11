@@ -58,6 +58,16 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
     }
   }
 
+  void getUpdatedSpaceDetails() async {
+    try {
+      final space = await spaceService.getSpaceInfo(state.space!.space.id);
+      state = state.copyWith(space: space, isAdmin: space?.space.admin_id == user?.id);
+    } catch (error, stack) {
+      logger.e('EditSpaceViewNotifier: error while get update space details',
+          error: error, stackTrace: stack);
+    }
+  }
+
   void updateSpace() async {
     try {
       state = state.copyWith(saving: true);

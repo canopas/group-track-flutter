@@ -199,6 +199,10 @@
   "edit_space_leave_space_alert_confirm_button_text": "Leave",
   "edit_space_remove_user_title": "Remove member",
   "edit_space_remove_user_subtitle": "This action cannot be undone, are you sure you want to remove this member from group",
+  "edit_space_admin_text": "(Admin)",
+  "edit_space_change_admin_text": "Change",
+  "edit_space_change_admin_title": "Change Admin",
+  "edit_space_change_admin_subtitle": "To leave the group, you must assign another member as admin. This action is irreversible unless the new admin changes it.",
 
   "contact_support_title": "Contact support",
   "contact_support_title_field": "Title",

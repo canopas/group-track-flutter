@@ -22,6 +22,7 @@ import 'package:yourspace_flutter/ui/flow/permission/enable_permission_view.dart
 import 'package:yourspace_flutter/ui/flow/setting/contact_support/contact_support_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/profile/profile_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/setting_screen.dart';
+import 'package:yourspace_flutter/ui/flow/setting/space/admin/change_admin_screen.dart';
 import 'package:yourspace_flutter/ui/flow/setting/space/edit_space_screen.dart';
 import 'package:yourspace_flutter/ui/flow/space/create/create_space_screen.dart';
 import 'package:yourspace_flutter/ui/flow/space/invite/invite_code_screen.dart';
@@ -41,6 +42,7 @@ class AppRoute {
   static const pathSetting = '/setting';
   static const pathProfile = '/profile';
   static const pathEditSpace = '/space';
+  static const pathChangeAdmin = '/admin';
   static const pathContactSupport = '/contact-support';
   static const pathMessage = '/message';
   static const pathChat = '/chat';
@@ -185,6 +187,13 @@ class AppRoute {
     );
   }
 
+  static AppRoute changeAdmin(SpaceInfo space) {
+    return AppRoute(
+      pathChangeAdmin,
+      builder: (_) => ChangeAdminScreen(spaceInfo: space),
+    );
+  }
+
   static AppRoute get contactSupport => AppRoute(pathContactSupport,
       builder: (_) => const ContactSupportScreen());
 
@@ -323,6 +332,10 @@ class AppRoute {
     ),
     GoRoute(
       path: pathEditSpace,
+      builder: (context, state) => state.widget(context),
+    ),
+    GoRoute(
+      path: pathChangeAdmin,
       builder: (context, state) => state.widget(context),
     ),
     GoRoute(
