@@ -147,7 +147,7 @@ Future<void> onStart(ServiceInstance service) async {
           android: AndroidNotificationDetails(
             NOTIFICATION_CHANNEL_ID,
             'MY FOREGROUND SERVICE',
-            icon: "app_logo_1",
+            icon: "app_notification_icon",
             ongoing: true,
             color: Color(0xFF1679AB),
           ),
