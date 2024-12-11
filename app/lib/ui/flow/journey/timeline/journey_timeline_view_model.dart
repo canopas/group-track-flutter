@@ -23,18 +23,21 @@ final journeyTimelineStateProvider = StateNotifierProvider.autoDispose<
           ref.read(currentUserPod),
           ref.read(journeyServiceProvider),
           ref.read(currentSpaceId.notifier),
+          ref.read(googleMapType.notifier),
         ));
 
 class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
   final ApiUser? currentUser;
   final ApiJourneyService journeyService;
   final StateController<String?> _currentSpaceId;
+  final StateController<String> mapTypeController;
 
   JourneyTimelineViewModel(
     this.currentUser,
     this.journeyService,
     this._currentSpaceId,
-  ) : super(const JourneyTimelineState());
+    this.mapTypeController,
+  ) : super(JourneyTimelineState(mapType: mapTypeController.state));
 
   void loadData(ApiUser selectedUser) async {
     final isNetworkOff = await _checkUserInternet();
@@ -249,6 +252,7 @@ class JourneyTimelineState with _$JourneyTimelineState {
     int? selectedTimeFrom,
     int? selectedTimeTo,
     String? spaceId,
+    @Default("Normal") String mapType,
     Object? error,
   }) = _JourneyTimelineState;
 }
