@@ -26,7 +26,7 @@ import 'domain/fcm/notification_handler.dart';
 
 const platform = MethodChannel('com.grouptrack/location');
 const NOTIFICATION_ID = 112233;
-const NOTIFICATION_CHANNEL_ID = "high_importance_channel";
+const NOTIFICATION_CHANNEL_ID = "notification_channel_your_space_regional";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -147,7 +147,7 @@ Future<void> onStart(ServiceInstance service) async {
           android: AndroidNotificationDetails(
             NOTIFICATION_CHANNEL_ID,
             'MY FOREGROUND SERVICE',
-            icon: "app_icon",
+            icon: "app_logo_1",
             ongoing: true,
             color: Color(0xFF1679AB),
           ),
