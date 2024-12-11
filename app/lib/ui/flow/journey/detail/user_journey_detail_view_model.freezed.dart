@@ -20,7 +20,6 @@ mixin _$UserJourneyDetailState {
   bool get isNetworkOff => throw _privateConstructorUsedError;
   ApiLocationJourney? get journey => throw _privateConstructorUsedError;
   String? get journeyId => throw _privateConstructorUsedError;
-  String get mapType => throw _privateConstructorUsedError;
   List<Placemark> get addressFrom => throw _privateConstructorUsedError;
   List<Placemark> get addressTo => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
@@ -41,7 +40,6 @@ abstract class $UserJourneyDetailStateCopyWith<$Res> {
       bool isNetworkOff,
       ApiLocationJourney? journey,
       String? journeyId,
-      String mapType,
       List<Placemark> addressFrom,
       List<Placemark> addressTo,
       Object? error});
@@ -67,7 +65,6 @@ class _$UserJourneyDetailStateCopyWithImpl<$Res,
     Object? isNetworkOff = null,
     Object? journey = freezed,
     Object? journeyId = freezed,
-    Object? mapType = null,
     Object? addressFrom = null,
     Object? addressTo = null,
     Object? error = freezed,
@@ -89,10 +86,6 @@ class _$UserJourneyDetailStateCopyWithImpl<$Res,
           ? _value.journeyId
           : journeyId // ignore: cast_nullable_to_non_nullable
               as String?,
-      mapType: null == mapType
-          ? _value.mapType
-          : mapType // ignore: cast_nullable_to_non_nullable
-              as String,
       addressFrom: null == addressFrom
           ? _value.addressFrom
           : addressFrom // ignore: cast_nullable_to_non_nullable
@@ -132,7 +125,6 @@ abstract class _$$UserJourneyDetailStateImplCopyWith<$Res>
       bool isNetworkOff,
       ApiLocationJourney? journey,
       String? journeyId,
-      String mapType,
       List<Placemark> addressFrom,
       List<Placemark> addressTo,
       Object? error});
@@ -158,7 +150,6 @@ class __$$UserJourneyDetailStateImplCopyWithImpl<$Res>
     Object? isNetworkOff = null,
     Object? journey = freezed,
     Object? journeyId = freezed,
-    Object? mapType = null,
     Object? addressFrom = null,
     Object? addressTo = null,
     Object? error = freezed,
@@ -180,10 +171,6 @@ class __$$UserJourneyDetailStateImplCopyWithImpl<$Res>
           ? _value.journeyId
           : journeyId // ignore: cast_nullable_to_non_nullable
               as String?,
-      mapType: null == mapType
-          ? _value.mapType
-          : mapType // ignore: cast_nullable_to_non_nullable
-              as String,
       addressFrom: null == addressFrom
           ? _value._addressFrom
           : addressFrom // ignore: cast_nullable_to_non_nullable
@@ -205,7 +192,6 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
       this.isNetworkOff = false,
       this.journey,
       this.journeyId,
-      this.mapType = "Normal",
       final List<Placemark> addressFrom = const [],
       final List<Placemark> addressTo = const [],
       this.error})
@@ -222,9 +208,6 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
   final ApiLocationJourney? journey;
   @override
   final String? journeyId;
-  @override
-  @JsonKey()
-  final String mapType;
   final List<Placemark> _addressFrom;
   @override
   @JsonKey()
@@ -248,7 +231,7 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
 
   @override
   String toString() {
-    return 'UserJourneyDetailState(loading: $loading, isNetworkOff: $isNetworkOff, journey: $journey, journeyId: $journeyId, mapType: $mapType, addressFrom: $addressFrom, addressTo: $addressTo, error: $error)';
+    return 'UserJourneyDetailState(loading: $loading, isNetworkOff: $isNetworkOff, journey: $journey, journeyId: $journeyId, addressFrom: $addressFrom, addressTo: $addressTo, error: $error)';
   }
 
   @override
@@ -262,7 +245,6 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
             (identical(other.journey, journey) || other.journey == journey) &&
             (identical(other.journeyId, journeyId) ||
                 other.journeyId == journeyId) &&
-            (identical(other.mapType, mapType) || other.mapType == mapType) &&
             const DeepCollectionEquality()
                 .equals(other._addressFrom, _addressFrom) &&
             const DeepCollectionEquality()
@@ -277,7 +259,6 @@ class _$UserJourneyDetailStateImpl implements _UserJourneyDetailState {
       isNetworkOff,
       journey,
       journeyId,
-      mapType,
       const DeepCollectionEquality().hash(_addressFrom),
       const DeepCollectionEquality().hash(_addressTo),
       const DeepCollectionEquality().hash(error));
@@ -296,7 +277,6 @@ abstract class _UserJourneyDetailState implements UserJourneyDetailState {
       final bool isNetworkOff,
       final ApiLocationJourney? journey,
       final String? journeyId,
-      final String mapType,
       final List<Placemark> addressFrom,
       final List<Placemark> addressTo,
       final Object? error}) = _$UserJourneyDetailStateImpl;
@@ -309,8 +289,6 @@ abstract class _UserJourneyDetailState implements UserJourneyDetailState {
   ApiLocationJourney? get journey;
   @override
   String? get journeyId;
-  @override
-  String get mapType;
   @override
   List<Placemark> get addressFrom;
   @override

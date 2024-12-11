@@ -73,7 +73,6 @@ class _UserJourneyDetailScreenState
                   markers: _markers,
                   isTimeLine: false,
                   gestureEnable: true,
-                  mapType: getMapTypeInfo(state.mapType),
                 ),
               ),
               _journeyInfo(state)
@@ -257,8 +256,8 @@ class _UserJourneyDetailScreenState
   }
 
   Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {
-    final fromIcon = await notifier
-        .createCustomIcon('assets/images/ic_timeline_start_location_icon.png');
+    final fromIcon = await notifier.createCustomIcon(
+        'assets/images/ic_timeline_start_location_icon.png');
     final toIcon = await notifier.createCustomIcon(
         'assets/images/ic_timeline_end_location_flag_icon.png');
 
@@ -280,15 +279,5 @@ class _UserJourneyDetailScreenState
     ];
 
     return markers;
-  }
-
-  MapType getMapTypeInfo(String mapType) {
-    if (mapType == 'Terrain') {
-      return MapType.terrain;
-    } else if (mapType == 'Satellite') {
-      return MapType.satellite;
-    } else {
-      return MapType.normal;
-    }
   }
 }

@@ -28,7 +28,6 @@ mixin _$JourneyTimelineState {
   int? get selectedTimeFrom => throw _privateConstructorUsedError;
   int? get selectedTimeTo => throw _privateConstructorUsedError;
   String? get spaceId => throw _privateConstructorUsedError;
-  String get mapType => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -54,7 +53,6 @@ abstract class $JourneyTimelineStateCopyWith<$Res> {
       int? selectedTimeFrom,
       int? selectedTimeTo,
       String? spaceId,
-      String mapType,
       Object? error});
 
   $ApiUserCopyWith<$Res>? get selectedUser;
@@ -85,7 +83,6 @@ class _$JourneyTimelineStateCopyWithImpl<$Res,
     Object? selectedTimeFrom = freezed,
     Object? selectedTimeTo = freezed,
     Object? spaceId = freezed,
-    Object? mapType = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -133,10 +130,6 @@ class _$JourneyTimelineStateCopyWithImpl<$Res,
           ? _value.spaceId
           : spaceId // ignore: cast_nullable_to_non_nullable
               as String?,
-      mapType: null == mapType
-          ? _value.mapType
-          : mapType // ignore: cast_nullable_to_non_nullable
-              as String,
       error: freezed == error ? _value.error : error,
     ) as $Val);
   }
@@ -174,7 +167,6 @@ abstract class _$$JourneyTimelineStateImplCopyWith<$Res>
       int? selectedTimeFrom,
       int? selectedTimeTo,
       String? spaceId,
-      String mapType,
       Object? error});
 
   @override
@@ -203,7 +195,6 @@ class __$$JourneyTimelineStateImplCopyWithImpl<$Res>
     Object? selectedTimeFrom = freezed,
     Object? selectedTimeTo = freezed,
     Object? spaceId = freezed,
-    Object? mapType = null,
     Object? error = freezed,
   }) {
     return _then(_$JourneyTimelineStateImpl(
@@ -251,10 +242,6 @@ class __$$JourneyTimelineStateImplCopyWithImpl<$Res>
           ? _value.spaceId
           : spaceId // ignore: cast_nullable_to_non_nullable
               as String?,
-      mapType: null == mapType
-          ? _value.mapType
-          : mapType // ignore: cast_nullable_to_non_nullable
-              as String,
       error: freezed == error ? _value.error : error,
     ));
   }
@@ -275,7 +262,6 @@ class _$JourneyTimelineStateImpl implements _JourneyTimelineState {
       this.selectedTimeFrom,
       this.selectedTimeTo,
       this.spaceId,
-      this.mapType = "Normal",
       this.error})
       : _sortedJourney = sortedJourney;
 
@@ -315,14 +301,11 @@ class _$JourneyTimelineStateImpl implements _JourneyTimelineState {
   @override
   final String? spaceId;
   @override
-  @JsonKey()
-  final String mapType;
-  @override
   final Object? error;
 
   @override
   String toString() {
-    return 'JourneyTimelineState(isLoading: $isLoading, appending: $appending, hasMore: $hasMore, isCurrentUser: $isCurrentUser, showDatePicker: $showDatePicker, isNetworkOff: $isNetworkOff, selectedUser: $selectedUser, sortedJourney: $sortedJourney, selectedTimeFrom: $selectedTimeFrom, selectedTimeTo: $selectedTimeTo, spaceId: $spaceId, mapType: $mapType, error: $error)';
+    return 'JourneyTimelineState(isLoading: $isLoading, appending: $appending, hasMore: $hasMore, isCurrentUser: $isCurrentUser, showDatePicker: $showDatePicker, isNetworkOff: $isNetworkOff, selectedUser: $selectedUser, sortedJourney: $sortedJourney, selectedTimeFrom: $selectedTimeFrom, selectedTimeTo: $selectedTimeTo, spaceId: $spaceId, error: $error)';
   }
 
   @override
@@ -350,7 +333,6 @@ class _$JourneyTimelineStateImpl implements _JourneyTimelineState {
             (identical(other.selectedTimeTo, selectedTimeTo) ||
                 other.selectedTimeTo == selectedTimeTo) &&
             (identical(other.spaceId, spaceId) || other.spaceId == spaceId) &&
-            (identical(other.mapType, mapType) || other.mapType == mapType) &&
             const DeepCollectionEquality().equals(other.error, error));
   }
 
@@ -368,7 +350,6 @@ class _$JourneyTimelineStateImpl implements _JourneyTimelineState {
       selectedTimeFrom,
       selectedTimeTo,
       spaceId,
-      mapType,
       const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
@@ -393,7 +374,6 @@ abstract class _JourneyTimelineState implements JourneyTimelineState {
       final int? selectedTimeFrom,
       final int? selectedTimeTo,
       final String? spaceId,
-      final String mapType,
       final Object? error}) = _$JourneyTimelineStateImpl;
 
   @override
@@ -418,8 +398,6 @@ abstract class _JourneyTimelineState implements JourneyTimelineState {
   int? get selectedTimeTo;
   @override
   String? get spaceId;
-  @override
-  String get mapType;
   @override
   Object? get error;
   @override

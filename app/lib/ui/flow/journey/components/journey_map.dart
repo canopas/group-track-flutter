@@ -15,7 +15,6 @@ class JourneyMap extends StatefulWidget {
   final List<Marker> markers;
   final bool isTimeLine;
   final bool gestureEnable;
-  final MapType mapType;
 
   const JourneyMap({
     super.key,
@@ -23,7 +22,6 @@ class JourneyMap extends StatefulWidget {
     required this.markers,
     required this.isTimeLine,
     required this.gestureEnable,
-    this.mapType = MapType.normal,
   });
 
   @override
@@ -68,7 +66,6 @@ class _JourneyMapState extends State<JourneyMap> {
             zoomGesturesEnabled: widget.gestureEnable,
             scrollGesturesEnabled: widget.gestureEnable,
             rotateGesturesEnabled: widget.gestureEnable,
-            mapType: widget.mapType,
             markers: widget.markers.toSet(),
             polylines:ployLines.toSet(),
           ),
