@@ -43,7 +43,7 @@ class ApiLocationJourney with _$ApiLocationJourney {
   List<LatLng> toRoute() {
     if (type == JOURNEY_TYPE_STEADY) {
       return [];
-    } else {
+    } else if (type == JOURNEY_TYPE_MOVING) {
       List<LatLng> result = [LatLng(from_latitude, from_longitude)];
       result.addAll(routes.map((route) => route.toLatLng()));
       if (to_latitude != null && to_longitude != null) {
@@ -51,6 +51,7 @@ class ApiLocationJourney with _$ApiLocationJourney {
       }
       return result;
     }
+    return [];
   }
 
   LocationData toLocationFromSteadyJourney() {
