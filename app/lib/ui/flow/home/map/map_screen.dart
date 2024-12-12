@@ -479,8 +479,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           setState(() {
             _places.add(Circle(
               circleId: CircleId(place.id),
-              fillColor: context.colorScheme.primary.withOpacity(0.4),
-              strokeColor: context.colorScheme.primary.withOpacity(0.6),
+              fillColor: context.colorScheme.primary.withAlpha((0.4 * 255).toInt()),
+              strokeColor: context.colorScheme.primary.withAlpha((0.6 * 255).toInt()),
               strokeWidth: 1,
               center: latLng,
               radius: place.radius,

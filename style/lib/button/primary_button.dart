@@ -130,7 +130,7 @@ class OutlinedPrimaryButton extends StatelessWidget {
     final fg = foreground ?? colorScheme.primary;
     final fgColor = tappable
         ? fg
-        : Color.alphaBlend(fg.withOpacity(0.5), colorScheme.surface);
+        : Color.alphaBlend(fg.withAlpha((0.5 * 255).toInt()), colorScheme.surface);
 
     return OnTapScale(
       onTap: () {
