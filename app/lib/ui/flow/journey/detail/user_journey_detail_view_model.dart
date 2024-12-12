@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:data/api/location/journey/api_journey_service.dart';
 import 'package:data/api/location/journey/journey.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -17,13 +18,15 @@ final userJourneyDetailStateProvider = StateNotifierProvider.autoDispose<
         UserJourneyDetailViewModel, UserJourneyDetailState>(
     (ref) => UserJourneyDetailViewModel(
           ref.read(journeyServiceProvider),
+          ref.read(googleMapType.notifier),
         ));
 
 class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
   final ApiJourneyService journeyService;
+  final StateController<String> mapTypeController;
 
-  UserJourneyDetailViewModel(this.journeyService)
-      : super(const UserJourneyDetailState());
+  UserJourneyDetailViewModel(this.journeyService, this.mapTypeController)
+      : super(UserJourneyDetailState(mapType: mapTypeController.state));
 
   void loadData(ApiLocationJourney journey) async {
     final isNetworkOff = await _checkUserInternet();
@@ -122,6 +125,7 @@ class UserJourneyDetailState with _$UserJourneyDetailState {
     @Default(false) bool isNetworkOff,
     ApiLocationJourney? journey,
     String? journeyId,
+    @Default("Normal") String mapType,
     @Default([]) List<Placemark> addressFrom,
     @Default([]) List<Placemark> addressTo,
     Object? error,
