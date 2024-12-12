@@ -237,7 +237,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       selectedIndex: notifier.getMapTypeInfo().index,
       items: [
         BottomSheetAction(
-          title: context.l10n.home_map_selected_type_normal_text,
+          title: context.l10n.home_map_style_type_app_theme_text,
           icon: Image.asset(Assets.images.icNormalMap.path),
           onTap: () {
             notifier
