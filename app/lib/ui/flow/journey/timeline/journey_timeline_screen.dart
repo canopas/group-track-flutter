@@ -138,6 +138,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                         journey,
                         state.sortedJourney.first.id == journey.id,
                         state.sortedJourney.last.id == journey.id,
+                        state.mapType,
                       ),
               ],
             );
@@ -224,6 +225,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     ApiLocationJourney journey,
     bool isFirstItem,
     bool isLastItem,
+    String mapType,
   ) {
     final time = _getFormattedJourneyTime(
         journey.created_at ?? 0, journey.update_at ?? 0);
@@ -262,6 +264,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                             markers: markers,
                             isTimeLine: true,
                             gestureEnable: false,
+                            mapType: getMapTypeInfo(mapType),
                           );
                         } else {
                           return JourneyMap(
@@ -269,6 +272,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                             markers: const [],
                             isTimeLine: true,
                             gestureEnable: false,
+                            mapType: getMapTypeInfo(mapType),
                           );
                         }
                       },
@@ -369,7 +373,9 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          address.isEmpty ? context.l10n.journey_timeline_unknown_address_text : address,
+          address.isEmpty
+              ? context.l10n.journey_timeline_unknown_address_text
+              : address,
           style: AppTextStyle.body2
               .copyWith(color: context.colorScheme.textPrimary),
           maxLines: 2,
@@ -540,6 +546,16 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     } else {
       final date = DateFormat('dd MMM').format(dateTime);
       return date.toString();
+    }
+  }
+
+  MapType getMapTypeInfo(String mapType) {
+    if (mapType == 'Terrain') {
+      return MapType.terrain;
+    } else if (mapType == 'Satellite') {
+      return MapType.satellite;
+    } else {
+      return MapType.normal;
     }
   }
 }
