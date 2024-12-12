@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:data/api/location/journey/api_journey_service.dart';
@@ -104,8 +105,8 @@ class UserJourneyDetailViewModel extends StateNotifier<UserJourneyDetailState> {
     final data = await rootBundle.load(assetPath);
     final codec = await ui.instantiateImageCodec(
       data.buffer.asUint8List(),
-      targetWidth: 100,
-      targetHeight: 100,
+      targetWidth: Platform.isAndroid ? 200 : 100,
+      targetHeight: Platform.isAndroid ? 200 : 100,
     );
     final frameInfo = await codec.getNextFrame();
 

@@ -185,7 +185,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     return Padding(
       padding: EdgeInsets.only(top: isFirstItem ? 16 : 0),
       child: SizedBox(
-        height: 142,
+        height: 148,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

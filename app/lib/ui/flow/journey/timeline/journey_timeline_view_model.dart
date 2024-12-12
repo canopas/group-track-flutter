@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:data/api/auth/auth_models.dart';
@@ -219,7 +220,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     final data = await rootBundle.load(assetPath);
     final codec = await ui.instantiateImageCodec(
       data.buffer.asUint8List(),
-      targetHeight: 24,
+      targetHeight: Platform.isAndroid ? 54 : 24,
     );
     final frameInfo = await codec.getNextFrame();
 
