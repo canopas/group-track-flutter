@@ -26,7 +26,7 @@ class BottomStickyOverlay extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  context.colorScheme.surface.withOpacity(0),
+                  context.colorScheme.surface.withAlpha(0),
                   context.colorScheme.surface,
                   context.colorScheme.surface,
                   context.colorScheme.surface,

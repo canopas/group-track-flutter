@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:data/api/space/space_models.dart';
@@ -23,7 +24,8 @@ import 'map_view_model.dart';
 
 const defaultCameraZoom = 15.0;
 const defaultCameraZoomForSelectedUser = 17.0;
-const markerSize = 124.0;
+double markerSize = Platform.isAndroid ? 124.0 : 70.0;
+double markerRadius = Platform.isAndroid ? 60.0 : 30.0;
 const placeSize = 80;
 
 class MapScreen extends ConsumerStatefulWidget {
@@ -125,7 +127,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             }
           },
           onDismiss: () => notifier.onDismissMemberDetail(),
-          currentUserLocation: state.currentUserLocation ?? const LatLng(0.0, 0.0),
+          currentUserLocation:
+              state.currentUserLocation ?? const LatLng(0.0, 0.0),
         ),
         Visibility(visible: enabled, child: _permissionFooter(state))
       ],
@@ -375,11 +378,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     // Draw background rectangle
     canvas.drawRRect(
       RRect.fromRectAndCorners(
-        const Rect.fromLTWH(0.0, 0.0, markerSize, markerSize),
-        topLeft: const Radius.circular(60),
-        topRight: const Radius.circular(60),
+        Rect.fromLTWH(0.0, 0.0, markerSize, markerSize),
+        topLeft: Radius.circular(markerRadius),
+        topRight: Radius.circular(markerRadius),
         bottomLeft: const Radius.circular(0),
-        bottomRight: const Radius.circular(60),
+        bottomRight: Radius.circular(markerRadius),
       ),
       Paint()..color = markerBgColor,
     );
@@ -399,12 +402,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   void _drawUserName(Canvas canvas, String userName, Color bgColor) {
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
 
-    canvas.drawCircle(const Offset(markerSize / 2, markerSize / 2), 50,
-        Paint()..color = bgColor);
+    canvas.drawCircle(Offset(markerSize / 2, markerSize / 2),
+        Platform.isAndroid ? 50 : 30, Paint()..color = bgColor);
 
     textPainter.text = TextSpan(
       text: userName.isNotEmpty ? userName[0] : '',
-      style: const TextStyle(fontSize: 70, color: Colors.white),
+      style: TextStyle(
+          fontSize: Platform.isAndroid ? 70 : 40, color: Colors.white),
     );
     textPainter.layout();
     textPainter.paint(
@@ -426,19 +430,17 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   ) async {
     // Prepare the canvas to draw the rounded rectangle and the image
     final recorder = ui.PictureRecorder();
-    final canvas = ui.Canvas(
-        recorder,
-        Rect.fromPoints(
-            const Offset(0, 0), const Offset(markerSize, markerSize)));
+    final canvas = ui.Canvas(recorder,
+        Rect.fromPoints(const Offset(0, 0), Offset(markerSize, markerSize)));
 
     // Draw the rounded rectangle
     canvas.drawRRect(
       RRect.fromRectAndCorners(
-        const Rect.fromLTWH(0.0, 0.0, markerSize, markerSize),
-        topLeft: const Radius.circular(60),
-        topRight: const Radius.circular(60),
+        Rect.fromLTWH(0.0, 0.0, markerSize, markerSize),
+        topLeft: Radius.circular(markerRadius),
+        topRight: Radius.circular(markerRadius),
         bottomLeft: const Radius.circular(0),
-        bottomRight: const Radius.circular(60),
+        bottomRight: Radius.circular(markerRadius),
       ),
       Paint()..color = markerBgColor,
     );
@@ -477,8 +479,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           setState(() {
             _places.add(Circle(
               circleId: CircleId(place.id),
-              fillColor: context.colorScheme.primary.withOpacity(0.4),
-              strokeColor: context.colorScheme.primary.withOpacity(0.6),
+              fillColor: context.colorScheme.primary.withAlpha((0.4 * 255).toInt()),
+              strokeColor: context.colorScheme.primary.withAlpha((0.6 * 255).toInt()),
               strokeWidth: 1,
               center: latLng,
               radius: place.radius,

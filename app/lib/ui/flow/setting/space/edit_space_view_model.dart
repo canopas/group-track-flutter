@@ -58,6 +58,16 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
     }
   }
 
+  void getUpdatedSpaceDetails() async {
+    try {
+      final space = await spaceService.getSpaceInfo(state.space!.space.id);
+      state = state.copyWith(space: space, isAdmin: space?.space.admin_id == user?.id);
+    } catch (error, stack) {
+      logger.e('EditSpaceViewNotifier: error while get update space details',
+          error: error, stackTrace: stack);
+    }
+  }
+
   void updateSpace() async {
     try {
       state = state.copyWith(saving: true);
@@ -79,11 +89,20 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
 
   void leaveSpace({String? userId}) async {
     try {
-      state = state.copyWith(deleting: true);
-      await spaceService.leaveSpace(state.space!.space.id, userId: userId);
-      state = state.copyWith(deleting: false, deleted: true, error: null);
-      if (state.adminRemovingMember) {
-        getSpaceDetails(state.space!.space.id);
+      if (state.isAdmin) {
+        state = state.copyWith(deleting: true);
+        await spaceService.updateSpace(
+          state.space!.space.copyWith(admin_id: state.userInfo.first.user.id),
+        );
+        await spaceService.leaveSpace(state.space!.space.id, userId: userId);
+        state = state.copyWith(deleting: false, deleted: true, error: null);
+      } else {
+        state = state.copyWith(deleting: true);
+        await spaceService.leaveSpace(state.space!.space.id, userId: userId);
+        state = state.copyWith(deleting: false, deleted: true, error: null);
+        if (state.adminRemovingMember) {
+          getSpaceDetails(state.space!.space.id);
+        }
       }
     } catch (error, stack) {
       logger.e(

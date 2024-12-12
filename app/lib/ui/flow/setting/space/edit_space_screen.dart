@@ -12,9 +12,11 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
+import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/profile_picture.dart';
+import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/setting/space/edit_space_view_model.dart';
 
 import '../../../components/alert.dart';
@@ -69,8 +71,24 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
             });
           },
         ),
+        if (state.isAdmin) ...[
+          actionButton(
+            context: context,
+            icon: Icon(
+              Icons.person_2_outlined,
+              size: 24,
+              color: context.colorScheme.textPrimary,
+            ),
+            onPressed: () {
+              AppRoute.changeAdmin(state.space!).push(context);
+            }
+          ),
+        ]
       ],
-      body: SafeArea(child: _body(context, state)),
+      body: SafeArea(
+          child: ResumeDetector(
+              onResume: () => notifier.getUpdatedSpaceDetails(),
+              child: _body(context, state))),
     );
   }
 
@@ -137,11 +155,8 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           const SizedBox(height: 24),
           if (state.currentUserInfo != null) ...[
             _locationSharingItem(
-              context,
-              state.currentUserInfo!,
-              state.locationEnabled,
-              isCurrentUser: true,
-            ),
+                context, state.currentUserInfo!, state.locationEnabled,
+                isCurrentUser: true, adminId: state.space!.space.admin_id),
           ],
         ],
       ),
@@ -183,6 +198,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                     member,
                     member.isLocationEnabled,
                     isAdmin: state.isAdmin,
+                    adminId: state.space!.space.admin_id
                   ),
                 );
               }).toList(),
@@ -195,7 +211,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
 
   Widget _locationSharingItem(BuildContext context, ApiUserInfo member,
       bool isLocationEnabled, {bool isAdmin = false,
-      bool isCurrentUser = false}) {
+      bool isCurrentUser = false, required String adminId}) {
     final profileImageUrl = member.user.profile_image ?? '';
     final firstLetter = member.user.firstChar;
     return Row(
@@ -208,11 +224,23 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: Text(
-            member.user.fullName,
-            style: AppTextStyle.subtitle2
-                .copyWith(color: context.colorScheme.textPrimary),
-            overflow: TextOverflow.ellipsis,
+          child: Row(
+            children: [
+              Text(
+                member.user.fullName,
+                style: AppTextStyle.subtitle2
+                    .copyWith(color: context.colorScheme.textPrimary),
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(width: member.user.id == adminId ? 8 : 0,),
+              Text(
+                member.user.id == adminId
+                    ? context.l10n.edit_space_admin_text
+                    : '',
+                style: AppTextStyle.body1
+                    .copyWith(color: context.colorScheme.textSecondary),
+              )
+            ],
           ),
         ),
         const SizedBox(width: 8),
@@ -257,7 +285,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
   Widget _deleteSpaceButton(BuildContext context, EditSpaceViewState state) {
     return BottomStickyOverlay(
       child: PrimaryButton(
-        state.isAdmin
+        state.space?.members.length == 1
             ? context.l10n.edit_space_delete_space_title
             : context.l10n.edit_space_leave_space_title,
         expanded: false,
@@ -267,21 +295,25 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         foreground: context.colorScheme.alert,
         background: context.colorScheme.containerLowOnSurface,
         onPressed: () {
-          showConfirmation(context,
-              confirmBtnText: state.isAdmin
-                  ? context.l10n.common_delete
-                  : context
-                      .l10n.edit_space_leave_space_alert_confirm_button_text,
-              title: state.isAdmin
-                  ? context.l10n.edit_space_delete_space_title
-                  : context.l10n.edit_space_leave_space_title,
-              message: state.isAdmin
-                  ? context.l10n.edit_space_delete_space_alert_message
-                  : context.l10n.edit_space_leave_space_alert_message,
-              onConfirm: () {
-            _checkUserInternet(() =>
-                state.isAdmin ? notifier.deleteSpace() : notifier.leaveSpace());
-          });
+          if (state.isAdmin && state.space!.members.length >= 2) {
+            _showPopupToChangeAdmin(state);
+          } else {
+            showConfirmation(context,
+                confirmBtnText: state.space?.members.length == 1
+                    ? context.l10n.common_delete
+                    : context
+                    .l10n.edit_space_leave_space_alert_confirm_button_text,
+                title: state.space?.members.length == 1
+                    ? context.l10n.edit_space_delete_space_title
+                    : context.l10n.edit_space_leave_space_title,
+                message: state.space?.members.length == 1
+                    ? context.l10n.edit_space_delete_space_alert_message
+                    : context.l10n.edit_space_leave_space_alert_message,
+                onConfirm: () {
+                  _checkUserInternet(() =>
+                  state.space?.members.length == 1 ? notifier.deleteSpace() : notifier.leaveSpace());
+                });
+          }
         },
       ),
     );
@@ -296,6 +328,20 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
       popBack: false,
       onConfirm: () {
         _checkUserInternet(() => onTap());
+      },
+    );
+  }
+
+  void _showPopupToChangeAdmin(EditSpaceViewState state) {
+    showConfirmation(
+      context,
+      confirmBtnText: context.l10n.edit_space_change_admin_text,
+      title: context.l10n.edit_space_change_admin_title,
+      message: context.l10n.edit_space_change_admin_subtitle,
+      popBack: false,
+      onConfirm: () {
+        AppRoute.changeAdmin(state.space!).push(context);
+        context.pop();
       },
     );
   }
