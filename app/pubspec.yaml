@@ -58,7 +58,10 @@ dependencies:
   image: ^3.0.1
   flutter_cache_manager: ^3.3.2
   permission_handler: ^11.3.1
-  flutter_slidable: ^3.1.0
+  flutter_slidable:
+    git:
+      url: https://github.com/letsar/flutter_slidable.git
+      ref: master
   flutter_background_service: ^5.0.6
   url_launcher: ^6.3.0
   battery_plus: ^6.2.0

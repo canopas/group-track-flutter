@@ -25,7 +25,7 @@ class PlaceMarker extends StatelessWidget {
               height: radius,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(radius),
-                color: context.colorScheme.primary.withOpacity(0.5),
+                color: context.colorScheme.primary.withAlpha((0.5 * 255).toInt()),
               ),
             ),
           ),

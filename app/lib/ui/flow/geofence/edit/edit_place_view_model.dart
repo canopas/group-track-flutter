@@ -164,7 +164,9 @@ class EditPlaceViewNotifier extends StateNotifier<EditPlaceState> {
   void onSavePlace() async {
     if (state.saving &&
         state.updatedSetting == null &&
-        state.updatedPlace == null) return;
+        state.updatedPlace == null) {
+      return;
+    }
 
     try {
       state = state.copyWith(saving: true, error: null);

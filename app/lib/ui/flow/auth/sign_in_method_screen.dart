@@ -35,11 +35,11 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          context.colorScheme.primary.withOpacity(0),
-          context.colorScheme.primary.withOpacity(0.02),
-          context.colorScheme.primary.withOpacity(0.12),
-          context.colorScheme.primary.withOpacity(0.02),
-          context.colorScheme.primary.withOpacity(0),
+          context.colorScheme.primary.withAlpha(0),
+          context.colorScheme.primary.withAlpha((0.02 * 255).toInt()),
+          context.colorScheme.primary.withAlpha((0.12 * 255).toInt()),
+          context.colorScheme.primary.withAlpha((0.02 * 255).toInt()),
+          context.colorScheme.primary.withAlpha(0),
         ],
       ),
     );
