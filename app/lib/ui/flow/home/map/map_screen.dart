@@ -24,8 +24,8 @@ import 'map_view_model.dart';
 
 const defaultCameraZoom = 15.0;
 const defaultCameraZoomForSelectedUser = 17.0;
-double markerSize = Platform.isAndroid ? 150.0 : 70.0;
-double markerRadius = Platform.isAndroid ? 70.0 : 30.0;
+double markerSize = Platform.isAndroid ? 124.0 : 70.0;
+double markerRadius = Platform.isAndroid ? 60.0 : 30.0;
 const placeSize = 80;
 
 class MapScreen extends ConsumerStatefulWidget {
@@ -127,7 +127,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             }
           },
           onDismiss: () => notifier.onDismissMemberDetail(),
-          currentUserLocation: state.currentUserLocation ?? const LatLng(0.0, 0.0),
+          currentUserLocation:
+              state.currentUserLocation ?? const LatLng(0.0, 0.0),
         ),
         Visibility(visible: enabled, child: _permissionFooter(state))
       ],
@@ -401,12 +402,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   void _drawUserName(Canvas canvas, String userName, Color bgColor) {
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
 
-    canvas.drawCircle(Offset(markerSize / 2, markerSize / 2), 30,
-        Paint()..color = bgColor);
+    canvas.drawCircle(Offset(markerSize / 2, markerSize / 2),
+        Platform.isAndroid ? 50 : 30, Paint()..color = bgColor);
 
     textPainter.text = TextSpan(
       text: userName.isNotEmpty ? userName[0] : '',
-      style: TextStyle(fontSize: Platform.isAndroid ? 70 : 40, color: Colors.white),
+      style: TextStyle(
+          fontSize: Platform.isAndroid ? 70 : 40, color: Colors.white),
     );
     textPainter.layout();
     textPainter.paint(
@@ -428,10 +430,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   ) async {
     // Prepare the canvas to draw the rounded rectangle and the image
     final recorder = ui.PictureRecorder();
-    final canvas = ui.Canvas(
-        recorder,
-        Rect.fromPoints(
-            const Offset(0, 0), Offset(markerSize, markerSize)));
+    final canvas = ui.Canvas(recorder,
+        Rect.fromPoints(const Offset(0, 0), Offset(markerSize, markerSize)));
 
     // Draw the rounded rectangle
     canvas.drawRRect(
