@@ -1,3 +1,4 @@
+// ignore_for_file: constant_identifier_names
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/location.dart';
 import 'package:data/domain/journey_lat_lng_entension.dart';
@@ -6,6 +7,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 part 'journey.freezed.dart';
 part 'journey.g.dart';
+
+const JOURNEY_TYPE_STEADY = 'steady';
+const JOURNEY_TYPE_MOVING = 'moving';
 
 @freezed
 class ApiLocationJourney with _$ApiLocationJourney {
@@ -23,6 +27,7 @@ class ApiLocationJourney with _$ApiLocationJourney {
     int? route_duration,
     int? created_at,
     int? update_at,
+    String? type,
   }) = _LocationJourney;
 
   factory ApiLocationJourney.fromJson(Map<String, dynamic> json) =>
@@ -36,7 +41,7 @@ class ApiLocationJourney with _$ApiLocationJourney {
   }
 
   List<LatLng> toRoute() {
-    if (isSteadyLocation()) {
+    if (type == JOURNEY_TYPE_STEADY) {
       return [];
     } else {
       List<LatLng> result = [LatLng(from_latitude, from_longitude)];
@@ -46,10 +51,6 @@ class ApiLocationJourney with _$ApiLocationJourney {
       }
       return result;
     }
-  }
-
-  bool isSteadyLocation() {
-    return to_latitude == null && to_longitude == null;
   }
 
   LocationData toLocationFromSteadyJourney() {

@@ -31,9 +31,14 @@ mixin _$ApiLocationJourney {
   int? get route_duration => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
   int? get update_at => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
 
+  /// Serializes this ApiLocationJourney to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiLocationJourney
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ApiLocationJourneyCopyWith<ApiLocationJourney> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -55,7 +60,8 @@ abstract class $ApiLocationJourneyCopyWith<$Res> {
       double? route_distance,
       int? route_duration,
       int? created_at,
-      int? update_at});
+      int? update_at,
+      String? type});
 }
 
 /// @nodoc
@@ -68,6 +74,8 @@ class _$ApiLocationJourneyCopyWithImpl<$Res, $Val extends ApiLocationJourney>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ApiLocationJourney
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -82,6 +90,7 @@ class _$ApiLocationJourneyCopyWithImpl<$Res, $Val extends ApiLocationJourney>
     Object? route_duration = freezed,
     Object? created_at = freezed,
     Object? update_at = freezed,
+    Object? type = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -128,6 +137,10 @@ class _$ApiLocationJourneyCopyWithImpl<$Res, $Val extends ApiLocationJourney>
           ? _value.update_at
           : update_at // ignore: cast_nullable_to_non_nullable
               as int?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -151,7 +164,8 @@ abstract class _$$LocationJourneyImplCopyWith<$Res>
       double? route_distance,
       int? route_duration,
       int? created_at,
-      int? update_at});
+      int? update_at,
+      String? type});
 }
 
 /// @nodoc
@@ -162,6 +176,8 @@ class __$$LocationJourneyImplCopyWithImpl<$Res>
       _$LocationJourneyImpl _value, $Res Function(_$LocationJourneyImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiLocationJourney
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -176,6 +192,7 @@ class __$$LocationJourneyImplCopyWithImpl<$Res>
     Object? route_duration = freezed,
     Object? created_at = freezed,
     Object? update_at = freezed,
+    Object? type = freezed,
   }) {
     return _then(_$LocationJourneyImpl(
       id: freezed == id
@@ -222,6 +239,10 @@ class __$$LocationJourneyImplCopyWithImpl<$Res>
           ? _value.update_at
           : update_at // ignore: cast_nullable_to_non_nullable
               as int?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -240,7 +261,8 @@ class _$LocationJourneyImpl extends _LocationJourney {
       this.route_distance,
       this.route_duration,
       this.created_at,
-      this.update_at})
+      this.update_at,
+      this.type})
       : _routes = routes,
         super._();
 
@@ -276,10 +298,12 @@ class _$LocationJourneyImpl extends _LocationJourney {
   final int? created_at;
   @override
   final int? update_at;
+  @override
+  final String? type;
 
   @override
   String toString() {
-    return 'ApiLocationJourney(id: $id, user_id: $user_id, from_latitude: $from_latitude, from_longitude: $from_longitude, to_latitude: $to_latitude, to_longitude: $to_longitude, routes: $routes, route_distance: $route_distance, route_duration: $route_duration, created_at: $created_at, update_at: $update_at)';
+    return 'ApiLocationJourney(id: $id, user_id: $user_id, from_latitude: $from_latitude, from_longitude: $from_longitude, to_latitude: $to_latitude, to_longitude: $to_longitude, routes: $routes, route_distance: $route_distance, route_duration: $route_duration, created_at: $created_at, update_at: $update_at, type: $type)';
   }
 
   @override
@@ -305,10 +329,11 @@ class _$LocationJourneyImpl extends _LocationJourney {
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at) &&
             (identical(other.update_at, update_at) ||
-                other.update_at == update_at));
+                other.update_at == update_at) &&
+            (identical(other.type, type) || other.type == type));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -322,9 +347,12 @@ class _$LocationJourneyImpl extends _LocationJourney {
       route_distance,
       route_duration,
       created_at,
-      update_at);
+      update_at,
+      type);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiLocationJourney
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$LocationJourneyImplCopyWith<_$LocationJourneyImpl> get copyWith =>
@@ -351,7 +379,8 @@ abstract class _LocationJourney extends ApiLocationJourney {
       final double? route_distance,
       final int? route_duration,
       final int? created_at,
-      final int? update_at}) = _$LocationJourneyImpl;
+      final int? update_at,
+      final String? type}) = _$LocationJourneyImpl;
   const _LocationJourney._() : super._();
 
   factory _LocationJourney.fromJson(Map<String, dynamic> json) =
@@ -380,7 +409,12 @@ abstract class _LocationJourney extends ApiLocationJourney {
   @override
   int? get update_at;
   @override
-  @JsonKey(ignore: true)
+  String? get type;
+
+  /// Create a copy of ApiLocationJourney
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LocationJourneyImplCopyWith<_$LocationJourneyImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -394,8 +428,12 @@ mixin _$JourneyRoute {
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
 
+  /// Serializes this JourneyRoute to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of JourneyRoute
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $JourneyRouteCopyWith<JourneyRoute> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -419,6 +457,8 @@ class _$JourneyRouteCopyWithImpl<$Res, $Val extends JourneyRoute>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of JourneyRoute
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -457,6 +497,8 @@ class __$$JourneyRouteImplCopyWithImpl<$Res>
       _$JourneyRouteImpl _value, $Res Function(_$JourneyRouteImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of JourneyRoute
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -505,11 +547,13 @@ class _$JourneyRouteImpl implements _JourneyRoute {
                 other.longitude == longitude));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, latitude, longitude);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of JourneyRoute
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$JourneyRouteImplCopyWith<_$JourneyRouteImpl> get copyWith =>
@@ -535,8 +579,11 @@ abstract class _JourneyRoute implements JourneyRoute {
   double get latitude;
   @override
   double get longitude;
+
+  /// Create a copy of JourneyRoute
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$JourneyRouteImplCopyWith<_$JourneyRouteImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

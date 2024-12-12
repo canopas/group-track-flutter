@@ -32,11 +32,9 @@ class LocationsHandler: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func startLocationUpdates() {
         if self.manager.authorizationStatus == .notDetermined {
-            print("startLocationUpdates: permission notDetermined")
             return
         }
         updatesStarted = true
-        print("startLocationUpdates: startUpdatingLocation......")
         manager.startUpdatingLocation()
     }
     
@@ -64,8 +62,6 @@ class LocationsHandler: NSObject, ObservableObject, CLLocationManagerDelegate {
         if timeInterval < 10 {
             return
         }
-        
-        print("Got location update: \(currentLocation.coordinate.latitude):\(currentLocation.coordinate.longitude)")
         
         lastLocation = currentLocation
     }

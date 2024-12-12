@@ -38,6 +38,7 @@ class ApiJourneyService {
     int? routeDuration,
     int? created_at,
     int? updated_at,
+    String? type,
   }) async {
     final fromLatLng = LatLng(fromLatitude, fromLongitude);
     final toLatLng = (toLatitude != null && toLongitude != null)
@@ -58,6 +59,7 @@ class ApiJourneyService {
       route_duration: routeDuration,
       created_at: created_at ?? DateTime.now().millisecondsSinceEpoch,
       update_at: updated_at ?? DateTime.now().millisecondsSinceEpoch,
+      type: type ?? (toLatLng == null ? JOURNEY_TYPE_STEADY : JOURNEY_TYPE_MOVING)
     );
     await docRef.set(journey.toJson());
     return docRef.id;
