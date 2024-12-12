@@ -127,19 +127,21 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                journey.isSteadyLocation()
-                    ? _steadyLocationItem(
-                        journey,
-                        state.sortedJourney.first.id == journey.id,
-                        state.sortedJourney.last.id == journey.id,
-                        state.spaceId,
-                      )
-                    : _journeyLocationItem(
-                        journey,
-                        state.sortedJourney.first.id == journey.id,
-                        state.sortedJourney.last.id == journey.id,
-                        state.mapType,
-                      ),
+                if (journey.type == JOURNEY_TYPE_STEADY) ...[
+                  _steadyLocationItem(
+                    journey,
+                    state.sortedJourney.first.id == journey.id,
+                    state.sortedJourney.last.id == journey.id,
+                    state.spaceId,
+                  )
+                ] else if (journey.type == JOURNEY_TYPE_MOVING) ...[
+                  _journeyLocationItem(
+                    journey,
+                    state.sortedJourney.first.id == journey.id,
+                    state.sortedJourney.last.id == journey.id,
+                    state.mapType,
+                  )
+                ]
               ],
             );
           } else {
@@ -199,7 +201,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                     _buildPlaceInfo(
                         location,
                         formattedTime,
-                        journey.isSteadyLocation(),
+                        journey.type == JOURNEY_TYPE_STEADY,
                         steadyDuration,
                         isFirstItem),
                     const SizedBox(height: 16),

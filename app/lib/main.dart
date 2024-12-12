@@ -24,7 +24,6 @@ import 'package:yourspace_flutter/ui/app.dart';
 
 import 'domain/fcm/notification_handler.dart';
 
-const platform = MethodChannel('com.grouptrack/location');
 const NOTIFICATION_ID = 112233;
 const NOTIFICATION_CHANNEL_ID = "notification_channel_your_space_regional";
 
@@ -41,7 +40,11 @@ void main() async {
 
   if (Platform.isAndroid) _configureService();
 
-  platform.setMethodCallHandler(_handleLocationUpdates);
+  if (await Permission.location.isGranted) {
+     await locationMethodChannel.invokeMethod('startTracking');
+  }
+
+  locationMethodChannel.setMethodCallHandler(_handleLocationUpdates);
 
   runApp(
     UncontrolledProviderScope(container: container, child: const App()),

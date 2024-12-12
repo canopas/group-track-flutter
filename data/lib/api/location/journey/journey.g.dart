@@ -23,6 +23,7 @@ _$LocationJourneyImpl _$$LocationJourneyImplFromJson(
       route_duration: (json['route_duration'] as num?)?.toInt(),
       created_at: (json['created_at'] as num?)?.toInt(),
       update_at: (json['update_at'] as num?)?.toInt(),
+      type: json['type'] as String?,
     );
 
 Map<String, dynamic> _$$LocationJourneyImplToJson(
@@ -39,6 +40,7 @@ Map<String, dynamic> _$$LocationJourneyImplToJson(
       'route_duration': instance.route_duration,
       'created_at': instance.created_at,
       'update_at': instance.update_at,
+      'type': instance.type,
     };
 
 _$JourneyRouteImpl _$$JourneyRouteImplFromJson(Map<String, dynamic> json) =>

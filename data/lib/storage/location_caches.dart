@@ -7,7 +7,6 @@ class LocationCache {
   final Cache<String, ApiLocationJourney> _lastJourneyCache;
   final Cache<String, List<LocationData>> _lastFiveLocationCache;
   final Cache<String, List<LocationData>> _locationCache;
-  final Cache<String, int> _lastJourneyUpdatedTime;
 
   static LocationCache? _instance;
 
@@ -16,11 +15,10 @@ class LocationCache {
     return _instance!;
   }
 
-  LocationCache({int cacheSize = 5, int locationCacheSize = 200, int timestampCacheSize = 1})
+  LocationCache({int cacheSize = 5, int locationCacheSize = 200})
       : _lastJourneyCache = Cache<String, ApiLocationJourney>(cacheSize),
         _lastFiveLocationCache = Cache<String, List<LocationData>>(cacheSize),
-        _locationCache = Cache<String, List<LocationData>>(locationCacheSize),
-        _lastJourneyUpdatedTime = Cache<String, int>(timestampCacheSize);
+        _locationCache = Cache<String, List<LocationData>>(locationCacheSize);
 
   void putLastJourney(ApiLocationJourney journey, String userId) {
     _lastJourneyCache.put(userId, journey);
@@ -36,14 +34,6 @@ class LocationCache {
 
   List<LocationData> getLastFiveLocations(String userId) {
     return _lastFiveLocationCache.get(userId) ?? [];
-  }
-
-  void putLastJourneyUpdatedTime(int time, String userId) {
-    _lastJourneyUpdatedTime.put(userId, time);
-  }
-
-  int getLastJourneyUpdatedTime(String userId) {
-    return _lastJourneyUpdatedTime.get(userId) ?? DateTime.now().millisecondsSinceEpoch;
   }
 
   void clearLocationCache() {
@@ -64,7 +54,6 @@ class LocationCache {
     _lastJourneyCache.clear();
     _lastFiveLocationCache.clear();
     _locationCache.clear();
-    _lastJourneyUpdatedTime.clear();
   }
 }
 

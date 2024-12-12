@@ -77,7 +77,7 @@ class JourneyRepository {
     var lastLocation =
         locationCache.getLastJourney(userId)?.toLocationFromSteadyJourney();
     var lastLocationJourney = await getLastKnownLocation(userId, position);
-    if (lastLocation == null || lastLocationJourney.isSteadyLocation()) {
+    if (lastLocation == null || lastLocationJourney.type == JOURNEY_TYPE_STEADY) {
       return;
     }
 
@@ -96,7 +96,7 @@ class JourneyRepository {
 
   Future<void> _saveSteadyLocation(LocationData position, String userId) async {
     var lastKnownJourney = await getLastKnownLocation(userId, position);
-    if (lastKnownJourney.isSteadyLocation()) return;
+    if (lastKnownJourney.type == JOURNEY_TYPE_STEADY) return;
     await _saveJourneyOnJourneyStopped(userId, position, lastKnownJourney);
   }
 
@@ -138,12 +138,12 @@ class JourneyRepository {
       userId: userId,
       fromLatitude: extractedLocation.latitude,
       fromLongitude: extractedLocation.longitude,
+      type: JOURNEY_TYPE_STEADY
     );
 
     var newJourney = extractedLocation
         .toLocationJourney(userId, newJourneyId)
-        .copyWith(id: newJourneyId);
-
+        .copyWith(id: newJourneyId, type: JOURNEY_TYPE_STEADY);
     locationCache.putLastJourney(newJourney, userId);
   }
 
@@ -177,9 +177,10 @@ class JourneyRepository {
           fromLatitude: extractedLocation?.latitude ?? 0,
           fromLongitude: extractedLocation?.longitude ?? 0,
           created_at: DateTime.now().millisecondsSinceEpoch,
+          type: JOURNEY_TYPE_STEADY
         );
         var locationJourney =
-            extractedLocation!.toLocationJourney(userId, newJourneyId);
+            extractedLocation!.toLocationJourney(userId, newJourneyId).copyWith(type: JOURNEY_TYPE_STEADY);
         locationCache.putLastJourney(locationJourney, userId);
         return locationJourney;
       }
@@ -195,31 +196,32 @@ class JourneyRepository {
     var geometricMedian =
         locations.isNotEmpty ? _geometricMedianCalculation(locations) : null;
 
-    double distance = lastKnownJourney.isSteadyLocation()
-        ? _distanceBetween(geometricMedian ?? extractedLocation,
-            lastKnownJourney.toLocationFromSteadyJourney())
-        : _distanceBetween(geometricMedian ?? extractedLocation,
-            lastKnownJourney.toLocationFromMovingJourney());
+    double distance = 0;
+    if (lastKnownJourney.type == JOURNEY_TYPE_STEADY) {
+      distance = _distanceBetween(geometricMedian ?? extractedLocation,
+          lastKnownJourney.toLocationFromSteadyJourney());
+    } else if (lastKnownJourney.type == JOURNEY_TYPE_MOVING) {
+      distance = _distanceBetween(geometricMedian ?? extractedLocation,
+          lastKnownJourney.toLocationFromMovingJourney());
+    }
 
     final timeDifference = (geometricMedian?.timestamp.millisecondsSinceEpoch ??
             extractedLocation.timestamp.millisecondsSinceEpoch) -
         (lastKnownJourney.update_at ?? 0);
 
-    if (lastKnownJourney.isSteadyLocation()) {
+    if (lastKnownJourney.type == JOURNEY_TYPE_STEADY) {
       if (distance > MIN_DISTANCE) {
         // Here, means last known journey is steady and and now user has started moving
         // Save journey for moving user and update cache as well:
         await _saveJourneyWhenUserStartsMoving(
             userId, extractedLocation, lastKnownJourney, timeDifference);
       }
-    } else {
+    } else if (lastKnownJourney.type == JOURNEY_TYPE_MOVING) {
       // Here, means last known journey is moving and user is still moving
       // Save journey for moving user and update last known journey.
       // Note: Need to use lastKnownJourney.id as journey id because we are updating the journey
-      if (distance > MIN_DISTANCE_FOR_MOVING) {
         await _updateJourneyForContinuedMovingUser(
             userId, extractedLocation, lastKnownJourney);
-      }
     }
   }
 
@@ -245,6 +247,7 @@ class JourneyRepository {
       toLongitude: extractedLocation.longitude,
       routeDistance: distance,
       routeDuration: duration,
+      type: JOURNEY_TYPE_MOVING
     );
 
     var journey = ApiLocationJourney(
@@ -259,11 +262,10 @@ class JourneyRepository {
       route_duration: duration,
       created_at: DateTime.now().millisecondsSinceEpoch,
       update_at: DateTime.now().millisecondsSinceEpoch,
+      type: JOURNEY_TYPE_MOVING
     );
 
     locationCache.putLastJourney(journey, userId);
-    locationCache.putLastJourneyUpdatedTime(
-        DateTime.now().millisecondsSinceEpoch, userId);
   }
 
   /// Update journey for continued moving user i.e., state is moving and user is still moving
@@ -294,17 +296,10 @@ class JourneyRepository {
           ],
       created_at: lastKnownJourney.created_at,
       update_at: DateTime.now().millisecondsSinceEpoch,
+      type: JOURNEY_TYPE_MOVING
     );
 
-    final lastJourneyUpdatedTime =
-        locationCache.getLastJourneyUpdatedTime(userId);
-    final timeDifference = journey.update_at! - lastJourneyUpdatedTime;
-
-    if (timeDifference >= MIN_UPDATE_INTERVAL_MINUTE) {
-      await journeyService.updateLastLocationJourney(userId, journey);
-      locationCache.putLastJourneyUpdatedTime(
-          DateTime.now().millisecondsSinceEpoch, userId);
-    }
+    await journeyService.updateLastLocationJourney(userId, journey);
     locationCache.putLastJourney(journey, userId);
   }
 
@@ -339,6 +334,7 @@ class JourneyRepository {
       fromLatitude: extractedLocation.latitude,
       fromLongitude: extractedLocation.longitude,
       created_at: lastKnownJourney.update_at,
+      type: JOURNEY_TYPE_STEADY
     );
 
     var steadyJourney = ApiLocationJourney(
@@ -347,6 +343,7 @@ class JourneyRepository {
       from_latitude: extractedLocation.latitude,
       from_longitude: extractedLocation.longitude,
       created_at: lastKnownJourney.update_at,
+      type: JOURNEY_TYPE_STEADY
     );
 
     locationCache.putLastJourney(steadyJourney, userId);

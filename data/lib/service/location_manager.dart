@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/repository/journey_repository.dart';
 import 'package:data/service/location_service.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -22,6 +23,7 @@ const STEADY_DISTANCE = 50; // meters
 final locationManagerProvider = Provider((ref) => LocationManager.instance);
 
 final bgService = FlutterBackgroundService();
+const locationMethodChannel = MethodChannel('com.grouptrack/location');
 
 class LocationManager {
   static LocationManager? _instance;
@@ -58,10 +60,12 @@ class LocationManager {
   }
 
   void startService() async {
+    await locationMethodChannel.invokeMethod('startTracking');
     await bgService.startService();
   }
 
   void stopTrackingService() async {
+    await locationMethodChannel.invokeMethod('stopTracking');
     positionSubscription?.cancel();
     positionSubscription = null;
     bgService.invoke("stopService");
