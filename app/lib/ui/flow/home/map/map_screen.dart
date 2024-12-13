@@ -6,7 +6,6 @@ import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:style/animation/on_tap_scale.dart';
@@ -238,8 +237,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       selectedIndex: notifier.getMapTypeInfo().index,
       items: [
         BottomSheetAction(
-          title: context.l10n.home_map_selected_type_normal_text,
-          icon: SvgPicture.asset(Assets.images.icNormalMap),
+          title: context.l10n.home_map_style_type_app_theme_text,
+          icon: Image.asset(Assets.images.icNormalMap.path),
           onTap: () {
             notifier
                 .setMapType(context.l10n.home_map_selected_type_normal_text);
@@ -247,7 +246,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         ),
         BottomSheetAction(
           title: context.l10n.home_map_selected_type_terrain_text,
-          icon: SvgPicture.asset(Assets.images.icTerrainMap),
+          icon: Image.asset(Assets.images.icTerrainMap.path),
           onTap: () {
             notifier
                 .setMapType(context.l10n.home_map_selected_type_terrain_text);
@@ -255,7 +254,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         ),
         BottomSheetAction(
           title: context.l10n.home_map_selected_type_satellite_text,
-          icon: SvgPicture.asset(Assets.images.icSatelliteMap),
+          icon: Image.asset(Assets.images.icSatelliteMap.path),
           onTap: () {
             notifier
                 .setMapType(context.l10n.home_map_selected_type_satellite_text);

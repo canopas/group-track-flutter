@@ -4,6 +4,7 @@ import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/column_builder.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 
 Future<T?> showActionBottomSheet<T>({
   required BuildContext context,
@@ -12,7 +13,8 @@ Future<T?> showActionBottomSheet<T>({
   bool showHorizontal = false,
   int? selectedIndex,
 }) async {
-  ValueNotifier<int?> selectedIndexNotifier = ValueNotifier<int?>(selectedIndex);
+  ValueNotifier<int?> selectedIndexNotifier =
+      ValueNotifier<int?>(selectedIndex);
   HapticFeedback.mediumImpact();
 
   return await showModalBottomSheet<T>(
@@ -44,16 +46,23 @@ Future<T?> showActionBottomSheet<T>({
   );
 }
 
-Widget _buildHorizontalLayout(BuildContext context, List<BottomSheetAction> items, ValueNotifier<int?> selectedIndexNotifier) {
+Widget _buildHorizontalLayout(BuildContext context,
+    List<BottomSheetAction> items, ValueNotifier<int?> selectedIndexNotifier) {
   return Column(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Align(
-        alignment: Alignment.topRight,
-        child: IconButton(
-          icon: Icon(Icons.close, color: context.colorScheme.textSecondary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+      Padding(
+        padding: const EdgeInsets.only(left: 16, bottom: 16),
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Text(context.l10n.home_map_style_bottom_sheet_title_text,
+              style: AppTextStyle.subtitle1
+                  .copyWith(color: context.colorScheme.textPrimary)),
+          IconButton(
+            icon: Icon(Icons.close, color: context.colorScheme.textSecondary),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ]),
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -74,23 +83,28 @@ Widget _buildHorizontalLayout(BuildContext context, List<BottomSheetAction> item
                     valueListenable: selectedIndexNotifier,
                     builder: (context, selectedIndex, _) {
                       return Container(
-                          height: 100,
-                          width: 100,// Adjust the height as needed
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: selectedIndex == index
-                                  ? context.colorScheme.warning
-                                  : Colors.transparent,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(16),
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: selectedIndex == index
+                                ? context.colorScheme.warning
+                                : Colors.transparent,
+                            width: 2,
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                              child: item.icon!));
+                          image: item.icon != null
+                              ? DecorationImage(
+                                  image: (item.icon as Image).image,
+                                  // Extract ImageProvider
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                        ),
+                      );
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   Text(
                     item.title,
                     style: AppTextStyle.body2,
@@ -102,11 +116,13 @@ Widget _buildHorizontalLayout(BuildContext context, List<BottomSheetAction> item
           );
         }).toList(),
       ),
+      const SizedBox(height: 16)
     ],
   );
 }
 
-Widget _buildVerticalLayout(BuildContext context, List<BottomSheetAction> items) {
+Widget _buildVerticalLayout(
+    BuildContext context, List<BottomSheetAction> items) {
   return ColumnBuilder.separated(
     separatorBuilder: (index) => Divider(
       height: 0,

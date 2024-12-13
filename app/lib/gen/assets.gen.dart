@@ -100,8 +100,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_no_connection_icon.svg
   String get icNoConnectionIcon => 'assets/images/ic_no_connection_icon.svg';
 
-  /// File path: assets/images/ic_normal_map.svg
-  String get icNormalMap => 'assets/images/ic_normal_map.svg';
+  /// File path: assets/images/ic_normal_map.png
+  AssetGenImage get icNormalMap =>
+      const AssetGenImage('assets/images/ic_normal_map.png');
 
   /// File path: assets/images/ic_place_marker_icon.png
   AssetGenImage get icPlaceMarkerIcon =>
@@ -137,8 +138,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_remove.svg
   String get icRemove => 'assets/images/ic_remove.svg';
 
-  /// File path: assets/images/ic_satellite_map.svg
-  String get icSatelliteMap => 'assets/images/ic_satellite_map.svg';
+  /// File path: assets/images/ic_satellite_map.png
+  AssetGenImage get icSatelliteMap =>
+      const AssetGenImage('assets/images/ic_satellite_map.png');
 
   /// File path: assets/images/ic_search_icon.svg
   String get icSearchIcon => 'assets/images/ic_search_icon.svg';
@@ -166,8 +168,9 @@ class $AssetsImagesGen {
   String get icSubscriptionUncheckIcon =>
       'assets/images/ic_subscription_uncheck_icon.svg';
 
-  /// File path: assets/images/ic_terrain_map.svg
-  String get icTerrainMap => 'assets/images/ic_terrain_map.svg';
+  /// File path: assets/images/ic_terrain_map.png
+  AssetGenImage get icTerrainMap =>
+      const AssetGenImage('assets/images/ic_terrain_map.png');
 
   /// File path: assets/images/ic_time_line_history_icon.svg
   String get icTimeLineHistoryIcon =>
