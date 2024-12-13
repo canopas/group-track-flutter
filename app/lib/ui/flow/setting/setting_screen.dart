@@ -3,6 +3,7 @@ import 'package:data/feature_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:style/button/icon_primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
@@ -236,6 +237,20 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
             icon: Assets.images.icAboutUs,
             onTap: () {
               notifier.onLaunchUri(privacyPolicyUrl);
+            }),
+        _otherOptionItem(
+            context: context,
+            title: context.l10n.settings_other_option_rate_us_text,
+            icon: Assets.images.icRateUs,
+            onTap: () {
+              notifier.onRateUs();
+            }),
+        _otherOptionItem(
+            context: context,
+            title: context.l10n.settings_other_option_share_app_text,
+            icon: Assets.images.icShareApp,
+            onTap: () {
+              Share.share(context.l10n.settings_share_app_text);
             }),
         _otherOptionItem(
             context: context,
