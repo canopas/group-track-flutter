@@ -52,8 +52,9 @@ Widget _buildHorizontalLayout(BuildContext context,
     mainAxisSize: MainAxisSize.min,
     children: [
       Padding(
-        padding: const EdgeInsets.only(left: 16,bottom: 16),
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        padding: const EdgeInsets.only(left: 16, bottom: 16),
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Text(context.l10n.home_map_style_bottom_sheet_title_text,
               style: AppTextStyle.subtitle1
                   .copyWith(color: context.colorScheme.textPrimary)),
@@ -82,20 +83,25 @@ Widget _buildHorizontalLayout(BuildContext context,
                     valueListenable: selectedIndexNotifier,
                     builder: (context, selectedIndex, _) {
                       return Container(
-                          height: 100,
-                          width: 100, // Adjust the height as needed
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: selectedIndex == index
-                                  ? context.colorScheme.warning
-                                  : Colors.transparent,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(16),
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: selectedIndex == index
+                                ? context.colorScheme.warning
+                                : Colors.transparent,
+                            width: 2,
                           ),
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: item.icon!));
+                          image: item.icon != null
+                              ? DecorationImage(
+                                  image: (item.icon as Image).image,
+                                  // Extract ImageProvider
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                        ),
+                      );
                     },
                   ),
                   const SizedBox(height: 12),
