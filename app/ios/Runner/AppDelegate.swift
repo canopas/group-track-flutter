@@ -31,6 +31,7 @@ import Combine
         let locationsHandler = LocationsHandler.shared
         if locationsHandler.updatesStarted {
             locationsHandler.startLocationUpdates()
+            locationsHandler.startLocationUpdate()
         }
         
         locationsHandler.$lastLocation.sink(receiveValue: { [weak self] location in
@@ -41,10 +42,12 @@ import Combine
                 "timestamp": location.timestamp.timeIntervalSince1970 * 1000,
             ]
             
-            guard let self = self else { return }
-            if let controller = window?.rootViewController as? FlutterViewController {
-                let methodChannel = FlutterMethodChannel(name: "com.grouptrack/location", binaryMessenger: controller.binaryMessenger)
-                methodChannel.invokeMethod("onLocationUpdate", arguments: locationData)
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                if let controller = self.window?.rootViewController as? FlutterViewController {
+                    let methodChannel = FlutterMethodChannel(name: "com.grouptrack/location", binaryMessenger: controller.binaryMessenger)
+                    methodChannel.invokeMethod("onLocationUpdate", arguments: locationData)
+                }
             }
         }).store(in: &cancellables)
         
