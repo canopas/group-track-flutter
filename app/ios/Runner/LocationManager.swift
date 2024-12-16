@@ -53,39 +53,17 @@ class LocationsHandler: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
     }
     
-//    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-//        guard let currentLocation = locations.last else { return }
-//        
-//        let lastUpdateTime = lastLocation.timestamp
-//        
-//        let timeInterval = Date().timeIntervalSince(lastUpdateTime)
-//        if timeInterval < 10 {
-//            return
-//        }
-//        
-//        lastLocation = currentLocation
-//    }
-    
-    func startLocationUpdate() {
-        Task {
-            do {
-                if #available(iOS 17.0, *) {
-                    let updates = CLLocationUpdate.liveUpdates()
-                    for try await update in updates {
-                        if let location = update.location {
-                            self.lastLocation = location
-                            print("Current Location is \(location)")
-
-                            if update.isStationary {
-                                break
-                            }
-                        }
-                    }
-                }
-            } catch {
-                debugPrint("An error occurred: \(error.localizedDescription)")
-            }
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let currentLocation = locations.last else { return }
+        
+        let lastUpdateTime = lastLocation.timestamp
+        
+        let timeInterval = Date().timeIntervalSince(lastUpdateTime)
+        if timeInterval < 10 {
+            return
         }
+        
+        lastLocation = currentLocation
     }
     
     func getCurrentLocation(result: @escaping FlutterResult) {

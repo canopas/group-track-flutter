@@ -28,28 +28,23 @@ import Combine
         geofencePluginRegistration()
         registerLocationChannel()
         
-        let locationsHandler = LocationsHandler.shared
-        if locationsHandler.updatesStarted {
-            locationsHandler.startLocationUpdates()
-            locationsHandler.startLocationUpdate()
-        }
-        
-        locationsHandler.$lastLocation.sink(receiveValue: { [weak self] location in
+        if #available(iOS 17.0, *) {
+            let liveLocationUpdates = LiveLocationUpdates.shared
             
-            let locationData: [String: Any] = [
-                "latitude": location.coordinate.latitude,
-                "longitude": location.coordinate.longitude,
-                "timestamp": location.timestamp.timeIntervalSince1970 * 1000,
-            ]
+            liveLocationUpdates.startLocationUpdate()
             
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                if let controller = self.window?.rootViewController as? FlutterViewController {
-                    let methodChannel = FlutterMethodChannel(name: "com.grouptrack/location", binaryMessenger: controller.binaryMessenger)
-                    methodChannel.invokeMethod("onLocationUpdate", arguments: locationData)
-                }
+            liveLocationUpdates.$lastLocation.sink(receiveValue: { [weak self] location in
+                self?.sendLocationToFlutter(location: location)
+            }).store(in: &cancellables)
+        } else {
+            let locationsHandler = LocationsHandler.shared
+            if locationsHandler.updatesStarted {
+                locationsHandler.startLocationUpdates()
             }
-        }).store(in: &cancellables)
+            locationsHandler.$lastLocation.sink(receiveValue: { [weak self] location in
+                self?.sendLocationToFlutter(location: location)
+            }).store(in: &cancellables)
+        }
         
         GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -73,6 +68,22 @@ import Combine
                 LocationsHandler.shared.getCurrentLocation(result: result)
             } else {
                 result(FlutterMethodNotImplemented)
+            }
+        }
+    }
+    
+    func sendLocationToFlutter(location: CLLocation) {
+        let locationData: [String: Any] = [
+            "latitude": location.coordinate.latitude,
+            "longitude": location.coordinate.longitude,
+            "timestamp": location.timestamp.timeIntervalSince1970 * 1000,
+        ]
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            if let controller = self.window?.rootViewController as? FlutterViewController {
+                let methodChannel = FlutterMethodChannel(name: "com.grouptrack/location", binaryMessenger: controller.binaryMessenger)
+                methodChannel.invokeMethod("onLocationUpdate", arguments: locationData)
             }
         }
     }
