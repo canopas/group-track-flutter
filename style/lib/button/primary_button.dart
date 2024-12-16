@@ -42,7 +42,7 @@ class PrimaryButton extends StatelessWidget {
         ? bg
         : context.colorScheme.containerLowOnSurface;
 
-    final fg = foreground ?? colorScheme.onPrimary;
+    final fg = foreground ?? colorScheme.textInversePrimary;
     final fgColor = tappable
         ? fg
         : context.colorScheme.textDisabled;

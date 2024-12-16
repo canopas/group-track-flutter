@@ -236,7 +236,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 firstLetter: sender!.firstChar,
                 size: 24,
                 style: AppTextStyle.caption.copyWith(
-                  color: context.colorScheme.textPrimaryDark,
+                  color: context.colorScheme.textInversePrimary,
                 ),
                 backgroundColor: context.colorScheme.primary,
               ),
@@ -310,7 +310,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             style: AppTextStyle.subtitle3.copyWith(
               color: isSender
                   ? context.colorScheme.textPrimary
-                  : context.colorScheme.textPrimaryDark,
+                  : context.colorScheme.textInversePrimary,
             ),
             maxLines: null,
             textAlign: isSender ? TextAlign.start : TextAlign.end,
@@ -492,7 +492,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 child: Center(
                   child: Text(firstLetter,
                       style: AppTextStyle.header4.copyWith(
-                          color: context.colorScheme.textPrimaryDark)),
+                          color: context.colorScheme.textInversePrimary)),
                 ),
               ),
       ),
@@ -545,7 +545,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             },
             icon: Icon(Icons.arrow_forward_rounded,
                 color: state.allowSend && state.message.text.isNotEmpty
-                    ? context.colorScheme.textPrimaryDark
+                    ? context.colorScheme.textInversePrimary
                     : context.colorScheme.textDisabled),
             enabled: state.allowSend,
             radius: 23,

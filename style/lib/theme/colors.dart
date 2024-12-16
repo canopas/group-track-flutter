@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:style/text/app_text_dart.dart';
 
 
-const primaryColor = Color(0xFF1679AB);
+const primaryLightColor = Color(0xFF1679AB);
+const primaryDarkColor = Color(0xFF74BFE4);
 
 const secondaryLightColor = Color(0xFF34495E);
 const secondaryVariantLightColor = Color(0x5234495E);
@@ -18,7 +19,7 @@ const containerLightColor = Color(0x0A61A4C6);
 const containerHighDarkColor = Color(0x3DABCFE1);
 const containerNormalDarkColor = Color(0x1EABCFE1);
 const containerLowDarkColor = Color(0x14ABCFE1);
-const containerDarkColor = Color(0x0AABCFE1);
+const containerDarkColor = Color(0x06ABCFE1);
 
 const textPrimaryLightColor = Color(0xDE000000);
 const textSecondaryLightColor = Color(0x99000000);
@@ -42,10 +43,10 @@ final ThemeData _materialLightTheme = ThemeData.light(useMaterial3: true);
 final ThemeData _materialDarkTheme = ThemeData.dark(useMaterial3: true);
 
 final ThemeData materialThemeDataLight = _materialLightTheme.copyWith(
-  primaryColor: primaryColor,
+  primaryColor: primaryLightColor,
   dividerColor: outlineLightColor,
   colorScheme: _materialLightTheme.colorScheme.copyWith(
-    primary: primaryColor,
+    primary: primaryLightColor,
     secondary: secondaryLightColor,
     surface: surfaceLightColor,
     onPrimary: textPrimaryDarkColor,
@@ -64,10 +65,10 @@ final ThemeData materialThemeDataLight = _materialLightTheme.copyWith(
 );
 
 final ThemeData materialThemeDataDark = _materialDarkTheme.copyWith(
-  primaryColor: primaryColor,
+  primaryColor: primaryDarkColor,
   dividerColor: outlineDarkColor,
   colorScheme: _materialDarkTheme.colorScheme.copyWith(
-    primary: primaryColor,
+    primary: primaryDarkColor,
     secondary: secondaryDarkColor,
     surface: surfaceDarkColor,
     onPrimary: textPrimaryDarkColor,
@@ -159,7 +160,7 @@ class AppColorScheme {
 }
 
 final appColorSchemeLight = AppColorScheme(
-  primary: primaryColor,
+  primary: primaryLightColor,
   secondary: secondaryLightColor,
   secondaryVariant: secondaryVariantLightColor,
   surface: surfaceLightColor,
@@ -192,7 +193,7 @@ final appColorSchemeLight = AppColorScheme(
 );
 
 final appColorSchemeDark = AppColorScheme(
-  primary: primaryColor,
+  primary: primaryDarkColor,
   secondary: secondaryDarkColor,
   secondaryVariant: secondaryVariantDarkColor,
   surface: surfaceDarkColor,

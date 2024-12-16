@@ -124,7 +124,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
               context: context,
               icon: Assets.images.icGeofenceIcon,
               iconSize: 24,
-              foreground: context.colorScheme.onPrimary,
+              foreground: context.colorScheme.textInversePrimary,
               background: context.colorScheme.primary,
               onTap: widget.onPlacesTap,
             ),
