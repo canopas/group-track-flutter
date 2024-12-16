@@ -422,6 +422,7 @@ class _EditPlaceViewState extends ConsumerState<EditPlaceScreen> {
           trackOutlineColor:
               WidgetStatePropertyAll(context.colorScheme.outline),
           trackOutlineWidth: const WidgetStatePropertyAll(0.5),
+          activeColor: context.colorScheme.containerLowOnSurface,
         )
       ],
     );
