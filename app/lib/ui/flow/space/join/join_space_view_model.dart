@@ -30,7 +30,7 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
 
   Future<void> joinSpace() async {
     try {
-      spaceService.joinSpace(state.spaceId);
+      spaceService.joinSpace(state.space?.id ?? '');
       state = state.copyWith(verifying: false, spaceJoined: true, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error, verifying: false);
@@ -95,7 +95,6 @@ class JoinSpaceViewState with _$JoinSpaceViewState {
     @Default(false) bool verifying,
     @Default(false) bool spaceJoined,
     @Default('') String invitationCode,
-    @Default('') String spaceId,
     @Default(false) bool errorInvalidInvitationCode,
     @Default(false) bool alreadySpaceMember,
     Object? error,
