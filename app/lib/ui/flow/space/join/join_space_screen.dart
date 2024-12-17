@@ -33,8 +33,37 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
   @override
   void initState() {
     super.initState();
-    _controllers = List.generate(6, (index) => TextEditingController());
+    _controllers = List.generate(6, (index) => TextEditingController(text: '\u200b'));
     _focusNodes = List.generate(6, (index) => FocusNode());
+
+    for (int i = 0; i < _controllers.length; i++) {
+      _controllers[i].addListener(() {
+        _handleTextChange(i);
+      });
+    }
+  }
+
+  void _handleTextChange(int index) {
+    final text = _controllers[index].text;
+
+    if (text.isEmpty) {
+      _controllers[index].text = '\u200b';
+      _controllers[index].selection = const TextSelection.collapsed(offset: 1);
+
+      if (index > 0) {
+        _focusNodes[index - 1].requestFocus();
+      }
+    } else if (text.length > 1) {
+      String newText = text.replaceAll('\u200b', '').toUpperCase();
+      _controllers[index].text = newText;
+      _controllers[index].selection = TextSelection.collapsed(offset: newText.length);
+
+      // Move focus to the next field
+      if (index < 5) {
+        _focusNodes[index + 1].requestFocus();
+      }
+      _updateJoinSpaceButtonState();
+    }
   }
 
   @override
@@ -150,7 +179,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
           controller: _controllers[index],
           focusNode: _focusNodes[index],
           textAlign: TextAlign.center,
-          maxLength: 1,
+          maxLength: 2,
           decoration: const InputDecoration(
             border: InputBorder.none,
             counterText: '',
@@ -170,17 +199,6 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
                 selection: TextSelection.collapsed(offset: upperCaseText.length),
               );
             }
-
-            if (text.isEmpty) {
-              if (index > 0) _focusNodes[index - 1].requestFocus();
-            } else {
-              if (index < 5) {
-                _focusNodes[index + 1].requestFocus();
-              } else {
-                FocusManager.instance.primaryFocus?.unfocus();
-              }
-            }
-            _updateJoinSpaceButtonState();
           },
         ),
       ),
@@ -238,8 +256,10 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
 
   void _updateJoinSpaceButtonState() {
     setState(() {
-      enabled =
-          _controllers.every((controller) => controller.text.trim().isNotEmpty);
+      enabled = _controllers.every((controller) {
+        final text = controller.text;
+        return text.length == 1 && text != '\u200b';
+      });
     });
   }
 
