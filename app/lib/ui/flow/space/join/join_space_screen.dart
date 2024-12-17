@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
@@ -33,17 +32,20 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
 
   @override
   void initState() {
-    _controllers = List.generate(6, (index) => TextEditingController());
-    _focusNodes = List.generate(
-        6,
-        (index) => FocusNode(onKeyEvent: (node, event) {
-              if (event.logicalKey == LogicalKeyboardKey.backspace &&
-                  _controllers[index].text.isEmpty) {
-                if (index > 0) _focusNodes[index - 1].requestFocus();
-              }
-              return KeyEventResult.ignored;
-            }));
     super.initState();
+    _controllers = List.generate(6, (index) => TextEditingController());
+    _focusNodes = List.generate(6, (index) => FocusNode());
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    for (var focusNode in _focusNodes) {
+      focusNode.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -130,11 +132,11 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
   }
 
   Widget _buildCodeBox(
-    BuildContext context,
-    double width,
-    int index,
-    JoinSpaceViewState state,
-  ) {
+      BuildContext context,
+      double width,
+      int index,
+      JoinSpaceViewState state,
+      ) {
     return Container(
       width: width,
       height: 64,
@@ -161,6 +163,14 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
             FocusManager.instance.primaryFocus?.unfocus();
           },
           onChanged: (text) {
+            final upperCaseText = text.toUpperCase();
+            if (_controllers[index].text != upperCaseText) {
+              _controllers[index].value = TextEditingValue(
+                text: upperCaseText,
+                selection: TextSelection.collapsed(offset: upperCaseText.length),
+              );
+            }
+
             if (text.isEmpty) {
               if (index > 0) _focusNodes[index - 1].requestFocus();
             } else {
