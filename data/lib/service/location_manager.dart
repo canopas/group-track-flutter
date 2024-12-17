@@ -4,8 +4,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:battery_plus/battery_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/repository/journey_repository.dart';
+import 'package:data/service/NotificationService.dart';
 import 'package:data/service/location_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -46,6 +48,13 @@ class LocationManager {
   Position? _movingPosition;
   bool isMoving = false;
   int movingDistance = STEADY_DISTANCE;
+  final NotificationService notificationService = NotificationService();
+  final battery = Battery();
+  bool isBatterySaveMode = false;
+  final StreamController<bool> _batterySaveModeController =
+      StreamController<bool>();
+
+  Stream<bool> get batterySaveModeStream => _batterySaveModeController.stream;
 
   Future<bool> isServiceRunning() async {
     return await bgService.isRunning();
@@ -60,14 +69,20 @@ class LocationManager {
   }
 
   void startService() async {
-    await locationMethodChannel.invokeMethod('startTracking');
+    if (Platform.isIOS) {
+      await locationMethodChannel.invokeMethod('startTracking');
+    }
+    listenNotification();
     await bgService.startService();
   }
 
   void stopTrackingService() async {
-    await locationMethodChannel.invokeMethod('stopTracking');
+    if (Platform.isIOS) {
+      await locationMethodChannel.invokeMethod('stopTracking');
+    }
     positionSubscription?.cancel();
     positionSubscription = null;
+    _batterySaveModeController.close();
     bgService.invoke("stopService");
   }
 
@@ -84,6 +99,8 @@ class LocationManager {
 
     final userId = await _getUserIdFromPreferences();
     if (userId == null) return;
+    startBatterySaveModeMonitoring();
+    listenToBatterySaveMode();
 
     positionSubscription = Geolocator.getPositionStream(
       locationSettings: LocationSettings(
@@ -177,5 +194,50 @@ class LocationManager {
     this.isMoving = isMoving;
     movingDistance = isMoving ? MOVING_DISTANCE : STEADY_DISTANCE;
     startTracking();
+  }
+
+  void startBatterySaveModeMonitoring() async {
+    Timer.periodic(const Duration(seconds: 10), (_) async {
+      final isInBatterySaveMode = await battery.isInBatterySaveMode;
+      print("XXX Battery:$isInBatterySaveMode");
+      if (isInBatterySaveMode != isBatterySaveMode) {
+        _batterySaveModeController.add(isInBatterySaveMode);
+      }
+    });
+  }
+
+  void listenToBatterySaveMode() {
+    batterySaveModeStream.listen((isInBatterySaveMode) {
+      if (isInBatterySaveMode) {
+        isBatterySaveMode = true;
+        print("XXX Battery is in save mode");
+        showNotification(true);
+      } else {
+        isBatterySaveMode = false;
+        print("XXX Battery is not in battery save mode");
+        showNotification(false);
+      }
+    });
+  }
+
+  void showNotification(bool isEnable) async {
+    final text = (isEnable)
+        ? "Battery save mode is enable"
+        : "Battery save mode is disable";
+    // notificationService.initializeService();
+    notificationService.showNotification(
+        id: 101,
+        title: "Group Track",
+        body: text,
+        payload: "battery_save_mode_notification");
+  }
+
+  void listenNotification() => notificationService.onNotificationClick.stream
+      .listen((onNotificationListener));
+
+  void onNotificationListener(String? payload) {
+    // if (payload != null && payload.isNotEmpty) {
+      print("XXX payload:$payload");
+    // }
   }
 }

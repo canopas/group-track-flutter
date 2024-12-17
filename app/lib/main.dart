@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/location.dart';
+import 'package:data/service/NotificationService.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/network_service.dart';
 import 'package:data/storage/preferences_provider.dart';
@@ -40,9 +41,11 @@ void main() async {
 
   if (Platform.isAndroid) _configureService();
 
-  if (await Permission.location.isGranted) {
+  if (await Permission.location.isGranted && Platform.isIOS) {
      await locationMethodChannel.invokeMethod('startTracking');
   }
+  NotificationService notificationService = NotificationService();
+  notificationService.initializeService();
 
   locationMethodChannel.setMethodCallHandler(_handleLocationUpdates);
 
@@ -84,10 +87,10 @@ void updateCurrentUserState(
 
 Future<ProviderContainer> _initContainer() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  if (!kDebugMode) {
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-    await FirebaseCrashlytics.instance.setCustomKey("app_type", "flutter");
-  }
+  // if (!kDebugMode) {
+  //   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  //   await FirebaseCrashlytics.instance.setCustomKey("app_type", "flutter");
+  // }
 
   final prefs = await SharedPreferences.getInstance();
 
