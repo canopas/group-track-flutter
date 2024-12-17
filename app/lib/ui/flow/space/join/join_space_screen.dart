@@ -284,7 +284,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     final isNetworkOff = await checkInternetConnectivity();
     isNetworkOff
         ? _showSnackBar()
-        : notifier.joinSpace(inviteCode.toUpperCase());
+        : notifier.joinSpace();
   }
 
   void _showSnackBar() {
