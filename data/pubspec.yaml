@@ -33,8 +33,6 @@ dependencies:
   google_maps_flutter: ^2.2.8
   connectivity_plus: ^6.0.5
   battery_plus: ^6.2.0
-  flutter_local_notifications: ^18.0.1
-  awesome_notifications: ^0.10.0
 
 dev_dependencies:
   flutter_test:

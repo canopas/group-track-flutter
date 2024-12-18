@@ -13,6 +13,7 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/theme/colors.dart';
 import 'package:style/theme/theme.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/main.dart';
 
 import '../domain/extenstions/widget_extensions.dart';
 import 'app_route.dart';
@@ -41,8 +42,11 @@ class _AppState extends ConsumerState<App> {
       initialRoute = AppRoute.home;
     }
 
-    _router =
-        GoRouter(routes: AppRoute.routes, initialLocation: initialRoute.path);
+    _router = GoRouter(
+      routes: AppRoute.routes,
+      initialLocation: initialRoute.path,
+      navigatorKey: navigatorKey,
+    );
   }
 
   @override
