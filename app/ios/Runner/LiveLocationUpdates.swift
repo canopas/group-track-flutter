@@ -8,17 +8,21 @@
 import Foundation
 import CoreLocation
 
+@available(iOS 17.0, *)
 class LiveLocationUpdates {
     static let shared = LiveLocationUpdates()
     private var previousLocation: CLLocation? = nil
     private let distanceThreshold: CLLocationDistance = 150.0
     
+    private var backgroundActivity: CLBackgroundActivitySession?
+    
     @Published var lastLocation = CLLocation()
     
-    @available(iOS 17.0, *)
     func startLocationUpdate() {
         Task {
             do {
+                self.backgroundActivity = CLBackgroundActivitySession()
+                
                 let locationUpdates = CLLocationUpdate.liveUpdates(.fitness)
                 for try await update in locationUpdates {
                     if let currentLocation = update.location {
@@ -43,5 +47,9 @@ class LiveLocationUpdates {
                 debugPrint("An error occurred: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func stopBackgroundLocation() {
+        self.backgroundActivity?.invalidate()
     }
 }

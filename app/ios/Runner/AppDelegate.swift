@@ -101,17 +101,24 @@ extension AppDelegate {
             (call: FlutterMethodCall, result: @escaping FlutterResult) in
             guard self != nil else { return }
             if call.method == "startTracking" {
-                LocationsHandler.shared.startLocationUpdates()
-                result(true)
+                if #available(iOS 17.0, *) {
+                    LiveLocationUpdates.shared.startLocationUpdate()
+                } else {
+                    LocationsHandler.shared.startLocationUpdates()
+                    result(true)
+                }
             } else if call.method == "stopTracking" {
-                LocationsHandler.shared.stopLocationUpdates()
-                result(true)
+                if #available(iOS 17.0, *) {
+                    LiveLocationUpdates.shared.stopBackgroundLocation()
+                } else {
+                    LocationsHandler.shared.stopLocationUpdates()
+                    result(true)
+                }
             } else {
                 result(FlutterMethodNotImplemented)
             }
         }
     }
-    
     
     private func geofencePluginRegistration() {
         let controller: FlutterViewController =
