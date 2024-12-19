@@ -182,6 +182,9 @@
   "edit_profile_remove_photo_option_text": "Remove photo",
   "edit_profile_cropper_text": "Cropper",
   "edit_profile_delete_account_title": "Delete account",
+  "edit_profile_change_admin_text": "Change",
+  "edit_profile_change_admin_title": "Change admin",
+  "edit_profile_change_admin_subtitle": "To delete the account, you must assign another member as admin. This action is irreversible unless the new admin changes it.",
 
   "edit_space_name_title": "Group name",
   "edit_space_member_location_sharing_title": "Member location sharing",
