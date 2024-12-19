@@ -26,21 +26,7 @@ class LiveLocationUpdates {
                 let locationUpdates = CLLocationUpdate.liveUpdates(.fitness)
                 for try await update in locationUpdates {
                     if let currentLocation = update.location {
-                        if previousLocation == nil {
-                            previousLocation = currentLocation
-                            lastLocation = currentLocation
-                            continue
-                        }
-                        
-                        if let previousLocation = previousLocation {
-                            let distanceMoved = currentLocation.distance(from: previousLocation)
-                            if distanceMoved >= distanceThreshold || update.isStationary {
-                                self.previousLocation = currentLocation
-                                self.lastLocation = currentLocation
-                            }
-                        }
-                        
-                        if update.isStationary { break }
+                        self.handleLocationUpdate(currentLocation, isStationary: update.isStationary)
                     }
                 }
             } catch {
@@ -49,7 +35,19 @@ class LiveLocationUpdates {
         }
     }
     
-    func stopBackgroundLocation() {
-        self.backgroundActivity?.invalidate()
+    private func handleLocationUpdate(_ currentLocation: CLLocation, isStationary: Bool) {
+        if previousLocation == nil {
+            previousLocation = currentLocation
+            lastLocation = currentLocation
+            return
+        }
+        
+        if let previousLocation = previousLocation {
+            let distanceMoved = currentLocation.distance(from: previousLocation)
+            if distanceMoved >= distanceThreshold || isStationary {
+                self.previousLocation = currentLocation
+                self.lastLocation = currentLocation
+            }
+        }
     }
 }
