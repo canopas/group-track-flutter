@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
+import 'package:yourspace_flutter/domain/fcm/awesome_notification_handler.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
@@ -16,7 +17,6 @@ import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/home/home_screen_viewmodel.dart';
 import 'package:yourspace_flutter/ui/flow/home/map/map_view_model.dart';
 
-import '../../../domain/fcm/notification_handler.dart';
 import '../../components/alert.dart';
 import '../../components/no_internet_screen.dart';
 import '../../components/permission_dialog.dart';
@@ -33,15 +33,15 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late HomeViewNotifier notifier;
   late MapViewNotifier mapNotifier;
-  late NotificationHandler notificationHandler;
+  late AwesomeNotificationHandler awesomeNotificationHandler;
   late GeofenceRepository geofenceRepository;
 
   @override
   void initState() {
     super.initState();
     runPostFrame(() {
-      notificationHandler = ref.read(notificationHandlerProvider);
-      notificationHandler.init(context);
+      awesomeNotificationHandler = ref.read(awesomeNotificationHandlerProvider);
+      awesomeNotificationHandler.init(context);
 
       notifier = ref.watch(homeViewStateProvider.notifier);
 

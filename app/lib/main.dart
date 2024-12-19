@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/location.dart';
+import 'package:data/log/logger.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/network_service.dart';
 import 'package:data/storage/preferences_provider.dart';
@@ -10,19 +11,20 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yourspace_flutter/domain/fcm/awesome_notification_handler.dart';
 import 'package:yourspace_flutter/firebase_options.dart';
 import 'package:yourspace_flutter/ui/app.dart';
 
 import 'domain/fcm/notification_handler.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 const NOTIFICATION_ID = 112233;
 const NOTIFICATION_CHANNEL_ID = "notification_channel_your_space_regional";
@@ -40,8 +42,8 @@ void main() async {
 
   if (Platform.isAndroid) _configureService();
 
-  if (await Permission.location.isGranted) {
-     await locationMethodChannel.invokeMethod('startTracking');
+  if (await Permission.location.isGranted && Platform.isIOS) {
+    await locationMethodChannel.invokeMethod('startTracking');
   }
 
   locationMethodChannel.setMethodCallHandler(_handleLocationUpdates);
@@ -84,10 +86,10 @@ void updateCurrentUserState(
 
 Future<ProviderContainer> _initContainer() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  if (!kDebugMode) {
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-    await FirebaseCrashlytics.instance.setCustomKey("app_type", "flutter");
-  }
+  // if (!kDebugMode) {
+  //   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  //   await FirebaseCrashlytics.instance.setCustomKey("app_type", "flutter");
+  // }
 
   final prefs = await SharedPreferences.getInstance();
 
@@ -137,25 +139,30 @@ void _configureService() async {
 Future<void> onStart(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!await Permission.location.isGranted) return;
-
-  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final AwesomeNotificationHandler notificationHandler = AwesomeNotificationHandler();
 
   if (service is AndroidServiceInstance) {
     if (await service.isForegroundService()) {
-      flutterLocalNotificationsPlugin.show(
+      notificationHandler.showLocalNotification(
         NOTIFICATION_ID,
         'Your space Location',
         'Location is being tracked',
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            NOTIFICATION_CHANNEL_ID,
-            'MY FOREGROUND SERVICE',
-            icon: "app_notification_icon",
-            ongoing: true,
-            color: Color(0xFF1679AB),
-          ),
-        ),
+        'location',
       );
+      // flutterLocalNotificationsPlugin.show(
+      //   NOTIFICATION_ID,
+      //   'Your space Location',
+      //   'Location is being tracked',
+      //   const NotificationDetails(
+      //     android: AndroidNotificationDetails(
+      //       NOTIFICATION_CHANNEL_ID,
+      //       'MY FOREGROUND SERVICE',
+      //       icon: "app_notification_icon",
+      //       ongoing: true,
+      //       color: Color(0xFF1679AB),
+      //     ),
+      //   ),
+      // );
     }
   }
 
@@ -167,3 +174,21 @@ Future<void> onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 }
+
+void _onLocalNotificationTap(String? payload) {
+  print("XXX on tap notification: $payload");
+  if (payload != null) {
+    print("XXX get data on tap notification: $payload");
+    logger.d("XXX logger get data on tap notification tapped: $payload");
+  }
+}
+
+// @pragma('vm:entry-point')
+// void _onBackgroundNotificationTap(NotificationResponse response) {
+//   print("XXX on tap Background notification: $response");
+//   if (response.payload != null) {
+//     print("XXX get Background on tap notification: ${response.payload}");
+//     logger.d("XXX logger Background notification tapped: ${response.payload}");
+//     // Handle specific cases if required
+//   }
+// }
