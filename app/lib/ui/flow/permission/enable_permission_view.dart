@@ -73,22 +73,22 @@ class _EnablePermissionViewState extends ConsumerState<EnablePermissionView>
             _permissionView(
               title: context.l10n.enable_location_access_title,
               subTitle: context.l10n.enable_location_access_sub_title,
-              buttonValue: state.isLocationGranted,
-              onTapRadio: notifier.requestLocationPermission,
+              isChecked: state.isLocationGranted,
+              onChanged: notifier.requestLocationPermission,
             ),
             const SizedBox(height: 24),
             _permissionView(
               title: context.l10n.enable_background_location_access_title,
               subTitle: context.l10n.enable_background_location_access_sub_title,
-              buttonValue: state.isBackGroundLocationGranted,
-              onTapRadio: notifier.requestBackgroundLocationPermission,
+              isChecked: state.isBackGroundLocationGranted,
+              onChanged: notifier.requestBackgroundLocationPermission,
             ),
             const SizedBox(height: 24),
             _permissionView(
               title: context.l10n.enable_notification_access_title,
               subTitle: context.l10n.enable_notification_access_sun_title,
-              buttonValue: state.isNotificationGranted,
-              onTapRadio: notifier.requestNotificationPermission,
+              isChecked: state.isNotificationGranted,
+              onChanged: notifier.requestNotificationPermission,
             ),
             const SizedBox(height: 64),
           ],
@@ -112,8 +112,8 @@ class _EnablePermissionViewState extends ConsumerState<EnablePermissionView>
   Widget _permissionView({
     required String title,
     required String subTitle,
-    required bool buttonValue,
-    required VoidCallback onTapRadio,
+    required bool isChecked,
+    required VoidCallback onChanged,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,12 +121,13 @@ class _EnablePermissionViewState extends ConsumerState<EnablePermissionView>
         SizedBox(
           width: 24,
           height: 24,
-          child: Radio(
-            value: true,
-            groupValue: buttonValue,
+          child: Checkbox(
+            value: isChecked,
             activeColor: context.colorScheme.primary,
             onChanged: (value) {
-              onTapRadio();
+              if (value == true) {
+                onChanged();
+              }
             },
           ),
         ),
@@ -135,8 +136,8 @@ class _EnablePermissionViewState extends ConsumerState<EnablePermissionView>
           child: InkWell(
             splashColor: Colors.transparent,
             onTap: () {
-              if (!buttonValue) {
-                onTapRadio();
+              if (!isChecked) {
+                onChanged();
               }
             },
             child: Column(

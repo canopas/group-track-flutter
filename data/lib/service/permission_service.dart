@@ -16,6 +16,9 @@ class PermissionService {
   Future<PermissionStatus> requestLocationPermission() async {
     return await Permission.location.request();
   }
+  Future<PermissionStatus> requestLocationPermissionStatus() async {
+    return await Permission.location.status;
+  }
 
   Future<bool> isBackgroundLocationPermissionGranted() async {
     return await Permission.locationAlways.isGranted;

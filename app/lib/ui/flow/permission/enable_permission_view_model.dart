@@ -39,9 +39,11 @@ class PermissionViewNotifier extends StateNotifier<PermissionViewState> {
   }
 
   Future<void> requestLocationPermission() async {
-    final permissionState = await permissionService.requestLocationPermission();
+    final permissionState = await permissionService.requestLocationPermissionStatus();
     if (permissionState.isGranted) {
       state = state.copyWith(isLocationGranted: true);
+    } else if (permissionState.isDenied) {
+     await permissionService.requestLocationPermission();
     } else {
       state = state.copyWith(showLocationPrompt: DateTime.now());
     }
