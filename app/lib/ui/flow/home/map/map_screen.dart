@@ -407,7 +407,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     textPainter.text = TextSpan(
       text: userName.isNotEmpty ? userName[0] : '',
       style: TextStyle(
-          fontSize: Platform.isAndroid ? 70 : 40, color: Colors.white),
+          fontSize: Platform.isAndroid ? 70 : 40, color: context.colorScheme.textInversePrimary),
     );
     textPainter.layout();
     textPainter.paint(

@@ -215,7 +215,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
             SvgPicture.asset(
               Assets.images.icPlusIcon,
               colorFilter: ColorFilter.mode(
-                context.colorScheme.onPrimary,
+                context.colorScheme.textInversePrimary,
                 BlendMode.srcATop,
               ),
             ),
@@ -223,7 +223,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
             Text(
               context.l10n.places_list_add_place_btn_text,
               style: AppTextStyle.button.copyWith(
-                color: context.colorScheme.onPrimary,
+                color: context.colorScheme.textInversePrimary,
               ),
             )
           ],

@@ -73,7 +73,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
                 },
                 icon: Icon(
                   Icons.add_rounded,
-                  color: context.colorScheme.onPrimary,
+                  color: context.colorScheme.textInversePrimary,
                 ),
               )
             : null);

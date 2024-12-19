@@ -254,6 +254,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           activeTrackColor: context.colorScheme.primary,
           inactiveTrackColor: context.colorScheme.outline,
           inactiveThumbColor: context.colorScheme.textPrimaryDark,
+          activeColor: context.colorScheme.containerLowOnSurface,
           trackOutlineColor:
               WidgetStatePropertyAll(context.colorScheme.outline),
           trackOutlineWidth: const WidgetStatePropertyAll(0.5),
