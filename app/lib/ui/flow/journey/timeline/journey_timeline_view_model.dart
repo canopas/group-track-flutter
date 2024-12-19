@@ -118,7 +118,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
   }
 
   void loadMoreJourney() async {
-    if (state.hasMore && !state.appending) {
+    if (state.hasMore && !state.appending && !state.isLoading) {
       await Future.delayed(const Duration(milliseconds: 200));
       _loadJourney(loadMore: true);
     }
