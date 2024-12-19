@@ -45,12 +45,10 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
   Future<bool> getUserSpaces() async {
     try {
       final spaces = await spaceService.getUserSpaces(user?.id ?? '');
-      for (final space in spaces) {
-        final spaceMember = await spaceService.getMemberBySpaceId(space?.id ?? '');
-        final isCurrentUserAdmin = space?.admin_id == user?.id;
-        if (isCurrentUserAdmin && spaceMember.length > 1) {
-          return true;
-        }
+      final adminSpaces = spaces.where((space) => space?.admin_id == user?.id);
+      for (final space in adminSpaces) {
+          final members = await spaceService.getMemberBySpaceId(space?.id ?? '');
+          if (members.length > 1) return true;
       }
       return false;
     } catch (error, stack) {
