@@ -26,10 +26,11 @@ class ApiJourneyService {
   CollectionReference _journeyRef(String userId) =>
       _userRef.doc(userId).collection("user_journeys");
 
-  Future<String> saveCurrentJourney({
+  Future<ApiLocationJourney> saveCurrentJourney({
     required String userId,
     required double fromLatitude,
     required double fromLongitude,
+    required String type,
     double? toLatitude,
     double? toLongitude,
     LatLng? toLatLng,
@@ -38,7 +39,7 @@ class ApiJourneyService {
     int? routeDuration,
     int? created_at,
     int? updated_at,
-    String? type,
+
   }) async {
     final fromLatLng = LatLng(fromLatitude, fromLongitude);
     final toLatLng = (toLatitude != null && toLongitude != null)
@@ -59,10 +60,10 @@ class ApiJourneyService {
       route_duration: routeDuration,
       created_at: created_at ?? DateTime.now().millisecondsSinceEpoch,
       update_at: updated_at ?? DateTime.now().millisecondsSinceEpoch,
-      type: type ?? (toLatLng == null ? JOURNEY_TYPE_STEADY : JOURNEY_TYPE_MOVING)
+      type: type
     );
     await docRef.set(journey.toJson());
-    return docRef.id;
+    return journey;
   }
 
   Future<void> updateLastLocationJourney(

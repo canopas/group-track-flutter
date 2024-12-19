@@ -6,7 +6,6 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/journey/journey.dart';
 import 'package:data/api/location/location.dart';
-import 'package:data/domain/location_data_extension.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:geolocator/geolocator.dart';
@@ -77,7 +76,7 @@ class JourneyRepository {
     var lastLocation =
         locationCache.getLastJourney(userId)?.toLocationFromSteadyJourney();
     var lastLocationJourney = await getLastKnownLocation(userId, position);
-    if (lastLocation == null || lastLocationJourney.type == JOURNEY_TYPE_STEADY) {
+    if (lastLocation == null || lastLocationJourney.isSteady()) {
       return;
     }
 
@@ -134,16 +133,12 @@ class JourneyRepository {
 
   Future<void> _saveJourneyOnDayChanged(
       String userId, LocationData extractedLocation) async {
-    String newJourneyId = await journeyService.saveCurrentJourney(
-      userId: userId,
-      fromLatitude: extractedLocation.latitude,
-      fromLongitude: extractedLocation.longitude,
-      type: JOURNEY_TYPE_STEADY
-    );
+    final newJourney = await journeyService.saveCurrentJourney(
+        userId: userId,
+        fromLatitude: extractedLocation.latitude,
+        fromLongitude: extractedLocation.longitude,
+        type: JOURNEY_TYPE_STEADY);
 
-    var newJourney = extractedLocation
-        .toLocationJourney(userId, newJourneyId)
-        .copyWith(id: newJourneyId, type: JOURNEY_TYPE_STEADY);
     locationCache.putLastJourney(newJourney, userId);
   }
 
@@ -172,17 +167,15 @@ class JourneyRepository {
         // Possibly user is new or no location journey available
         // Save extracted location as new location journey with steady state in cache
 
-        String newJourneyId = await journeyService.saveCurrentJourney(
-          userId: userId,
-          fromLatitude: extractedLocation?.latitude ?? 0,
-          fromLongitude: extractedLocation?.longitude ?? 0,
-          created_at: DateTime.now().millisecondsSinceEpoch,
-          type: JOURNEY_TYPE_STEADY
-        );
-        var locationJourney =
-            extractedLocation!.toLocationJourney(userId, newJourneyId).copyWith(type: JOURNEY_TYPE_STEADY);
-        locationCache.putLastJourney(locationJourney, userId);
-        return locationJourney;
+        final newJourney = await journeyService.saveCurrentJourney(
+            userId: userId,
+            fromLatitude: extractedLocation?.latitude ?? 0,
+            fromLongitude: extractedLocation?.longitude ?? 0,
+            created_at: DateTime.now().millisecondsSinceEpoch,
+            type: JOURNEY_TYPE_STEADY);
+
+        locationCache.putLastJourney(newJourney, userId);
+        return newJourney;
       }
     }
   }
@@ -197,10 +190,10 @@ class JourneyRepository {
         locations.isNotEmpty ? _geometricMedianCalculation(locations) : null;
 
     double distance = 0;
-    if (lastKnownJourney.type == JOURNEY_TYPE_STEADY) {
+    if (lastKnownJourney.isSteady()) {
       distance = _distanceBetween(geometricMedian ?? extractedLocation,
           lastKnownJourney.toLocationFromSteadyJourney());
-    } else if (lastKnownJourney.type == JOURNEY_TYPE_MOVING) {
+    } else if (lastKnownJourney.isMoving()) {
       distance = _distanceBetween(geometricMedian ?? extractedLocation,
           lastKnownJourney.toLocationFromMovingJourney());
     }
@@ -209,14 +202,15 @@ class JourneyRepository {
             extractedLocation.timestamp.millisecondsSinceEpoch) -
         (lastKnownJourney.update_at ?? 0);
 
-    if (lastKnownJourney.type == JOURNEY_TYPE_STEADY) {
+    if (lastKnownJourney.isSteady()) {
       if (distance > MIN_DISTANCE) {
         // Here, means last known journey is steady and and now user has started moving
         // Save journey for moving user and update cache as well:
+
         await _saveJourneyWhenUserStartsMoving(
             userId, extractedLocation, lastKnownJourney, timeDifference);
       }
-    } else if (lastKnownJourney.type == JOURNEY_TYPE_MOVING) {
+    } else if (lastKnownJourney.isMoving()) {
       // Here, means last known journey is moving and user is still moving
       // Save journey for moving user and update last known journey.
       // Note: Need to use lastKnownJourney.id as journey id because we are updating the journey
@@ -239,33 +233,18 @@ class JourneyRepository {
         lastKnownJourney.copyWith(
             update_at: DateTime.now().millisecondsSinceEpoch));
 
-    String newJourneyId = await journeyService.saveCurrentJourney(
-      userId: userId,
-      fromLatitude: lastKnownJourney.from_latitude,
-      fromLongitude: lastKnownJourney.from_longitude,
-      toLatitude: extractedLocation.latitude,
-      toLongitude: extractedLocation.longitude,
-      routeDistance: distance,
-      routeDuration: duration,
-      type: JOURNEY_TYPE_MOVING
-    );
+    final newJourney = await journeyService.saveCurrentJourney(
+        userId: userId,
+        fromLatitude: lastKnownJourney.from_latitude,
+        fromLongitude: lastKnownJourney.from_longitude,
+        toLatitude: extractedLocation.latitude,
+        toLongitude: extractedLocation.longitude,
+        routes: _getRoute(userId),
+        routeDistance: distance,
+        routeDuration: duration,
+        type: JOURNEY_TYPE_MOVING);
 
-    var journey = ApiLocationJourney(
-      id: newJourneyId,
-      user_id: userId,
-      from_latitude: lastKnownJourney.from_latitude,
-      from_longitude: lastKnownJourney.from_longitude,
-      to_latitude: extractedLocation.latitude,
-      to_longitude: extractedLocation.longitude,
-      routes: _getRoute(userId),
-      route_distance: distance,
-      route_duration: duration,
-      created_at: DateTime.now().millisecondsSinceEpoch,
-      update_at: DateTime.now().millisecondsSinceEpoch,
-      type: JOURNEY_TYPE_MOVING
-    );
-
-    locationCache.putLastJourney(journey, userId);
+    locationCache.putLastJourney(newJourney, userId);
   }
 
   /// Update journey for continued moving user i.e., state is moving and user is still moving
@@ -278,26 +257,25 @@ class JourneyRepository {
         lastKnownJourney.toLocationFromMovingJourney(), extractedLocation);
 
     var journey = ApiLocationJourney(
-      id: lastKnownJourney.id,
-      user_id: userId,
-      from_latitude: lastKnownJourney.from_latitude,
-      from_longitude: lastKnownJourney.from_longitude,
-      to_latitude: extractedLocation.latitude,
-      to_longitude: extractedLocation.longitude,
-      route_distance: distance + (lastKnownJourney.route_distance ?? 0),
-      route_duration: (lastKnownJourney.update_at ?? 0) -
-          (lastKnownJourney.created_at ?? 0),
-      routes: lastKnownJourney.routes +
-          [
-            JourneyRoute(
-              latitude: extractedLocation.latitude,
-              longitude: extractedLocation.longitude,
-            )
-          ],
-      created_at: lastKnownJourney.created_at,
-      update_at: DateTime.now().millisecondsSinceEpoch,
-      type: JOURNEY_TYPE_MOVING
-    );
+        id: lastKnownJourney.id,
+        user_id: userId,
+        from_latitude: lastKnownJourney.from_latitude,
+        from_longitude: lastKnownJourney.from_longitude,
+        to_latitude: extractedLocation.latitude,
+        to_longitude: extractedLocation.longitude,
+        route_distance: distance + (lastKnownJourney.route_distance ?? 0),
+        route_duration: (lastKnownJourney.update_at ?? 0) -
+            (lastKnownJourney.created_at ?? 0),
+        routes: lastKnownJourney.routes +
+            [
+              JourneyRoute(
+                latitude: extractedLocation.latitude,
+                longitude: extractedLocation.longitude,
+              )
+            ],
+        created_at: lastKnownJourney.created_at,
+        update_at: DateTime.now().millisecondsSinceEpoch,
+        type: JOURNEY_TYPE_MOVING);
 
     await journeyService.updateLastLocationJourney(userId, journey);
     locationCache.putLastJourney(journey, userId);
@@ -329,24 +307,14 @@ class JourneyRepository {
     journeyService.updateLastLocationJourney(userId, movingJourney);
 
     // Save journey for steady user and update cache as well:
-    var newJourneyId = await journeyService.saveCurrentJourney(
-      userId: userId,
-      fromLatitude: extractedLocation.latitude,
-      fromLongitude: extractedLocation.longitude,
-      created_at: lastKnownJourney.update_at,
-      type: JOURNEY_TYPE_STEADY
-    );
+    var newJourney = await journeyService.saveCurrentJourney(
+        userId: userId,
+        fromLatitude: extractedLocation.latitude,
+        fromLongitude: extractedLocation.longitude,
+        created_at: lastKnownJourney.update_at,
+        type: JOURNEY_TYPE_STEADY);
 
-    var steadyJourney = ApiLocationJourney(
-      id: newJourneyId,
-      user_id: userId,
-      from_latitude: extractedLocation.latitude,
-      from_longitude: extractedLocation.longitude,
-      created_at: lastKnownJourney.update_at,
-      type: JOURNEY_TYPE_STEADY
-    );
-
-    locationCache.putLastJourney(steadyJourney, userId);
+    locationCache.putLastJourney(newJourney, userId);
   }
 
   List<JourneyRoute> _getRoute(String userId) {

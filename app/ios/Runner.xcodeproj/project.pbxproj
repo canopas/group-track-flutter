@@ -12,7 +12,6 @@
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		575FF21DC0FB7470A79D170E /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653E5A003C07C38CD5C806EB /* Pods_Runner.framework */; };
-		6343871F2D103308007A9B0F /* LiveLocationUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6343871E2D103308007A9B0F /* LiveLocationUpdates.swift */; };
 		636F895C2C47D80100693E55 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		6371AA752C7D958A00C5843A /* GeofencePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6371AA742C7D958A00C5843A /* GeofencePlugin.swift */; };
 		63A31EDB2C8AD43000776177 /* ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 63A31EDA2C8AD43000776177 /* ExportOptions.plist */; };
@@ -20,7 +19,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		9A5FB9BC2D005B6600F14D83 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5FB9BB2D005B5F00F14D83 /* LocationManager.swift */; };
+		9A95678A2D117BD100F43643 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9567892D117BD000F43643 /* LocationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,7 +56,6 @@
 		48C603BA80614C24B1420721 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		50FABBCFD3A738142E3EA6E8 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 		5FC5C510EC1BFADE01941668 /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
-		6343871E2D103308007A9B0F /* LiveLocationUpdates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveLocationUpdates.swift; sourceTree = "<group>"; };
 		6371AA742C7D958A00C5843A /* GeofencePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeofencePlugin.swift; sourceTree = "<group>"; };
 		63A31EDA2C8AD43000776177 /* ExportOptions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ExportOptions.plist; sourceTree = "<group>"; };
 		63CBD3CD2C5A08DC00283B36 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
@@ -73,7 +71,7 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9A5FB9BB2D005B5F00F14D83 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		9A9567892D117BD000F43643 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		B09B463B48F6F6C17BEDC2CB /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -140,7 +138,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
-				9A5FB9BB2D005B5F00F14D83 /* LocationManager.swift */,
+				9A9567892D117BD000F43643 /* LocationManager.swift */,
 				63CBD3CD2C5A08DC00283B36 /* Runner.entitlements */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
@@ -152,7 +150,6 @@
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
 				6371AA742C7D958A00C5843A /* GeofencePlugin.swift */,
-				6343871E2D103308007A9B0F /* LiveLocationUpdates.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -434,11 +431,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6343871F2D103308007A9B0F /* LiveLocationUpdates.swift in Sources */,
-				9A5FB9BC2D005B6600F14D83 /* LocationManager.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				6371AA752C7D958A00C5843A /* GeofencePlugin.swift in Sources */,
+				9A95678A2D117BD100F43643 /* LocationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

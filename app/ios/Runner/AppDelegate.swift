@@ -28,24 +28,19 @@ import Combine
         geofencePluginRegistration()
         registerLocationChannel()
         
-        if #available(iOS 17.0, *) {
-            let liveLocationUpdates = LiveLocationUpdates.shared
-            
-            liveLocationUpdates.startLocationUpdate()
-            
-            liveLocationUpdates.$lastLocation.sink(receiveValue: { [weak self] location in
-                self?.sendLocationToFlutter(location: location)
-            }).store(in: &cancellables)
-        } else {
-            let locationsHandler = LocationsHandler.shared
-            if locationsHandler.updatesStarted {
-                locationsHandler.startLocationUpdates()
-            }
-            locationsHandler.$lastLocation.sink(receiveValue: { [weak self] location in
-                self?.sendLocationToFlutter(location: location)
-            }).store(in: &cancellables)
+        let liveLocationUpdates = LocationManager.shared
+        if liveLocationUpdates.updatesStarted {
+            liveLocationUpdates.startLocationUpdates()
         }
-        
+            
+        if liveLocationUpdates.bgActivitySessionStarted {
+            liveLocationUpdates.bgActivitySessionStarted = true
+        }
+            
+        liveLocationUpdates.$lastLocation.sink(receiveValue: { [weak self] location in
+            self?.sendLocationToFlutter(location: location)
+        }).store(in: &cancellables)
+
         GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
@@ -65,7 +60,7 @@ import Combine
             (call: FlutterMethodCall, result: @escaping FlutterResult) in
             
             if call.method == "getCurrentLocation" {
-                LocationsHandler.shared.getCurrentLocation(result: result)
+                LocationManager.shared.getCurrentLocation(result: result)
             } else {
                 result(FlutterMethodNotImplemented)
             }
@@ -73,12 +68,13 @@ import Combine
     }
     
     func sendLocationToFlutter(location: CLLocation) {
+
         let locationData: [String: Any] = [
             "latitude": location.coordinate.latitude,
             "longitude": location.coordinate.longitude,
             "timestamp": location.timestamp.timeIntervalSince1970 * 1000,
         ]
-        
+       
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             if let controller = self.window?.rootViewController as? FlutterViewController {
@@ -101,18 +97,17 @@ extension AppDelegate {
             (call: FlutterMethodCall, result: @escaping FlutterResult) in
             guard self != nil else { return }
             if call.method == "startTracking" {
-                LocationsHandler.shared.startLocationUpdates()
+                LocationManager.shared.startLocationUpdates()
                 result(true)
             } else if call.method == "stopTracking" {
-                LocationsHandler.shared.stopLocationUpdates()
+                LocationManager.shared.stopLocationUpdates()
                 result(true)
             } else {
                 result(FlutterMethodNotImplemented)
             }
         }
     }
-    
-    
+
     private func geofencePluginRegistration() {
         let controller: FlutterViewController =
         window?.rootViewController as! FlutterViewController

@@ -1,4 +1,5 @@
 // ignore_for_file: constant_identifier_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/location.dart';
 import 'package:data/domain/journey_lat_lng_entension.dart';
@@ -6,6 +7,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 part 'journey.freezed.dart';
+
 part 'journey.g.dart';
 
 const JOURNEY_TYPE_STEADY = 'steady';
@@ -40,10 +42,24 @@ class ApiLocationJourney with _$ApiLocationJourney {
     return ApiLocationJourney.fromJson(data!);
   }
 
+  bool isSteady() {
+    if (type != null) {
+      return type == JOURNEY_TYPE_STEADY;
+    }
+    return to_latitude == null || to_longitude == null;
+  }
+
+  bool isMoving() {
+    if (type != null) {
+      return type == JOURNEY_TYPE_MOVING;
+    }
+    return to_latitude != null && to_longitude != null;
+  }
+
   List<LatLng> toRoute() {
-    if (type == JOURNEY_TYPE_STEADY) {
+    if (isSteady()) {
       return [];
-    } else if (type == JOURNEY_TYPE_MOVING) {
+    } else if (isMoving()) {
       List<LatLng> result = [LatLng(from_latitude, from_longitude)];
       result.addAll(routes.map((route) => route.toLatLng()));
       if (to_latitude != null && to_longitude != null) {
@@ -55,11 +71,17 @@ class ApiLocationJourney with _$ApiLocationJourney {
   }
 
   LocationData toLocationFromSteadyJourney() {
-    return LocationData(latitude: from_latitude, longitude: from_longitude, timestamp: DateTime.now());
+    return LocationData(
+        latitude: from_latitude,
+        longitude: from_longitude,
+        timestamp: DateTime.now());
   }
 
   LocationData toLocationFromMovingJourney() {
-    return LocationData(latitude: to_latitude ?? 0, longitude: to_longitude ?? 0, timestamp: DateTime.now());
+    return LocationData(
+        latitude: to_latitude ?? 0,
+        longitude: to_longitude ?? 0,
+        timestamp: DateTime.now());
   }
 }
 
