@@ -60,15 +60,19 @@ class LocationManager {
   }
 
   void startService() async {
-    await locationMethodChannel.invokeMethod('startTracking');
-    await bgService.startService();
+    if (Platform.isIOS) {
+      await locationMethodChannel.invokeMethod('startTracking');
+    }
+    if (Platform.isAndroid) await bgService.startService();
   }
 
   void stopTrackingService() async {
-    await locationMethodChannel.invokeMethod('stopTracking');
+    if (Platform.isIOS) {
+      await locationMethodChannel.invokeMethod('stopTracking');
+    }
     positionSubscription?.cancel();
     positionSubscription = null;
-    bgService.invoke("stopService");
+    if (Platform.isAndroid) bgService.invoke("stopService");
   }
 
   Future<String?> _getUserIdFromPreferences() async {
@@ -123,7 +127,10 @@ class LocationManager {
   }
 
   void _updateUserLocation(Position? position) {
-    if (position == null) return;
+    if (position == null ||
+        (position.latitude == 0 && position.longitude == 0)) {
+      return;
+    }
     final locationData = LocationData(
       latitude: position.latitude,
       longitude: position.longitude,
@@ -148,6 +155,13 @@ class LocationManager {
           stackTrace: stack,
         );
       }
+    }
+  }
+
+  Future<void> saveLocation(LocationData locationPosition) async {
+    final userId = await _getUserIdFromPreferences();
+    if (userId != null) {
+      await _locationService.saveCurrentLocation(userId, locationPosition);
     }
   }
 

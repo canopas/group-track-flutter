@@ -32,14 +32,14 @@ class AuthService {
       String? profileImg,
       int authType = LOGIN_TYPE_GOOGLE}) async {
     final data = await userService.saveUser(
-        uid: uid,
-        firebaseToken: firebaseToken,
-        phone: phone,
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        profileImage: profileImg,
-        authType: authType,
+      uid: uid,
+      firebaseToken: firebaseToken,
+      phone: phone,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      profileImage: profileImg,
+      authType: authType,
     );
     userJsonNotifier.state = (data['user'] as ApiUser).toJsonString();
     userSessionJsonNotifier.state =
@@ -53,17 +53,17 @@ class AuthService {
     userJsonNotifier.state = user.toJsonString();
   }
 
-  Future<ApiUser?> getUser(String? userId) {
-    return userService.getUser(userId ?? _currentUser?.id ?? '');
+  Future<ApiUser?> getUser(String userId) {
+    return userService.getUser(userId);
   }
 
-  Stream<ApiUser?> getUserStream({String? currentUserId}) {
-    return userService.getUserStream(currentUserId ?? _currentUser?.id ?? '');
+  Stream<ApiUser?> getUserStream({required String currentUserId}) {
+    return userService.getUserStream(currentUserId);
   }
 
-  Future<void> deleteAccount({String? currentUserId}) async {
+  Future<void> deleteAccount({required String currentUserId}) async {
     userService.clearPreference();
-    await userService.deleteUser(currentUserId ?? _currentUser?.id ?? '');
+    await userService.deleteUser(currentUserId);
   }
 
   Future<void> getUserNetworkStatus(
@@ -74,8 +74,8 @@ class AuthService {
 
     if (user?.updated_at == null ||
         DateTime.now()
-                .difference(
-                    DateTime.fromMillisecondsSinceEpoch(user?.updated_at ?? DateTime.now().millisecondsSinceEpoch))
+                .difference(DateTime.fromMillisecondsSinceEpoch(
+                    user?.updated_at ?? DateTime.now().millisecondsSinceEpoch))
                 .inMinutes >=
             3) {
       final callable = FirebaseFunctions.instanceFor(region: 'asia-south1')

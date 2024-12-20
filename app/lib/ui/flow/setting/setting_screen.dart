@@ -312,7 +312,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     ref.listen(settingViewStateProvider.select((state) => state.logOut),
         (previous, next) {
       if (next) {
-        AppRoute.signInMethod.push(context);
+        AppRoute.signInMethod.go(context);
       }
     });
   }

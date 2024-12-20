@@ -40,8 +40,8 @@ void main() async {
 
   if (Platform.isAndroid) _configureService();
 
-  if (await Permission.location.isGranted) {
-     await locationMethodChannel.invokeMethod('startTracking');
+  if (await Permission.location.isGranted && Platform.isIOS) {
+    await locationMethodChannel.invokeMethod('startTracking');
   }
 
   locationMethodChannel.setMethodCallHandler(_handleLocationUpdates);
@@ -111,7 +111,9 @@ Future<void> _handleLocationUpdates(MethodCall call) async {
           locationData['timestamp'].toInt()),
     );
 
-    await LocationManager.instance.updateUserLocation(locationPosition);
+    if (locationPosition.latitude != 0 && locationPosition.longitude != 0) {
+      await LocationManager.instance.updateUserLocation(locationPosition);
+    }
   }
 }
 

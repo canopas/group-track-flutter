@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:data/api/auth/auth_models.dart';
-import 'package:data/api/location/location.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -17,13 +16,14 @@ import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 import 'package:yourspace_flutter/domain/extenstions/time_ago_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/profile_picture.dart';
+import 'package:yourspace_flutter/ui/flow/home/map/map_view_model.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../components/user_battery_status.dart';
 
 class SelectedMemberDetailView extends StatefulWidget {
   final int groupCreatedDate;
-  final ApiUserInfo? userInfo;
+  final MapUserInfo? userInfo;
   final void Function() onDismiss;
   final bool isCurrentUser;
   final LatLng currentUserLocation;
@@ -49,7 +49,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   @override
   void initState() {
     super.initState();
-    getAddressDebounced(widget.userInfo?.location);
+    getAddressDebounced(widget.userInfo?.latLng);
   }
 
   @override
@@ -69,17 +69,17 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
         address = '';
       });
 
-      getAddressDebounced(widget.userInfo?.location);
+      getAddressDebounced(widget.userInfo?.latLng);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final userInfo = widget.userInfo;
-    return userInfo != null ? _userDetailCardView(userInfo) : Container();
+    return userInfo != null ? _userDetailCardView(userInfo.user) : Container();
   }
 
-  Widget _userDetailCardView(ApiUserInfo userInfo) {
+  Widget _userDetailCardView(ApiUser user) {
     return Stack(
       alignment: Alignment.topCenter,
       children: [
@@ -93,9 +93,9 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _userProfileView(userInfo),
+                _userProfileView(user),
                 const SizedBox(width: 16),
-                Expanded(child: _userDetailView(userInfo)),
+                Expanded(child: _userDetailView(user)),
               ],
             ),
           ),
@@ -132,43 +132,44 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
     );
   }
 
-  Widget _userProfileView(ApiUserInfo userInfo) {
+  Widget _userProfileView(ApiUser user) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ProfileImage(
-          profileImageUrl: userInfo.user.profile_image!,
-          firstLetter: userInfo.user.firstChar,
+          profileImageUrl: user.profile_image!,
+          firstLetter: user.firstChar,
           size: 48,
           backgroundColor: context.colorScheme.primary,
         ),
         const SizedBox(height: 2),
-        UserBatteryStatus(userInfo: userInfo)
+        UserBatteryStatus(user: user)
       ],
     );
   }
 
-  Widget _userDetailView(ApiUserInfo userInfo) {
-    final (userState, textColor) = selectedUserState(userInfo.user);
+  Widget _userDetailView(ApiUser user) {
+    final (userState, textColor) = selectedUserState(user);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          userInfo.user.fullName,
+          user.fullName,
           style: AppTextStyle.subtitle2
               .copyWith(color: context.colorScheme.textPrimary),
         ),
         const SizedBox(height: 4),
         Text(userState, style: AppTextStyle.caption.copyWith(color: textColor)),
         const SizedBox(height: 12),
-        _userAddressView(userInfo.location),
+        _userAddressView(),
         const SizedBox(height: 4),
-        _userTimeAgo(userInfo.location?.created_at ?? DateTime.now().millisecondsSinceEpoch)
+        _userTimeAgo(widget.userInfo?.updatedLocationAt ??
+            DateTime.now().millisecondsSinceEpoch)
       ],
     );
   }
 
-  Widget _userAddressView(ApiLocation? location) {
+  Widget _userAddressView() {
     return Text(
       address ?? '',
       style: AppTextStyle.body2.copyWith(
@@ -182,7 +183,8 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   Widget _timeLineButtonView() {
     return IconPrimaryButton(
       onTap: () {
-        AppRoute.journeyTimeline(widget.userInfo!.user, widget.groupCreatedDate).push(context);
+        AppRoute.journeyTimeline(widget.userInfo!.user, widget.groupCreatedDate)
+            .push(context);
       },
       icon: SvgPicture.asset(
         Assets.images.icTimeLineHistoryIcon,
@@ -199,18 +201,24 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
       onTap: () {
         if (widget.isCurrentUser) {
           final mapsLink =
-              'https://www.google.com/maps/search/?api=1&query=${widget.userInfo!.location?.latitude},${widget.userInfo!.location?.longitude}';
+              'https://www.google.com/maps/search/?api=1&query=${widget.userInfo?.latitude},${widget.userInfo?.longitude}';
           Share.share('Check out my location: $mapsLink');
         } else {
-          final origin = '${widget.currentUserLocation.latitude}, ${widget.currentUserLocation.longitude}';
-          final destination = '${widget.userInfo!.location?.latitude},${widget.userInfo!.location?.longitude}';
+          final origin =
+              '${widget.currentUserLocation.latitude}, ${widget.currentUserLocation.longitude}';
+          final destination =
+              '${widget.userInfo?.latitude},${widget.userInfo?.longitude}';
           final mapsLink =
               'https://www.google.com/maps/dir/?api=1&origin=$origin&destination=$destination';
           launchUrl(Uri.parse(mapsLink), mode: LaunchMode.externalApplication);
         }
       },
       icon: widget.isCurrentUser
-          ? Icon(CupertinoIcons.paperplane, color: context.colorScheme.textPrimary, size: 18,)
+          ? Icon(
+              CupertinoIcons.paperplane,
+              color: context.colorScheme.textPrimary,
+              size: 18,
+            )
           : SvgPicture.asset(
               Assets.images.icShareTwoLocation,
               colorFilter: ColorFilter.mode(
@@ -239,7 +247,7 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
     );
   }
 
-  void getAddressDebounced(ApiLocation? location) {
+  void getAddressDebounced(LatLng? location) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 500), () {
@@ -247,9 +255,8 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
     });
   }
 
-  void getAddress(ApiLocation? location) async {
-    if (location != null) {
-      final latLng = LatLng(location.latitude, location.longitude);
+  void getAddress(LatLng? latLng) async {
+    if (latLng != null) {
       final fetchedAddress = await latLng.getAddressFromLocation();
 
       if (mounted) {

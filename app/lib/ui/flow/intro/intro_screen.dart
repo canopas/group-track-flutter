@@ -77,7 +77,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
             onPressed: () {
               if (_controller.page == _items.length - 1) {
                 ref.read(isIntroScreenShownPod.notifier).state = true;
-                AppRoute.signInMethod.push(context);
+                AppRoute.signInMethod.pushReplacement(context);
               } else {
                 _controller.nextPage(
                   duration: const Duration(milliseconds: 300),

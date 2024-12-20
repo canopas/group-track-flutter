@@ -44,10 +44,12 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
 
   void deleteAccount() async {
     try {
+      if (user?.id == null) return;
       state = state.copyWith(deletingAccount: true);
-      await spaceService.deleteUserSpaces();
-      await authService.deleteAccount(currentUserId: user?.id);
-      state = state.copyWith(deletingAccount: false, accountDeleted: true, error: null);
+      await spaceService.deleteUserSpaces(user!.id);
+      await authService.deleteAccount(currentUserId: user!.id);
+      state = state.copyWith(
+          deletingAccount: false, accountDeleted: true, error: null);
       locationManager.stopTrackingService();
     } catch (error, stack) {
       logger.e(
