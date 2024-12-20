@@ -278,8 +278,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         background: context.colorScheme.containerLow,
         progress: state.deletingAccount,
         onPressed: () async {
-          final changeAdmin = await notifier.getUserSpaces();
-          if (changeAdmin) {
+          final isCurrentUserAdminOfAnyGroup = await notifier.getUserSpaces();
+          if (isCurrentUserAdminOfAnyGroup) {
             showChangeAdminConfirmation();
           } else {
             showDeleteAccountConfirmation();
@@ -308,7 +308,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       title: context.l10n.edit_profile_change_admin_title,
       message: context.l10n.edit_profile_change_admin_subtitle,
       onConfirm: () {
-        AppRoute.setting.push(context);
+        Navigator.pop(context);
       },
     );
   }
