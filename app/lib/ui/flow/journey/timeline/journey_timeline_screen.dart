@@ -300,8 +300,9 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           firstItem: firstItem);
     }
 
+    final getAddress = notifier.getAddress(latLng);
     return FutureBuilder(
-      future: notifier.getAddress(latLng),
+      future: getAddress,
       builder: (_, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _placeInfo(
