@@ -42,6 +42,22 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
           profileUrl: user?.profile_image ?? '',
         ));
 
+  Future<bool> getUserSpaces() async {
+    try {
+      final spaces = await spaceService.getUserSpaces(user?.id ?? '');
+      final adminSpaces = spaces.where((space) => space?.admin_id == user?.id);
+      for (final space in adminSpaces) {
+          final members = await spaceService.getMemberBySpaceId(space?.id ?? '');
+          if (members.length > 1) return true;
+      }
+      return false;
+    } catch (error, stack) {
+      logger.e('EditProfileViewModel: error while all user groups',
+          error: error, stackTrace: stack);
+      return false;
+    }
+  }
+
   void deleteAccount() async {
     try {
       state = state.copyWith(deletingAccount: true);
