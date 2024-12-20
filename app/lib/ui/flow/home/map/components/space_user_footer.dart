@@ -1,4 +1,3 @@
-import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,18 +11,19 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/profile_picture.dart';
 
 import '../../../../../gen/assets.gen.dart';
+import '../map_view_model.dart';
 import 'selected_member_detail_view.dart';
 
 class SpaceUserFooter extends StatefulWidget {
   final SpaceInfo? selectedSpace;
-  final List<ApiUserInfo>? members;
-  final ApiUserInfo? selectedUser;
+  final List<MapUserInfo>? members;
+  final MapUserInfo? selectedUser;
   final bool isEnabled;
   final bool fetchingInviteCode;
   final bool isCurrentUser;
   final LatLng currentUserLocation;
   final void Function() onAddMemberTap;
-  final void Function(ApiUserInfo) onMemberTap;
+  final void Function(MapUserInfo) onMemberTap;
   final void Function() onRelocateTap;
   final void Function() onMapTypeTap;
   final void Function() onPlacesTap;
@@ -162,7 +162,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
 
   Widget selectedSpaceMemberView({
     required BuildContext context,
-    required List<ApiUserInfo>? members,
+    required List<MapUserInfo>? members,
   }) {
     if (members == null || members.isEmpty) return Container();
     return Container(
@@ -239,7 +239,7 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
 
   Widget spaceMemberItem(
     BuildContext context,
-    ApiUserInfo userInfo,
+      MapUserInfo userInfo,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),

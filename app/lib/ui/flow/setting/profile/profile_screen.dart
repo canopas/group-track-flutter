@@ -306,7 +306,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         editProfileViewStateProvider.select((state) => state.accountDeleted),
         (previous, next) {
       if (next) {
-        AppRoute.signInMethod.push(context);
+        AppRoute.signInMethod.go(context);
       }
     });
   }

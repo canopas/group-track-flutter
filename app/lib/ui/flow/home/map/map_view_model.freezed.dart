@@ -22,10 +22,9 @@ mixin _$MapViewState {
   bool get hasLocationServiceEnabled => throw _privateConstructorUsedError;
   bool get hasNotificationEnabled => throw _privateConstructorUsedError;
   bool get hasFineLocationEnabled => throw _privateConstructorUsedError;
-  List<ApiUserInfo> get userInfo => throw _privateConstructorUsedError;
   List<ApiPlace> get places => throw _privateConstructorUsedError;
-  List<UserMarker> get markers => throw _privateConstructorUsedError;
-  ApiUserInfo? get selectedUser => throw _privateConstructorUsedError;
+  Map<String, MapUserInfo> get userInfos => throw _privateConstructorUsedError;
+  ApiUser? get selectedUser => throw _privateConstructorUsedError;
   LatLng? get currentUserLocation => throw _privateConstructorUsedError;
   CameraPosition? get defaultPosition => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
@@ -51,10 +50,9 @@ abstract class $MapViewStateCopyWith<$Res> {
       bool hasLocationServiceEnabled,
       bool hasNotificationEnabled,
       bool hasFineLocationEnabled,
-      List<ApiUserInfo> userInfo,
       List<ApiPlace> places,
-      List<UserMarker> markers,
-      ApiUserInfo? selectedUser,
+      Map<String, MapUserInfo> userInfos,
+      ApiUser? selectedUser,
       LatLng? currentUserLocation,
       CameraPosition? defaultPosition,
       String spaceInvitationCode,
@@ -62,7 +60,7 @@ abstract class $MapViewStateCopyWith<$Res> {
       Object? error,
       DateTime? showLocationDialog});
 
-  $ApiUserInfoCopyWith<$Res>? get selectedUser;
+  $ApiUserCopyWith<$Res>? get selectedUser;
 }
 
 /// @nodoc
@@ -84,9 +82,8 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
     Object? hasLocationServiceEnabled = null,
     Object? hasNotificationEnabled = null,
     Object? hasFineLocationEnabled = null,
-    Object? userInfo = null,
     Object? places = null,
-    Object? markers = null,
+    Object? userInfos = null,
     Object? selectedUser = freezed,
     Object? currentUserLocation = freezed,
     Object? defaultPosition = freezed,
@@ -120,22 +117,18 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
           ? _value.hasFineLocationEnabled
           : hasFineLocationEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
-      userInfo: null == userInfo
-          ? _value.userInfo
-          : userInfo // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
       places: null == places
           ? _value.places
           : places // ignore: cast_nullable_to_non_nullable
               as List<ApiPlace>,
-      markers: null == markers
-          ? _value.markers
-          : markers // ignore: cast_nullable_to_non_nullable
-              as List<UserMarker>,
+      userInfos: null == userInfos
+          ? _value.userInfos
+          : userInfos // ignore: cast_nullable_to_non_nullable
+              as Map<String, MapUserInfo>,
       selectedUser: freezed == selectedUser
           ? _value.selectedUser
           : selectedUser // ignore: cast_nullable_to_non_nullable
-              as ApiUserInfo?,
+              as ApiUser?,
       currentUserLocation: freezed == currentUserLocation
           ? _value.currentUserLocation
           : currentUserLocation // ignore: cast_nullable_to_non_nullable
@@ -162,12 +155,12 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
 
   @override
   @pragma('vm:prefer-inline')
-  $ApiUserInfoCopyWith<$Res>? get selectedUser {
+  $ApiUserCopyWith<$Res>? get selectedUser {
     if (_value.selectedUser == null) {
       return null;
     }
 
-    return $ApiUserInfoCopyWith<$Res>(_value.selectedUser!, (value) {
+    return $ApiUserCopyWith<$Res>(_value.selectedUser!, (value) {
       return _then(_value.copyWith(selectedUser: value) as $Val);
     });
   }
@@ -188,10 +181,9 @@ abstract class _$$MapViewStateImplCopyWith<$Res>
       bool hasLocationServiceEnabled,
       bool hasNotificationEnabled,
       bool hasFineLocationEnabled,
-      List<ApiUserInfo> userInfo,
       List<ApiPlace> places,
-      List<UserMarker> markers,
-      ApiUserInfo? selectedUser,
+      Map<String, MapUserInfo> userInfos,
+      ApiUser? selectedUser,
       LatLng? currentUserLocation,
       CameraPosition? defaultPosition,
       String spaceInvitationCode,
@@ -200,7 +192,7 @@ abstract class _$$MapViewStateImplCopyWith<$Res>
       DateTime? showLocationDialog});
 
   @override
-  $ApiUserInfoCopyWith<$Res>? get selectedUser;
+  $ApiUserCopyWith<$Res>? get selectedUser;
 }
 
 /// @nodoc
@@ -220,9 +212,8 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
     Object? hasLocationServiceEnabled = null,
     Object? hasNotificationEnabled = null,
     Object? hasFineLocationEnabled = null,
-    Object? userInfo = null,
     Object? places = null,
-    Object? markers = null,
+    Object? userInfos = null,
     Object? selectedUser = freezed,
     Object? currentUserLocation = freezed,
     Object? defaultPosition = freezed,
@@ -253,22 +244,18 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
           ? _value.hasFineLocationEnabled
           : hasFineLocationEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
-      userInfo: null == userInfo
-          ? _value._userInfo
-          : userInfo // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
       places: null == places
           ? _value._places
           : places // ignore: cast_nullable_to_non_nullable
               as List<ApiPlace>,
-      markers: null == markers
-          ? _value._markers
-          : markers // ignore: cast_nullable_to_non_nullable
-              as List<UserMarker>,
+      userInfos: null == userInfos
+          ? _value._userInfos
+          : userInfos // ignore: cast_nullable_to_non_nullable
+              as Map<String, MapUserInfo>,
       selectedUser: freezed == selectedUser
           ? _value.selectedUser
           : selectedUser // ignore: cast_nullable_to_non_nullable
-              as ApiUserInfo?,
+              as ApiUser?,
       currentUserLocation: freezed == currentUserLocation
           ? _value.currentUserLocation
           : currentUserLocation // ignore: cast_nullable_to_non_nullable
@@ -304,9 +291,8 @@ class _$MapViewStateImpl implements _MapViewState {
       this.hasLocationServiceEnabled = false,
       this.hasNotificationEnabled = false,
       this.hasFineLocationEnabled = false,
-      final List<ApiUserInfo> userInfo = const [],
       final List<ApiPlace> places = const [],
-      final List<UserMarker> markers = const [],
+      final Map<String, MapUserInfo> userInfos = const {},
       this.selectedUser,
       this.currentUserLocation,
       this.defaultPosition,
@@ -314,9 +300,8 @@ class _$MapViewStateImpl implements _MapViewState {
       required this.mapType,
       this.error,
       this.showLocationDialog})
-      : _userInfo = userInfo,
-        _places = places,
-        _markers = markers;
+      : _places = places,
+        _userInfos = userInfos;
 
   @override
   @JsonKey()
@@ -336,15 +321,6 @@ class _$MapViewStateImpl implements _MapViewState {
   @override
   @JsonKey()
   final bool hasFineLocationEnabled;
-  final List<ApiUserInfo> _userInfo;
-  @override
-  @JsonKey()
-  List<ApiUserInfo> get userInfo {
-    if (_userInfo is EqualUnmodifiableListView) return _userInfo;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_userInfo);
-  }
-
   final List<ApiPlace> _places;
   @override
   @JsonKey()
@@ -354,17 +330,17 @@ class _$MapViewStateImpl implements _MapViewState {
     return EqualUnmodifiableListView(_places);
   }
 
-  final List<UserMarker> _markers;
+  final Map<String, MapUserInfo> _userInfos;
   @override
   @JsonKey()
-  List<UserMarker> get markers {
-    if (_markers is EqualUnmodifiableListView) return _markers;
+  Map<String, MapUserInfo> get userInfos {
+    if (_userInfos is EqualUnmodifiableMapView) return _userInfos;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_markers);
+    return EqualUnmodifiableMapView(_userInfos);
   }
 
   @override
-  final ApiUserInfo? selectedUser;
+  final ApiUser? selectedUser;
   @override
   final LatLng? currentUserLocation;
   @override
@@ -381,7 +357,7 @@ class _$MapViewStateImpl implements _MapViewState {
 
   @override
   String toString() {
-    return 'MapViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, hasLocationEnabled: $hasLocationEnabled, hasLocationServiceEnabled: $hasLocationServiceEnabled, hasNotificationEnabled: $hasNotificationEnabled, hasFineLocationEnabled: $hasFineLocationEnabled, userInfo: $userInfo, places: $places, markers: $markers, selectedUser: $selectedUser, currentUserLocation: $currentUserLocation, defaultPosition: $defaultPosition, spaceInvitationCode: $spaceInvitationCode, mapType: $mapType, error: $error, showLocationDialog: $showLocationDialog)';
+    return 'MapViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, hasLocationEnabled: $hasLocationEnabled, hasLocationServiceEnabled: $hasLocationServiceEnabled, hasNotificationEnabled: $hasNotificationEnabled, hasFineLocationEnabled: $hasFineLocationEnabled, places: $places, userInfos: $userInfos, selectedUser: $selectedUser, currentUserLocation: $currentUserLocation, defaultPosition: $defaultPosition, spaceInvitationCode: $spaceInvitationCode, mapType: $mapType, error: $error, showLocationDialog: $showLocationDialog)';
   }
 
   @override
@@ -401,9 +377,9 @@ class _$MapViewStateImpl implements _MapViewState {
                 other.hasNotificationEnabled == hasNotificationEnabled) &&
             (identical(other.hasFineLocationEnabled, hasFineLocationEnabled) ||
                 other.hasFineLocationEnabled == hasFineLocationEnabled) &&
-            const DeepCollectionEquality().equals(other._userInfo, _userInfo) &&
             const DeepCollectionEquality().equals(other._places, _places) &&
-            const DeepCollectionEquality().equals(other._markers, _markers) &&
+            const DeepCollectionEquality()
+                .equals(other._userInfos, _userInfos) &&
             (identical(other.selectedUser, selectedUser) ||
                 other.selectedUser == selectedUser) &&
             (identical(other.currentUserLocation, currentUserLocation) ||
@@ -427,9 +403,8 @@ class _$MapViewStateImpl implements _MapViewState {
       hasLocationServiceEnabled,
       hasNotificationEnabled,
       hasFineLocationEnabled,
-      const DeepCollectionEquality().hash(_userInfo),
       const DeepCollectionEquality().hash(_places),
-      const DeepCollectionEquality().hash(_markers),
+      const DeepCollectionEquality().hash(_userInfos),
       selectedUser,
       currentUserLocation,
       defaultPosition,
@@ -453,10 +428,9 @@ abstract class _MapViewState implements MapViewState {
       final bool hasLocationServiceEnabled,
       final bool hasNotificationEnabled,
       final bool hasFineLocationEnabled,
-      final List<ApiUserInfo> userInfo,
       final List<ApiPlace> places,
-      final List<UserMarker> markers,
-      final ApiUserInfo? selectedUser,
+      final Map<String, MapUserInfo> userInfos,
+      final ApiUser? selectedUser,
       final LatLng? currentUserLocation,
       final CameraPosition? defaultPosition,
       final String spaceInvitationCode,
@@ -477,13 +451,11 @@ abstract class _MapViewState implements MapViewState {
   @override
   bool get hasFineLocationEnabled;
   @override
-  List<ApiUserInfo> get userInfo;
-  @override
   List<ApiPlace> get places;
   @override
-  List<UserMarker> get markers;
+  Map<String, MapUserInfo> get userInfos;
   @override
-  ApiUserInfo? get selectedUser;
+  ApiUser? get selectedUser;
   @override
   LatLng? get currentUserLocation;
   @override
@@ -503,38 +475,42 @@ abstract class _MapViewState implements MapViewState {
 }
 
 /// @nodoc
-mixin _$UserMarker {
+mixin _$MapUserInfo {
   String get userId => throw _privateConstructorUsedError;
-  String get userName => throw _privateConstructorUsedError;
+  ApiUser get user => throw _privateConstructorUsedError;
   ui.Image? get imageUrl => throw _privateConstructorUsedError;
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
   bool get isSelected => throw _privateConstructorUsedError;
+  int? get updatedLocationAt => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $UserMarkerCopyWith<UserMarker> get copyWith =>
+  $MapUserInfoCopyWith<MapUserInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $UserMarkerCopyWith<$Res> {
-  factory $UserMarkerCopyWith(
-          UserMarker value, $Res Function(UserMarker) then) =
-      _$UserMarkerCopyWithImpl<$Res, UserMarker>;
+abstract class $MapUserInfoCopyWith<$Res> {
+  factory $MapUserInfoCopyWith(
+          MapUserInfo value, $Res Function(MapUserInfo) then) =
+      _$MapUserInfoCopyWithImpl<$Res, MapUserInfo>;
   @useResult
   $Res call(
       {String userId,
-      String userName,
+      ApiUser user,
       ui.Image? imageUrl,
       double latitude,
       double longitude,
-      bool isSelected});
+      bool isSelected,
+      int? updatedLocationAt});
+
+  $ApiUserCopyWith<$Res> get user;
 }
 
 /// @nodoc
-class _$UserMarkerCopyWithImpl<$Res, $Val extends UserMarker>
-    implements $UserMarkerCopyWith<$Res> {
-  _$UserMarkerCopyWithImpl(this._value, this._then);
+class _$MapUserInfoCopyWithImpl<$Res, $Val extends MapUserInfo>
+    implements $MapUserInfoCopyWith<$Res> {
+  _$MapUserInfoCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -545,21 +521,22 @@ class _$UserMarkerCopyWithImpl<$Res, $Val extends UserMarker>
   @override
   $Res call({
     Object? userId = null,
-    Object? userName = null,
+    Object? user = null,
     Object? imageUrl = freezed,
     Object? latitude = null,
     Object? longitude = null,
     Object? isSelected = null,
+    Object? updatedLocationAt = freezed,
   }) {
     return _then(_value.copyWith(
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
-      userName: null == userName
-          ? _value.userName
-          : userName // ignore: cast_nullable_to_non_nullable
-              as String,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as ApiUser,
       imageUrl: freezed == imageUrl
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
@@ -576,54 +553,71 @@ class _$UserMarkerCopyWithImpl<$Res, $Val extends UserMarker>
           ? _value.isSelected
           : isSelected // ignore: cast_nullable_to_non_nullable
               as bool,
+      updatedLocationAt: freezed == updatedLocationAt
+          ? _value.updatedLocationAt
+          : updatedLocationAt // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $ApiUserCopyWith<$Res> get user {
+    return $ApiUserCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value) as $Val);
+    });
   }
 }
 
 /// @nodoc
-abstract class _$$UserMarkerImplCopyWith<$Res>
-    implements $UserMarkerCopyWith<$Res> {
-  factory _$$UserMarkerImplCopyWith(
-          _$UserMarkerImpl value, $Res Function(_$UserMarkerImpl) then) =
-      __$$UserMarkerImplCopyWithImpl<$Res>;
+abstract class _$$MapUserInfoImplCopyWith<$Res>
+    implements $MapUserInfoCopyWith<$Res> {
+  factory _$$MapUserInfoImplCopyWith(
+          _$MapUserInfoImpl value, $Res Function(_$MapUserInfoImpl) then) =
+      __$$MapUserInfoImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
       {String userId,
-      String userName,
+      ApiUser user,
       ui.Image? imageUrl,
       double latitude,
       double longitude,
-      bool isSelected});
+      bool isSelected,
+      int? updatedLocationAt});
+
+  @override
+  $ApiUserCopyWith<$Res> get user;
 }
 
 /// @nodoc
-class __$$UserMarkerImplCopyWithImpl<$Res>
-    extends _$UserMarkerCopyWithImpl<$Res, _$UserMarkerImpl>
-    implements _$$UserMarkerImplCopyWith<$Res> {
-  __$$UserMarkerImplCopyWithImpl(
-      _$UserMarkerImpl _value, $Res Function(_$UserMarkerImpl) _then)
+class __$$MapUserInfoImplCopyWithImpl<$Res>
+    extends _$MapUserInfoCopyWithImpl<$Res, _$MapUserInfoImpl>
+    implements _$$MapUserInfoImplCopyWith<$Res> {
+  __$$MapUserInfoImplCopyWithImpl(
+      _$MapUserInfoImpl _value, $Res Function(_$MapUserInfoImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? userId = null,
-    Object? userName = null,
+    Object? user = null,
     Object? imageUrl = freezed,
     Object? latitude = null,
     Object? longitude = null,
     Object? isSelected = null,
+    Object? updatedLocationAt = freezed,
   }) {
-    return _then(_$UserMarkerImpl(
+    return _then(_$MapUserInfoImpl(
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
-      userName: null == userName
-          ? _value.userName
-          : userName // ignore: cast_nullable_to_non_nullable
-              as String,
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as ApiUser,
       imageUrl: freezed == imageUrl
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
@@ -640,25 +634,31 @@ class __$$UserMarkerImplCopyWithImpl<$Res>
           ? _value.isSelected
           : isSelected // ignore: cast_nullable_to_non_nullable
               as bool,
+      updatedLocationAt: freezed == updatedLocationAt
+          ? _value.updatedLocationAt
+          : updatedLocationAt // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
 
 /// @nodoc
 
-class _$UserMarkerImpl implements _UserMarker {
-  const _$UserMarkerImpl(
+class _$MapUserInfoImpl extends _MapUserInfo {
+  const _$MapUserInfoImpl(
       {required this.userId,
-      required this.userName,
+      required this.user,
       required this.imageUrl,
       required this.latitude,
       required this.longitude,
-      required this.isSelected});
+      required this.isSelected,
+      this.updatedLocationAt = 0})
+      : super._();
 
   @override
   final String userId;
   @override
-  final String userName;
+  final ApiUser user;
   @override
   final ui.Image? imageUrl;
   @override
@@ -667,20 +667,22 @@ class _$UserMarkerImpl implements _UserMarker {
   final double longitude;
   @override
   final bool isSelected;
+  @override
+  @JsonKey()
+  final int? updatedLocationAt;
 
   @override
   String toString() {
-    return 'UserMarker(userId: $userId, userName: $userName, imageUrl: $imageUrl, latitude: $latitude, longitude: $longitude, isSelected: $isSelected)';
+    return 'MapUserInfo(userId: $userId, user: $user, imageUrl: $imageUrl, latitude: $latitude, longitude: $longitude, isSelected: $isSelected, updatedLocationAt: $updatedLocationAt)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UserMarkerImpl &&
+            other is _$MapUserInfoImpl &&
             (identical(other.userId, userId) || other.userId == userId) &&
-            (identical(other.userName, userName) ||
-                other.userName == userName) &&
+            (identical(other.user, user) || other.user == user) &&
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
             (identical(other.latitude, latitude) ||
@@ -688,33 +690,37 @@ class _$UserMarkerImpl implements _UserMarker {
             (identical(other.longitude, longitude) ||
                 other.longitude == longitude) &&
             (identical(other.isSelected, isSelected) ||
-                other.isSelected == isSelected));
+                other.isSelected == isSelected) &&
+            (identical(other.updatedLocationAt, updatedLocationAt) ||
+                other.updatedLocationAt == updatedLocationAt));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, userId, userName, imageUrl, latitude, longitude, isSelected);
+  int get hashCode => Object.hash(runtimeType, userId, user, imageUrl, latitude,
+      longitude, isSelected, updatedLocationAt);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$UserMarkerImplCopyWith<_$UserMarkerImpl> get copyWith =>
-      __$$UserMarkerImplCopyWithImpl<_$UserMarkerImpl>(this, _$identity);
+  _$$MapUserInfoImplCopyWith<_$MapUserInfoImpl> get copyWith =>
+      __$$MapUserInfoImplCopyWithImpl<_$MapUserInfoImpl>(this, _$identity);
 }
 
-abstract class _UserMarker implements UserMarker {
-  const factory _UserMarker(
+abstract class _MapUserInfo extends MapUserInfo {
+  const factory _MapUserInfo(
       {required final String userId,
-      required final String userName,
+      required final ApiUser user,
       required final ui.Image? imageUrl,
       required final double latitude,
       required final double longitude,
-      required final bool isSelected}) = _$UserMarkerImpl;
+      required final bool isSelected,
+      final int? updatedLocationAt}) = _$MapUserInfoImpl;
+  const _MapUserInfo._() : super._();
 
   @override
   String get userId;
   @override
-  String get userName;
+  ApiUser get user;
   @override
   ui.Image? get imageUrl;
   @override
@@ -724,7 +730,9 @@ abstract class _UserMarker implements UserMarker {
   @override
   bool get isSelected;
   @override
+  int? get updatedLocationAt;
+  @override
   @JsonKey(ignore: true)
-  _$$UserMarkerImplCopyWith<_$UserMarkerImpl> get copyWith =>
+  _$$MapUserInfoImplCopyWith<_$MapUserInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

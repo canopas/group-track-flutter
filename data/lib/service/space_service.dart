@@ -61,8 +61,8 @@ class SpaceService {
     currentSpaceId = spaceId;
   }
 
-  Stream<List<SpaceInfo>> streamAllSpace() {
-    return streamUserSpaces(currentUser?.id ?? '').switchMap((spaces) {
+  Stream<List<SpaceInfo>> streamAllSpace(String userId) {
+    return streamUserSpaces(userId).switchMap((spaces) {
       if (spaces.isEmpty) {
         return Stream.value([]);
       }
@@ -171,8 +171,7 @@ class SpaceService {
     await spaceService.enableLocation(spaceId, userId, locationEnabled);
   }
 
-  Future<void> deleteUserSpaces() async {
-    final userId = currentUser?.id ?? '';
+  Future<void> deleteUserSpaces(String userId) async {
     final allSpace = await getUserSpaces(userId);
     if (allSpace.isEmpty) return;
     final ownSpace =
@@ -187,19 +186,19 @@ class SpaceService {
     for (final space in joinedSpace) {
       await spaceService.removeUserFromSpace(space!.id, userId);
     }
-    _currentSpaceIdController.state = null;
+    currentSpaceId = null;
   }
 
   Future<void> deleteSpace(String spaceId) async {
     await spaceInvitationService.deleteInvitations(spaceId);
     await spaceService.deleteSpace(spaceId);
-    _currentSpaceIdController.state = null;
+    currentSpaceId = null;
   }
 
   Future<void> leaveSpace(String spaceId, {String? userId}) async {
     final currentUserId = currentUser?.id ?? '';
     await spaceService.removeUserFromSpace(spaceId, userId ?? currentUserId);
-    _currentSpaceIdController.state = null;
+    currentSpaceId = null;
   }
 
   Future<void> updateSpace(ApiSpace newSpace) async {

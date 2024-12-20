@@ -1,28 +1,26 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
-import 'package:data/api/location/location.dart';
+import 'package:data/api/place/api_place.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/service/geofence_service.dart';
 import 'package:data/service/permission_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:geolocator/geolocator.dart';
 
 import '../../components/no_internet_screen.dart';
 
 part 'home_screen_viewmodel.freezed.dart';
 
 final homeViewStateProvider =
-    StateNotifierProvider.autoDispose<HomeViewNotifier, HomeViewState>(
-  (ref) => HomeViewNotifier(
+    StateNotifierProvider.autoDispose<HomeViewNotifier, HomeViewState>((ref) {
+  final notifier = HomeViewNotifier(
     ref.read(spaceServiceProvider),
     ref.read(currentSpaceId.notifier),
     ref.read(permissionServiceProvider),
@@ -30,15 +28,24 @@ final homeViewStateProvider =
     ref.read(currentUserPod),
     ref.read(apiUserServiceProvider),
     ref.read(currentUserSessionPod),
-  ),
-);
+  );
+  ref.listen(currentUserPod, (prev, user) {
+    notifier._onUpdateUser(prevUser: prev, currentUser: user);
+  });
+
+  ref.listen(currentSpaceId, (prev, newSpaceId) {
+    notifier._onUpdateSpace(prev: prev, current: newSpaceId);
+  });
+
+  return notifier;
+});
 
 class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final SpaceService spaceService;
   final PermissionService permissionService;
   final StateController<String?> _currentSpaceIdController;
   final StateController<String?> _lastBatteryDialogDate;
-  final ApiUser? _currentUser;
+  ApiUser? _currentUser;
   final ApiUserService userService;
   final ApiSession? _userSession;
 
@@ -51,48 +58,87 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this.userService,
     this._userSession,
   ) : super(const HomeViewState()) {
-    setDate();
+    fetchData();
+    _listenPlaces();
   }
 
   StreamSubscription<List<SpaceInfo>>? _spacesSubscription;
+  StreamSubscription<ApiSession?>? _userSessionSubscription;
+  StreamSubscription<List<ApiPlace>?>? _spacePlacesSubscription;
 
   String? get currentSpaceId => _currentSpaceIdController.state;
 
-  void setDate() async {
+  void fetchData() async {
     final isNetworkOff = await _checkUserInternet();
     if (isNetworkOff) return;
 
     listenSpaceMember();
     updateCurrentUserNetworkState();
 
-    if (_currentUser == null && _userSession == null) return;
-    listenUserSession(_currentUser!.id, _userSession!.id);
+    listenUserSession();
   }
 
-  Future<LocationData> currentUserLocation() async {
-    if (Platform.isIOS) {
-      const platform = MethodChannel('com.grouptrack/current_location');
-      final locationFromIOS = await platform.invokeMethod('getCurrentLocation');
-      return LocationData(
-        latitude: locationFromIOS['latitude'],
-        longitude: locationFromIOS['longitude'],
-        timestamp: DateTime.fromMillisecondsSinceEpoch(
-            locationFromIOS['timestamp'].toInt()),
-      );
-    } else {
-      var location = await Geolocator.getCurrentPosition();
-      return LocationData(
-          latitude: location.latitude,
-          longitude: location.longitude,
-          timestamp: DateTime.now());
+  void _listenPlaces() async {
+    if (_currentUser == null) return;
+    try {
+      _spacePlacesSubscription?.cancel();
+      _spacePlacesSubscription = spaceService
+          .getStreamPlacesByUserId(_currentUser!.id)
+          .listen((places) {
+        if (places.isEmpty) {
+          logger.e('No places found for spaces.');
+          return;
+        }
+
+        GeofenceService.startMonitoring(places);
+      });
+    } catch (error) {
+      logger.e('GeofenceRepository: error while get user space $error');
     }
   }
 
+  void _onUpdateSpace({String? prev, String? current}) {
+    if (current == null) {
+      _cancelSubscriptions();
+      state = state.copyWith(selectedSpace: null);
+      fetchData();
+    } else if (prev != current) {
+      state = state.copyWith(
+          selectedSpace:
+              state.spaceList.where((e) => e.space.id == current).firstOrNull);
+    }
+  }
+
+  void _onUpdateUser({ApiUser? prevUser, ApiUser? currentUser}) {
+    _currentUser = currentUser;
+    if (currentUser == null) {
+      _cancelSubscriptions();
+      state = state.copyWith(spaceList: [], selectedSpace: null);
+    } else if (prevUser?.id != currentUser.id) {
+      fetchData();
+      _listenPlaces();
+    }
+  }
+
+  void _cancelSubscriptions() {
+    _spacePlacesSubscription?.cancel();
+    _spacesSubscription?.cancel();
+    _userSessionSubscription?.cancel();
+  }
+
   void listenSpaceMember() async {
-    if (state.loading) return;
+    final userId = _currentUser?.id;
+    if (state.loading || userId == null) return;
     try {
+      _spacesSubscription?.cancel();
       state = state.copyWith(loading: true);
-      _spacesSubscription = spaceService.streamAllSpace().listen((spaces) {
+
+      _spacesSubscription =
+          spaceService.streamAllSpace(userId).listen((spaces) {
+        if ((currentSpaceId?.isEmpty ?? true) && spaces.isNotEmpty) {
+          spaceService.currentSpaceId = spaces.firstOrNull?.space.id;
+        }
+
         if (spaces.isNotEmpty) {
           if (state.spaceList.length != spaces.length) {
             reorderSpaces(spaces);
@@ -119,7 +165,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     try {
       var connectivityResult = await Connectivity().checkConnectivity();
       final userState = await checkUserState(connectivityResult.first);
-      await userService.updateUserState(_currentUser.id, userState);
+      await userService.updateUserState(_currentUser!.id, userState);
     } catch (error, stack) {
       logger.e(
         'HomeViewNotifier: error while update current user state',
@@ -176,11 +222,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
         state = state.copyWith(selectedSpace: selectedSpace);
       }
     }
-    if (currentSpaceId == null && sortedSpaces.isNotEmpty) {
-      _currentSpaceIdController.state = sortedSpaces.first.space.id;
-      updateSelectedSpace(sortedSpaces.first);
-      state = state.copyWith(selectedSpace: sortedSpaces.first);
-    }
     state = state.copyWith(
         selectedSpace: sortedSpaces.first, spaceList: sortedSpaces);
   }
@@ -196,7 +237,8 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
             ? _currentUser?.location_enabled ?? true
             : members.first.isLocationEnabled,
       );
-      _currentSpaceIdController.state = space.space.id;
+
+      spaceService.currentSpaceId = space.space.id;
     }
   }
 
@@ -241,7 +283,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       state = state.copyWith(enablingLocation: true);
       await spaceService.enableLocation(
         currentSpaceId!,
-        _currentUser.id,
+        _currentUser!.id,
         isEnabled,
       );
       state = state.copyWith(
@@ -256,9 +298,15 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     }
   }
 
-  void listenUserSession(String userId, String sessionId) async {
+  void listenUserSession() async {
+    if (_currentUser == null && _userSession == null) return;
     try {
-      userService.getUserSessionByIdStream(userId, sessionId).listen((session) {
+      final userId = _currentUser!.id;
+      final sessionId = _userSession!.id;
+      _userSessionSubscription?.cancel();
+      _userSessionSubscription = userService
+          .getUserSessionByIdStream(userId, sessionId)
+          .listen((session) {
         if (session != null && !session.session_active) {
           state = state.copyWith(isSessionExpired: true, error: null);
         }
@@ -284,6 +332,12 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     state = state.copyWith(isNetworkOff: isNetworkOff);
     if (isNetworkOff) _spacesSubscription?.cancel();
     return isNetworkOff;
+  }
+
+  @override
+  void dispose() {
+    _cancelSubscriptions();
+    super.dispose();
   }
 }
 

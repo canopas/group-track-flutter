@@ -45,8 +45,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
       notifier = ref.watch(homeViewStateProvider.notifier);
 
-      geofenceRepository = ref.read(geofenceRepositoryProvider);
-      geofenceRepository.init();
       GeofenceService.setGeofenceCallback(
         onEnter: (id) => geofenceRepository.makeHttpCall(id, GEOFENCE_ENTER),
         onExit: (id) => geofenceRepository.makeHttpCall(id, GEOFENCE_EXIT),
@@ -71,7 +69,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final state = ref.watch(homeViewStateProvider);
     _observeNavigation(state);
     _observeError();
-    _observeSelectedSpace();
     if (Platform.isAndroid) _observeShowBatteryDialog(context);
     _observeSessionExpiredAlertPopup(context);
     _observeSessionExpired();
@@ -93,7 +90,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _body(BuildContext context, HomeViewState state) {
     if (state.isNetworkOff) {
       return NoInternetScreen(onPressed: () {
-        notifier.setDate();
+        notifier.fetchData();
       });
     }
 
@@ -139,15 +136,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         (previous, next) {
       if (next != null) {
         showErrorSnackBar(context, next.toString());
-      }
-    });
-  }
-
-  void _observeSelectedSpace() {
-    ref.listen(homeViewStateProvider.select((state) => state.selectedSpace),
-        (previous, next) {
-      if (previous?.space.id != next?.space.id) {
-        mapNotifier.loadData(next?.space.id);
       }
     });
   }
@@ -198,7 +186,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ref.listen(homeViewStateProvider.select((state) => state.popToSignIn),
         (_, next) {
       if (next != null) {
-        AppRoute.signInMethod.push(context);
+        AppRoute.signInMethod.go(context);
       }
     });
   }

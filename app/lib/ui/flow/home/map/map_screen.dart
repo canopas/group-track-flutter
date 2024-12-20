@@ -18,6 +18,7 @@ import '../../../../gen/assets.gen.dart';
 import '../../../app_route.dart';
 import '../../../components/action_bottom_sheet.dart';
 import '../../../components/permission_dialog.dart';
+import '../../permission/enable_permission_view_model.dart';
 import 'components/space_user_footer.dart';
 import 'map_view_model.dart';
 
@@ -66,6 +67,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     _observeMarkerChange();
     _observeShowEnableLocationPrompt(context);
     _observeMemberPlace(context);
+    _observePermissionChange();
     _observeError();
 
     notifier = ref.watch(mapViewStateProvider.notifier);
@@ -104,8 +106,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       children: [
         SpaceUserFooter(
           selectedSpace: widget.space,
-          members: state.userInfo,
-          selectedUser: state.selectedUser,
+          members: state.userInfos.values.toList(),
+          selectedUser: state.userInfos[state.selectedUser?.id],
           isEnabled: !state.loading,
           fetchingInviteCode: state.fetchingInviteCode,
           isCurrentUser: notifier.isCurrentUser(),
@@ -117,7 +119,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           onMemberTap: (member) {
             notifier.showMemberDetail(member);
           },
-          onRelocateTap: () => notifier.getUserLastLocation(),
+          onRelocateTap: () => notifier.relocateCameraPosition(),
           onMapTypeTap: () => _openMapTypeSheet(context),
           onPlacesTap: () {
             final space = widget.space;
@@ -285,20 +287,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     });
   }
 
-  void _observeMarkerChange() {
-    ref.listen(mapViewStateProvider.select((state) => state.markers),
-        (previous, next) {
-      if (previous?.length != next.length) {
-        _clearNonPlaceMarkers();
-      }
-      if (next.isNotEmpty) {
-        for (final item in next) {
-          _buildMarker(item);
-        }
-      }
-    });
-  }
-
   void _observeShowEnableLocationPrompt(BuildContext context) {
     ref.listen(mapViewStateProvider.select((state) => state.showLocationDialog),
         (_, next) {
@@ -321,29 +309,51 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     });
   }
 
-  void _buildMarker(UserMarker item) async {
-    final marker = await _mapMarker(
-      item.isSelected,
-      item.userName,
-      item.imageUrl,
-      item.isSelected
-          ? context.colorScheme.secondary
-          : context.colorScheme.surface,
-      context.colorScheme.primary,
-      AppTextStyle.subtitle2.copyWith(color: context.colorScheme.onPrimary),
-    );
+  void _observePermissionChange() {
+    ref.listen(
+        permissionStateProvider.select((state) => state.isLocationGranted),
+        (previous, next) {
+      if (previous != next && next) {
+        notifier.fetchCurrentUserLocation();
+      }
+    });
+  }
 
-    setState(() {
-      _markers.add(
-        Marker(
+  void _observeMarkerChange() {
+    ref.listen(mapViewStateProvider.select((state) => state.userInfos),
+        (previous, next) async {
+      if (previous?.length != next.length) {
+        _clearNonPlaceMarkers();
+      }
+      if (next.isNotEmpty) {
+        final markers = await Future.wait(next.values.map((item) async {
+          final marker = await _mapMarker(
+            item.isSelected,
+            item.user.fullName,
+            item.imageUrl,
+            item.isSelected
+                ? context.colorScheme.secondary
+                : context.colorScheme.surface,
+            context.colorScheme.primary,
+            AppTextStyle.subtitle2
+                .copyWith(color: context.colorScheme.onPrimary),
+          );
+
+          return Marker(
             markerId: MarkerId(item.userId),
             position: LatLng(item.latitude, item.longitude),
             anchor: const Offset(0.0, 1.0),
             icon: marker,
             onTap: () {
               notifier.onTapUserMarker(item.userId);
-            }),
-      );
+            },
+          );
+        }).toList());
+
+        setState(() {
+          _markers.addAll(markers);
+        });
+      }
     });
   }
 
@@ -478,8 +488,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           setState(() {
             _places.add(Circle(
               circleId: CircleId(place.id),
-              fillColor: context.colorScheme.primary.withAlpha((0.4 * 255).toInt()),
-              strokeColor: context.colorScheme.primary.withAlpha((0.6 * 255).toInt()),
+              fillColor:
+                  context.colorScheme.primary.withAlpha((0.4 * 255).toInt()),
+              strokeColor:
+                  context.colorScheme.primary.withAlpha((0.6 * 255).toInt()),
               strokeWidth: 1,
               center: latLng,
               radius: place.radius,
