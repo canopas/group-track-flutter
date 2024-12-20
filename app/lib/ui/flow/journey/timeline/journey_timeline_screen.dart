@@ -39,6 +39,7 @@ class JourneyTimelineScreen extends ConsumerStatefulWidget {
 class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   late JourneyTimelineViewModel notifier;
   final Map<LatLng, String> _addressCache = {};
+  final Map<String, String> _movingJourneyAddressCache = {};
 
   @override
   void initState() {
@@ -300,8 +301,9 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           firstItem: firstItem);
     }
 
+    final getAddress = notifier.getAddress(latLng);
     return FutureBuilder(
-      future: notifier.getAddress(latLng),
+      future: getAddress,
       builder: (_, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _placeInfo(
@@ -336,6 +338,16 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     LatLng toLatLng,
     String formattedTime,
   ) {
+    final cacheKey = '${fromLatLng.latitude},${fromLatLng.longitude}_'
+        '${toLatLng.latitude},${toLatLng.longitude}';
+
+    if (_movingJourneyAddressCache.containsKey(cacheKey)) {
+      return _placeInfo(
+        address: _movingJourneyAddressCache[cacheKey]!,
+        formattedTime: formattedTime,
+      );
+    }
+
     return FutureBuilder(
         future: _getMovingJourneyAddress(fromLatLng, toLatLng),
         builder: (_, snapshot) {
@@ -347,6 +359,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           } else if (snapshot.hasData) {
             final address = snapshot.data ??
                 context.l10n.journey_timeline_unknown_address_text;
+            _movingJourneyAddressCache[cacheKey] = address;
             return _placeInfo(address: address, formattedTime: formattedTime);
           } else {
             return _placeInfo(
