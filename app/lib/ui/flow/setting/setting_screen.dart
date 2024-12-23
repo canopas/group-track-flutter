@@ -136,7 +136,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
             final isLastItem = entry.key == state.spaces.length - 1;
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: GestureDetector(
+              child: OnTapScale(
                 onTap: () {
                   AppRoute.editSpace(space.id).push(context);
                 },
