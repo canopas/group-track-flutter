@@ -264,14 +264,25 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     required String icon,
     required Function() onTap,
   }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        children: [
+          _iconButton(context: context, icon: icon),
+          const SizedBox(width: 16),
+          Expanded(child: _otherOptionText(title: title, onTap: () => onTap()))
+        ],
+      ),
+    );
+  }
+
+  Widget _otherOptionText({required String title, required Function() onTap}) {
     return OnTapScale(
       onTap: () => onTap(),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 16),
+      child: SizedBox(
+        height: 36,
         child: Row(
           children: [
-            _iconButton(context: context, icon: icon),
-            const SizedBox(width: 16),
             Expanded(
               child: Text(
                 title,
@@ -295,7 +306,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     required String icon,
   }) {
     return IconPrimaryButton(
-      onTap: () {},
+      onTap: () => null,
       size: 36,
       radius: 8,
       icon: SvgPicture.asset(
