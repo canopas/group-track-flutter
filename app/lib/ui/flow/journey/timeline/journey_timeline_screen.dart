@@ -40,6 +40,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   late JourneyTimelineViewModel notifier;
   final Map<LatLng, String> _addressCache = {};
   final Map<String, String> _movingJourneyAddressCache = {};
+  final Map<String, List<Marker>> _markerCache = {};
 
   @override
   void initState() {
@@ -495,6 +496,13 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {
+    final cacheKey = '${fromLatLng.latitude},${fromLatLng.longitude}_'
+        '${toLatLng.latitude},${toLatLng.longitude}';
+
+    if (_markerCache.containsKey(cacheKey)) {
+      return _markerCache[cacheKey]!;
+    }
+    
     final fromIcon = await notifier
         .createCustomIcon('assets/images/ic_feed_location_icon.png');
     final toIcon =
@@ -515,7 +523,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         icon: toIcon,
       ),
     ];
-
+    _markerCache[cacheKey] = markers;
     return markers;
   }
 
