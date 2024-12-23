@@ -45,7 +45,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
 
   Future<void> isCurrentUserIsAdminOfAnyGroup() async {
     try {
-      if (state.isCurrentUserAdminOfAnyGroup) return;
+      if (state.isUserAdminOfAnyGroup || state.currentUserSpace.isNotEmpty) return;
       final spaces = await spaceService.getUserSpaces(user?.id ?? '');
       final adminSpaces = spaces
           .where((space) => space?.admin_id == user?.id)
@@ -55,7 +55,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
       for (final space in adminSpaces) {
           final members = await spaceService.getMemberBySpaceId(space.id);
           if (members.length > 1) {
-            state = state.copyWith(isCurrentUserAdminOfAnyGroup: true);
+            state = state.copyWith(isUserAdminOfAnyGroup: true);
           }
       }
     } catch (error, stack) {
@@ -162,7 +162,7 @@ class EditProfileViewState with _$EditProfileViewState {
     @Default(false) bool accountDeleted,
     @Default(false) bool uploadingImage,
     @Default(false) bool deletingAccount,
-    @Default(false) bool isCurrentUserAdminOfAnyGroup,
+    @Default(false) bool isUserAdminOfAnyGroup,
     @Default([]) List<ApiSpace> currentUserSpace,
     required TextEditingController firstName,
     required TextEditingController lastName,

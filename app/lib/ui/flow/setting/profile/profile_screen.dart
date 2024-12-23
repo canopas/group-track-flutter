@@ -43,7 +43,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _observePop();
     _observeAccountDeleted();
     _observeError();
-    _observeIsCurrentUserAdminOfAnyGroup();
+    _observeIsUserAdminOfAnyGroup();
 
     return AppPage(
       title: context.l10n.edit_profile_title,
@@ -279,10 +279,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         background: context.colorScheme.containerLow,
         progress: state.deletingAccount,
         onPressed: () async {
-          if (state.currentUserSpace.isEmpty) {
-            await notifier.isCurrentUserIsAdminOfAnyGroup();
-          }
-          if (!state.isCurrentUserAdminOfAnyGroup) {
+          await notifier.isCurrentUserIsAdminOfAnyGroup();
+          if (!state.isUserAdminOfAnyGroup) {
             showDeleteAccountConfirmation();
           }
         },
@@ -333,8 +331,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     });
   }
 
-  void _observeIsCurrentUserAdminOfAnyGroup() {
-    ref.listen(editProfileViewStateProvider.select((state) => state.isCurrentUserAdminOfAnyGroup), (previous, next) {
+  void _observeIsUserAdminOfAnyGroup() {
+    ref.listen(editProfileViewStateProvider.select((state) => state.isUserAdminOfAnyGroup), (previous, next) {
       if (next) {
         showChangeAdminConfirmation();
       }
