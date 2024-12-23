@@ -278,7 +278,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         background: context.colorScheme.containerLow,
         progress: state.deletingAccount,
         onPressed: () async {
-          final isCurrentUserAdminOfAnyGroup = await notifier.getUserSpaces();
+          final isCurrentUserAdminOfAnyGroup = await notifier.isCurrentUserIsAdminOfAnyGroup();
           if (isCurrentUserAdminOfAnyGroup) {
             showChangeAdminConfirmation();
           } else {

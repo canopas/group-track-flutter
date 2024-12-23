@@ -42,7 +42,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
           profileUrl: user?.profile_image ?? '',
         ));
 
-  Future<bool> getUserSpaces() async {
+  Future<bool> isCurrentUserIsAdminOfAnyGroup() async {
     try {
       final spaces = await spaceService.getUserSpaces(user?.id ?? '');
       final adminSpaces = spaces.where((space) => space?.admin_id == user?.id);
