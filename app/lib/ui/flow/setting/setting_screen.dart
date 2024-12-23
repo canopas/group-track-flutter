@@ -271,12 +271,13 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
           children: [
             _iconButton(context: context, icon: icon),
             const SizedBox(width: 16),
-            Text(
-              title,
-              style: AppTextStyle.subtitle3
-                  .copyWith(color: context.colorScheme.textPrimary),
+            Expanded(
+              child: Text(
+                title,
+                style: AppTextStyle.subtitle3
+                    .copyWith(color: context.colorScheme.textPrimary),
+              ),
             ),
-            const Spacer(),
             Icon(
               Icons.arrow_forward_ios,
               size: 12,
