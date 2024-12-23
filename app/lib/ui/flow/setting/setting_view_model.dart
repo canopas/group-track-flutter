@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
@@ -9,6 +10,7 @@ import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part 'setting_view_model.freezed.dart';
@@ -103,6 +105,30 @@ class SettingViewNotifier extends StateNotifier<SettingViewState> {
         error: error,
         stackTrace: stack,
       );
+    }
+  }
+
+  void onRateUs() async {
+    final packageNameForRateUs = await packageName;
+    final targetUrl = (Platform.isAndroid)
+        ? "market://details?id=$packageNameForRateUs"
+        : (Platform.isIOS)
+          ? "itms-apps://itunes.apple.com/app/$packageNameForRateUs"
+          : "";
+    _launch(targetUrl);
+  }
+
+  Future<String> get packageName async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    return packageInfo.packageName;
+  }
+
+  void _launch(String url) async {
+    try {
+      final targetUrl = Uri.parse(url);
+      await launchUrl(targetUrl, mode: LaunchMode.platformDefault);
+    } catch (error) {
+      state = state.copyWith(error: error);
     }
   }
 }

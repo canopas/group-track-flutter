@@ -139,10 +139,13 @@
   "settings_other_option_privacy_policy_text": "Privacy policy",
   "settings_other_option_contact_support_text": "Contact support",
   "settings_other_option_about_us_text": "About us",
+  "settings_other_option_share_app_text": "Share app",
+  "settings_other_option_rate_us_text": "Rate us",
   "settings_other_option_sign_out_text": "Sign out",
   "settings_sign_out_alert_title": "See you soon!",
   "settings_sign_out_alert_description": "Are you sure you want to sign out?",
   "settings_subscriptions_title": "Subscriptions",
+  "settings_share_app_text": "Hey! I found this app to track friends and family in real-time. It’s super handy—check it out! // link",
 
   "message_add_member_to_send_message_title": "Add members to send messages",
   "message_add_member_to_send_message_subtitle": "At least one member needs to join your group to be able to chat.",

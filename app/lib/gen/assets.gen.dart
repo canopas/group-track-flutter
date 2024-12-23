@@ -132,6 +132,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_privacy_policy.svg
   String get icPrivacyPolicy => 'assets/images/ic_privacy_policy.svg';
 
+  /// File path: assets/images/ic_rate_us.svg
+  String get icRateUs => 'assets/images/ic_rate_us.svg';
+
   /// File path: assets/images/ic_relocate_icon.svg
   String get icRelocateIcon => 'assets/images/ic_relocate_icon.svg';
 
@@ -150,6 +153,9 @@ class $AssetsImagesGen {
 
   /// File path: assets/images/ic_setting.svg
   String get icSetting => 'assets/images/ic_setting.svg';
+
+  /// File path: assets/images/ic_share_app.svg
+  String get icShareApp => 'assets/images/ic_share_app.svg';
 
   /// File path: assets/images/ic_share_two_location.svg
   String get icShareTwoLocation => 'assets/images/ic_share_two_location.svg';
@@ -249,12 +255,14 @@ class $AssetsImagesGen {
         icPlacesWorkIcon,
         icPlusIcon,
         icPrivacyPolicy,
+        icRateUs,
         icRelocateIcon,
         icRemove,
         icSatelliteMap,
         icSearchIcon,
         icSendMessage,
         icSetting,
+        icShareApp,
         icShareTwoLocation,
         icSignOut,
         icSubscriptionCheckIcon,
