@@ -98,15 +98,17 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   }
 
   void _onUpdateSpace({String? prev, String? current}) {
+    if (prev == current) return;
+
+    _spacePlacesSubscription?.cancel();
+    _spacesSubscription?.cancel();
+
     if (current == null) {
-      _cancelSubscriptions();
       state = state.copyWith(selectedSpace: null);
-      fetchData();
-    } else if (prev != current) {
-      state = state.copyWith(
-          selectedSpace:
-              state.spaceList.where((e) => e.space.id == current).firstOrNull);
     }
+
+    listenSpaceMember();
+    _listenPlaces();
   }
 
   void _onUpdateUser({ApiUser? prevUser, ApiUser? currentUser}) {
@@ -128,6 +130,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
   void listenSpaceMember() async {
     final userId = _currentUser?.id;
+
     if (state.loading || userId == null) return;
     try {
       _spacesSubscription?.cancel();
@@ -135,19 +138,13 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
       _spacesSubscription =
           spaceService.streamAllSpace(userId).listen((spaces) {
+
         if ((currentSpaceId?.isEmpty ?? true) && spaces.isNotEmpty) {
           spaceService.currentSpaceId = spaces.firstOrNull?.space.id;
         }
 
-        if (spaces.isNotEmpty) {
-          if (state.spaceList.length != spaces.length) {
-            reorderSpaces(spaces);
-          } else {
-            state = state.copyWith(spaceList: spaces);
-          }
-        } else {
-          state = state.copyWith(spaceList: [], selectedSpace: null);
-        }
+        _reorderSpaces(spaces);
+
         state = state.copyWith(loading: false, error: null);
       });
     } catch (error, stack) {
@@ -208,7 +205,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     }
   }
 
-  void reorderSpaces(List<SpaceInfo> spaces) {
+  void _reorderSpaces(List<SpaceInfo> spaces) {
     final sortedSpaces = spaces.toList();
     if ((currentSpaceId?.isNotEmpty ?? false) &&
         spaces.isNotEmpty &&
@@ -218,25 +215,17 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       if (selectedSpaceIndex > -1) {
         final selectedSpace = sortedSpaces.removeAt(selectedSpaceIndex);
         sortedSpaces.insert(0, selectedSpace);
-        updateSelectedSpace(selectedSpace);
-        state = state.copyWith(selectedSpace: selectedSpace);
       }
     }
     state = state.copyWith(
-        selectedSpace: sortedSpaces.first, spaceList: sortedSpaces);
+        selectedSpace: sortedSpaces.firstOrNull, spaceList: sortedSpaces);
   }
 
   void updateSelectedSpace(SpaceInfo space) {
     if (space != state.selectedSpace) {
-      final members = space.members
-          .where((member) => member.user.id == _currentUser!.id)
-          .toList();
       state = state.copyWith(
-        selectedSpace: space,
-        locationEnabled: members.isEmpty
-            ? _currentUser?.location_enabled ?? true
-            : members.first.isLocationEnabled,
-      );
+          selectedSpace: space,
+          locationEnabled: _currentUser?.location_enabled ?? true);
 
       spaceService.currentSpaceId = space.space.id;
     }

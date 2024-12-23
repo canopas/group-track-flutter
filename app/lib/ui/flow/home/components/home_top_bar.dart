@@ -92,7 +92,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    selectedIndex = widget.spaces.indexWhere((space) => space.space.id == widget.selectedSpace?.space.id);
     return _body(context);
   }
 

@@ -18,6 +18,7 @@ import '../../../../gen/assets.gen.dart';
 import '../../../app_route.dart';
 import '../../../components/action_bottom_sheet.dart';
 import '../../../components/permission_dialog.dart';
+import '../../../components/resume_detector.dart';
 import '../../permission/enable_permission_view_model.dart';
 import 'components/space_user_footer.dart';
 import 'map_view_model.dart';
@@ -74,26 +75,32 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final state = ref.watch(mapViewStateProvider);
 
     _updateMapStyle(context.brightness == Brightness.dark);
-    return Stack(
-      children: [
-        Center(
-          child: GoogleMap(
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: _cameraPosition,
-            style: _mapStyle,
-            compassEnabled: false,
-            zoomControlsEnabled: false,
-            tiltGesturesEnabled: false,
-            myLocationButtonEnabled: false,
-            mapToolbarEnabled: false,
-            buildingsEnabled: false,
-            circles: _places.toSet(),
-            markers: _markers.toSet(),
-            mapType: notifier.getMapTypeInfo().mapType,
+    return ResumeDetector(
+      onResume: () {
+        notifier.checkUserPermission();
+      },
+      child: Stack(
+        children: [
+          Center(
+            child: GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: _cameraPosition,
+              style: _mapStyle,
+              compassEnabled: false,
+              zoomControlsEnabled: false,
+              tiltGesturesEnabled: false,
+              myLocationButtonEnabled: false,
+              mapToolbarEnabled: false,
+              buildingsEnabled: false,
+              circles: _places.toSet(),
+              markers: _markers.toSet(),
+              mapType: notifier.getMapTypeInfo().mapType,
+            ),
           ),
-        ),
-        Positioned(bottom: 0, left: 0, right: 0, child: _bottomFooters(state)),
-      ],
+          Positioned(
+              bottom: 0, left: 0, right: 0, child: _bottomFooters(state)),
+        ],
+      ),
     );
   }
 
@@ -417,7 +424,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     textPainter.text = TextSpan(
       text: userName.isNotEmpty ? userName[0] : '',
       style: TextStyle(
-          fontSize: Platform.isAndroid ? 70 : 40, color: context.colorScheme.textInversePrimary),
+          fontSize: Platform.isAndroid ? 70 : 40,
+          color: context.colorScheme.textInversePrimary),
     );
     textPainter.layout();
     textPainter.paint(

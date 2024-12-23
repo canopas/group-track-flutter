@@ -32,7 +32,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late HomeViewNotifier notifier;
-  late MapViewNotifier mapNotifier;
   late NotificationHandler notificationHandler;
   late GeofenceRepository geofenceRepository;
 
@@ -71,15 +70,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _observeError();
     if (Platform.isAndroid) _observeShowBatteryDialog(context);
     _observeSessionExpiredAlertPopup(context);
-    _observeSessionExpired();
-
-    mapNotifier = ref.watch(mapViewStateProvider.notifier);
+    _observeSignInState();
 
     return AppPage(
       body: ResumeDetector(
         onResume: () {
           notifier.showBatteryOptimizationDialog();
-          mapNotifier.checkUserPermission();
           notifier.updateCurrentUserNetworkState();
         },
         child: _body(context, state),
@@ -182,7 +178,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
-  void _observeSessionExpired() {
+  void _observeSignInState() {
     ref.listen(homeViewStateProvider.select((state) => state.popToSignIn),
         (_, next) {
       if (next != null) {
