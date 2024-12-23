@@ -3,6 +3,7 @@ import 'package:data/feature_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/button/icon_primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
@@ -263,7 +264,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     required String icon,
     required Function() onTap,
   }) {
-    return GestureDetector(
+    return OnTapScale(
       onTap: () => onTap(),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 16),
