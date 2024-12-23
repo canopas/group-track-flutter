@@ -24,6 +24,8 @@ mixin _$EditProfileViewState {
   bool get accountDeleted => throw _privateConstructorUsedError;
   bool get uploadingImage => throw _privateConstructorUsedError;
   bool get deletingAccount => throw _privateConstructorUsedError;
+  bool get isCurrentUserAdminOfAnyGroup => throw _privateConstructorUsedError;
+  List<ApiSpace> get currentUserSpace => throw _privateConstructorUsedError;
   TextEditingController get firstName => throw _privateConstructorUsedError;
   TextEditingController get lastName => throw _privateConstructorUsedError;
   TextEditingController get email => throw _privateConstructorUsedError;
@@ -50,6 +52,8 @@ abstract class $EditProfileViewStateCopyWith<$Res> {
       bool accountDeleted,
       bool uploadingImage,
       bool deletingAccount,
+      bool isCurrentUserAdminOfAnyGroup,
+      List<ApiSpace> currentUserSpace,
       TextEditingController firstName,
       TextEditingController lastName,
       TextEditingController email,
@@ -79,6 +83,8 @@ class _$EditProfileViewStateCopyWithImpl<$Res,
     Object? accountDeleted = null,
     Object? uploadingImage = null,
     Object? deletingAccount = null,
+    Object? isCurrentUserAdminOfAnyGroup = null,
+    Object? currentUserSpace = null,
     Object? firstName = null,
     Object? lastName = null,
     Object? email = null,
@@ -118,6 +124,14 @@ class _$EditProfileViewStateCopyWithImpl<$Res,
           ? _value.deletingAccount
           : deletingAccount // ignore: cast_nullable_to_non_nullable
               as bool,
+      isCurrentUserAdminOfAnyGroup: null == isCurrentUserAdminOfAnyGroup
+          ? _value.isCurrentUserAdminOfAnyGroup
+          : isCurrentUserAdminOfAnyGroup // ignore: cast_nullable_to_non_nullable
+              as bool,
+      currentUserSpace: null == currentUserSpace
+          ? _value.currentUserSpace
+          : currentUserSpace // ignore: cast_nullable_to_non_nullable
+              as List<ApiSpace>,
       firstName: null == firstName
           ? _value.firstName
           : firstName // ignore: cast_nullable_to_non_nullable
@@ -156,6 +170,8 @@ abstract class _$$EditProfileViewStateImplCopyWith<$Res>
       bool accountDeleted,
       bool uploadingImage,
       bool deletingAccount,
+      bool isCurrentUserAdminOfAnyGroup,
+      List<ApiSpace> currentUserSpace,
       TextEditingController firstName,
       TextEditingController lastName,
       TextEditingController email,
@@ -182,6 +198,8 @@ class __$$EditProfileViewStateImplCopyWithImpl<$Res>
     Object? accountDeleted = null,
     Object? uploadingImage = null,
     Object? deletingAccount = null,
+    Object? isCurrentUserAdminOfAnyGroup = null,
+    Object? currentUserSpace = null,
     Object? firstName = null,
     Object? lastName = null,
     Object? email = null,
@@ -221,6 +239,14 @@ class __$$EditProfileViewStateImplCopyWithImpl<$Res>
           ? _value.deletingAccount
           : deletingAccount // ignore: cast_nullable_to_non_nullable
               as bool,
+      isCurrentUserAdminOfAnyGroup: null == isCurrentUserAdminOfAnyGroup
+          ? _value.isCurrentUserAdminOfAnyGroup
+          : isCurrentUserAdminOfAnyGroup // ignore: cast_nullable_to_non_nullable
+              as bool,
+      currentUserSpace: null == currentUserSpace
+          ? _value._currentUserSpace
+          : currentUserSpace // ignore: cast_nullable_to_non_nullable
+              as List<ApiSpace>,
       firstName: null == firstName
           ? _value.firstName
           : firstName // ignore: cast_nullable_to_non_nullable
@@ -254,11 +280,14 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
       this.accountDeleted = false,
       this.uploadingImage = false,
       this.deletingAccount = false,
+      this.isCurrentUserAdminOfAnyGroup = false,
+      final List<ApiSpace> currentUserSpace = const [],
       required this.firstName,
       required this.lastName,
       required this.email,
       required this.profileUrl,
-      this.error});
+      this.error})
+      : _currentUserSpace = currentUserSpace;
 
   @override
   @JsonKey()
@@ -285,6 +314,19 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
   @JsonKey()
   final bool deletingAccount;
   @override
+  @JsonKey()
+  final bool isCurrentUserAdminOfAnyGroup;
+  final List<ApiSpace> _currentUserSpace;
+  @override
+  @JsonKey()
+  List<ApiSpace> get currentUserSpace {
+    if (_currentUserSpace is EqualUnmodifiableListView)
+      return _currentUserSpace;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_currentUserSpace);
+  }
+
+  @override
   final TextEditingController firstName;
   @override
   final TextEditingController lastName;
@@ -297,7 +339,7 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
 
   @override
   String toString() {
-    return 'EditProfileViewState(saving: $saving, saved: $saved, allowSave: $allowSave, enablePhone: $enablePhone, enableEmail: $enableEmail, accountDeleted: $accountDeleted, uploadingImage: $uploadingImage, deletingAccount: $deletingAccount, firstName: $firstName, lastName: $lastName, email: $email, profileUrl: $profileUrl, error: $error)';
+    return 'EditProfileViewState(saving: $saving, saved: $saved, allowSave: $allowSave, enablePhone: $enablePhone, enableEmail: $enableEmail, accountDeleted: $accountDeleted, uploadingImage: $uploadingImage, deletingAccount: $deletingAccount, isCurrentUserAdminOfAnyGroup: $isCurrentUserAdminOfAnyGroup, currentUserSpace: $currentUserSpace, firstName: $firstName, lastName: $lastName, email: $email, profileUrl: $profileUrl, error: $error)';
   }
 
   @override
@@ -319,6 +361,12 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
                 other.uploadingImage == uploadingImage) &&
             (identical(other.deletingAccount, deletingAccount) ||
                 other.deletingAccount == deletingAccount) &&
+            (identical(other.isCurrentUserAdminOfAnyGroup,
+                    isCurrentUserAdminOfAnyGroup) ||
+                other.isCurrentUserAdminOfAnyGroup ==
+                    isCurrentUserAdminOfAnyGroup) &&
+            const DeepCollectionEquality()
+                .equals(other._currentUserSpace, _currentUserSpace) &&
             (identical(other.firstName, firstName) ||
                 other.firstName == firstName) &&
             (identical(other.lastName, lastName) ||
@@ -340,6 +388,8 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
       accountDeleted,
       uploadingImage,
       deletingAccount,
+      isCurrentUserAdminOfAnyGroup,
+      const DeepCollectionEquality().hash(_currentUserSpace),
       firstName,
       lastName,
       email,
@@ -365,6 +415,8 @@ abstract class _EditProfileViewState implements EditProfileViewState {
       final bool accountDeleted,
       final bool uploadingImage,
       final bool deletingAccount,
+      final bool isCurrentUserAdminOfAnyGroup,
+      final List<ApiSpace> currentUserSpace,
       required final TextEditingController firstName,
       required final TextEditingController lastName,
       required final TextEditingController email,
@@ -387,6 +439,10 @@ abstract class _EditProfileViewState implements EditProfileViewState {
   bool get uploadingImage;
   @override
   bool get deletingAccount;
+  @override
+  bool get isCurrentUserAdminOfAnyGroup;
+  @override
+  List<ApiSpace> get currentUserSpace;
   @override
   TextEditingController get firstName;
   @override
