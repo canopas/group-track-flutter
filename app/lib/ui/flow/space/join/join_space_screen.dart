@@ -26,56 +26,6 @@ class JoinSpace extends ConsumerStatefulWidget {
 
 class _JoinSpaceState extends ConsumerState<JoinSpace> {
   late JoinSpaceViewNotifier notifier;
-  late List<TextEditingController> _controllers;
-  late List<FocusNode> _focusNodes;
-  late bool enabled = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controllers = List.generate(6, (index) => TextEditingController(text: '\u200b'));
-    _focusNodes = List.generate(6, (index) => FocusNode());
-
-    for (int i = 0; i < _controllers.length; i++) {
-      _controllers[i].addListener(() {
-        _handleTextChange(i);
-      });
-    }
-  }
-
-  void _handleTextChange(int index) {
-    final text = _controllers[index].text;
-
-    if (text.isEmpty) {
-      _controllers[index].text = '\u200b';
-      _controllers[index].selection = const TextSelection.collapsed(offset: 1);
-
-      if (index > 0) {
-        _focusNodes[index - 1].requestFocus();
-      }
-    } else if (text.length > 1) {
-      String newText = text.replaceAll('\u200b', '').toUpperCase();
-      _controllers[index].text = newText;
-      _controllers[index].selection = TextSelection.collapsed(offset: newText.length);
-
-      // Move focus to the next field
-      if (index < 5) {
-        _focusNodes[index + 1].requestFocus();
-      }
-      _updateJoinSpaceButtonState();
-    }
-  }
-
-  @override
-  void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    for (var focusNode in _focusNodes) {
-      focusNode.dispose();
-    }
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,8 +126,8 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
       ),
       child: Center(
         child: TextField(
-          controller: _controllers[index],
-          focusNode: _focusNodes[index],
+          controller: state.controllers[index],
+          focusNode: state.focusNodes[index],
           textAlign: TextAlign.center,
           maxLength: 2,
           decoration: const InputDecoration(
@@ -192,13 +142,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
             FocusManager.instance.primaryFocus?.unfocus();
           },
           onChanged: (text) {
-            final upperCaseText = text.toUpperCase();
-            if (_controllers[index].text != upperCaseText) {
-              _controllers[index].value = TextEditingValue(
-                text: upperCaseText,
-                selection: TextSelection.collapsed(offset: upperCaseText.length),
-              );
-            }
+            notifier.onChange(text, index);
           },
         ),
       ),
@@ -214,9 +158,9 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
           PrimaryButton(
             context.l10n.join_space_title,
             progress: state.verifying,
-            enabled: enabled,
+            enabled: state.enabled,
             onPressed: () {
-              final inviteCode = _controllers
+              final inviteCode = state.controllers
                   .map((controller) => controller.text.trim())
                   .join();
               notifier.getSpace(inviteCode);
@@ -254,15 +198,6 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     );
   }
 
-  void _updateJoinSpaceButtonState() {
-    setState(() {
-      enabled = _controllers.every((controller) {
-        final text = controller.text;
-        return text.length == 1 && text != '\u200b';
-      });
-    });
-  }
-
   void _observeError() {
     ref.listen(joinSpaceViewStateProvider.select((state) => state.error),
         (previous, next) {
@@ -289,15 +224,22 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
           title: context.l10n.join_space_title,
           message: context.l10n.join_space_prompt_subtitle(next.name),
           onConfirm: () {
-            final inviteCode = _controllers
-                .map((controller) => controller.text.trim())
-                .join();
+            final inviteCode = _invitationCode();
             _checkInternet(inviteCode);
           },
           onCancel: () => context.pop(),
         );
       }
     });
+  }
+
+  String _invitationCode() {
+    final state = ref.watch(joinSpaceViewStateProvider);
+    if (state.controllers.length == 6) {
+      final inviteCode = state.controllers.map((controller) => controller.text.trim()).join();
+      return inviteCode;
+    }
+    return '';
   }
 
   void _checkInternet(String inviteCode) async {
