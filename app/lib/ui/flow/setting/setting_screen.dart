@@ -207,7 +207,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
           style: AppTextStyle.subtitle2
               .copyWith(color: context.colorScheme.textDisabled),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         if (FeatureFlags.enableSubscription) ...{
           _otherOptionItem(
               context: context,
@@ -264,32 +264,20 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     required String icon,
     required Function() onTap,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        children: [
-          _iconButton(context: context, icon: icon),
-          const SizedBox(width: 16),
-          Expanded(child: _otherOptionText(title: title, onTap: () => onTap()))
-        ],
-      ),
-    );
-  }
-
-  Widget _otherOptionText({required String title, required Function() onTap}) {
     return OnTapScale(
       onTap: () => onTap(),
-      child: SizedBox(
-        height: 36,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
-            Expanded(
-              child: Text(
-                title,
-                style: AppTextStyle.subtitle3
-                    .copyWith(color: context.colorScheme.textPrimary),
-              ),
+            _iconButton(context: context, icon: icon),
+            const SizedBox(width: 16),
+            Text(
+              title,
+              style: AppTextStyle.subtitle3
+                  .copyWith(color: context.colorScheme.textPrimary),
             ),
+            const Spacer(),
             Icon(
               Icons.arrow_forward_ios,
               size: 12,
@@ -306,7 +294,8 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     required String icon,
   }) {
     return IconPrimaryButton(
-      onTap: () => null,
+      onTap: () {},
+      enabled: false,
       size: 36,
       radius: 8,
       icon: SvgPicture.asset(
