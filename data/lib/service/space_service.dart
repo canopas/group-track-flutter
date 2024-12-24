@@ -158,7 +158,8 @@ class SpaceService {
   Future<String?> getInviteCode(String spaceId) async {
     final code = await spaceInvitationService.getSpaceInviteCode(spaceId);
     if (code?.isExpired ?? false) {
-      return spaceInvitationService.regenerateInvitationCode(spaceId);
+      final newInvitation = await spaceInvitationService.regenerateInvitationCode(spaceId);
+      return newInvitation?.code;
     }
     return code?.code;
   }
