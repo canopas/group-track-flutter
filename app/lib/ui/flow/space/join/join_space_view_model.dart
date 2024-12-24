@@ -150,6 +150,14 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
         selection: TextSelection.collapsed(offset: upperCaseText.length),
       );
     }
+    _getInvitationCode();
+  }
+
+  void _getInvitationCode() {
+    if (state.controllers.length == 6) {
+      final inviteCode = state.controllers.map((controller) => controller.text.trim()).join();
+      state = state.copyWith(invitationCode: inviteCode);
+    }
   }
 
   @override

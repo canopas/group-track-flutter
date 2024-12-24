@@ -160,10 +160,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
             progress: state.verifying,
             enabled: state.enabled,
             onPressed: () {
-              final inviteCode = state.controllers
-                  .map((controller) => controller.text.trim())
-                  .join();
-              notifier.getSpace(inviteCode);
+              notifier.getSpace(state.invitationCode);
             },
           ),
           if (widget.fromOnboard) ...[
@@ -216,6 +213,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
   }
 
   void _showCongratulationPrompt() {
+    final state = ref.watch(joinSpaceViewStateProvider);
     ref.listen(joinSpaceViewStateProvider.select((state) => state.space),
         (previous, next) {
       if (next != null) {
@@ -224,22 +222,12 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
           title: context.l10n.join_space_title,
           message: context.l10n.join_space_prompt_subtitle(next.name),
           onConfirm: () {
-            final inviteCode = _invitationCode();
-            _checkInternet(inviteCode);
+            _checkInternet(state.invitationCode);
           },
           onCancel: () => context.pop(),
         );
       }
     });
-  }
-
-  String _invitationCode() {
-    final state = ref.watch(joinSpaceViewStateProvider);
-    if (state.controllers.length == 6) {
-      final inviteCode = state.controllers.map((controller) => controller.text.trim()).join();
-      return inviteCode;
-    }
-    return '';
   }
 
   void _checkInternet(String inviteCode) async {
