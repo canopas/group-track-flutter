@@ -41,7 +41,6 @@ class HomeTopBar extends StatefulWidget {
 
 class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   bool expand = false;
-  late int selectedIndex = widget.spaces.indexWhere((space) => space.space.id == widget.selectedSpace?.space.id);
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -92,7 +91,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    selectedIndex = widget.spaces.indexWhere((space) => space.space.id == widget.selectedSpace?.space.id);
     return _body(context);
   }
 
@@ -105,7 +103,11 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
       builder: (context, orientation) {
         return IntrinsicHeight(
           child: Container(
-            padding: EdgeInsets.only(left: 16, right: 16, bottom: 16, top: orientation == Orientation.portrait ? 0 : 16),
+            padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 16,
+                top: orientation == Orientation.portrait ? 0 : 16),
             color: context.colorScheme.surface,
             child: SingleChildScrollView(
               child: Column(
@@ -134,7 +136,8 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                           visibility: !expand,
                           onTap: () {
                             if (widget.selectedSpace != null) {
-                              AppRoute.message(widget.selectedSpace!).push(context);
+                              AppRoute.message(widget.selectedSpace!)
+                                  .push(context);
                             }
                           },
                         ),
@@ -271,9 +274,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: GestureDetector(
             onTap: () {
-              setState(() {
-                selectedIndex = index;
-              });
               widget.onSpaceItemTap(space);
             },
             child: _spaceListItem(
@@ -305,7 +305,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedIndex = index;
           widget.onSpaceItemTap(space);
           expand = false;
           performAnimation();
@@ -327,10 +326,10 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
             const SizedBox(width: 4),
             Radio<int>(
               value: index,
-              groupValue: selectedIndex,
+              groupValue: widget.spaces.indexWhere(
+                  (space) => space.space.id == widget.selectedSpace?.space.id),
               onChanged: (val) {
                 setState(() {
-                  selectedIndex = index;
                   widget.onSpaceItemTap(space);
                 });
               },

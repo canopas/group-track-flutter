@@ -23,9 +23,10 @@ class CreateSpaceViewNotifier extends StateNotifier<CreateSpaceViewState> {
 
   Future<void> createSpace() async {
     try {
-      state = state.copyWith(isCreating: true, invitationCode: '');
-      final invitationCode = await spaceService.createSpaceAndGetInviteCode(state.spaceName.text);
-      state = state.copyWith(isCreating: false, invitationCode: invitationCode, error: null);
+      state = state.copyWith(isCreating: true, invitationCode: '', error: null);
+      final invitationCode =
+          await spaceService.createSpaceAndGetInviteCode(state.spaceName.text);
+      state = state.copyWith(isCreating: false, invitationCode: invitationCode);
     } catch (error, stack) {
       state = state.copyWith(error: error, isCreating: false);
       logger.e(
@@ -41,17 +42,24 @@ class CreateSpaceViewNotifier extends StateNotifier<CreateSpaceViewState> {
       state = state.copyWith(
         selectedSpaceName: message,
         spaceName: TextEditingController(text: message),
+        allowSave: message.isNotEmpty,
       );
     } else {
       state = state.copyWith(
-        selectedSpaceName: '',
-        spaceName: TextEditingController(text: ''),
-      );
+          selectedSpaceName: '',
+          spaceName: TextEditingController(text: ''),
+          allowSave: false);
     }
   }
 
-  void onChange(String spaceName) {
-    state = state.copyWith(selectedSpaceName: spaceName, allowSave: spaceName.isNotEmpty);
+  void onChange() {
+    state = state.copyWith(allowSave: state.spaceName.text.isNotEmpty);
+  }
+
+  @override
+  void dispose() {
+    state.spaceName.dispose();
+    super.dispose();
   }
 }
 

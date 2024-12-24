@@ -42,7 +42,6 @@ class ApiUserService {
     this.locationManager,
   );
 
-
   CollectionReference get _userRef =>
       _db.collection("users").withConverter<ApiUser>(
           fromFirestore: ApiUser.fromFireStore,
@@ -173,6 +172,27 @@ class ApiUserService {
     await _userRef.doc(userId).update({
       "space_ids": FieldValue.arrayUnion([spaceId])
     });
+  }
+
+  Future<void> removeSpaceId(
+      {required String userId, required String spaceId}) async {
+    await _userRef.doc(userId).update({
+      "space_ids": FieldValue.arrayRemove([spaceId])
+    });
+  }
+
+  Future<void> removeSpaceIdForAllSpaceMember({required String spaceId}) async {
+    final querySnapshot =
+        await _userRef.where('space_ids', arrayContains: spaceId).get();
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (final doc in querySnapshot.docs) {
+      batch.update(doc.reference, {
+        "space_ids": FieldValue.arrayRemove([spaceId]),
+      });
+    }
+
+    await batch.commit();
   }
 
   Future<void> updateUserState(String id, int state) async {

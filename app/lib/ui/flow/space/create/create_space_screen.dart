@@ -88,7 +88,7 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
               FocusManager.instance.primaryFocus?.unfocus();
             },
             onChanged: (text) {
-              notifier.onChange(text);
+              notifier.onChange();
             },
             style: AppTextStyle.subtitle2
                 .copyWith(color: context.colorScheme.textPrimary),
@@ -172,7 +172,7 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
         onPressed: () {
           _checkUserInternet(() => notifier.createSpace());
         },
-        enabled: state.allowSave || state.selectedSpaceName.isNotEmpty,
+        enabled: state.allowSave,
         progress: state.isCreating,
       ),
     );

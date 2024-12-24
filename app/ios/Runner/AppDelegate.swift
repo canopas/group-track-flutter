@@ -29,10 +29,8 @@ import Combine
         registerLocationChannel()
         
         let liveLocationUpdates = LocationManager.shared
-        if liveLocationUpdates.updatesStarted {
-            liveLocationUpdates.startLocationUpdates()
-        }
-
+        liveLocationUpdates.startLocationUpdates()
+        
         liveLocationUpdates.$lastLocation.sink(receiveValue: { [weak self] location in
             self?.sendLocationToFlutter(location: location)
         }).store(in: &cancellables)

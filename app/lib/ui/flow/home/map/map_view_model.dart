@@ -19,6 +19,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image/image.dart' as img;
 
+import 'components/marker_generator.dart';
 import 'map_screen.dart';
 
 part 'map_view_model.freezed.dart';
@@ -321,8 +322,8 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   }
 
   void startLocationService(bool isPermission) async {
-    final isRunning = await locationManager.isServiceRunning();
-    if (isPermission && !isRunning) {
+    final isTrackingStarted = locationManager.isTrackingStarted;
+    if (isPermission && !isTrackingStarted) {
       locationManager.startService();
     }
   }

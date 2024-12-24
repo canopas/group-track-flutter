@@ -124,22 +124,20 @@ class SpaceService {
     );
   }
 
-
   Future<List<ApiSpace?>> getUserSpaces(String userId) async {
     final spaceMembers = await spaceService.getSpaceMemberByUserId(userId);
-    final spaces = await Future.wait(spaceMembers.map((spaceMember) async {
+    return await Future.wait(spaceMembers.map((spaceMember) async {
       final spaceId = spaceMember.space_id;
       final space = await spaceService.getSpace(spaceId);
       return space;
     }).toList());
-    return spaces;
   }
 
   Stream<List<ApiSpace?>> streamUserSpaces(String userId) {
     return spaceService
         .streamSpaceMemberByUserId(userId)
-        .asyncMap((member) async {
-      final spaces = await Future.wait(member.map((spaceMember) async {
+        .asyncMap((members) async {
+      final spaces = await Future.wait(members.map((spaceMember) async {
         final spaceId = spaceMember.space_id;
         return await spaceService.getSpace(spaceId);
       }).toList());
@@ -174,17 +172,20 @@ class SpaceService {
   Future<void> deleteUserSpaces(String userId) async {
     final allSpace = await getUserSpaces(userId);
     if (allSpace.isEmpty) return;
-    final ownSpace =
-        allSpace.where((space) => space?.admin_id == userId).toList();
-    final joinedSpace =
-        allSpace.where((space) => space?.admin_id != userId).toList();
+    final ownSpace = allSpace
+        .where((space) => space != null && space.admin_id == userId)
+        .toList();
+    final joinedSpace = allSpace
+        .where((space) => space != null && space.admin_id != userId)
+        .toList();
 
     for (final space in ownSpace) {
-      await deleteSpace(space!.id);
+      await spaceInvitationService.deleteInvitations(space!.id);
+      await spaceService.deleteSpace(space.id);
     }
 
     for (final space in joinedSpace) {
-      await spaceService.removeUserFromSpace(space!.id, userId);
+      leaveSpace(space!.id, userId: userId);
     }
     currentSpaceId = null;
   }
@@ -192,12 +193,14 @@ class SpaceService {
   Future<void> deleteSpace(String spaceId) async {
     await spaceInvitationService.deleteInvitations(spaceId);
     await spaceService.deleteSpace(spaceId);
+    await userService.removeSpaceIdForAllSpaceMember(spaceId: spaceId);
     currentSpaceId = null;
   }
 
   Future<void> leaveSpace(String spaceId, {String? userId}) async {
     final currentUserId = currentUser?.id ?? '';
     await spaceService.removeUserFromSpace(spaceId, userId ?? currentUserId);
+    await userService.removeSpaceId(userId: currentUserId, spaceId: spaceId);
     currentSpaceId = null;
   }
 
@@ -239,17 +242,15 @@ class SpaceService {
     });
   }
 
-  Stream<List<ApiPlace>> getStreamPlacesByUserId(String userId) {
-    return spaceService.streamSpaceMemberByUserId(userId).asyncExpand((spaces) {
-      if (spaces.isEmpty) return Stream.value([]);
+  Stream<List<ApiPlace>> getStreamPlacesByUserId(List<String> spaceIds) {
+    if (spaceIds.isEmpty) return Stream.value([]);
 
-      final placeStreams = spaces.map((space) {
-        return placeService.getAllPlacesStream(space.space_id);
-      }).toList();
+    final placeStreams = spaceIds.map((spaceId) {
+      return placeService.getAllPlacesStream(spaceId);
+    }).toList();
 
-      return CombineLatestStream.list(placeStreams).map((placesLists) {
-        return placesLists.expand((places) => places).toList();
-      });
+    return CombineLatestStream.list(placeStreams).map((placesLists) {
+      return placesLists.expand((places) => places).toList();
     });
   }
 }

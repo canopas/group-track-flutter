@@ -26,31 +26,23 @@ class GeofenceRepository {
 
   void makeHttpCall(String placeId, int status) async {
     try {
-      final spaces = await spaceService.getUserSpaces(_currentUser?.id ?? '');
-      for (final space in spaces) {
-        final spaceId = space!.id;
-        final places = await placeService.getAllPlace(spaceId);
+      final place = await placeService.getPlace(placeId);
+      if (place != null) {
+        final message = status == GEOFENCE_ENTER
+            ? '${_currentUser?.first_name ?? ''} has arrived at 📍${place.name}'
+            : '${_currentUser?.first_name ?? ''} has left 📍${place.name}';
 
-        for (final place in places) {
-          if (place.id == placeId) {
-            final message = status == GEOFENCE_ENTER
-                ? '${_currentUser?.first_name ?? ''} has arrived at 📍${place.name}'
-                : '${_currentUser?.first_name ?? ''} has left 📍${place.name}';
+        final data = {
+          'placeId': placeId,
+          'spaceId': place.space_id,
+          'eventBy': _currentUser?.id ?? '',
+          'message': message,
+          'eventType': status == GEOFENCE_ENTER ? "1" : "2",
+        };
 
-            final data = {
-              'placeId': placeId,
-              'spaceId': place.space_id,
-              'eventBy': _currentUser?.id ?? '',
-              'message': message,
-              'eventType': status == GEOFENCE_ENTER ? "1" : "2",
-            };
-
-            final callable =
-                FirebaseFunctions.instanceFor(region: 'asia-south1')
-                    .httpsCallable('sendGeoFenceNotification');
-            await callable.call(data);
-          }
-        }
+        final callable = FirebaseFunctions.instanceFor(region: 'asia-south1')
+            .httpsCallable('sendGeoFenceNotification');
+        await callable.call(data);
       }
     } catch (error, stack) {
       logger.e(

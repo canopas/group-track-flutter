@@ -45,6 +45,7 @@ class LocationManager {
   Position? _lastPosition;
   Position? _movingPosition;
   bool isMoving = false;
+  bool isTrackingStarted = false;
   int movingDistance = STEADY_DISTANCE;
 
   Future<bool> isServiceRunning() async {
@@ -60,10 +61,13 @@ class LocationManager {
   }
 
   void startService() async {
+    if (isTrackingStarted) return;
+
     if (Platform.isIOS) {
       await locationMethodChannel.invokeMethod('startTracking');
     }
     if (Platform.isAndroid) await bgService.startService();
+    isTrackingStarted = true;
   }
 
   void stopTrackingService() async {
@@ -73,6 +77,7 @@ class LocationManager {
     positionSubscription?.cancel();
     positionSubscription = null;
     if (Platform.isAndroid) bgService.invoke("stopService");
+    isTrackingStarted = false;
   }
 
   Future<String?> _getUserIdFromPreferences() async {
