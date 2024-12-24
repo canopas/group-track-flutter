@@ -205,6 +205,9 @@
   "edit_space_change_admin_text": "Change",
   "edit_space_change_admin_title": "Change Admin",
   "edit_space_change_admin_subtitle": "To leave the group, you must assign another member as admin. This action is irreversible unless the new admin changes it.",
+  "edit_space_more_option_change_admin_text": "Change admin",
+  "edit_space_more_option_regenerate_invitation_code_text": "Regenerate invitation code",
+  "edit_space_invitation_code_title": "Invitation code",
 
   "contact_support_title": "Contact support",
   "contact_support_title_field": "Title",

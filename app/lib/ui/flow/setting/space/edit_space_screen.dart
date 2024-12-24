@@ -1,7 +1,9 @@
 import 'package:data/api/auth/auth_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/button/action_button.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
@@ -12,6 +14,7 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
+import 'package:yourspace_flutter/gen/assets.gen.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
@@ -109,6 +112,8 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           children: [
             const SizedBox(height: 16),
             _spaceNameField(context, state),
+            const SizedBox(height: 16),
+            _invitationCode(context, state),
             const SizedBox(height: 16),
             _yourLocation(context, state),
             const SizedBox(height: 16),
@@ -316,6 +321,78 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                 });
           }
         },
+      ),
+    );
+  }
+
+  Widget _invitationCode(BuildContext context, EditSpaceViewState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            context.l10n.edit_space_invitation_code_title,
+            style: AppTextStyle.subtitle2
+                .copyWith(color: context.colorScheme.textDisabled),
+          ),
+        ),
+        const SizedBox(height: 8),
+        _shareAndRegenerateCode(state),
+        const SizedBox(height: 30),
+        _divider(context),
+      ],
+    );
+  }
+
+  Widget _shareAndRegenerateCode(EditSpaceViewState state) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: SelectableText(
+                  state.invitationCode,
+                  style: AppTextStyle.header4
+                      .copyWith(color: context.colorScheme.textPrimary),
+                ),
+              ),
+              OnTapScale(
+                  onTap: () async {
+                    Share.share(context.l10n.invite_code_share_code_text(state.invitationCode));
+                  },
+                  child: Icon(
+                    Icons.share_rounded,
+                    color: context.colorScheme.textPrimary,
+                    size: 20,
+                  )),
+              if (state.isAdmin) ...[
+                const SizedBox(width: 24),
+                OnTapScale(
+                    onTap: () async {
+                      await notifier.regenerateInvitationCode();
+                    },
+                    child: SvgPicture.asset(
+                      Assets.images.icRegenerateInvitationCode,
+                      colorFilter: ColorFilter.mode(
+                        context.colorScheme.textPrimary,
+                        BlendMode.srcATop,
+                      ),
+                    ))
+              ]
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            state.remainingDurationText,
+            style: AppTextStyle.caption
+                .copyWith(color: context.colorScheme.textSecondary),
+          ),
+        ],
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/space_service.dart';
@@ -14,15 +15,17 @@ final editSpaceViewStateProvider = StateNotifierProvider.autoDispose<
     EditSpaceViewNotifier, EditSpaceViewState>(
   (ref) => EditSpaceViewNotifier(
     ref.read(spaceServiceProvider),
+    ref.read(apiSpaceInvitationServiceProvider),
     ref.read(currentUserPod),
   ),
 );
 
 class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
   final SpaceService spaceService;
+  final ApiSpaceInvitationService spaceInvitationService;
   final ApiUser? user;
 
-  EditSpaceViewNotifier(this.spaceService, this.user)
+  EditSpaceViewNotifier(this.spaceService, this.spaceInvitationService, this.user)
       : super(EditSpaceViewState(spaceName: TextEditingController()));
 
   void getSpaceDetails(String spaceId) async {
@@ -51,6 +54,9 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         loading: false,
         error: null,
       );
+      if (state.space != null) {
+        getInvitationCode();
+      }
     } catch (error, stack) {
       logger.e('EditSpaceViewNotifier: error while fetch space details',
           error: error, stackTrace: stack);
@@ -150,6 +156,46 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
   void isAdminRemovingMember(bool removeMember) {
     state = state.copyWith(adminRemovingMember: removeMember);
   }
+
+  Future<void> getInvitationCode() async {
+    try {
+      final code = await spaceInvitationService.getSpaceInviteCode(state.space?.space.id ?? '');
+      state = state.copyWith(invitationCode: code?.code ?? '');
+      _updateRemainingDurationText(code?.remainingTime ?? const Duration());
+    } catch (error, stack) {
+      logger.e('EditSpaceViewNotifier: error while get invitation code',
+          error: error, stackTrace: stack);
+    }
+  }
+
+  Future<void> regenerateInvitationCode() async {
+    try {
+      if (state.space == null) return;
+      final code = await spaceInvitationService.regenerateInvitationCode(state.space?.space.id ?? '');
+      final invitationCode = await spaceInvitationService.getInvitation(code);
+      state = state.copyWith(invitationCode: invitationCode?.code ?? '');
+      _updateRemainingDurationText(invitationCode?.remainingTime ?? const Duration());
+    } catch (error, stack) {
+      logger.e('EditSpaceViewNotifier: error while regenerate group code',
+          error: error, stackTrace: stack);
+    }
+  }
+
+  void _updateRemainingDurationText(Duration? remainingTime) {
+    if (remainingTime == null) {
+      state = state.copyWith(remainingDurationText: 'Invalid invitation');
+    } else if (remainingTime == Duration.zero) {
+      state = state.copyWith(remainingDurationText: 'Invitation expired');
+    } else {
+      final hours = remainingTime.inHours % 24 + remainingTime.inDays * 24;
+      final minutes = remainingTime.inMinutes % 60;
+
+      state = state.copyWith(
+        remainingDurationText: 'Code expires in $hours hour${hours > 1 ? 's' : ''} $minutes minute${minutes > 36 ? 's' : ''}',
+      );
+    }
+  }
+
 }
 
 @freezed
@@ -166,6 +212,8 @@ class EditSpaceViewState with _$EditSpaceViewState {
     @Default(false) bool adminRemovingMember,
     @Default('') String selectedSpaceName,
     @Default('') String currentUserId,
+    @Default('') String invitationCode,
+    @Default('') String remainingDurationText,
     ApiUserInfo? currentUserInfo,
     @Default([]) List<ApiUserInfo> userInfo,
     required TextEditingController spaceName,

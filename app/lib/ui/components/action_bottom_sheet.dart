@@ -127,7 +127,7 @@ Widget _buildVerticalLayout(
     separatorBuilder: (index) => Divider(
       height: 0,
       thickness: 1,
-      color: context.colorScheme.positive,
+      color: context.colorScheme.outline,
     ),
     itemBuilder: (index) => items[index],
     itemCount: items.length,

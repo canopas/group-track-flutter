@@ -27,6 +27,8 @@ mixin _$EditSpaceViewState {
   bool get adminRemovingMember => throw _privateConstructorUsedError;
   String get selectedSpaceName => throw _privateConstructorUsedError;
   String get currentUserId => throw _privateConstructorUsedError;
+  String get invitationCode => throw _privateConstructorUsedError;
+  String get remainingDurationText => throw _privateConstructorUsedError;
   ApiUserInfo? get currentUserInfo => throw _privateConstructorUsedError;
   List<ApiUserInfo> get userInfo => throw _privateConstructorUsedError;
   TextEditingController get spaceName => throw _privateConstructorUsedError;
@@ -56,6 +58,8 @@ abstract class $EditSpaceViewStateCopyWith<$Res> {
       bool adminRemovingMember,
       String selectedSpaceName,
       String currentUserId,
+      String invitationCode,
+      String remainingDurationText,
       ApiUserInfo? currentUserInfo,
       List<ApiUserInfo> userInfo,
       TextEditingController spaceName,
@@ -90,6 +94,8 @@ class _$EditSpaceViewStateCopyWithImpl<$Res, $Val extends EditSpaceViewState>
     Object? adminRemovingMember = null,
     Object? selectedSpaceName = null,
     Object? currentUserId = null,
+    Object? invitationCode = null,
+    Object? remainingDurationText = null,
     Object? currentUserInfo = freezed,
     Object? userInfo = null,
     Object? spaceName = null,
@@ -140,6 +146,14 @@ class _$EditSpaceViewStateCopyWithImpl<$Res, $Val extends EditSpaceViewState>
       currentUserId: null == currentUserId
           ? _value.currentUserId
           : currentUserId // ignore: cast_nullable_to_non_nullable
+              as String,
+      invitationCode: null == invitationCode
+          ? _value.invitationCode
+          : invitationCode // ignore: cast_nullable_to_non_nullable
+              as String,
+      remainingDurationText: null == remainingDurationText
+          ? _value.remainingDurationText
+          : remainingDurationText // ignore: cast_nullable_to_non_nullable
               as String,
       currentUserInfo: freezed == currentUserInfo
           ? _value.currentUserInfo
@@ -206,6 +220,8 @@ abstract class _$$EditSpaceViewStateImplCopyWith<$Res>
       bool adminRemovingMember,
       String selectedSpaceName,
       String currentUserId,
+      String invitationCode,
+      String remainingDurationText,
       ApiUserInfo? currentUserInfo,
       List<ApiUserInfo> userInfo,
       TextEditingController spaceName,
@@ -240,6 +256,8 @@ class __$$EditSpaceViewStateImplCopyWithImpl<$Res>
     Object? adminRemovingMember = null,
     Object? selectedSpaceName = null,
     Object? currentUserId = null,
+    Object? invitationCode = null,
+    Object? remainingDurationText = null,
     Object? currentUserInfo = freezed,
     Object? userInfo = null,
     Object? spaceName = null,
@@ -291,6 +309,14 @@ class __$$EditSpaceViewStateImplCopyWithImpl<$Res>
           ? _value.currentUserId
           : currentUserId // ignore: cast_nullable_to_non_nullable
               as String,
+      invitationCode: null == invitationCode
+          ? _value.invitationCode
+          : invitationCode // ignore: cast_nullable_to_non_nullable
+              as String,
+      remainingDurationText: null == remainingDurationText
+          ? _value.remainingDurationText
+          : remainingDurationText // ignore: cast_nullable_to_non_nullable
+              as String,
       currentUserInfo: freezed == currentUserInfo
           ? _value.currentUserInfo
           : currentUserInfo // ignore: cast_nullable_to_non_nullable
@@ -327,6 +353,8 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
       this.adminRemovingMember = false,
       this.selectedSpaceName = '',
       this.currentUserId = '',
+      this.invitationCode = '',
+      this.remainingDurationText = '',
       this.currentUserInfo,
       final List<ApiUserInfo> userInfo = const [],
       required this.spaceName,
@@ -368,6 +396,12 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
   @JsonKey()
   final String currentUserId;
   @override
+  @JsonKey()
+  final String invitationCode;
+  @override
+  @JsonKey()
+  final String remainingDurationText;
+  @override
   final ApiUserInfo? currentUserInfo;
   final List<ApiUserInfo> _userInfo;
   @override
@@ -387,7 +421,7 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
 
   @override
   String toString() {
-    return 'EditSpaceViewState(loading: $loading, allowSave: $allowSave, saving: $saving, isAdmin: $isAdmin, deleting: $deleting, deleted: $deleted, locationEnabled: $locationEnabled, isNetworkOff: $isNetworkOff, adminRemovingMember: $adminRemovingMember, selectedSpaceName: $selectedSpaceName, currentUserId: $currentUserId, currentUserInfo: $currentUserInfo, userInfo: $userInfo, spaceName: $spaceName, space: $space, error: $error)';
+    return 'EditSpaceViewState(loading: $loading, allowSave: $allowSave, saving: $saving, isAdmin: $isAdmin, deleting: $deleting, deleted: $deleted, locationEnabled: $locationEnabled, isNetworkOff: $isNetworkOff, adminRemovingMember: $adminRemovingMember, selectedSpaceName: $selectedSpaceName, currentUserId: $currentUserId, invitationCode: $invitationCode, remainingDurationText: $remainingDurationText, currentUserInfo: $currentUserInfo, userInfo: $userInfo, spaceName: $spaceName, space: $space, error: $error)';
   }
 
   @override
@@ -413,6 +447,10 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
                 other.selectedSpaceName == selectedSpaceName) &&
             (identical(other.currentUserId, currentUserId) ||
                 other.currentUserId == currentUserId) &&
+            (identical(other.invitationCode, invitationCode) ||
+                other.invitationCode == invitationCode) &&
+            (identical(other.remainingDurationText, remainingDurationText) ||
+                other.remainingDurationText == remainingDurationText) &&
             (identical(other.currentUserInfo, currentUserInfo) ||
                 other.currentUserInfo == currentUserInfo) &&
             const DeepCollectionEquality().equals(other._userInfo, _userInfo) &&
@@ -436,6 +474,8 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
       adminRemovingMember,
       selectedSpaceName,
       currentUserId,
+      invitationCode,
+      remainingDurationText,
       currentUserInfo,
       const DeepCollectionEquality().hash(_userInfo),
       spaceName,
@@ -463,6 +503,8 @@ abstract class _EditSpaceViewState implements EditSpaceViewState {
       final bool adminRemovingMember,
       final String selectedSpaceName,
       final String currentUserId,
+      final String invitationCode,
+      final String remainingDurationText,
       final ApiUserInfo? currentUserInfo,
       final List<ApiUserInfo> userInfo,
       required final TextEditingController spaceName,
@@ -491,6 +533,10 @@ abstract class _EditSpaceViewState implements EditSpaceViewState {
   String get selectedSpaceName;
   @override
   String get currentUserId;
+  @override
+  String get invitationCode;
+  @override
+  String get remainingDurationText;
   @override
   ApiUserInfo? get currentUserInfo;
   @override
