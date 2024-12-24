@@ -26,11 +26,12 @@ mixin _$MapViewState {
   Map<String, MapUserInfo> get userInfos => throw _privateConstructorUsedError;
   ApiUser? get selectedUser => throw _privateConstructorUsedError;
   LatLng? get currentUserLocation => throw _privateConstructorUsedError;
-  CameraPosition? get defaultPosition => throw _privateConstructorUsedError;
+  CameraPosition get defaultPosition => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
   String get mapType => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   DateTime? get showLocationDialog => throw _privateConstructorUsedError;
+  GoogleMapController? get mapController => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $MapViewStateCopyWith<MapViewState> get copyWith =>
@@ -54,11 +55,12 @@ abstract class $MapViewStateCopyWith<$Res> {
       Map<String, MapUserInfo> userInfos,
       ApiUser? selectedUser,
       LatLng? currentUserLocation,
-      CameraPosition? defaultPosition,
+      CameraPosition defaultPosition,
       String spaceInvitationCode,
       String mapType,
       Object? error,
-      DateTime? showLocationDialog});
+      DateTime? showLocationDialog,
+      GoogleMapController? mapController});
 
   $ApiUserCopyWith<$Res>? get selectedUser;
 }
@@ -86,11 +88,12 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
     Object? userInfos = null,
     Object? selectedUser = freezed,
     Object? currentUserLocation = freezed,
-    Object? defaultPosition = freezed,
+    Object? defaultPosition = null,
     Object? spaceInvitationCode = null,
     Object? mapType = null,
     Object? error = freezed,
     Object? showLocationDialog = freezed,
+    Object? mapController = freezed,
   }) {
     return _then(_value.copyWith(
       loading: freezed == loading
@@ -133,10 +136,10 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
           ? _value.currentUserLocation
           : currentUserLocation // ignore: cast_nullable_to_non_nullable
               as LatLng?,
-      defaultPosition: freezed == defaultPosition
+      defaultPosition: null == defaultPosition
           ? _value.defaultPosition
           : defaultPosition // ignore: cast_nullable_to_non_nullable
-              as CameraPosition?,
+              as CameraPosition,
       spaceInvitationCode: null == spaceInvitationCode
           ? _value.spaceInvitationCode
           : spaceInvitationCode // ignore: cast_nullable_to_non_nullable
@@ -150,6 +153,10 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
           ? _value.showLocationDialog
           : showLocationDialog // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      mapController: freezed == mapController
+          ? _value.mapController
+          : mapController // ignore: cast_nullable_to_non_nullable
+              as GoogleMapController?,
     ) as $Val);
   }
 
@@ -185,11 +192,12 @@ abstract class _$$MapViewStateImplCopyWith<$Res>
       Map<String, MapUserInfo> userInfos,
       ApiUser? selectedUser,
       LatLng? currentUserLocation,
-      CameraPosition? defaultPosition,
+      CameraPosition defaultPosition,
       String spaceInvitationCode,
       String mapType,
       Object? error,
-      DateTime? showLocationDialog});
+      DateTime? showLocationDialog,
+      GoogleMapController? mapController});
 
   @override
   $ApiUserCopyWith<$Res>? get selectedUser;
@@ -216,11 +224,12 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
     Object? userInfos = null,
     Object? selectedUser = freezed,
     Object? currentUserLocation = freezed,
-    Object? defaultPosition = freezed,
+    Object? defaultPosition = null,
     Object? spaceInvitationCode = null,
     Object? mapType = null,
     Object? error = freezed,
     Object? showLocationDialog = freezed,
+    Object? mapController = freezed,
   }) {
     return _then(_$MapViewStateImpl(
       loading: freezed == loading ? _value.loading! : loading,
@@ -260,10 +269,10 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
           ? _value.currentUserLocation
           : currentUserLocation // ignore: cast_nullable_to_non_nullable
               as LatLng?,
-      defaultPosition: freezed == defaultPosition
+      defaultPosition: null == defaultPosition
           ? _value.defaultPosition
           : defaultPosition // ignore: cast_nullable_to_non_nullable
-              as CameraPosition?,
+              as CameraPosition,
       spaceInvitationCode: null == spaceInvitationCode
           ? _value.spaceInvitationCode
           : spaceInvitationCode // ignore: cast_nullable_to_non_nullable
@@ -277,6 +286,10 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
           ? _value.showLocationDialog
           : showLocationDialog // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      mapController: freezed == mapController
+          ? _value.mapController
+          : mapController // ignore: cast_nullable_to_non_nullable
+              as GoogleMapController?,
     ));
   }
 }
@@ -295,11 +308,12 @@ class _$MapViewStateImpl implements _MapViewState {
       final Map<String, MapUserInfo> userInfos = const {},
       this.selectedUser,
       this.currentUserLocation,
-      this.defaultPosition,
+      required this.defaultPosition,
       this.spaceInvitationCode = '',
       required this.mapType,
       this.error,
-      this.showLocationDialog})
+      this.showLocationDialog,
+      this.mapController})
       : _places = places,
         _userInfos = userInfos;
 
@@ -344,7 +358,7 @@ class _$MapViewStateImpl implements _MapViewState {
   @override
   final LatLng? currentUserLocation;
   @override
-  final CameraPosition? defaultPosition;
+  final CameraPosition defaultPosition;
   @override
   @JsonKey()
   final String spaceInvitationCode;
@@ -354,10 +368,12 @@ class _$MapViewStateImpl implements _MapViewState {
   final Object? error;
   @override
   final DateTime? showLocationDialog;
+  @override
+  final GoogleMapController? mapController;
 
   @override
   String toString() {
-    return 'MapViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, hasLocationEnabled: $hasLocationEnabled, hasLocationServiceEnabled: $hasLocationServiceEnabled, hasNotificationEnabled: $hasNotificationEnabled, hasFineLocationEnabled: $hasFineLocationEnabled, places: $places, userInfos: $userInfos, selectedUser: $selectedUser, currentUserLocation: $currentUserLocation, defaultPosition: $defaultPosition, spaceInvitationCode: $spaceInvitationCode, mapType: $mapType, error: $error, showLocationDialog: $showLocationDialog)';
+    return 'MapViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, hasLocationEnabled: $hasLocationEnabled, hasLocationServiceEnabled: $hasLocationServiceEnabled, hasNotificationEnabled: $hasNotificationEnabled, hasFineLocationEnabled: $hasFineLocationEnabled, places: $places, userInfos: $userInfos, selectedUser: $selectedUser, currentUserLocation: $currentUserLocation, defaultPosition: $defaultPosition, spaceInvitationCode: $spaceInvitationCode, mapType: $mapType, error: $error, showLocationDialog: $showLocationDialog, mapController: $mapController)';
   }
 
   @override
@@ -391,7 +407,9 @@ class _$MapViewStateImpl implements _MapViewState {
             (identical(other.mapType, mapType) || other.mapType == mapType) &&
             const DeepCollectionEquality().equals(other.error, error) &&
             (identical(other.showLocationDialog, showLocationDialog) ||
-                other.showLocationDialog == showLocationDialog));
+                other.showLocationDialog == showLocationDialog) &&
+            (identical(other.mapController, mapController) ||
+                other.mapController == mapController));
   }
 
   @override
@@ -411,7 +429,8 @@ class _$MapViewStateImpl implements _MapViewState {
       spaceInvitationCode,
       mapType,
       const DeepCollectionEquality().hash(error),
-      showLocationDialog);
+      showLocationDialog,
+      mapController);
 
   @JsonKey(ignore: true)
   @override
@@ -432,11 +451,12 @@ abstract class _MapViewState implements MapViewState {
       final Map<String, MapUserInfo> userInfos,
       final ApiUser? selectedUser,
       final LatLng? currentUserLocation,
-      final CameraPosition? defaultPosition,
+      required final CameraPosition defaultPosition,
       final String spaceInvitationCode,
       required final String mapType,
       final Object? error,
-      final DateTime? showLocationDialog}) = _$MapViewStateImpl;
+      final DateTime? showLocationDialog,
+      final GoogleMapController? mapController}) = _$MapViewStateImpl;
 
   @override
   dynamic get loading;
@@ -459,7 +479,7 @@ abstract class _MapViewState implements MapViewState {
   @override
   LatLng? get currentUserLocation;
   @override
-  CameraPosition? get defaultPosition;
+  CameraPosition get defaultPosition;
   @override
   String get spaceInvitationCode;
   @override
@@ -468,6 +488,8 @@ abstract class _MapViewState implements MapViewState {
   Object? get error;
   @override
   DateTime? get showLocationDialog;
+  @override
+  GoogleMapController? get mapController;
   @override
   @JsonKey(ignore: true)
   _$$MapViewStateImplCopyWith<_$MapViewStateImpl> get copyWith =>

@@ -32,11 +32,7 @@ import Combine
         if liveLocationUpdates.updatesStarted {
             liveLocationUpdates.startLocationUpdates()
         }
-            
-        if liveLocationUpdates.bgActivitySessionStarted {
-            liveLocationUpdates.bgActivitySessionStarted = true
-        }
-            
+
         liveLocationUpdates.$lastLocation.sink(receiveValue: { [weak self] location in
             self?.sendLocationToFlutter(location: location)
         }).store(in: &cancellables)
@@ -97,6 +93,7 @@ extension AppDelegate {
             (call: FlutterMethodCall, result: @escaping FlutterResult) in
             guard self != nil else { return }
             if call.method == "startTracking" {
+                print("XXX startTracking method invoked")
                 LocationManager.shared.startLocationUpdates()
                 result(true)
             } else if call.method == "stopTracking" {
