@@ -14,7 +14,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     private var manager: CLLocationManager
     private var bgActivitySession: Any?
-    
+    private var trackingInvoked: Bool = false
     private let distanceThreshold: CLLocationDistance = 10.0
     
     @Published var lastLocation = CLLocation()
@@ -48,11 +48,15 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     func startLocationUpdates() {
-        guard updatesStarted else { return }
         if manager.authorizationStatus == .notDetermined {
             return
         }
+        guard !trackingInvoked else {
+            return
+        }
+        bgActivitySessionStarted = false
         updatesStarted = true
+        trackingInvoked = true
         if #available(iOS 17.0, *) {
             startLiveLocationUpdates()
         } else {
@@ -63,8 +67,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func stopLocationUpdates() {
         self.updatesStarted = false
+        self.trackingInvoked = false
         if #available(iOS 17.0, *) {
-            (bgActivitySession as? CLBackgroundActivitySession)?.invalidate()
             bgActivitySessionStarted = false
             bgActivitySession = nil
         } else {
@@ -77,17 +81,17 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         
         Task {
             do {
-                self.bgActivitySession = CLBackgroundActivitySession()
-                
+                bgActivitySessionStarted = true
+              
                 let locationUpdates = CLLocationUpdate.liveUpdates()
                     .filter { [weak self] update in
                         guard let self = self else { return false }
                         let distanceMoved = (update.location?.distance(from: lastLocation) ?? 0.0)
                         let hasLastLocation = lastLocation.coordinate.latitude != 0 && lastLocation.coordinate.longitude != 0
-                        
+
                         return distanceMoved >= distanceThreshold || !hasLastLocation
                     }
-                
+
                 for try await update in locationUpdates {
                     if !self.updatesStarted { break }
                     if let currentLocation = update.location {

@@ -59,6 +59,8 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   final AuthService authService;
   final StateController<String> mapTypeController;
 
+  CameraPosition? _lastCameraPosition;
+
   StreamSubscription<List<ApiUserInfo>>? _userInfoSubscription;
   StreamSubscription<List<ApiPlace>>? _placeSubscription;
 
@@ -71,7 +73,11 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     this.locationManager,
     this.authService,
     this.mapTypeController,
-  ) : super(MapViewState(mapType: mapTypeController.state)) {
+  ) : super(MapViewState(
+            mapType: mapTypeController.state,
+            defaultPosition: const CameraPosition(
+                target: LatLng(0.0, 0.0), zoom: defaultCameraZoom))) {
+    _lastCameraPosition = state.defaultPosition;
     checkUserPermission();
     loadData(_currentSpaceId);
   }
@@ -106,10 +112,10 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     _userInfoSubscription?.cancel();
     _placeSubscription?.cancel();
 
+    _lastCameraPosition = null;
     state = state.copyWith(
       userInfos: {},
       places: [],
-      defaultPosition: null,
       selectedUser: null,
       currentUserLocation: null,
     );
@@ -169,7 +175,12 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         userInfo = await _prepareMapUserInfo(info.user,
             latitude: latLng.latitude, longitude: latLng.longitude);
 
-        _mapCameraPosition(latLng, defaultCameraZoom);
+        final lastCameraPosition = _lastCameraPosition?.target;
+        if (lastCameraPosition == null ||
+            (lastCameraPosition.latitude == 0.0 &&
+                lastCameraPosition.longitude == 0.0)) {
+          _mapCameraPosition(latLng);
+        }
       } else if (info.location != null && info.isLocationEnabled) {
         userInfo = await _prepareMapUserInfo(info.user,
             latitude: info.location!.latitude,
@@ -248,7 +259,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   }
 
   void onDismissMemberDetail() {
-    state = state.copyWith(selectedUser: null, defaultPosition: null);
+    state = state.copyWith(selectedUser: null);
     _onSelectUserMarker(null);
   }
 
@@ -259,14 +270,17 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     final position = (selectedMember != null &&
             selectedMember.latitude != 0.0 &&
             selectedMember.longitude != 0.0)
-        ? CameraPosition(
-            target: LatLng(selectedMember.latitude, selectedMember.longitude),
-            zoom: defaultCameraZoomForSelectedUser)
+        ? LatLng(selectedMember.latitude, selectedMember.longitude)
         : null;
 
-    state = state.copyWith(
-        selectedUser: selectedMember?.user, defaultPosition: position);
+    state = state.copyWith(selectedUser: selectedMember?.user);
     _onSelectUserMarker(member.user.id);
+
+    if (position != null) {
+      _mapCameraPosition(position,
+          cameraZoom: defaultCameraZoomForSelectedUser);
+    }
+
     if (state.selectedUser != null) {
       getNetworkStatus();
     }
@@ -319,13 +333,13 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
 
   void relocateCameraPosition() async {
     try {
-      state = state.copyWith(defaultPosition: null);
       final userId = state.selectedUser?.id ?? _currentUser?.id;
 
       final info = state.userInfos[userId];
       if (info != null) {
         final latLng = LatLng(info.latitude, info.longitude);
-        _mapCameraPosition(latLng, defaultCameraZoom);
+        _mapCameraPosition(latLng,
+            cameraZoom: defaultCameraZoomForSelectedUser);
       }
     } catch (error, stack) {
       state = state.copyWith(error: error);
@@ -337,12 +351,18 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     }
   }
 
-  void _mapCameraPosition(LatLng latLng, double zoom) {
+  void _mapCameraPosition(LatLng latLng, {double? cameraZoom}) async {
+    final zoom = cameraZoom ??
+        await state.mapController?.getZoomLevel() ??
+        defaultCameraZoom;
     final cameraPosition = CameraPosition(
       target: LatLng(latLng.latitude, latLng.longitude),
       zoom: zoom,
     );
-    state = state.copyWith(defaultPosition: cameraPosition);
+
+    _lastCameraPosition = cameraPosition;
+    await state.mapController
+        ?.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
   }
 
   void getNetworkStatus() async {
@@ -373,6 +393,9 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
             latitude: location.latitude,
             longitude: location.longitude,
             timestamp: location.timestamp));
+        if (state.selectedUser == null) {
+          _mapCameraPosition(LatLng(location.latitude, location.longitude));
+        }
       }
     } catch (error, stack) {
       logger.e('MapViewNotifier: error while get current location',
@@ -399,12 +422,17 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   @override
   void dispose() {
     super.dispose();
+    state.mapController?.dispose();
     _userInfoSubscription?.cancel();
     _placeSubscription?.cancel();
   }
 
   bool isCurrentUser() {
     return _currentUser?.id == state.selectedUser?.id;
+  }
+
+  void onMapCreated(GoogleMapController controller) async {
+    state = state.copyWith(mapController: controller);
   }
 }
 
@@ -421,11 +449,12 @@ class MapViewState with _$MapViewState {
     @Default({}) Map<String, MapUserInfo> userInfos,
     ApiUser? selectedUser,
     LatLng? currentUserLocation,
-    CameraPosition? defaultPosition,
+    required CameraPosition defaultPosition,
     @Default('') String spaceInvitationCode,
     required String mapType,
     Object? error,
     DateTime? showLocationDialog,
+    GoogleMapController? mapController,
   }) = _MapViewState;
 }
 
