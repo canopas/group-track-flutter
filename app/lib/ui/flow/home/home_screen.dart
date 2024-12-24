@@ -14,7 +14,6 @@ import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/home/home_screen_viewmodel.dart';
-import 'package:yourspace_flutter/ui/flow/home/map/map_view_model.dart';
 
 import '../../../domain/fcm/notification_handler.dart';
 import '../../components/alert.dart';

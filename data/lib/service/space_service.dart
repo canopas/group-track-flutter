@@ -242,19 +242,15 @@ class SpaceService {
     });
   }
 
-  Stream<List<ApiPlace>> getStreamPlacesByUserId(String userId) {
-    return spaceService
-        .streamSpaceMemberByUserId(userId)
-        .asyncExpand((members) {
-      if (members.isEmpty) return Stream.value([]);
+  Stream<List<ApiPlace>> getStreamPlacesByUserId(List<String> spaceIds) {
+    if (spaceIds.isEmpty) return Stream.value([]);
 
-      final placeStreams = members.map((space) {
-        return placeService.getAllPlacesStream(space.space_id);
-      }).toList();
+    final placeStreams = spaceIds.map((spaceId) {
+      return placeService.getAllPlacesStream(spaceId);
+    }).toList();
 
-      return CombineLatestStream.list(placeStreams).map((placesLists) {
-        return placesLists.expand((places) => places).toList();
-      });
+    return CombineLatestStream.list(placeStreams).map((placesLists) {
+      return placesLists.expand((places) => places).toList();
     });
   }
 }

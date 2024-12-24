@@ -24,12 +24,15 @@ class PlaceService {
 
   PlaceService(this._db);
 
-  CollectionReference get _spaceRef => _db.collection('spaces').withConverter<ApiSpace>(
-      fromFirestore: ApiSpace.fromFireStore,
-      toFirestore: (space, options) => space.toJson());
+  CollectionReference get _spaceRef =>
+      _db.collection('spaces').withConverter<ApiSpace>(
+          fromFirestore: ApiSpace.fromFireStore,
+          toFirestore: (space, options) => space.toJson());
 
   CollectionReference spacePlacesRef(String spaceId) =>
-      _spaceRef.doc(spaceId).collection('space_places');
+      _spaceRef.doc(spaceId).collection('space_places').withConverter<ApiPlace>(
+          fromFirestore: ApiPlace.fromFireStore,
+          toFirestore: (place, options) => place.toJson());
 
   CollectionReference spacePlacesSettingsRef(String spaceId, String placeId) {
     return spacePlacesRef(spaceId)
@@ -39,8 +42,19 @@ class PlaceService {
 
   Stream<List<ApiPlace>> getAllPlacesStream(String spaceId) {
     return spacePlacesRef(spaceId).snapshots().map((snapshot) => snapshot.docs
-        .map((doc) => ApiPlace.fromJson(doc.data() as Map<String, dynamic>))
+        .map((doc) => doc.data() as ApiPlace?)
+        .whereType<ApiPlace>()
         .toList());
+  }
+
+  Future<ApiPlace?> getPlace(String placeId) async {
+    final querySnapshot = await _spaceRef.firestore
+        .collectionGroup('space_places')
+        .where("id", isEqualTo: placeId)
+        .limit(1)
+        .get();
+
+    return querySnapshot.docs.firstOrNull?.data() as ApiPlace?;
   }
 
   Future<List<ApiPlace>> getAllPlace(String spaceId) async {

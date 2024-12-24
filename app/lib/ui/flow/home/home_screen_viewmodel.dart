@@ -82,13 +82,15 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     if (_currentUser == null) return;
     try {
       _spacePlacesSubscription?.cancel();
+      if (_currentUser?.space_ids?.isEmpty ?? true) return;
       _spacePlacesSubscription = spaceService
-          .getStreamPlacesByUserId(_currentUser!.id)
+          .getStreamPlacesByUserId(_currentUser?.space_ids ?? List.empty())
           .listen((places) {
         if (places.isEmpty) {
           logger.e('No places found for spaces.');
           return;
         }
+
 
         GeofenceService.startMonitoring(places);
       });
@@ -119,6 +121,8 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     } else if (prevUser?.id != currentUser.id) {
       fetchData();
       _listenPlaces();
+    } else if (prevUser?.space_ids != currentUser.space_ids) {
+      _listenPlaces();
     }
   }
 
@@ -138,7 +142,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
       _spacesSubscription =
           spaceService.streamAllSpace(userId).listen((spaces) {
-
         if ((currentSpaceId?.isEmpty ?? true) && spaces.isNotEmpty) {
           spaceService.currentSpaceId = spaces.firstOrNull?.space.id;
         }

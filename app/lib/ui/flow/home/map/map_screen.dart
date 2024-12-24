@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:data/api/space/space_models.dart';
@@ -20,14 +18,14 @@ import '../../../components/action_bottom_sheet.dart';
 import '../../../components/permission_dialog.dart';
 import '../../../components/resume_detector.dart';
 import '../../permission/enable_permission_view_model.dart';
+import 'components/marker_generator.dart';
 import 'components/space_user_footer.dart';
 import 'map_view_model.dart';
 
 const defaultCameraZoom = 15.0;
 const defaultCameraZoomForSelectedUser = 17.0;
-double markerSize = Platform.isAndroid ? 124.0 : 70.0;
-double markerRadius = Platform.isAndroid ? 60.0 : 30.0;
-const placeSize = 80;
+
+const placeSize = 80.0;
 
 class MapScreen extends ConsumerStatefulWidget {
   final SpaceInfo? space;
@@ -44,20 +42,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   String? _mapStyle;
   bool _isDarkMode = false;
 
-  List<Marker> _markers = [];
+  final List<Marker> _markers = [];
   List<Circle> _places = [];
-
-  @override
-  void didUpdateWidget(covariant MapScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.space == null ||
-        oldWidget.space?.space.id != widget.space?.space.id) {
-      setState(() {
-        _markers = [];
-        _places = [];
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +67,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           Center(
             child: GoogleMap(
               onMapCreated: (controller) {
-              notifier.onMapCreated(controller);
-            },
+                notifier.onMapCreated(controller);
+              },
               initialCameraPosition: state.defaultPosition,
               style: _mapStyle,
               compassEnabled: false,
@@ -93,9 +79,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               buildingsEnabled: false,
               circles: _places.toSet(),
               markers: _markers.toSet(),
-              mapType: notifier
-                .getMapTypeInfo()
-                .mapType,
+              mapType: notifier.getMapTypeInfo().mapType,
             ),
           ),
           Positioned(
@@ -137,7 +121,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           },
           onDismiss: () => notifier.onDismissMemberDetail(),
           currentUserLocation:
-          state.currentUserLocation ?? const LatLng(0.0, 0.0),
+              state.currentUserLocation ?? const LatLng(0.0, 0.0),
         ),
         Visibility(visible: enabled, child: _permissionFooter(state))
       ],
@@ -146,7 +130,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   Widget _permissionFooter(MapViewState state) {
     final locationEnabled =
-    state.hasLocationEnabled ? state.hasLocationServiceEnabled : true;
+        state.hasLocationEnabled ? state.hasLocationServiceEnabled : true;
     final (title, subTitle) = _permissionFooterContent(state);
 
     return OnTapScale(
@@ -197,7 +181,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   (String, String) _permissionFooterContent(MapViewState state) {
     final locationEnabled =
-    state.hasLocationEnabled ? state.hasLocationServiceEnabled : true;
+        state.hasLocationEnabled ? state.hasLocationServiceEnabled : true;
 
     String title = '';
     String subTitle = '';
@@ -225,7 +209,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   void _updateMapStyle(bool isDarkMode) async {
     if (_isDarkMode == isDarkMode) return;
     final style =
-    await rootBundle.loadString('assets/map/map_theme_night.json');
+        await rootBundle.loadString('assets/map/map_theme_night.json');
     setState(() {
       _isDarkMode = isDarkMode;
       if (isDarkMode) {
@@ -240,9 +224,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     showActionBottomSheet(
       context: context,
       showHorizontal: true,
-      selectedIndex: notifier
-          .getMapTypeInfo()
-          .index,
+      selectedIndex: notifier.getMapTypeInfo().index,
       items: [
         BottomSheetAction(
           title: context.l10n.home_map_style_type_app_theme_text,
@@ -275,263 +257,107 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   void _observeNavigation() {
     ref.listen(
         mapViewStateProvider.select((state) => state.spaceInvitationCode),
-            (_, next) {
-          if (next.isNotEmpty) {
-            AppRoute.inviteCode(
+        (_, next) {
+      if (next.isNotEmpty) {
+        AppRoute.inviteCode(
                 code: next, spaceName: widget.space?.space.name ?? '')
-                .push(context);
-          }
-        });
+            .push(context);
+      }
+    });
   }
 
   void _observeShowEnableLocationPrompt(BuildContext context) {
     ref.listen(mapViewStateProvider.select((state) => state.showLocationDialog),
-            (_, next) {
-          if (next != null) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return PermissionDialog(
-                  title: context.l10n.enable_location_service_title,
-                  subTitle1: context.l10n.enable_location_service_message,
-                  onDismiss: () {},
-                  goToSettings: () {
-                    openAppSettings();
-                    Navigator.of(context).pop();
-                  },
-                );
+        (_, next) {
+      if (next != null) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return PermissionDialog(
+              title: context.l10n.enable_location_service_title,
+              subTitle1: context.l10n.enable_location_service_message,
+              onDismiss: () {},
+              goToSettings: () {
+                openAppSettings();
+                Navigator.of(context).pop();
               },
             );
-          }
-        });
+          },
+        );
+      }
+    });
   }
 
   void _observePermissionChange() {
     ref.listen(
         permissionStateProvider.select((state) => state.isLocationGranted),
-            (previous, next) {
-          if (previous != next && next) {
-            notifier.fetchCurrentUserLocation();
-          }
-        });
+        (previous, next) {
+      if (previous != next && next) {
+        notifier.fetchCurrentUserLocation();
+      }
+    });
   }
 
   void _observeMarkerChange() {
     ref.listen(mapViewStateProvider.select((state) => state.userInfos),
-            (previous, next) async {
-          if (previous?.length != next.length) {
-            _clearNonPlaceMarkers();
-          }
-          if (next.isNotEmpty) {
-            final markers = await Future.wait(next.values.map((item) async {
-              final marker = await _mapMarker(
-                item.isSelected,
-                item.user.fullName,
-                item.imageUrl,
-                item.isSelected
-                    ? context.colorScheme.secondary
-                    : context.colorScheme.surface,
-                context.colorScheme.primary,
-                AppTextStyle.subtitle2
-                    .copyWith(color: context.colorScheme.onPrimary),
-              );
-
-              return Marker(
-                markerId: MarkerId(item.userId),
-                position: LatLng(item.latitude, item.longitude),
-                anchor: const Offset(0.0, 1.0),
-                icon: marker,
-                onTap: () {
-                  notifier.onTapUserMarker(item.userId);
-                },
-              );
-            }).toList());
-
-            setState(() {
-              _markers.addAll(markers);
-            });
-          }
+        (previous, next) async {
+      if (previous?.length != next.length) {
+        _clearNonPlaceMarkers();
+      }
+      if (next.isNotEmpty) {
+        final markersToAdd = await createMarkerFromAsset(
+            context, next.values.toList(), onTap: (userId) {
+          notifier.onTapUserMarker(userId);
         });
-  }
-
-  Future<BitmapDescriptor> _mapMarker(bool isSelected,
-      String userName,
-      ui.Image? imageUrl,
-      Color markerBgColor,
-      Color iconBgColor,
-      TextStyle textStyle,) async {
-    if (imageUrl != null) {
-      return await _userImageMarker(userName, imageUrl, isSelected,
-          markerBgColor, iconBgColor, textStyle);
-    } else {
-      return await _userCharMarker(
-          isSelected, userName, markerBgColor, iconBgColor, textStyle);
-    }
-  }
-
-  Future<BitmapDescriptor> _userCharMarker(bool isSelected,
-      String userName,
-      Color markerBgColor,
-      Color iconBgColor,
-      TextStyle textStyle,) async {
-    final pictureRecorder = ui.PictureRecorder();
-    final canvas = Canvas(pictureRecorder);
-
-    // Draw background rectangle
-    canvas.drawRRect(
-      RRect.fromRectAndCorners(
-        Rect.fromLTWH(0.0, 0.0, markerSize, markerSize),
-        topLeft: Radius.circular(markerRadius),
-        topRight: Radius.circular(markerRadius),
-        bottomLeft: const Radius.circular(0),
-        bottomRight: Radius.circular(markerRadius),
-      ),
-      Paint()
-        ..color = markerBgColor,
-    );
-
-    _drawUserName(canvas, userName, iconBgColor);
-
-    final picture = pictureRecorder.endRecording();
-    final img = await picture.toImage(markerSize.toInt(), markerSize.toInt());
-    final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
-    final bitmapDescriptor = BitmapDescriptor.bytes(
-        byteData!.buffer.asUint8List(),
-        bitmapScaling: MapBitmapScaling.none);
-
-    return bitmapDescriptor;
-  }
-
-  void _drawUserName(Canvas canvas, String userName, Color bgColor) {
-    final textPainter = TextPainter(textDirection: TextDirection.ltr);
-
-    canvas.drawCircle(Offset(markerSize / 2, markerSize / 2),
-        Platform.isAndroid ? 50 : 30, Paint()
-          ..color = bgColor);
-
-    textPainter.text = TextSpan(
-      text: userName.isNotEmpty ? userName[0] : '',
-      style: TextStyle(
-          fontSize: Platform.isAndroid ? 70 : 40,
-          color: context.colorScheme.textInversePrimary),
-    );
-    textPainter.layout();
-    textPainter.paint(
-      canvas,
-      Offset(
-        (markerSize - textPainter.width) / 2,
-        (markerSize - textPainter.height) / 2,
-      ),
-    );
-  }
-
-  Future<BitmapDescriptor> _userImageMarker(String userName,
-      ui.Image uiImage,
-      bool isSelected,
-      Color markerBgColor,
-      Color iconBgColor,
-      TextStyle textStyle,) async {
-    // Prepare the canvas to draw the rounded rectangle and the image
-    final recorder = ui.PictureRecorder();
-    final canvas = ui.Canvas(recorder,
-        Rect.fromPoints(const Offset(0, 0), Offset(markerSize, markerSize)));
-
-    // Draw the rounded rectangle
-    canvas.drawRRect(
-      RRect.fromRectAndCorners(
-        Rect.fromLTWH(0.0, 0.0, markerSize, markerSize),
-        topLeft: Radius.circular(markerRadius),
-        topRight: Radius.circular(markerRadius),
-        bottomLeft: const Radius.circular(0),
-        bottomRight: Radius.circular(markerRadius),
-      ),
-      Paint()
-        ..color = markerBgColor,
-    );
-
-    // Calculate the position to center the image
-    final double imageOffset = (markerSize - uiImage.width.toDouble()) / 2;
-    final Offset offset = Offset(imageOffset, imageOffset);
-
-    // Draw the image on the canvas centered
-    canvas.drawImage(uiImage, offset, Paint()
-      ..color = iconBgColor);
-
-    // End recording and create an image from the canvas
-    final picture = recorder.endRecording();
-    final imgData =
-    await picture.toImage(markerSize.toInt(), markerSize.toInt());
-    final data = await imgData.toByteData(format: ui.ImageByteFormat.png);
-
-    final bitmapDescriptor = BitmapDescriptor.bytes(data!.buffer.asUint8List(),
-        bitmapScaling: MapBitmapScaling.none);
-
-    return bitmapDescriptor;
+        _markers.addAll(markersToAdd);
+        setState(() {});
+      }
+    });
   }
 
   void _observeMemberPlace(BuildContext context) {
     ref.listen(mapViewStateProvider.select((state) => state.places),
-            (previous, next) {
-          if (previous?.length != next.length) {
-            _clearPlacesAndPlaceMarkers();
-          }
+        (previous, next) {
+      if (previous?.length != next.length) {
+        _clearPlacesAndPlaceMarkers();
+      }
 
-          if (next.isNotEmpty) {
-            for (final place in next) {
-              final latLng = LatLng(place.latitude, place.longitude);
+      if (next.isNotEmpty) {
+        for (final place in next) {
+          final latLng = LatLng(place.latitude, place.longitude);
 
-              _generatePlaceMarker(place.id, latLng);
-              setState(() {
-                _places.add(Circle(
-                  circleId: CircleId(place.id),
-                  fillColor:
-                  context.colorScheme.primary.withAlpha((0.4 * 255).toInt()),
-                  strokeColor:
-                  context.colorScheme.primary.withAlpha((0.6 * 255).toInt()),
-                  strokeWidth: 1,
-                  center: latLng,
-                  radius: place.radius,
-                ));
-              });
-            }
-          }
-        });
-  }
+          _generatePlaceMarker(place.id, latLng);
 
-  void _generatePlaceMarker(String id, LatLng latLng) async {
-    final icon =
-    await _createCustomIcon('assets/images/ic_place_marker_icon.png');
-
-    setState(() {
-      _markers.add(
-        Marker(
-          markerId: MarkerId("place_$id"),
-          position: latLng,
-          anchor: const Offset(0.5, 0.5),
-          zIndex: 1,
-          icon: icon,
-        ),
-      );
+          _places.add(Circle(
+            circleId: CircleId(place.id),
+            fillColor:
+                context.colorScheme.primary.withAlpha((0.4 * 255).toInt()),
+            strokeColor:
+                context.colorScheme.primary.withAlpha((0.6 * 255).toInt()),
+            strokeWidth: 1,
+            center: latLng,
+            radius: place.radius,
+          ));
+        }
+        setState(() {});
+      }
     });
   }
 
-  Future<BitmapDescriptor> _createCustomIcon(String assetPath) async {
-    final data = await rootBundle.load(assetPath);
-    final bytes = data.buffer.asUint8List();
+  void _generatePlaceMarker(String id, LatLng latLng) async {
+    final icon = await BitmapDescriptor.asset(
+        const ImageConfiguration(size: ui.Size(placeSize, placeSize)),
+        'assets/images/ic_place_marker_icon.png');
 
-    final codec = await ui.instantiateImageCodec(
-      bytes,
-      targetWidth: placeSize,
-      targetHeight: placeSize,
+    _markers.add(
+      Marker(
+        markerId: MarkerId("place_$id"),
+        position: latLng,
+        anchor: const Offset(0.5, 0.5),
+        zIndex: 1,
+        icon: icon,
+      ),
     );
-    final frameInfo = await codec.getNextFrame();
-
-    final byteData =
-    await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
-    final resizedBytes = byteData!.buffer.asUint8List();
-
-    return BitmapDescriptor.bytes(resizedBytes,
-        bitmapScaling: MapBitmapScaling.none);
   }
 
   void _clearPlacesAndPlaceMarkers() {
@@ -551,10 +377,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   void _observeError() {
     ref.listen(mapViewStateProvider.select((state) => state.error),
-            (previous, next) {
-          if (next != null) {
-            showErrorSnackBar(context, next.toString());
-          }
-        });
+        (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.toString());
+      }
+    });
   }
 }
