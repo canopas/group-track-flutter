@@ -3,6 +3,7 @@ import 'package:data/feature_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/button/icon_primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
@@ -135,7 +136,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
             final isLastItem = entry.key == state.spaces.length - 1;
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: GestureDetector(
+              child: OnTapScale(
                 onTap: () {
                   AppRoute.editSpace(space.id).push(context);
                 },
@@ -206,7 +207,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
           style: AppTextStyle.subtitle2
               .copyWith(color: context.colorScheme.textDisabled),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         if (FeatureFlags.enableSubscription) ...{
           _otherOptionItem(
               context: context,
@@ -263,10 +264,10 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     required String icon,
     required Function() onTap,
   }) {
-    return GestureDetector(
+    return OnTapScale(
       onTap: () => onTap(),
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
             _iconButton(context: context, icon: icon),
@@ -294,6 +295,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
   }) {
     return IconPrimaryButton(
       onTap: () {},
+      enabled: false,
       size: 36,
       radius: 8,
       icon: SvgPicture.asset(
