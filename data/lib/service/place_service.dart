@@ -57,13 +57,6 @@ class PlaceService {
     return querySnapshot.docs.firstOrNull?.data() as ApiPlace?;
   }
 
-  Future<List<ApiPlace>> getAllPlace(String spaceId) async {
-    final snapshot = await spacePlacesRef(spaceId).get();
-    return snapshot.docs
-        .map((doc) => ApiPlace.fromJson(doc.data() as Map<String, dynamic>))
-        .toList();
-  }
-
   Future<void> deletePlace(String spaceId, String placeId) async {
     await spacePlacesRef(spaceId).doc(placeId).delete();
   }
