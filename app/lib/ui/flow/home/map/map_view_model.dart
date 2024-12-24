@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:data/api/auth/auth_models.dart';
@@ -17,7 +16,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image/image.dart' as img;
 
@@ -54,16 +52,16 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   StreamSubscription<List<ApiPlace>>? _placeSubscription;
 
   MapViewNotifier(
-      this._currentUser,
-      this.spaceService,
-      this.placeService,
-      this.permissionService,
-      this.locationManager,
-      this.authService,
-      this.mapTypeController,
+    this._currentUser,
+    this.spaceService,
+    this.placeService,
+    this.permissionService,
+    this.locationManager,
+    this.authService,
+    this.mapTypeController,
   ) : super(MapViewState(mapType: mapTypeController.state)) {
     checkUserPermission();
-    _getCurrentUserLastLocation();
+    getUserLastLocation();
   }
 
   void loadData(String? spaceId) {
@@ -89,8 +87,9 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     if (state.loading) return;
     try {
       state = state.copyWith(loading: true, selectedUser: null);
-      await _userInfoSubscription?.cancel();
-      _userInfoSubscription = spaceService.getMemberWithLocation(spaceId).listen((userInfo) {
+      _userInfoSubscription?.cancel();
+      _userInfoSubscription =
+          spaceService.getMemberWithLocation(spaceId).listen((userInfo) {
         state = state.copyWith(userInfo: userInfo, loading: false);
         _userMapPositions(userInfo);
       });
@@ -106,8 +105,9 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
 
   void _listenPlaces(String spaceId) async {
     try {
-      await _placeSubscription?.cancel();
-      _placeSubscription = placeService.getAllPlacesStream(spaceId).listen((places) {
+      _placeSubscription?.cancel();
+      _placeSubscription =
+          placeService.getAllPlacesStream(spaceId).listen((places) {
         state = state.copyWith(places: places);
       });
     } catch (error, stack) {
@@ -161,8 +161,8 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
       if (image != null) {
         final resizedImage = img.copyResize(
           image,
-          width: (markerSize/1.25).toInt(),
-          height: (markerSize/1.25).toInt(),
+          width: (markerSize / 1.25).toInt(),
+          height: (markerSize / 1.25).toInt(),
         );
         final circularImage = img.copyCropCircle(resizedImage);
 
@@ -322,27 +322,6 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         error: error,
         stackTrace: stack,
       );
-    }
-  }
-
-  void _getCurrentUserLastLocation() async {
-    try {
-      final location = await _currentUserLocation();
-      state = state.copyWith(currentUserLocation: LatLng(location.latitude, location.longitude));
-    } catch (error, stack) {
-      logger.e('MapViewNotifier: error while get current location',
-      error: error, stackTrace: stack);
-    }
-  }
-
-  Future<LatLng> _currentUserLocation() async {
-    if (Platform.isIOS) {
-      const platform = MethodChannel('com.grouptrack/current_location');
-      final locationFromIOS = await platform.invokeMethod('getCurrentLocation');
-      return LatLng(locationFromIOS['latitude'], locationFromIOS['longitude']);
-    } else {
-      var location = await Geolocator.getCurrentPosition();
-      return LatLng(location.latitude, location.longitude);
     }
   }
 

@@ -1,18 +1,23 @@
 //
-//  LocationManager.swift
+//  UnifiedLocationManager.swift
 //  Runner
 //
-//  Created by Radhika S on 04/12/24.
+//  Created by Radhika S on 17/12/24.
 //
 
-import CoreLocation
 
-class LocationsHandler: NSObject, ObservableObject, CLLocationManagerDelegate {
-    static let shared = LocationsHandler()
-    private let manager: CLLocationManager
+import CoreLocation
+import Combine
+
+class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+    static let shared = LocationManager()
+    
+    private var manager: CLLocationManager
+    private var bgActivitySession: Any?
+    
+    private let distanceThreshold: CLLocationDistance = 10.0
     
     @Published var lastLocation = CLLocation()
-    
     @Published
     var updatesStarted: Bool = UserDefaults.standard.bool(forKey: "liveLocationUpdatesStarted") {
         didSet {
@@ -20,27 +25,90 @@ class LocationsHandler: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
     }
     
+    @Published
+    var bgActivitySessionStarted: Bool = UserDefaults.standard.bool(forKey: "BGActivitySessionStarted") {
+        didSet {
+            if #available(iOS 17.0, *) {
+                bgActivitySessionStarted ? self.bgActivitySession = CLBackgroundActivitySession(): (self.bgActivitySession as? CLBackgroundActivitySession)?.invalidate()
+            }
+            UserDefaults.standard.set(bgActivitySessionStarted, forKey: "BGActivitySessionStarted")
+        }
+    }
+    
     private override init() {
         self.manager = CLLocationManager()
         super.init()
-        manager.delegate = self
-        manager.distanceFilter = 10
-        manager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
-        manager.allowsBackgroundLocationUpdates = true
-        manager.pausesLocationUpdatesAutomatically = false
+        if #unavailable(iOS 17.0) {
+            manager.delegate = self
+            manager.distanceFilter = 10
+            manager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+            manager.allowsBackgroundLocationUpdates = true
+            manager.pausesLocationUpdatesAutomatically = false
+        }
     }
     
     func startLocationUpdates() {
-        if self.manager.authorizationStatus == .notDetermined {
+        guard updatesStarted else { return }
+        if manager.authorizationStatus == .notDetermined {
             return
         }
         updatesStarted = true
-        manager.startUpdatingLocation()
+        if #available(iOS 17.0, *) {
+            startLiveLocationUpdates()
+        } else {
+            manager.startUpdatingLocation()
+        }
+        
     }
     
     func stopLocationUpdates() {
-        manager.stopUpdatingLocation()
-        updatesStarted = false
+        self.updatesStarted = false
+        if #available(iOS 17.0, *) {
+            (bgActivitySession as? CLBackgroundActivitySession)?.invalidate()
+            bgActivitySessionStarted = false
+            bgActivitySession = nil
+        } else {
+            manager.stopUpdatingLocation()
+        }
+    }
+    
+    @available(iOS 17.0, *)
+    private func startLiveLocationUpdates() {
+        
+        Task {
+            do {
+                self.bgActivitySession = CLBackgroundActivitySession()
+                
+                let locationUpdates = CLLocationUpdate.liveUpdates()
+                    .filter { [weak self] update in
+                        guard let self = self else { return false }
+                        let distanceMoved = (update.location?.distance(from: lastLocation) ?? 0.0)
+                        let hasLastLocation = lastLocation.coordinate.latitude != 0 && lastLocation.coordinate.longitude != 0
+                        
+                        return distanceMoved >= distanceThreshold || !hasLastLocation
+                    }
+                
+                for try await update in locationUpdates {
+                    if !self.updatesStarted { break }
+                    if let currentLocation = update.location {
+                        onLocationChanged(location: currentLocation)
+                        if update.isStationary { break }
+                    }
+                    
+                }
+            } catch {
+                print("Error with live updates: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func onLocationChanged(location: CLLocation) {
+        let lastUpdateTime = lastLocation.timestamp
+        let hasLastLocation = lastLocation.coordinate.latitude != 0 && lastLocation.coordinate.longitude != 0
+        let timeInterval = Date().timeIntervalSince(lastUpdateTime)
+        if (timeInterval >= 10 || !hasLastLocation) && lastLocation != location {
+            lastLocation = location
+        }
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -55,15 +123,7 @@ class LocationsHandler: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last else { return }
-        
-        let lastUpdateTime = lastLocation.timestamp
-        
-        let timeInterval = Date().timeIntervalSince(lastUpdateTime)
-        if timeInterval < 10 {
-            return
-        }
-        
-        lastLocation = currentLocation
+        onLocationChanged(location: currentLocation)
     }
     
     func getCurrentLocation(result: @escaping FlutterResult) {
