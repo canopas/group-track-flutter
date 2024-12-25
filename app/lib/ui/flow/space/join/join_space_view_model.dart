@@ -1,6 +1,7 @@
 import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/service/auth_service.dart';
+import 'package:data/service/place_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:data/service/space_service.dart';
@@ -14,6 +15,7 @@ final joinSpaceViewStateProvider = StateNotifierProvider.autoDispose<
     ref.read(spaceServiceProvider),
     ref.read(apiSpaceInvitationServiceProvider),
     ref.read(authServiceProvider),
+    ref.read(placeServiceProvider),
   );
 });
 
@@ -21,12 +23,10 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
   final SpaceService spaceService;
   final ApiSpaceInvitationService spaceInvitationService;
   final AuthService authService;
+  final PlaceService placeService;
 
-  JoinSpaceViewNotifier(
-    this.spaceService,
-    this.spaceInvitationService,
-    this.authService,
-  ) : super(const JoinSpaceViewState());
+  JoinSpaceViewNotifier(this.spaceService, this.spaceInvitationService,
+      this.authService, this.placeService) : super(const JoinSpaceViewState());
 
   Future<void> joinSpace(String code) async {
     try {

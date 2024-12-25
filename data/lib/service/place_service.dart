@@ -47,6 +47,14 @@ class PlaceService {
         .toList());
   }
 
+  Future<List<ApiPlace>> getAllPlaces(String spaceId) async {
+    final snapshot = await spacePlacesRef(spaceId).get();
+    return snapshot.docs
+        .map((doc) => doc.data() as ApiPlace?)
+        .whereType<ApiPlace>()
+        .toList();
+  }
+
   Future<ApiPlace?> getPlace(String placeId) async {
     final querySnapshot = await _spaceRef.firestore
         .collectionGroup('space_places')
@@ -132,6 +140,62 @@ class PlaceService {
 
   Future<void> updatePlace(ApiPlace place) async {
     await spacePlacesRef(place.space_id).doc(place.id).set(place.toJson());
+  }
+
+  Future<void> joinUserToExistingPlaces(
+      String userId,
+      String spaceId,
+      List<String> spaceMemberIds,
+      ) async {
+    final filterIds = spaceMemberIds.where((id) => id != userId).toList();
+    final allPlaces = await getAllPlaces(spaceId);
+
+    for (final place in allPlaces) {
+      final settings = await spacePlacesSettingsRef(spaceId, place.id).get();
+      for (final settingDoc in settings.docs) {
+        final setting = ApiPlaceMemberSetting.fromJson(
+            settingDoc.data() as Map<String, dynamic>);
+        final updatedSetting = setting.copyWith(
+          arrival_alert_for: updateAlertUsersList(setting.arrival_alert_for, userId),
+          leave_alert_for: updateAlertUsersList(setting.leave_alert_for, userId),
+        );
+        await updatePlaceSetting(spaceId, place.id, setting.user_id, updatedSetting);
+      }
+
+      final newUserSettings = ApiPlaceMemberSetting(
+        user_id: userId,
+        place_id: place.id,
+        alert_enable: true,
+        arrival_alert_for: filterIds,
+        leave_alert_for: filterIds,
+      );
+      await spacePlacesSettingsRef(spaceId, place.id).doc(userId).set(newUserSettings.toJson());
+    }
+  }
+
+  Future<void> removedUserFromExistingPlaces(String spaceId, String userId) async {
+    final allPlaces = await getAllPlaces(spaceId);
+
+    for (final place in allPlaces) {
+      final settings = await spacePlacesSettingsRef(spaceId, place.id).get();
+      for (final settingDoc in settings.docs) {
+        final setting = ApiPlaceMemberSetting.fromJson(
+            settingDoc.data() as Map<String, dynamic>);
+        if (setting.user_id == userId) {
+          await spacePlacesSettingsRef(spaceId, place.id).doc(userId).delete();
+        } else {
+          final updatedSetting = setting.copyWith(
+            arrival_alert_for: setting.arrival_alert_for.where((id) => id != userId).toList(),
+            leave_alert_for: setting.leave_alert_for.where((id) => id != userId).toList(),
+          );
+          await updatePlaceSetting(spaceId, place.id, setting.user_id, updatedSetting);
+        }
+      }
+    }
+  }
+
+  List<String> updateAlertUsersList(List<String> alertUsers, String newUserId) {
+    return alertUsers.contains(newUserId) ? alertUsers : [...alertUsers, newUserId];
   }
 
   Future<List<ApiNearbyPlace>> searchNearbyPlaces(
