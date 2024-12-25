@@ -46,7 +46,7 @@ class JourneyRepository {
           await getLastKnownLocation(userId, extractedLocation);
 
       // Check and save location journey on day changed
-      checkAndSaveJourneyOnDayChange(
+      await checkAndSaveJourneyOnDayChange(
           extractedLocation: extractedLocation,
           lastKnownJourney: lastKnownJourney,
           userId: userId);
@@ -95,7 +95,7 @@ class JourneyRepository {
 
   Future<void> _saveSteadyLocation(LocationData position, String userId) async {
     var lastKnownJourney = await getLastKnownLocation(userId, position);
-    if (lastKnownJourney.type == JOURNEY_TYPE_STEADY) return;
+    if (lastKnownJourney.isSteady()) return;
     await _saveJourneyOnJourneyStopped(userId, position, lastKnownJourney);
   }
 
@@ -108,9 +108,9 @@ class JourneyRepository {
         _isOnlyOneDayChanged(extractedLocation, lastKnownJourney);
 
     if (dayChanged && isOnlyOneDayChange) {
-      _updateJourneyOnDayChanged(userId, lastKnownJourney);
+      await _updateJourneyOnDayChanged(userId, lastKnownJourney);
     } else if (dayChanged && extractedLocation != null) {
-      _saveJourneyOnDayChanged(userId, extractedLocation);
+      await _saveJourneyOnDayChanged(userId, extractedLocation);
     }
   }
 
@@ -210,12 +210,17 @@ class JourneyRepository {
         await _saveJourneyWhenUserStartsMoving(
             userId, extractedLocation, lastKnownJourney, timeDifference);
       }
-    } else if (lastKnownJourney.isMoving()) {
+    } else {
       // Here, means last known journey is moving and user is still moving
       // Save journey for moving user and update last known journey.
       // Note: Need to use lastKnownJourney.id as journey id because we are updating the journey
+      if (distance < MIN_DISTANCE && timeDifference > MIN_TIME_DIFFERENCE) {
+        await _saveJourneyOnJourneyStopped(
+            userId, extractedLocation, lastKnownJourney);
+      } else if (distance > MIN_DISTANCE) {
         await _updateJourneyForContinuedMovingUser(
             userId, extractedLocation, lastKnownJourney);
+      }
     }
   }
 
@@ -228,7 +233,7 @@ class JourneyRepository {
     final distance = _distanceBetween(
         lastKnownJourney.toLocationFromSteadyJourney(), extractedLocation);
 
-    journeyService.updateLastLocationJourney(
+    await journeyService.updateLastLocationJourney(
         userId,
         lastKnownJourney.copyWith(
             update_at: DateTime.now().millisecondsSinceEpoch));
