@@ -31,6 +31,8 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
     _initializeControllersAndFocusNodes();
   }
 
+  bool isUpdating = false;
+
   void _initializeControllersAndFocusNodes() {
     final controllers = List.generate(6, (index) => TextEditingController(text: '\u200b'));
     final focusNodes = List.generate(6, (index) => FocusNode());
@@ -49,8 +51,6 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
       controller.clear();
     }
   }
-
-  bool isUpdating = false;
 
   void _handleTextChange(int index) {
     if (isUpdating) return;
