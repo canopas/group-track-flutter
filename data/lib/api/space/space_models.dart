@@ -88,6 +88,19 @@ class ApiSpaceInvitation with _$ApiSpaceInvitation {
     final differenceMillis = currentTimeMillis - created_at!;
     return differenceMillis > twoDaysMillis;
   }
+
+  Duration? get remainingTime {
+    if (created_at == null) return null;
+    const twoDaysMillis = 2 * 24 * 60 * 60 * 1000;
+    final expirationTime = created_at! + twoDaysMillis;
+    final currentTimeMillis = DateTime.now().millisecondsSinceEpoch;
+
+    if (currentTimeMillis > expirationTime) {
+      return Duration.zero;
+    }
+
+    return Duration(milliseconds: expirationTime - currentTimeMillis);
+  }
 }
 
 @freezed

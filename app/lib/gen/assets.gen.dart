@@ -132,6 +132,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_privacy_policy.svg
   String get icPrivacyPolicy => 'assets/images/ic_privacy_policy.svg';
 
+  /// File path: assets/images/ic_regenerate_invitation_code.svg
+  String get icRegenerateInvitationCode =>
+      'assets/images/ic_regenerate_invitation_code.svg';
+
   /// File path: assets/images/ic_relocate_icon.svg
   String get icRelocateIcon => 'assets/images/ic_relocate_icon.svg';
 
@@ -249,6 +253,7 @@ class $AssetsImagesGen {
         icPlacesWorkIcon,
         icPlusIcon,
         icPrivacyPolicy,
+        icRegenerateInvitationCode,
         icRelocateIcon,
         icRemove,
         icSatelliteMap,

@@ -42,7 +42,8 @@ class ApiSpaceInvitationService {
   }
 
   Future<ApiSpaceInvitation?> getSpaceInviteCode(String spaceId) async {
-    final querySnapshot = await _spaceRef.where("space_id", isEqualTo: spaceId).get();
+    final querySnapshot =
+        await _spaceRef.where("space_id", isEqualTo: spaceId).get();
     final docSnapshot = querySnapshot.docs.firstOrNull;
     if (docSnapshot!.exists) {
       return docSnapshot.data() as ApiSpaceInvitation;
@@ -50,19 +51,23 @@ class ApiSpaceInvitationService {
     return null;
   }
 
-  Future<String> regenerateInvitationCode(String spaceId) async {
+  Future<ApiSpaceInvitation?> regenerateInvitationCode(String spaceId) async {
     final invitation = await getSpaceInviteCode(spaceId);
     if (invitation != null) {
       final newCode = generateInvitationCode();
       final docRef = _spaceRef.doc(invitation.id);
-      await docRef.update({"code": newCode, "created_at": DateTime.now().millisecondsSinceEpoch});
-      return newCode;
+      final updatedInvitation = invitation.copyWith(
+          code: newCode, created_at: DateTime.now().millisecondsSinceEpoch);
+      await docRef.update(updatedInvitation.toJson());
+      return updatedInvitation;
     }
-    return "";
+    return null;
   }
 
   Future<ApiSpaceInvitation?> getInvitation(String inviteCode) async {
-    final querySnapshot = await _spaceRef.where("code", isEqualTo: inviteCode.toUpperCase()).get();
+    final querySnapshot = await _spaceRef
+        .where("code", isEqualTo: inviteCode.toUpperCase())
+        .get();
     final docSnapshot = querySnapshot.docs.firstOrNull;
     if (docSnapshot?.exists ?? false) {
       return docSnapshot?.data() as ApiSpaceInvitation;
@@ -71,7 +76,8 @@ class ApiSpaceInvitationService {
   }
 
   Future<void> deleteInvitations(String spaceId) async {
-    final querySnapshot = await _spaceRef.where("space_id", isEqualTo: spaceId).get();
+    final querySnapshot =
+        await _spaceRef.where("space_id", isEqualTo: spaceId).get();
     for (final doc in querySnapshot.docs) {
       await doc.reference.delete();
     }

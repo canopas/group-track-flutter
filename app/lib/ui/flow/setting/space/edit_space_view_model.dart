@@ -1,4 +1,5 @@
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/space_service.dart';
@@ -14,15 +15,18 @@ final editSpaceViewStateProvider = StateNotifierProvider.autoDispose<
     EditSpaceViewNotifier, EditSpaceViewState>(
   (ref) => EditSpaceViewNotifier(
     ref.read(spaceServiceProvider),
+    ref.read(apiSpaceInvitationServiceProvider),
     ref.read(currentUserPod),
   ),
 );
 
 class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
   final SpaceService spaceService;
+  final ApiSpaceInvitationService spaceInvitationService;
   final ApiUser? user;
 
-  EditSpaceViewNotifier(this.spaceService, this.user)
+  EditSpaceViewNotifier(
+      this.spaceService, this.spaceInvitationService, this.user)
       : super(EditSpaceViewState(spaceName: TextEditingController()));
 
   void getSpaceDetails(String spaceId) async {
@@ -51,6 +55,9 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         loading: false,
         error: null,
       );
+      if (state.space != null) {
+        getInvitationCode();
+      }
     } catch (error, stack) {
       logger.e('EditSpaceViewNotifier: error while fetch space details',
           error: error, stackTrace: stack);
@@ -61,7 +68,8 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
   void getUpdatedSpaceDetails() async {
     try {
       final space = await spaceService.getSpaceInfo(state.space!.space.id);
-      state = state.copyWith(space: space, isAdmin: space?.space.admin_id == user?.id);
+      state = state.copyWith(
+          space: space, isAdmin: space?.space.admin_id == user?.id);
     } catch (error, stack) {
       logger.e('EditSpaceViewNotifier: error while get update space details',
           error: error, stackTrace: stack);
@@ -150,6 +158,33 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
   void isAdminRemovingMember(bool removeMember) {
     state = state.copyWith(adminRemovingMember: removeMember);
   }
+
+  Future<void> getInvitationCode() async {
+    try {
+      if (state.space == null) return;
+      final code = await spaceInvitationService
+          .getSpaceInviteCode(state.space!.space.id);
+      state = state.copyWith(invitationCode: code);
+    } catch (error, stack) {
+      logger.e('EditSpaceViewNotifier: error while get invitation code',
+          error: error, stackTrace: stack);
+    }
+  }
+
+  Future<void> regenerateInvitationCode() async {
+    try {
+      final space = state.space?.space;
+      if (space == null) return;
+
+      state = state.copyWith(refreshingInviteCode: true, error:  null);
+      final invitationCode = await spaceInvitationService.regenerateInvitationCode(space.id);
+      state = state.copyWith(invitationCode: invitationCode, refreshingInviteCode: false);
+    } catch (error, stack) {
+      state = state.copyWith(refreshingInviteCode: false, error:  error);
+      logger.e('EditSpaceViewNotifier: error while regenerate group code',
+          error: error, stackTrace: stack);
+    }
+  }
 }
 
 @freezed
@@ -170,6 +205,8 @@ class EditSpaceViewState with _$EditSpaceViewState {
     @Default([]) List<ApiUserInfo> userInfo,
     required TextEditingController spaceName,
     SpaceInfo? space,
+    ApiSpaceInvitation? invitationCode,
+    @Default(false) bool refreshingInviteCode,
     Object? error,
   }) = _EditSpaceViewState;
 }

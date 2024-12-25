@@ -1,10 +1,14 @@
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/button/action_button.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
+import 'package:style/button/icon_primary_button.dart';
 import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
@@ -12,6 +16,7 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
+import 'package:yourspace_flutter/gen/assets.gen.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
@@ -73,16 +78,15 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         ),
         if (state.isAdmin) ...[
           actionButton(
-            context: context,
-            icon: Icon(
-              Icons.person_2_outlined,
-              size: 24,
-              color: context.colorScheme.textPrimary,
-            ),
-            onPressed: () {
-              AppRoute.changeAdmin(state.space!).push(context);
-            }
-          ),
+              context: context,
+              icon: Icon(
+                Icons.person_2_outlined,
+                size: 24,
+                color: context.colorScheme.textPrimary,
+              ),
+              onPressed: () {
+                AppRoute.changeAdmin(state.space!).push(context);
+              }),
         ]
       ],
       body: SafeArea(
@@ -109,11 +113,14 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           children: [
             const SizedBox(height: 16),
             _spaceNameField(context, state),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
+            if (state.isAdmin && state.invitationCode != null) ...[
+              _invitationCode(
+                  context, state.invitationCode!, state.refreshingInviteCode),
+            ],
             _yourLocation(context, state),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
             _divider(context),
-            const SizedBox(height: 16),
             _memberLocation(context, state),
             const SizedBox(height: 64)
           ],
@@ -192,14 +199,11 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
               children: state.userInfo.asMap().entries.map((entry) {
                 final member = entry.value;
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   child: _locationSharingItem(
-                    context,
-                    member,
-                    member.isLocationEnabled,
-                    isAdmin: state.isAdmin,
-                    adminId: state.space!.space.admin_id
-                  ),
+                      context, member, member.isLocationEnabled,
+                      isAdmin: state.isAdmin,
+                      adminId: state.space!.space.admin_id),
                 );
               }).toList(),
             ),
@@ -209,9 +213,11 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
     );
   }
 
-  Widget _locationSharingItem(BuildContext context, ApiUserInfo member,
-      bool isLocationEnabled, {bool isAdmin = false,
-      bool isCurrentUser = false, required String adminId}) {
+  Widget _locationSharingItem(
+      BuildContext context, ApiUserInfo member, bool isLocationEnabled,
+      {bool isAdmin = false,
+      bool isCurrentUser = false,
+      required String adminId}) {
     final profileImageUrl = member.user.profile_image ?? '';
     final firstLetter = member.user.firstChar;
     return Row(
@@ -232,7 +238,9 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                     .copyWith(color: context.colorScheme.textPrimary),
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(width: member.user.id == adminId ? 8 : 0,),
+              SizedBox(
+                width: member.user.id == adminId ? 8 : 0,
+              ),
               Text(
                 member.user.id == adminId
                     ? context.l10n.edit_space_admin_text
@@ -267,7 +275,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
               notifier.isAdminRemovingMember(true);
             }),
             child: Icon(Icons.remove_circle_outline_rounded,
-                  color: context.colorScheme.alert),
+                color: context.colorScheme.alert),
           ),
         ]
       ],
@@ -303,7 +311,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                 confirmBtnText: state.space?.members.length == 1
                     ? context.l10n.common_delete
                     : context
-                    .l10n.edit_space_leave_space_alert_confirm_button_text,
+                        .l10n.edit_space_leave_space_alert_confirm_button_text,
                 title: state.space?.members.length == 1
                     ? context.l10n.edit_space_delete_space_title
                     : context.l10n.edit_space_leave_space_title,
@@ -311,11 +319,82 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                     ? context.l10n.edit_space_delete_space_alert_message
                     : context.l10n.edit_space_leave_space_alert_message,
                 onConfirm: () {
-                  _checkUserInternet(() =>
-                  state.space?.members.length == 1 ? notifier.deleteSpace() : notifier.leaveSpace());
-                });
+              _checkUserInternet(() => state.space?.members.length == 1
+                  ? notifier.deleteSpace()
+                  : notifier.leaveSpace());
+            });
           }
         },
+      ),
+    );
+  }
+
+  Widget _invitationCode(BuildContext context,
+      ApiSpaceInvitation invitationCode, bool refreshingInviteCode) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            context.l10n.edit_space_invitation_code_title,
+            style: AppTextStyle.subtitle2
+                .copyWith(color: context.colorScheme.textDisabled),
+          ),
+        ),
+        const SizedBox(height: 8),
+        _shareAndRegenerateCode(invitationCode, refreshingInviteCode),
+        const SizedBox(height: 24),
+        _divider(context),
+      ],
+    );
+  }
+
+  Widget _shareAndRegenerateCode(
+      ApiSpaceInvitation invitationCode, bool refreshingInviteCode) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: SelectableText(
+                  invitationCode.code,
+                  style: AppTextStyle.header4
+                      .copyWith(color: context.colorScheme.textPrimary),
+                ),
+              ),
+              IconPrimaryButton(
+                  bgColor: Colors.transparent,
+                  onTap: () async {
+                    Share.share(context.l10n
+                        .invite_code_share_code_text(invitationCode.code));
+                  },
+                  icon: Icon(
+                    Icons.share_rounded,
+                    color: context.colorScheme.textPrimary,
+                    size: 20,
+                  )),
+              const SizedBox(width: 4),
+              IconPrimaryButton(
+                  bgColor: Colors.transparent,
+                  onTap: () async {
+                    await notifier.regenerateInvitationCode();
+                  },
+                  progress: refreshingInviteCode,
+                  icon: SvgPicture.asset(
+                    Assets.images.icRegenerateInvitationCode,
+                    colorFilter: ColorFilter.mode(
+                      context.colorScheme.textPrimary,
+                      BlendMode.srcATop,
+                    ),
+                  ))
+            ],
+          ),
+        ],
       ),
     );
   }
