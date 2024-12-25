@@ -31,8 +31,6 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
     _initializeControllersAndFocusNodes();
   }
 
-  bool isUpdating = false;
-
   void _initializeControllersAndFocusNodes() {
     final controllers = List.generate(6, (index) => TextEditingController(text: '\u200b'));
     final focusNodes = List.generate(6, (index) => FocusNode());
@@ -40,10 +38,6 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
   }
 
   void _handleTextChange(int index) {
-    if (isUpdating) return;
-
-    isUpdating = true;
-
     final controller = state.controllers[index];
     String text = controller.text;
 
@@ -72,9 +66,7 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
         nextFocusNode.requestFocus();
       }
     }
-
     _updateJoinSpaceButtonState();
-    isUpdating = false;
   }
 
   void _updateJoinSpaceButtonState() {
@@ -149,6 +141,7 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
 
   void onChange(String value, int index) {
     _handleTextChange(index);
+    state.controllers[index].text = state.controllers[index].value.text.toUpperCase();
     _getInvitationCode();
   }
 
