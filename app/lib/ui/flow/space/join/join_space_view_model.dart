@@ -36,20 +36,7 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
   void _initializeControllersAndFocusNodes() {
     final controllers = List.generate(6, (index) => TextEditingController(text: '\u200b'));
     final focusNodes = List.generate(6, (index) => FocusNode());
-
-    for (int i = 0; i < controllers.length; i++) {
-      controllers[i].addListener(() {
-        _handleTextChange(i);
-      });
-    }
-
     state = state.copyWith(controllers: controllers, focusNodes: focusNodes);
-  }
-
-  void clearInputs() {
-    for (var controller in state.controllers) {
-      controller.clear();
-    }
   }
 
   void _handleTextChange(int index) {
@@ -59,9 +46,6 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
 
     final controller = state.controllers[index];
     String text = controller.text;
-
-    // Temporarily detach the listener
-    controller.removeListener(() => _handleTextChange(index));
 
     if (text.isEmpty) {
       if (index > 0) {
@@ -89,8 +73,6 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
       }
     }
 
-    // Reattach the listener
-    controller.addListener(() => _handleTextChange(index));
     _updateJoinSpaceButtonState();
     isUpdating = false;
   }
@@ -165,14 +147,8 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
     });
   }
 
-  void onChange(String text, int index) {
-    final upperCaseText = text.toUpperCase();
-    if (state.controllers[index].text != upperCaseText) {
-      state.controllers[index].value = TextEditingValue(
-        text: upperCaseText,
-        selection: TextSelection.collapsed(offset: upperCaseText.length),
-      );
-    }
+  void onChange(String value, int index) {
+    _handleTextChange(index);
     _getInvitationCode();
   }
 
