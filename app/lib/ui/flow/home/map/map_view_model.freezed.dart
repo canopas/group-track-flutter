@@ -406,10 +406,10 @@ class _$MapViewStateImpl implements _MapViewState {
             const DeepCollectionEquality().equals(other._markers, _markers) &&
             (identical(other.selectedUser, selectedUser) ||
                 other.selectedUser == selectedUser) &&
-            (identical(other.currentUserLocation, currentUserLocation) ||
-                other.currentUserLocation == currentUserLocation) &&
-            (identical(other.defaultPosition, defaultPosition) ||
-                other.defaultPosition == defaultPosition) &&
+            const DeepCollectionEquality()
+                .equals(other.currentUserLocation, currentUserLocation) &&
+            const DeepCollectionEquality()
+                .equals(other.defaultPosition, defaultPosition) &&
             (identical(other.spaceInvitationCode, spaceInvitationCode) ||
                 other.spaceInvitationCode == spaceInvitationCode) &&
             (identical(other.mapType, mapType) || other.mapType == mapType) &&
@@ -431,8 +431,8 @@ class _$MapViewStateImpl implements _MapViewState {
       const DeepCollectionEquality().hash(_places),
       const DeepCollectionEquality().hash(_markers),
       selectedUser,
-      currentUserLocation,
-      defaultPosition,
+      const DeepCollectionEquality().hash(currentUserLocation),
+      const DeepCollectionEquality().hash(defaultPosition),
       spaceInvitationCode,
       mapType,
       const DeepCollectionEquality().hash(error),

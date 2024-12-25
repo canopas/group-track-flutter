@@ -232,13 +232,13 @@ class _$LocateOnMapStateImpl implements _LocateOnMapState {
                 .equals(other.addingPlace, addingPlace) &&
             const DeepCollectionEquality()
                 .equals(other.gettingAddress, gettingAddress) &&
-            (identical(other.currentLatLng, currentLatLng) ||
-                other.currentLatLng == currentLatLng) &&
-            (identical(other.cameraLatLng, cameraLatLng) ||
-                other.cameraLatLng == cameraLatLng) &&
+            const DeepCollectionEquality()
+                .equals(other.currentLatLng, currentLatLng) &&
+            const DeepCollectionEquality()
+                .equals(other.cameraLatLng, cameraLatLng) &&
             (identical(other.address, address) || other.address == address) &&
-            (identical(other.centerPosition, centerPosition) ||
-                other.centerPosition == centerPosition) &&
+            const DeepCollectionEquality()
+                .equals(other.centerPosition, centerPosition) &&
             (identical(other.popToPlaceList, popToPlaceList) ||
                 other.popToPlaceList == popToPlaceList) &&
             const DeepCollectionEquality().equals(other.error, error));
@@ -250,10 +250,10 @@ class _$LocateOnMapStateImpl implements _LocateOnMapState {
       const DeepCollectionEquality().hash(loading),
       const DeepCollectionEquality().hash(addingPlace),
       const DeepCollectionEquality().hash(gettingAddress),
-      currentLatLng,
-      cameraLatLng,
+      const DeepCollectionEquality().hash(currentLatLng),
+      const DeepCollectionEquality().hash(cameraLatLng),
       address,
-      centerPosition,
+      const DeepCollectionEquality().hash(centerPosition),
       popToPlaceList,
       const DeepCollectionEquality().hash(error));
 

@@ -50,26 +50,49 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
     }
   }
 
+  bool isUpdating = false;
+
   void _handleTextChange(int index) {
-    final text = state.controllers[index].text;
+    if (isUpdating) return;
+
+    isUpdating = true;
+
+    final controller = state.controllers[index];
+    String text = controller.text;
+
+    // Temporarily detach the listener
+    controller.removeListener(() => _handleTextChange(index));
 
     if (text.isEmpty) {
-      state.controllers[index].text = '\u200b';
-      state.controllers[index].selection = const TextSelection.collapsed(offset: 1);
-
       if (index > 0) {
         state.focusNodes[index - 1].requestFocus();
       }
+      controller.text = '\u200b'; // Placeholder to prevent deletion
+      controller.selection = const TextSelection.collapsed(offset: 1);
     } else if (text.length > 1) {
+      // Handle multiple characters
       String newText = text.replaceAll('\u200b', '').toUpperCase();
-      state.controllers[index].text = newText;
-      state.controllers[index].selection = TextSelection.collapsed(offset: newText.length);
+      controller.text = newText.substring(0, 1); // Keep only the first character
+      controller.selection = const TextSelection.collapsed(offset: 1);
 
-      if (index < 5) {
-        state.focusNodes[index + 1].requestFocus();
+      // Pass extra characters to the next field
+      if (index < state.controllers.length - 1) {
+        final nextController = state.controllers[index + 1];
+        final nextFocusNode = state.focusNodes[index + 1];
+
+        String nextText = (nextController.text.replaceAll('\u200b', '') +
+            newText.substring(1))
+            .toUpperCase();
+
+        nextController.text = nextText;
+        nextFocusNode.requestFocus();
       }
-      _updateJoinSpaceButtonState();
     }
+
+    // Reattach the listener
+    controller.addListener(() => _handleTextChange(index));
+    _updateJoinSpaceButtonState();
+    isUpdating = false;
   }
 
   void _updateJoinSpaceButtonState() {
