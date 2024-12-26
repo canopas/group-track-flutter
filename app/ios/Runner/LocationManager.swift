@@ -55,15 +55,11 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last else { return }
         
-        guard currentLocation.horizontalAccuracy >= 0,
-              currentLocation.horizontalAccuracy <= 20 else {
-            return // Ignore updates with poor accuracy
-        }
-        
         let distance = lastLocation.distance(from: currentLocation)
         let timeInterval = currentLocation.timestamp.timeIntervalSince(lastLocation.timestamp)
 
-        if (distance >= distanceThreshold && timeInterval >= 10) || !isValid(lastLocation) {
+        if (distance >= (currentLocation.horizontalAccuracy * 0.5) &&
+        distance >= distanceThreshold && timeInterval >= 10) || !isValid(lastLocation) {
             lastLocation = currentLocation
         }
     }
