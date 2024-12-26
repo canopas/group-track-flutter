@@ -90,7 +90,7 @@ class PlaceService {
       space_member_ids: spaceMemberIds,
     );
 
-    await placeDoc.set(place.toJson());
+    await placeDoc.set(place);
 
     final settings = spaceMemberIds.map((memberId) {
       final filterIds = spaceMemberIds.where((id) => id != memberId).toList();
@@ -143,12 +143,13 @@ class PlaceService {
   }
 
   Future<void> joinUserToExistingPlaces(
-      String userId,
-      String spaceId,
-      List<String> spaceMemberIds,
-      ) async {
+    String userId,
+    String spaceId,
+    List<String> spaceMemberIds,
+  ) async {
     final filterIds = spaceMemberIds.where((id) => id != userId).toList();
     final allPlaces = await getAllPlaces(spaceId);
+    if (allPlaces.isEmpty) return;
 
     for (final place in allPlaces) {
       final settings = await spacePlacesSettingsRef(spaceId, place.id).get();
@@ -159,6 +160,7 @@ class PlaceService {
           arrival_alert_for: updateAlertUsersList(setting.arrival_alert_for, userId),
           leave_alert_for: updateAlertUsersList(setting.leave_alert_for, userId),
         );
+        await updatePlace(place.copyWith(space_member_ids: spaceMemberIds));
         await updatePlaceSetting(spaceId, place.id, setting.user_id, updatedSetting);
       }
 
@@ -173,7 +175,7 @@ class PlaceService {
     }
   }
 
-  Future<void> removedUserFromExistingPlaces(String spaceId, String userId) async {
+  Future<void> removedUserFromExistingPlaces(String spaceId, String userId, List<String> spaceMemberIds,) async {
     final allPlaces = await getAllPlaces(spaceId);
 
     for (final place in allPlaces) {
@@ -183,12 +185,14 @@ class PlaceService {
             settingDoc.data() as Map<String, dynamic>);
         if (setting.user_id == userId) {
           await spacePlacesSettingsRef(spaceId, place.id).doc(userId).delete();
+          await updatePlace(place.copyWith(space_member_ids: spaceMemberIds));
         } else {
           final updatedSetting = setting.copyWith(
             arrival_alert_for: setting.arrival_alert_for.where((id) => id != userId).toList(),
             leave_alert_for: setting.leave_alert_for.where((id) => id != userId).toList(),
           );
           await updatePlaceSetting(spaceId, place.id, setting.user_id, updatedSetting);
+          await updatePlace(place.copyWith(space_member_ids: spaceMemberIds));
         }
       }
     }

@@ -160,7 +160,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
             progress: state.verifying,
             enabled: state.enabled,
             onPressed: () {
-              notifier.getSpace(state.invitationCode);
+              notifier.getSpace();
             },
           ),
           if (widget.fromOnboard) ...[

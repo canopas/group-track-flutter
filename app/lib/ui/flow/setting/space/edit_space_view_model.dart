@@ -2,6 +2,7 @@ import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/service/place_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ final editSpaceViewStateProvider = StateNotifierProvider.autoDispose<
     ref.read(spaceServiceProvider),
     ref.read(apiSpaceInvitationServiceProvider),
     ref.read(currentUserPod),
+    ref.read(placeServiceProvider),
   ),
 );
 
@@ -24,9 +26,10 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
   final SpaceService spaceService;
   final ApiSpaceInvitationService spaceInvitationService;
   final ApiUser? user;
+  final PlaceService placeService;
 
   EditSpaceViewNotifier(
-      this.spaceService, this.spaceInvitationService, this.user)
+      this.spaceService, this.spaceInvitationService, this.user, this.placeService)
       : super(EditSpaceViewState(spaceName: TextEditingController()));
 
   void getSpaceDetails(String spaceId) async {
@@ -102,10 +105,12 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         await spaceService.updateSpace(
           state.space!.space.copyWith(admin_id: state.userInfo.first.user.id),
         );
+        await _removeMemberFromPlace(userId);
         await spaceService.leaveSpace(state.space!.space.id, userId: userId);
         state = state.copyWith(deleting: false, deleted: true, error: null);
       } else {
         state = state.copyWith(deleting: true);
+        await _removeMemberFromPlace(userId);
         await spaceService.leaveSpace(state.space!.space.id, userId: userId);
         state = state.copyWith(deleting: false, deleted: true, error: null);
         if (state.adminRemovingMember) {
@@ -134,6 +139,22 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         stackTrace: stack,
       );
       state = state.copyWith(error: error, deleted: false);
+    }
+  }
+
+  Future<void> _removeMemberFromPlace(String? id) async {
+    try {
+      if (state.space == null || user == null) return;
+      final spaceMember = await spaceService.getMemberBySpaceId(state.space?.space.id ?? '');
+      final spaceMemberIds = List<String>.from(spaceMember.map((member) => member.user_id));
+      spaceMemberIds.remove(id ?? user?.id);
+      await placeService.removedUserFromExistingPlaces(state.space?.space.id ?? '', user?.id ?? '', spaceMemberIds);
+    } catch (error, stack) {
+      logger.e(
+          'EditSpaceViewNotifier: Error while removing member form place while member is leaving group',
+          error: error,
+          stackTrace: stack);
+      state = state.copyWith(error: error);
     }
   }
 

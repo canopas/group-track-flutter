@@ -1,7 +1,9 @@
+import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/service/auth_service.dart';
 import 'package:data/service/place_service.dart';
+import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -17,6 +19,7 @@ final joinSpaceViewStateProvider = StateNotifierProvider.autoDispose<
     ref.read(apiSpaceInvitationServiceProvider),
     ref.read(authServiceProvider),
     ref.read(placeServiceProvider),
+    ref.read(currentUserPod),
   );
 });
 
@@ -25,9 +28,10 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
   final ApiSpaceInvitationService spaceInvitationService;
   final AuthService authService;
   final PlaceService placeService;
+  final ApiUser? _currentUser;
 
   JoinSpaceViewNotifier(this.spaceService, this.spaceInvitationService,
-      this.authService, this.placeService) : super(const JoinSpaceViewState()) {
+      this.authService, this.placeService, this._currentUser) : super(const JoinSpaceViewState(controllers: [], focusNodes: [])) {
     _initializeControllersAndFocusNodes();
   }
 
@@ -79,9 +83,10 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
 
   Future<void> joinSpace() async {
     try {
-      if (state.space == null) return;
+      if (state.space == null || _currentUser == null) return;
       state = state.copyWith(verifying: true, error: null);
       spaceService.joinSpace(state.space?.id ?? '');
+      await _joinMemberToExistingPlace();
       state = state.copyWith(verifying: false, spaceJoined: true, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error, verifying: false);
@@ -90,6 +95,20 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
         error: error,
         stackTrace: stack,
       );
+    }
+  }
+
+  Future<void> _joinMemberToExistingPlace() async {
+    try {
+      if (state.space == null || _currentUser == null) return;
+      final spaceMembers = await spaceService.getMemberBySpaceId(state.space?.id ?? '');
+      final spaceMemberIds = List<String>.from(spaceMembers.map((member) => member.user_id));
+      await placeService.joinUserToExistingPlaces(_currentUser.id, state.space?.id ?? '', spaceMemberIds);
+    } catch (error, stack) {
+      logger.e(
+          'JoinSpaceNotifier: Error while add member to existing place of group',
+          error: error, stackTrace: stack);
+      state = state.copyWith(error: error);
     }
   }
 
@@ -115,28 +134,32 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
     } catch (error, stack) {
       logger.e('JoinSpaceViewNotifier: Error while get group invitation',
           error: error, stackTrace: stack);
+      state = state.copyWith(error: error, verifying: false);
       return null;
     }
   }
 
-  void getSpace(String code) async {
+  void getSpace() async {
     try {
-      final spaceId = await getInvitation(code);
+      final spaceId = await getInvitation(state.invitationCode);
       final space = await spaceService.getSpace(spaceId ?? '');
       state = state.copyWith(space: space);
     } catch (error, stack) {
       logger.e('JoinSpaceViewNotifier: Error while get space',
           error: error, stackTrace: stack);
+      state = state.copyWith(error: error);
     }
   }
 
   void _resetFlagsAfter30Sec() {
-    Future.delayed(const Duration(seconds: 10), () {
-      state = state.copyWith(
-        errorInvalidInvitationCode: false,
-        alreadySpaceMember: false,
-      );
-    });
+    if (mounted) {
+      Future.delayed(const Duration(seconds: 10), () {
+        state = state.copyWith(
+          errorInvalidInvitationCode: false,
+          alreadySpaceMember: false,
+        );
+      });
+    }
   }
 
   void onChange(String value, int index) {
