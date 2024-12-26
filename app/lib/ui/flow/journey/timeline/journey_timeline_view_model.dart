@@ -171,7 +171,6 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
   }
 
   Future<String> getAddress(LatLng latLng) async {
-    await Future.delayed(const Duration(seconds: 2));
     final address = await latLng.getAddressFromLocation();
     return address;
   }
