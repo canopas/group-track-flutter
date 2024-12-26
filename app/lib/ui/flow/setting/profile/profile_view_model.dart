@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/service/auth_service.dart';
 import 'package:data/service/location_manager.dart';
@@ -41,6 +42,27 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
           enableEmail: true,
           profileUrl: user?.profile_image ?? '',
         ));
+
+  Future<void> isCurrentUserIsAdminOfAnyGroup() async {
+    try {
+      if (state.isUserAdminOfAnyGroup || state.currentUserSpace.isNotEmpty) return;
+      final spaces = await spaceService.getUserSpaces(user?.id ?? '');
+      final adminSpaces = spaces
+          .where((space) => space?.admin_id == user?.id)
+          .whereType<ApiSpace>()
+          .toList();
+      state = state.copyWith(currentUserSpace: adminSpaces);
+      for (final space in adminSpaces) {
+          final members = await spaceService.getMemberBySpaceId(space.id);
+          if (members.length > 1) {
+            state = state.copyWith(isUserAdminOfAnyGroup: true);
+          }
+      }
+    } catch (error, stack) {
+      logger.e('EditProfileViewModel: error while all user groups',
+          error: error, stackTrace: stack);
+    }
+  }
 
   void deleteAccount() async {
     try {
@@ -142,6 +164,8 @@ class EditProfileViewState with _$EditProfileViewState {
     @Default(false) bool accountDeleted,
     @Default(false) bool uploadingImage,
     @Default(false) bool deletingAccount,
+    @Default(false) bool isUserAdminOfAnyGroup,
+    @Default([]) List<ApiSpace> currentUserSpace,
     required TextEditingController firstName,
     required TextEditingController lastName,
     required TextEditingController email,
