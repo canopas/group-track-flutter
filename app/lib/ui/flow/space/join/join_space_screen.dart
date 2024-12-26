@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
@@ -27,24 +26,6 @@ class JoinSpace extends ConsumerStatefulWidget {
 
 class _JoinSpaceState extends ConsumerState<JoinSpace> {
   late JoinSpaceViewNotifier notifier;
-  late List<TextEditingController> _controllers;
-  late List<FocusNode> _focusNodes;
-  late bool enabled = false;
-
-  @override
-  void initState() {
-    _controllers = List.generate(6, (index) => TextEditingController());
-    _focusNodes = List.generate(
-        6,
-        (index) => FocusNode(onKeyEvent: (node, event) {
-              if (event.logicalKey == LogicalKeyboardKey.backspace &&
-                  _controllers[index].text.isEmpty) {
-                if (index > 0) _focusNodes[index - 1].requestFocus();
-              }
-              return KeyEventResult.ignored;
-            }));
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,11 +111,11 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
   }
 
   Widget _buildCodeBox(
-    BuildContext context,
-    double width,
-    int index,
-    JoinSpaceViewState state,
-  ) {
+      BuildContext context,
+      double width,
+      int index,
+      JoinSpaceViewState state,
+      ) {
     return Container(
       width: width,
       height: 64,
@@ -145,10 +126,10 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
       ),
       child: Center(
         child: TextField(
-          controller: _controllers[index],
-          focusNode: _focusNodes[index],
+          controller: state.controllers[index],
+          focusNode: state.focusNodes[index],
           textAlign: TextAlign.center,
-          maxLength: 1,
+          maxLength: 2,
           decoration: const InputDecoration(
             border: InputBorder.none,
             counterText: '',
@@ -161,16 +142,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
             FocusManager.instance.primaryFocus?.unfocus();
           },
           onChanged: (text) {
-            if (text.isEmpty) {
-              if (index > 0) _focusNodes[index - 1].requestFocus();
-            } else {
-              if (index < 5) {
-                _focusNodes[index + 1].requestFocus();
-              } else {
-                FocusManager.instance.primaryFocus?.unfocus();
-              }
-            }
-            _updateJoinSpaceButtonState();
+            notifier.onChange(text, index);
           },
         ),
       ),
@@ -186,12 +158,9 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
           PrimaryButton(
             context.l10n.join_space_title,
             progress: state.verifying,
-            enabled: enabled,
+            enabled: state.enabled,
             onPressed: () {
-              final inviteCode = _controllers
-                  .map((controller) => controller.text.trim())
-                  .join();
-              notifier.getSpace(inviteCode);
+              notifier.getSpace(state.invitationCode);
             },
           ),
           if (widget.fromOnboard) ...[
@@ -226,13 +195,6 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     );
   }
 
-  void _updateJoinSpaceButtonState() {
-    setState(() {
-      enabled =
-          _controllers.every((controller) => controller.text.trim().isNotEmpty);
-    });
-  }
-
   void _observeError() {
     ref.listen(joinSpaceViewStateProvider.select((state) => state.error),
         (previous, next) {
@@ -251,6 +213,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
   }
 
   void _showCongratulationPrompt() {
+    final state = ref.watch(joinSpaceViewStateProvider);
     ref.listen(joinSpaceViewStateProvider.select((state) => state.space),
         (previous, next) {
       if (next != null) {
@@ -259,10 +222,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
           title: context.l10n.join_space_title,
           message: context.l10n.join_space_prompt_subtitle(next.name),
           onConfirm: () {
-            final inviteCode = _controllers
-                .map((controller) => controller.text.trim())
-                .join();
-            _checkInternet(inviteCode);
+            _checkInternet(state.invitationCode);
           },
           onCancel: () => context.pop(),
         );
@@ -274,7 +234,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     final isNetworkOff = await checkInternetConnectivity();
     isNetworkOff
         ? _showSnackBar()
-        : notifier.joinSpace(inviteCode.toUpperCase());
+        : notifier.joinSpace();
   }
 
   void _showSnackBar() {

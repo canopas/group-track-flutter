@@ -17,12 +17,16 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$JoinSpaceViewState {
   bool get verifying => throw _privateConstructorUsedError;
+  bool get enabled => throw _privateConstructorUsedError;
   bool get spaceJoined => throw _privateConstructorUsedError;
   String get invitationCode => throw _privateConstructorUsedError;
   bool get errorInvalidInvitationCode => throw _privateConstructorUsedError;
   bool get alreadySpaceMember => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   ApiSpace? get space => throw _privateConstructorUsedError;
+  List<TextEditingController> get controllers =>
+      throw _privateConstructorUsedError;
+  List<FocusNode> get focusNodes => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $JoinSpaceViewStateCopyWith<JoinSpaceViewState> get copyWith =>
@@ -37,12 +41,15 @@ abstract class $JoinSpaceViewStateCopyWith<$Res> {
   @useResult
   $Res call(
       {bool verifying,
+      bool enabled,
       bool spaceJoined,
       String invitationCode,
       bool errorInvalidInvitationCode,
       bool alreadySpaceMember,
       Object? error,
-      ApiSpace? space});
+      ApiSpace? space,
+      List<TextEditingController> controllers,
+      List<FocusNode> focusNodes});
 
   $ApiSpaceCopyWith<$Res>? get space;
 }
@@ -61,17 +68,24 @@ class _$JoinSpaceViewStateCopyWithImpl<$Res, $Val extends JoinSpaceViewState>
   @override
   $Res call({
     Object? verifying = null,
+    Object? enabled = null,
     Object? spaceJoined = null,
     Object? invitationCode = null,
     Object? errorInvalidInvitationCode = null,
     Object? alreadySpaceMember = null,
     Object? error = freezed,
     Object? space = freezed,
+    Object? controllers = null,
+    Object? focusNodes = null,
   }) {
     return _then(_value.copyWith(
       verifying: null == verifying
           ? _value.verifying
           : verifying // ignore: cast_nullable_to_non_nullable
+              as bool,
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
               as bool,
       spaceJoined: null == spaceJoined
           ? _value.spaceJoined
@@ -94,6 +108,14 @@ class _$JoinSpaceViewStateCopyWithImpl<$Res, $Val extends JoinSpaceViewState>
           ? _value.space
           : space // ignore: cast_nullable_to_non_nullable
               as ApiSpace?,
+      controllers: null == controllers
+          ? _value.controllers
+          : controllers // ignore: cast_nullable_to_non_nullable
+              as List<TextEditingController>,
+      focusNodes: null == focusNodes
+          ? _value.focusNodes
+          : focusNodes // ignore: cast_nullable_to_non_nullable
+              as List<FocusNode>,
     ) as $Val);
   }
 
@@ -120,12 +142,15 @@ abstract class _$$JoinSpaceViewStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {bool verifying,
+      bool enabled,
       bool spaceJoined,
       String invitationCode,
       bool errorInvalidInvitationCode,
       bool alreadySpaceMember,
       Object? error,
-      ApiSpace? space});
+      ApiSpace? space,
+      List<TextEditingController> controllers,
+      List<FocusNode> focusNodes});
 
   @override
   $ApiSpaceCopyWith<$Res>? get space;
@@ -143,17 +168,24 @@ class __$$JoinSpaceViewStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? verifying = null,
+    Object? enabled = null,
     Object? spaceJoined = null,
     Object? invitationCode = null,
     Object? errorInvalidInvitationCode = null,
     Object? alreadySpaceMember = null,
     Object? error = freezed,
     Object? space = freezed,
+    Object? controllers = null,
+    Object? focusNodes = null,
   }) {
     return _then(_$JoinSpaceViewStateImpl(
       verifying: null == verifying
           ? _value.verifying
           : verifying // ignore: cast_nullable_to_non_nullable
+              as bool,
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
               as bool,
       spaceJoined: null == spaceJoined
           ? _value.spaceJoined
@@ -176,6 +208,14 @@ class __$$JoinSpaceViewStateImplCopyWithImpl<$Res>
           ? _value.space
           : space // ignore: cast_nullable_to_non_nullable
               as ApiSpace?,
+      controllers: null == controllers
+          ? _value._controllers
+          : controllers // ignore: cast_nullable_to_non_nullable
+              as List<TextEditingController>,
+      focusNodes: null == focusNodes
+          ? _value._focusNodes
+          : focusNodes // ignore: cast_nullable_to_non_nullable
+              as List<FocusNode>,
     ));
   }
 }
@@ -185,16 +225,24 @@ class __$$JoinSpaceViewStateImplCopyWithImpl<$Res>
 class _$JoinSpaceViewStateImpl implements _JoinSpaceViewState {
   const _$JoinSpaceViewStateImpl(
       {this.verifying = false,
+      this.enabled = false,
       this.spaceJoined = false,
       this.invitationCode = '',
       this.errorInvalidInvitationCode = false,
       this.alreadySpaceMember = false,
       this.error,
-      this.space});
+      this.space,
+      required final List<TextEditingController> controllers,
+      required final List<FocusNode> focusNodes})
+      : _controllers = controllers,
+        _focusNodes = focusNodes;
 
   @override
   @JsonKey()
   final bool verifying;
+  @override
+  @JsonKey()
+  final bool enabled;
   @override
   @JsonKey()
   final bool spaceJoined;
@@ -211,10 +259,25 @@ class _$JoinSpaceViewStateImpl implements _JoinSpaceViewState {
   final Object? error;
   @override
   final ApiSpace? space;
+  final List<TextEditingController> _controllers;
+  @override
+  List<TextEditingController> get controllers {
+    if (_controllers is EqualUnmodifiableListView) return _controllers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_controllers);
+  }
+
+  final List<FocusNode> _focusNodes;
+  @override
+  List<FocusNode> get focusNodes {
+    if (_focusNodes is EqualUnmodifiableListView) return _focusNodes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_focusNodes);
+  }
 
   @override
   String toString() {
-    return 'JoinSpaceViewState(verifying: $verifying, spaceJoined: $spaceJoined, invitationCode: $invitationCode, errorInvalidInvitationCode: $errorInvalidInvitationCode, alreadySpaceMember: $alreadySpaceMember, error: $error, space: $space)';
+    return 'JoinSpaceViewState(verifying: $verifying, enabled: $enabled, spaceJoined: $spaceJoined, invitationCode: $invitationCode, errorInvalidInvitationCode: $errorInvalidInvitationCode, alreadySpaceMember: $alreadySpaceMember, error: $error, space: $space, controllers: $controllers, focusNodes: $focusNodes)';
   }
 
   @override
@@ -224,6 +287,7 @@ class _$JoinSpaceViewStateImpl implements _JoinSpaceViewState {
             other is _$JoinSpaceViewStateImpl &&
             (identical(other.verifying, verifying) ||
                 other.verifying == verifying) &&
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
             (identical(other.spaceJoined, spaceJoined) ||
                 other.spaceJoined == spaceJoined) &&
             (identical(other.invitationCode, invitationCode) ||
@@ -235,19 +299,26 @@ class _$JoinSpaceViewStateImpl implements _JoinSpaceViewState {
             (identical(other.alreadySpaceMember, alreadySpaceMember) ||
                 other.alreadySpaceMember == alreadySpaceMember) &&
             const DeepCollectionEquality().equals(other.error, error) &&
-            (identical(other.space, space) || other.space == space));
+            (identical(other.space, space) || other.space == space) &&
+            const DeepCollectionEquality()
+                .equals(other._controllers, _controllers) &&
+            const DeepCollectionEquality()
+                .equals(other._focusNodes, _focusNodes));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
       verifying,
+      enabled,
       spaceJoined,
       invitationCode,
       errorInvalidInvitationCode,
       alreadySpaceMember,
       const DeepCollectionEquality().hash(error),
-      space);
+      space,
+      const DeepCollectionEquality().hash(_controllers),
+      const DeepCollectionEquality().hash(_focusNodes));
 
   @JsonKey(ignore: true)
   @override
@@ -260,15 +331,20 @@ class _$JoinSpaceViewStateImpl implements _JoinSpaceViewState {
 abstract class _JoinSpaceViewState implements JoinSpaceViewState {
   const factory _JoinSpaceViewState(
       {final bool verifying,
+      final bool enabled,
       final bool spaceJoined,
       final String invitationCode,
       final bool errorInvalidInvitationCode,
       final bool alreadySpaceMember,
       final Object? error,
-      final ApiSpace? space}) = _$JoinSpaceViewStateImpl;
+      final ApiSpace? space,
+      required final List<TextEditingController> controllers,
+      required final List<FocusNode> focusNodes}) = _$JoinSpaceViewStateImpl;
 
   @override
   bool get verifying;
+  @override
+  bool get enabled;
   @override
   bool get spaceJoined;
   @override
@@ -281,6 +357,10 @@ abstract class _JoinSpaceViewState implements JoinSpaceViewState {
   Object? get error;
   @override
   ApiSpace? get space;
+  @override
+  List<TextEditingController> get controllers;
+  @override
+  List<FocusNode> get focusNodes;
   @override
   @JsonKey(ignore: true)
   _$$JoinSpaceViewStateImplCopyWith<_$JoinSpaceViewStateImpl> get copyWith =>
