@@ -22,7 +22,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         self.manager = CLLocationManager()
         super.init()
         manager.delegate = self
-        manager.distanceFilter = 10
+        manager.distanceFilter = distanceThreshold
         manager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         manager.allowsBackgroundLocationUpdates = true
         manager.pausesLocationUpdatesAutomatically = false
@@ -54,12 +54,24 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last else { return }
-        let lastUpdateTime = lastLocation.timestamp
-        let hasLastLocation = lastLocation.coordinate.latitude != 0 && lastLocation.coordinate.longitude != 0
-        let timeInterval = Date().timeIntervalSince(lastUpdateTime)
-        if (timeInterval >= 10 || !hasLastLocation) && lastLocation != currentLocation {
+        
+        guard currentLocation.horizontalAccuracy >= 0,
+              currentLocation.horizontalAccuracy <= 20 else {
+            return // Ignore updates with poor accuracy
+        }
+        
+        let distance = lastLocation.distance(from: currentLocation)
+        let timeInterval = currentLocation.timestamp.timeIntervalSince(lastLocation.timestamp)
+
+        if (distance >= distanceThreshold && timeInterval >= 10) || !isValid(lastLocation) {
             lastLocation = currentLocation
         }
+    }
+    
+    private func isValid(_ location: CLLocation) -> Bool {
+        return location.coordinate.latitude != 0 &&
+               location.coordinate.longitude != 0 &&
+               location.timestamp != Date.distantPast
     }
     
     func getCurrentLocation(result: @escaping FlutterResult) {

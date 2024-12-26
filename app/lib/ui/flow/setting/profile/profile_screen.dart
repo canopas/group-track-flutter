@@ -43,6 +43,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _observePop();
     _observeAccountDeleted();
     _observeError();
+    _observeIsUserAdminOfAnyGroup();
 
     return AppPage(
       title: context.l10n.edit_profile_title,
@@ -277,18 +278,37 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         foreground: context.colorScheme.alert,
         background: context.colorScheme.containerLow,
         progress: state.deletingAccount,
-        onPressed: () {
-          showConfirmation(
-            context,
-            confirmBtnText: context.l10n.common_delete,
-            title: context.l10n.edit_profile_alert_title,
-            message: context.l10n.edit_profile_alert_description,
-            onConfirm: () {
-              _checkUserInternet(() => notifier.deleteAccount());
-            },
-          );
+        onPressed: () async {
+          await notifier.isCurrentUserIsAdminOfAnyGroup();
+          if (!state.isUserAdminOfAnyGroup) {
+            showDeleteAccountConfirmation();
+          }
         },
       ),
+    );
+  }
+
+  void showDeleteAccountConfirmation() {
+    showConfirmation(
+      context,
+      confirmBtnText: context.l10n.common_delete,
+      title: context.l10n.edit_profile_alert_title,
+      message: context.l10n.edit_profile_alert_description,
+      onConfirm: () {
+        _checkUserInternet(() => notifier.deleteAccount());
+      },
+    );
+  }
+
+  void showChangeAdminConfirmation() {
+    showConfirmation(
+      context,
+      confirmBtnText: context.l10n.edit_profile_change_admin_text,
+      title: context.l10n.edit_profile_change_admin_title,
+      message: context.l10n.edit_profile_change_admin_subtitle,
+      onConfirm: () {
+        Navigator.pop(context);
+      },
     );
   }
 
@@ -307,6 +327,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         (previous, next) {
       if (next) {
         AppRoute.signInMethod.go(context);
+      }
+    });
+  }
+
+  void _observeIsUserAdminOfAnyGroup() {
+    ref.listen(editProfileViewStateProvider.select((state) => state.isUserAdminOfAnyGroup), (previous, next) {
+      if (next) {
+        showChangeAdminConfirmation();
       }
     });
   }
