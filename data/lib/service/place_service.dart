@@ -160,10 +160,9 @@ class PlaceService {
           arrival_alert_for: updateAlertUsersList(setting.arrival_alert_for, userId),
           leave_alert_for: updateAlertUsersList(setting.leave_alert_for, userId),
         );
-        await updatePlace(place.copyWith(space_member_ids: spaceMemberIds));
         await updatePlaceSetting(spaceId, place.id, setting.user_id, updatedSetting);
       }
-
+      await updatePlace(place.copyWith(space_member_ids: spaceMemberIds));
       final newUserSettings = ApiPlaceMemberSetting(
         user_id: userId,
         place_id: place.id,
@@ -185,16 +184,15 @@ class PlaceService {
             settingDoc.data() as Map<String, dynamic>);
         if (setting.user_id == userId) {
           await spacePlacesSettingsRef(spaceId, place.id).doc(userId).delete();
-          await updatePlace(place.copyWith(space_member_ids: spaceMemberIds));
         } else {
           final updatedSetting = setting.copyWith(
             arrival_alert_for: setting.arrival_alert_for.where((id) => id != userId).toList(),
             leave_alert_for: setting.leave_alert_for.where((id) => id != userId).toList(),
           );
           await updatePlaceSetting(spaceId, place.id, setting.user_id, updatedSetting);
-          await updatePlace(place.copyWith(space_member_ids: spaceMemberIds));
         }
       }
+      await updatePlace(place.copyWith(space_member_ids: spaceMemberIds));
     }
   }
 
