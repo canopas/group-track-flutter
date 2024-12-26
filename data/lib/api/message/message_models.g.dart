@@ -14,6 +14,10 @@ _$ApiThreadImpl _$$ApiThreadImplFromJson(Map<String, dynamic> json) =>
       member_ids: (json['member_ids'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      seen_by_ids: (json['seen_by_ids'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       archived_for: (json['archived_for'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, (e as num).toDouble()),
       ),
@@ -29,6 +33,7 @@ Map<String, dynamic> _$$ApiThreadImplToJson(_$ApiThreadImpl instance) =>
       'space_id': instance.space_id,
       'admin_id': instance.admin_id,
       'member_ids': instance.member_ids,
+      'seen_by_ids': instance.seen_by_ids,
       'archived_for': instance.archived_for,
       'created_at': instance.created_at,
       'last_message': instance.last_message,

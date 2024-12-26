@@ -14,6 +14,7 @@ class ApiThread with _$ApiThread {
     required String space_id,
     required String admin_id,
     required List<String> member_ids,
+    @Default([]) List<String> seen_by_ids,
     Map<String, double>? archived_for,
     int? created_at,
     String? last_message,

@@ -24,6 +24,7 @@ mixin _$ApiThread {
   String get space_id => throw _privateConstructorUsedError;
   String get admin_id => throw _privateConstructorUsedError;
   List<String> get member_ids => throw _privateConstructorUsedError;
+  List<String> get seen_by_ids => throw _privateConstructorUsedError;
   Map<String, double>? get archived_for => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
   String? get last_message => throw _privateConstructorUsedError;
@@ -50,6 +51,7 @@ abstract class $ApiThreadCopyWith<$Res> {
       String space_id,
       String admin_id,
       List<String> member_ids,
+      List<String> seen_by_ids,
       Map<String, double>? archived_for,
       int? created_at,
       String? last_message,
@@ -75,6 +77,7 @@ class _$ApiThreadCopyWithImpl<$Res, $Val extends ApiThread>
     Object? space_id = null,
     Object? admin_id = null,
     Object? member_ids = null,
+    Object? seen_by_ids = null,
     Object? archived_for = freezed,
     Object? created_at = freezed,
     Object? last_message = freezed,
@@ -96,6 +99,10 @@ class _$ApiThreadCopyWithImpl<$Res, $Val extends ApiThread>
       member_ids: null == member_ids
           ? _value.member_ids
           : member_ids // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      seen_by_ids: null == seen_by_ids
+          ? _value.seen_by_ids
+          : seen_by_ids // ignore: cast_nullable_to_non_nullable
               as List<String>,
       archived_for: freezed == archived_for
           ? _value.archived_for
@@ -130,6 +137,7 @@ abstract class _$$ApiThreadImplCopyWith<$Res>
       String space_id,
       String admin_id,
       List<String> member_ids,
+      List<String> seen_by_ids,
       Map<String, double>? archived_for,
       int? created_at,
       String? last_message,
@@ -153,6 +161,7 @@ class __$$ApiThreadImplCopyWithImpl<$Res>
     Object? space_id = null,
     Object? admin_id = null,
     Object? member_ids = null,
+    Object? seen_by_ids = null,
     Object? archived_for = freezed,
     Object? created_at = freezed,
     Object? last_message = freezed,
@@ -174,6 +183,10 @@ class __$$ApiThreadImplCopyWithImpl<$Res>
       member_ids: null == member_ids
           ? _value._member_ids
           : member_ids // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      seen_by_ids: null == seen_by_ids
+          ? _value._seen_by_ids
+          : seen_by_ids // ignore: cast_nullable_to_non_nullable
               as List<String>,
       archived_for: freezed == archived_for
           ? _value._archived_for
@@ -203,11 +216,13 @@ class _$ApiThreadImpl extends _ApiThread {
       required this.space_id,
       required this.admin_id,
       required final List<String> member_ids,
+      final List<String> seen_by_ids = const [],
       final Map<String, double>? archived_for,
       this.created_at,
       this.last_message,
       @ServerTimestampConverter() this.last_message_at})
       : _member_ids = member_ids,
+        _seen_by_ids = seen_by_ids,
         _archived_for = archived_for,
         super._();
 
@@ -226,6 +241,15 @@ class _$ApiThreadImpl extends _ApiThread {
     if (_member_ids is EqualUnmodifiableListView) return _member_ids;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_member_ids);
+  }
+
+  final List<String> _seen_by_ids;
+  @override
+  @JsonKey()
+  List<String> get seen_by_ids {
+    if (_seen_by_ids is EqualUnmodifiableListView) return _seen_by_ids;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_seen_by_ids);
   }
 
   final Map<String, double>? _archived_for;
@@ -248,7 +272,7 @@ class _$ApiThreadImpl extends _ApiThread {
 
   @override
   String toString() {
-    return 'ApiThread(id: $id, space_id: $space_id, admin_id: $admin_id, member_ids: $member_ids, archived_for: $archived_for, created_at: $created_at, last_message: $last_message, last_message_at: $last_message_at)';
+    return 'ApiThread(id: $id, space_id: $space_id, admin_id: $admin_id, member_ids: $member_ids, seen_by_ids: $seen_by_ids, archived_for: $archived_for, created_at: $created_at, last_message: $last_message, last_message_at: $last_message_at)';
   }
 
   @override
@@ -263,6 +287,8 @@ class _$ApiThreadImpl extends _ApiThread {
                 other.admin_id == admin_id) &&
             const DeepCollectionEquality()
                 .equals(other._member_ids, _member_ids) &&
+            const DeepCollectionEquality()
+                .equals(other._seen_by_ids, _seen_by_ids) &&
             const DeepCollectionEquality()
                 .equals(other._archived_for, _archived_for) &&
             (identical(other.created_at, created_at) ||
@@ -281,6 +307,7 @@ class _$ApiThreadImpl extends _ApiThread {
       space_id,
       admin_id,
       const DeepCollectionEquality().hash(_member_ids),
+      const DeepCollectionEquality().hash(_seen_by_ids),
       const DeepCollectionEquality().hash(_archived_for),
       created_at,
       last_message,
@@ -308,6 +335,7 @@ abstract class _ApiThread extends ApiThread {
           required final String space_id,
           required final String admin_id,
           required final List<String> member_ids,
+          final List<String> seen_by_ids,
           final Map<String, double>? archived_for,
           final int? created_at,
           final String? last_message,
@@ -326,6 +354,8 @@ abstract class _ApiThread extends ApiThread {
   String get admin_id;
   @override
   List<String> get member_ids;
+  @override
+  List<String> get seen_by_ids;
   @override
   Map<String, double>? get archived_for;
   @override

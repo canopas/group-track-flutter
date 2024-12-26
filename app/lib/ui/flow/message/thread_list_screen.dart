@@ -58,17 +58,17 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
 
     return AppPage(
         title: widget.spaceInfo.space.name,
-        body: ResumeDetector(
-          onResume: () => notifier.getMessage(),
-          child: SafeArea(child: _body(context, state)),
-        ),
+        body: _body(context, state),
         floatingActionButton: widget.spaceInfo.members.length >= 2
             ? LargeIconButton(
                 onTap: () {
                   AppRoute.chat(
                           spaceId: widget.spaceInfo.space.id,
                           spaceName: widget.spaceInfo.space.name,
-                          threadInfoList: state.threadInfo)
+                          threadInfoList: state.threads
+                              .map((e) => ThreadInfo(
+                                  thread: e, threadMessage: [], members: []))
+                              .toList())
                       .push(context);
                 },
                 icon: Icon(
@@ -91,44 +91,42 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: state.threadInfo.isEmpty
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: state.threads.isEmpty
           ? _emptyView(context, state)
-          : _threadList(context, state.threadInfo, state.threadMessages),
+          : _threadList(context, state.threads, state.users),
     );
   }
 
-  Widget _threadList(BuildContext context, List<ThreadInfo> threads,
-      List<List<ApiThreadMessage>> threadMessages) {
-    List<ThreadInfo> mutableThreads = List.from(threads);
-
+  Widget _threadList(BuildContext context, List<ApiThread> threads,
+      Map<String, ApiUser> users) {
     return ListView.builder(
-      itemCount: mutableThreads.length,
+      itemCount: threads.length,
       itemBuilder: (context, index) {
-        final thread = mutableThreads[index];
-        final members = thread.members
-            .where((member) => member.user.id != notifier.currentUser?.id)
+        final thread = threads[index];
+        final members = thread.member_ids
+            .where((id) => id != notifier.currentUser?.id)
+            .map((id) => users[id])
+            .whereType<ApiUser>()
             .toList();
-        final filteredMessages =
-            index < threadMessages.length ? threadMessages[index] : [];
-        final hasUnreadMessage = filteredMessages.any(
-            (message) => !message.seen_by.contains(notifier.currentUser?.id));
+
+        final hasUnreadMessage = threads.any((message) =>
+            !message.seen_by_ids.contains(notifier.currentUser?.id));
 
         return Slidable(
           endActionPane: ActionPane(
             motion: const ScrollMotion(),
             children: [
-              _deleteSlideButton(context, thread.thread),
+              _deleteSlideButton(context, thread),
             ],
           ),
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
               AppRoute.chat(
-                      spaceId: widget.spaceInfo.space.id,
-                      threadId: thread.thread.id,
-                      threadMessage: threadMessages[index])
-                  .push(context);
+                  spaceId: widget.spaceInfo.space.id,
+                  threadId: thread.id,
+                  threadMessage: []).push(context);
             },
             child: Column(
               children: [
@@ -136,11 +134,11 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
                   context: context,
                   members: members,
                   displayedMembers: members.take(2).toList(),
-                  message: thread.thread.last_message ?? '',
-                  date: thread.thread.last_message_at ?? DateTime.now(),
+                  message: thread.last_message ?? '',
+                  date: thread.last_message_at ?? DateTime.now(),
                   hasUnreadMessage: hasUnreadMessage,
                 ),
-                if (!(index == mutableThreads.length - 1)) ...[
+                if (!(index == threads.length - 1)) ...[
                   _divider(context),
                 ],
               ],
@@ -167,14 +165,14 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
 
   Widget _threadItem({
     required BuildContext context,
-    required List<ApiUserInfo> members,
-    required List<ApiUserInfo> displayedMembers,
-    required String message,
+    required List<ApiUser> members,
+    required List<ApiUser> displayedMembers,
+    String? message,
     required DateTime date,
     required bool hasUnreadMessage,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -184,7 +182,6 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
               child: _threadNamesAndMessage(
                   context: context,
                   members: members,
-                  displayedMembers: displayedMembers,
                   message: message)),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -226,53 +223,33 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
 
   Widget _threadNamesAndMessage({
     required BuildContext context,
-    required List<ApiUserInfo> members,
-    required List<ApiUserInfo> displayedMembers,
-    required String message,
+    required List<ApiUser> members,
+    String? message,
   }) {
-    final remainingCount = members.length - displayedMembers.length;
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            for (var i = 0; i < displayedMembers.length; i++)
-              Row(
-                children: [
-                  Text(
-                    displayedMembers[i].user.first_name ?? '',
-                    style: AppTextStyle.subtitle2.copyWith(
-                      color: context.colorScheme.textPrimary,
-                    ),
-                  ),
-                  if (i != displayedMembers.length - 1)
-                    Text(', ',
-                        style: AppTextStyle.subtitle2
-                            .copyWith(color: context.colorScheme.textPrimary)),
-                ],
-              ),
-            if (remainingCount > 0)
-              Text(
-                context.l10n.message_member_count_text(remainingCount),
-                style: AppTextStyle.subtitle2.copyWith(
-                  color: context.colorScheme.textPrimary,
-                ),
-              ),
-          ],
-        ),
         Text(
-          message,
-          style: AppTextStyle.caption.copyWith(
-            color: context.colorScheme.textDisabled,
+          members.map((e) => e.first_name ?? '').toList().getFormattedNames(),
+          style: AppTextStyle.subtitle2.copyWith(
+            color: context.colorScheme.textPrimary,
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        )
+        ),
+        if (message != null && message.isNotEmpty)
+          Text(
+            message,
+            style: AppTextStyle.caption.copyWith(
+              color: context.colorScheme.textDisabled,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          )
       ],
     );
   }
 
-  Widget _threadProfile(BuildContext context, List<ApiUserInfo> members) {
+  Widget _threadProfile(BuildContext context, List<ApiUser> members) {
     if (members.length == 1) {
       return _profileImageView(context, members[0], size: 50);
     } else {
@@ -295,10 +272,10 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
     }
   }
 
-  Widget _profileImageView(BuildContext context, ApiUserInfo member,
+  Widget _profileImageView(BuildContext context, ApiUser member,
       {required double size, bool isMoreMember = false, int count = 0}) {
-    final profileImageUrl = member.user.profile_image ?? '';
-    final firstLetter = member.user.firstChar;
+    final profileImageUrl = member.profile_image ?? '';
+    final firstLetter = member.firstChar;
 
     return SizedBox(
       width: size,
@@ -345,11 +322,11 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
   }
 
   Widget _emptyView(BuildContext context, ThreadListViewState state) {
-    if (widget.spaceInfo.members.length >= 2) {
-      return _emptyMessageView(context);
-    } else {
-      return _emptyMessageViewWith0Member(context, state);
-    }
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: widget.spaceInfo.members.length >= 2
+            ? _emptyMessageView(context)
+            : _emptyMessageViewWith0Member(context, state));
   }
 
   Widget _emptyMessageView(BuildContext context) {
@@ -440,5 +417,16 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
 
   void _showSnackBar() {
     showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
+  }
+}
+
+extension StringListExtension on List<String> {
+  String getFormattedNames() {
+    if (isEmpty) return "";
+    if (length == 1) {
+      return first;
+    } else {
+      return "${this[0]}, ${this[1]}${length > 2 ? ' + ${length - 2}' : ''}";
+    }
   }
 }

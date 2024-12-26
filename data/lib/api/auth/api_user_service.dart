@@ -42,7 +42,7 @@ class ApiUserService {
     this.locationManager,
   );
 
-  CollectionReference get _userRef =>
+  CollectionReference<ApiUser> get _userRef =>
       _db.collection("users").withConverter<ApiUser>(
           fromFirestore: ApiUser.fromFireStore,
           toFirestore: (user, options) => user.toJson());
@@ -118,6 +118,23 @@ class ApiUserService {
       return snapshot.data() as ApiUser;
     }
     return null;
+  }
+
+  Future<List<ApiUser>> getUsers(List<String> userIds) async {
+    if (userIds.isEmpty) return [];
+    final List<Future<QuerySnapshot<ApiUser>>> snapshots = [];
+    for (var i = 0; i < userIds.length; i += 10) {
+      final length = i + 10 > userIds.length ? userIds.length : i + 10;
+      final snapshot = _userRef
+          .where(FieldPath.documentId, whereIn: userIds.sublist(i, length))
+          .get();
+      snapshots.add(snapshot);
+    }
+
+    final results = await Future.wait(snapshots);
+    return results
+        .expand((element) => element.docs.map((e) => e.data()))
+        .toList();
   }
 
   Stream<ApiUser?> getUserStream(String userId) {
