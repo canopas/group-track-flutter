@@ -63,7 +63,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
             ? LargeIconButton(
                 onTap: () {
                   AppRoute.chat(
-                          spaceInfo: widget.spaceInfo,
+                          space: widget.spaceInfo.space,
                           threads: state.threads)
                       .push(context);
                 },
@@ -120,7 +120,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
             behavior: HitTestBehavior.translucent,
             onTap: () {
               AppRoute.chat(
-                spaceInfo: widget.spaceInfo,
+                space: widget.spaceInfo.space,
                 threadId: thread.id,
               ).push(context);
             },

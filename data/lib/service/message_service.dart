@@ -45,7 +45,7 @@ class MessageService {
     return messageService.getThreads(spaceId, currentUser?.id ?? '');
   }
 
-  Future<ApiThread?> getThreadInfo(String threadId) async {
+  Future<ApiThread?> getThread(String threadId) async {
     return await messageService.getThread(threadId).first;
   }
 

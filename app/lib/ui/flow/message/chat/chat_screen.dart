@@ -49,8 +49,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     runPostFrame(() {
       notifier.init(
         space: widget.space,
-        threadId: widget.threadId ?? '',
-        showMemberSelectionView: widget.threadId == null,
+        threadId: widget.threadId,
         threads: widget.threadInfoList ?? [],
       );
     });
@@ -76,12 +75,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget _body(BuildContext context, ChatViewState state) {
     if (state.isNetworkOff) {
       return NoInternetScreen(onPressed: () {
-        notifier.init(
-          space: widget.space,
-          threadId: widget.threadId ?? '',
-          showMemberSelectionView: widget.threadId == null,
-          threads: widget.threadInfoList ?? [],
-        );
+        notifier.fetch();
       });
     }
     if (state.loading && state.messages.isEmpty) {
@@ -99,7 +93,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     state.messages,
                     state.sender,
                     state.loadingMessages,
-                    state.threadId,
                     state.currentUserId,
                     state.thread)),
             const SizedBox(height: 100),
@@ -115,9 +108,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       List<ApiThreadMessage> messages,
       List<ApiUserInfo>? sender,
       bool loadingMessage,
-      String threadId,
       String currentUserId,
-      ApiThread? threadInfo) {
+      ApiThread? thread) {
     if (sender == null && sender!.isEmpty) {
       return const AppProgressIndicator();
     }
@@ -610,12 +602,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void _showSnackBar() {
-    notifier.cancelMessageSubscription();
     showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 
   String _formattedChatTitle(BuildContext context, ChatViewState state) {
-    if (state.spaceInfo?.space != null) {
+    if (state.space != null) {
       return widget.space?.name ?? '';
     }
 

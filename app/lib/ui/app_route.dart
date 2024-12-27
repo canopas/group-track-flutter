@@ -262,14 +262,14 @@ class AppRoute {
   }
 
   static AppRoute chat({
-    SpaceInfo? spaceInfo,
+    ApiSpace? space,
     String? threadId,
     List<ApiThread>? threads,
   }) {
     return AppRoute(
       pathMessage,
       builder: (_) => ChatScreen(
-        spaceInfo: spaceInfo,
+        space: space,
         threadId: threadId,
         threadInfoList: threads,
       ),
