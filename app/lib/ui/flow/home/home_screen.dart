@@ -93,7 +93,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       padding: context.mediaQueryPadding,
       child: Stack(
         children: [
-          MapScreen(space: state.selectedSpace),
+          MapScreen(space: state.selectedSpace, onExpandChanged: (newExpandValue) {
+           if (state.expand) {
+             notifier.updateExpandState(newExpandValue);
+           }
+          }),
           HomeTopBar(
             spaces: state.spaceList,
             onSpaceItemTap: (name) => notifier.updateSelectedSpace(name),
@@ -108,6 +112,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             fetchingInviteCode: state.fetchingInviteCode,
             locationEnabled: state.locationEnabled,
             enablingLocation: state.enablingLocation,
+            expand: state.expand,
+            onExpandChanged: (bool newExpandValue) {
+              notifier.updateExpandState(newExpandValue);
+            },
           ),
         ],
       ),

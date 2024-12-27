@@ -24,6 +24,7 @@ mixin _$HomeViewState {
   bool get locationEnabled => throw _privateConstructorUsedError;
   bool get isSessionExpired => throw _privateConstructorUsedError;
   bool get isNetworkOff => throw _privateConstructorUsedError;
+  bool get expand => throw _privateConstructorUsedError;
   DateTime? get popToSignIn => throw _privateConstructorUsedError;
   SpaceInfo? get selectedSpace => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
@@ -51,6 +52,7 @@ abstract class $HomeViewStateCopyWith<$Res> {
       bool locationEnabled,
       bool isSessionExpired,
       bool isNetworkOff,
+      bool expand,
       DateTime? popToSignIn,
       SpaceInfo? selectedSpace,
       String spaceInvitationCode,
@@ -82,6 +84,7 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
     Object? locationEnabled = null,
     Object? isSessionExpired = null,
     Object? isNetworkOff = null,
+    Object? expand = null,
     Object? popToSignIn = freezed,
     Object? selectedSpace = freezed,
     Object? spaceInvitationCode = null,
@@ -121,6 +124,10 @@ class _$HomeViewStateCopyWithImpl<$Res, $Val extends HomeViewState>
       isNetworkOff: null == isNetworkOff
           ? _value.isNetworkOff
           : isNetworkOff // ignore: cast_nullable_to_non_nullable
+              as bool,
+      expand: null == expand
+          ? _value.expand
+          : expand // ignore: cast_nullable_to_non_nullable
               as bool,
       popToSignIn: freezed == popToSignIn
           ? _value.popToSignIn
@@ -176,6 +183,7 @@ abstract class _$$HomeViewStateImplCopyWith<$Res>
       bool locationEnabled,
       bool isSessionExpired,
       bool isNetworkOff,
+      bool expand,
       DateTime? popToSignIn,
       SpaceInfo? selectedSpace,
       String spaceInvitationCode,
@@ -206,6 +214,7 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
     Object? locationEnabled = null,
     Object? isSessionExpired = null,
     Object? isNetworkOff = null,
+    Object? expand = null,
     Object? popToSignIn = freezed,
     Object? selectedSpace = freezed,
     Object? spaceInvitationCode = null,
@@ -246,6 +255,10 @@ class __$$HomeViewStateImplCopyWithImpl<$Res>
           ? _value.isNetworkOff
           : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
+      expand: null == expand
+          ? _value.expand
+          : expand // ignore: cast_nullable_to_non_nullable
+              as bool,
       popToSignIn: freezed == popToSignIn
           ? _value.popToSignIn
           : popToSignIn // ignore: cast_nullable_to_non_nullable
@@ -285,6 +298,7 @@ class _$HomeViewStateImpl
       this.locationEnabled = true,
       this.isSessionExpired = false,
       this.isNetworkOff = false,
+      this.expand = false,
       this.popToSignIn,
       this.selectedSpace,
       this.spaceInvitationCode = '',
@@ -318,6 +332,9 @@ class _$HomeViewStateImpl
   @JsonKey()
   final bool isNetworkOff;
   @override
+  @JsonKey()
+  final bool expand;
+  @override
   final DateTime? popToSignIn;
   @override
   final SpaceInfo? selectedSpace;
@@ -340,7 +357,7 @@ class _$HomeViewStateImpl
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'HomeViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, enablingLocation: $enablingLocation, locationEnabled: $locationEnabled, isSessionExpired: $isSessionExpired, isNetworkOff: $isNetworkOff, popToSignIn: $popToSignIn, selectedSpace: $selectedSpace, spaceInvitationCode: $spaceInvitationCode, spaceList: $spaceList, error: $error, showBatteryDialog: $showBatteryDialog)';
+    return 'HomeViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, enablingLocation: $enablingLocation, locationEnabled: $locationEnabled, isSessionExpired: $isSessionExpired, isNetworkOff: $isNetworkOff, expand: $expand, popToSignIn: $popToSignIn, selectedSpace: $selectedSpace, spaceInvitationCode: $spaceInvitationCode, spaceList: $spaceList, error: $error, showBatteryDialog: $showBatteryDialog)';
   }
 
   @override
@@ -356,6 +373,7 @@ class _$HomeViewStateImpl
       ..add(DiagnosticsProperty('locationEnabled', locationEnabled))
       ..add(DiagnosticsProperty('isSessionExpired', isSessionExpired))
       ..add(DiagnosticsProperty('isNetworkOff', isNetworkOff))
+      ..add(DiagnosticsProperty('expand', expand))
       ..add(DiagnosticsProperty('popToSignIn', popToSignIn))
       ..add(DiagnosticsProperty('selectedSpace', selectedSpace))
       ..add(DiagnosticsProperty('spaceInvitationCode', spaceInvitationCode))
@@ -384,6 +402,7 @@ class _$HomeViewStateImpl
                 other.isSessionExpired == isSessionExpired) &&
             (identical(other.isNetworkOff, isNetworkOff) ||
                 other.isNetworkOff == isNetworkOff) &&
+            (identical(other.expand, expand) || other.expand == expand) &&
             (identical(other.popToSignIn, popToSignIn) ||
                 other.popToSignIn == popToSignIn) &&
             (identical(other.selectedSpace, selectedSpace) ||
@@ -408,6 +427,7 @@ class _$HomeViewStateImpl
       locationEnabled,
       isSessionExpired,
       isNetworkOff,
+      expand,
       popToSignIn,
       selectedSpace,
       spaceInvitationCode,
@@ -432,6 +452,7 @@ abstract class _HomeViewState implements HomeViewState {
       final bool locationEnabled,
       final bool isSessionExpired,
       final bool isNetworkOff,
+      final bool expand,
       final DateTime? popToSignIn,
       final SpaceInfo? selectedSpace,
       final String spaceInvitationCode,
@@ -455,6 +476,8 @@ abstract class _HomeViewState implements HomeViewState {
   bool get isSessionExpired;
   @override
   bool get isNetworkOff;
+  @override
+  bool get expand;
   @override
   DateTime? get popToSignIn;
   @override

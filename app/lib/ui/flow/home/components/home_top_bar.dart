@@ -15,12 +15,14 @@ class HomeTopBar extends StatefulWidget {
   final void Function(SpaceInfo) onSpaceItemTap;
   final void Function() onAddMemberTap;
   final void Function() onToggleLocation;
+  final void Function(bool) onExpandChanged;
   final List<SpaceInfo> spaces;
   final SpaceInfo? selectedSpace;
   final bool loading;
   final bool fetchingInviteCode;
   final bool locationEnabled;
   final bool enablingLocation;
+  final bool expand;
 
   const HomeTopBar({
     super.key,
@@ -28,11 +30,13 @@ class HomeTopBar extends StatefulWidget {
     required this.onSpaceItemTap,
     required this.onAddMemberTap,
     required this.onToggleLocation,
+    required this.onExpandChanged,
     required this.selectedSpace,
     this.loading = false,
     this.fetchingInviteCode = false,
     required this.locationEnabled,
     required this.enablingLocation,
+    required this.expand,
   });
 
   @override
@@ -40,8 +44,6 @@ class HomeTopBar extends StatefulWidget {
 }
 
 class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
-  bool expand = false;
-
   late AnimationController _animationController;
   late Animation<double> _animation;
   late AnimationController _buttonController;
@@ -74,7 +76,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   }
 
   void performAnimation() {
-    if (expand) {
+    if (!widget.expand) {
       _animationController.forward();
     } else {
       _animationController.reverse(from: 1.0).orCancel;
@@ -82,7 +84,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   }
 
   void performArrowButtonAnimation() {
-    if (expand) {
+    if (widget.expand) {
       _buttonController.reverse(from: 0.5);
     } else {
       _buttonController.forward(from: 0.0);
@@ -117,7 +119,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                       _iconButton(
                           context: context,
                           icon: Assets.images.icSetting,
-                          visibility: !expand,
+                          visibility: !widget.expand,
                           onTap: () {
                             AppRoute.setting.push(context);
                           }),
@@ -133,7 +135,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                         _iconButton(
                           context: context,
                           icon: Assets.images.icMessage,
-                          visibility: !expand,
+                          visibility: !widget.expand,
                           onTap: () {
                             if (widget.selectedSpace != null) {
                               AppRoute.message(widget.selectedSpace!)
@@ -141,21 +143,21 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                             }
                           },
                         ),
-                        SizedBox(width: expand ? 0 : 8),
+                        SizedBox(width: widget.expand ? 0 : 8),
                       ],
                       _iconButton(
                         context: context,
                         icon: widget.locationEnabled
                             ? Assets.images.icLocation
                             : Assets.images.icLocationOff,
-                        visibility: !expand,
+                        visibility: !widget.expand,
                         progress: widget.enablingLocation,
                         onTap: () => widget.onToggleLocation(),
                       ),
                       _iconButton(
                         context: context,
                         icon: Assets.images.icAddMember,
-                        visibility: expand,
+                        visibility: widget.expand,
                         color: context.colorScheme.textPrimary,
                         onTap: () {
                           if (widget.selectedSpace != null) {
@@ -183,7 +185,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
       child: GestureDetector(
         onTap: () {
           setState(() {
-            expand = !expand;
+            widget.onExpandChanged(!widget.expand);
             performAnimation();
             performArrowButtonAnimation();
           });
@@ -306,7 +308,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
       onTap: () {
         setState(() {
           widget.onSpaceItemTap(space);
-          expand = false;
+          widget.onExpandChanged(!widget.expand);
           performAnimation();
           performArrowButtonAnimation();
         });

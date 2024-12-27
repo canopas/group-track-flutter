@@ -29,8 +29,9 @@ const placeSize = 80.0;
 
 class MapScreen extends ConsumerStatefulWidget {
   final SpaceInfo? space;
+  final void Function(bool) onExpandChanged;
 
-  const MapScreen({super.key, this.space});
+  const MapScreen({super.key, this.space, required this.onExpandChanged});
 
   @override
   ConsumerState<MapScreen> createState() => _MapScreenState();
@@ -68,6 +69,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             child: GoogleMap(
               onMapCreated: (controller) {
                 notifier.onMapCreated(controller);
+              },
+              onTap: (_) {
+                widget.onExpandChanged(false);
               },
               initialCameraPosition: state.defaultPosition,
               style: _mapStyle,

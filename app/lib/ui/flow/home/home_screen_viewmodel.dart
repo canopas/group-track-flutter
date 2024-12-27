@@ -326,6 +326,10 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     return isNetworkOff;
   }
 
+  void updateExpandState(bool expand) {
+    state = state.copyWith(expand: expand);
+  }
+
   @override
   void dispose() {
     _cancelSubscriptions();
@@ -344,6 +348,7 @@ class HomeViewState with _$HomeViewState {
     @Default(true) bool locationEnabled,
     @Default(false) bool isSessionExpired,
     @Default(false) bool isNetworkOff,
+    @Default(false) bool expand,
     DateTime? popToSignIn,
     SpaceInfo? selectedSpace,
     @Default('') String spaceInvitationCode,
