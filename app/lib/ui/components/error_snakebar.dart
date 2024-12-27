@@ -1,12 +1,15 @@
 import 'dart:io';
 
+import 'package:data/network/error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 
 void showErrorSnackBar(BuildContext context, Object error) {
   HapticFeedback.mediumImpact();
-  showSnackBar(context, error.toString(), length: SnackBarLength.long);
+  final message = ApiError.fromError(error).l10nMessage(context);
+  showSnackBar(context, message, length: SnackBarLength.long);
 }
 
 void showSnackBar(

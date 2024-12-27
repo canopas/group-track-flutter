@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/message/message_models.dart';
+import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
@@ -9,27 +10,27 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:style/text/app_text_field.dart';
+import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/profile_picture.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_view_model.dart';
+import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
 
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../components/no_internet_screen.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  final String? spaceId;
-  final String? spaceName;
   final String? threadId;
+  final ApiSpace? space;
   final List<ApiThreadMessage>? threadMessages;
-  final List<ThreadInfo>? threadInfoList;
+  final List<ApiThread>? threadInfoList;
 
   const ChatScreen({
     super.key,
-    this.spaceId,
-    this.spaceName,
+    this.space,
     this.threadMessages,
     this.threadId,
     this.threadInfoList,
@@ -46,11 +47,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void initState() {
     super.initState();
     runPostFrame(() {
-      notifier.setData(
-        spaceId: widget.spaceId ?? '',
+      notifier.init(
+        space: widget.space,
         threadId: widget.threadId ?? '',
-        show: widget.threadId == null,
-        threadInfoList: widget.threadInfoList ?? [],
+        showMemberSelectionView: widget.threadId == null,
+        threads: widget.threadInfoList ?? [],
       );
     });
   }
@@ -61,15 +62,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final state = ref.watch(chatViewStateProvider(widget.threadId ?? ''));
     _observeError();
 
-    if (widget.threadId != null) {
-      notifier.markMessageAsSeen(
-          widget.threadId ?? '', widget.threadMessages ?? state.messages);
-    }
+    // if (widget.threadId != null) {
+    //   notifier.markMessageAsSeen(
+    //       widget.threadId ?? '', widget.threadMessages ?? state.messages);
+    // }
 
     return AppPage(
-      title: state.threadInfo == null && widget.threadId == null
-          ? context.l10n.chat_start_new_chat_title
-          : state.title,
+      title: _formattedChatTitle(context, state),
       body: _body(context, state),
     );
   }
@@ -77,15 +76,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget _body(BuildContext context, ChatViewState state) {
     if (state.isNetworkOff) {
       return NoInternetScreen(onPressed: () {
-        notifier.setData(
-          spaceId: widget.spaceId ?? '',
+        notifier.init(
+          space: widget.space,
           threadId: widget.threadId ?? '',
-          show: widget.threadId == null,
-          threadInfoList: widget.threadInfoList ?? [],
+          showMemberSelectionView: widget.threadId == null,
+          threads: widget.threadInfoList ?? [],
         );
       });
     }
-    if ((widget.threadId != null) && state.sender.isEmpty) {
+    if (state.loading && state.messages.isEmpty) {
       return const Center(child: AppProgressIndicator());
     }
     return SafeArea(
@@ -102,7 +101,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     state.loadingMessages,
                     state.threadId,
                     state.currentUserId,
-                    state.threadInfo)),
+                    state.thread)),
             const SizedBox(height: 100),
           ],
         ),
@@ -118,7 +117,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       bool loadingMessage,
       String threadId,
       String currentUserId,
-      ThreadInfo? threadInfo) {
+      ApiThread? threadInfo) {
     if (sender == null && sender!.isEmpty) {
       return const AppProgressIndicator();
     }
@@ -133,8 +132,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               size: AppProgressIndicatorSize.small);
         }
         if (index == messages.length - 1) {
-          runPostFrame(() => notifier.onLoadMore(
-              widget.threadId == null ? threadId : widget.threadId ?? ''));
+          // runPostFrame(() => notifier.onLoadMore(
+          //     widget.threadId == null ? threadId : widget.threadId ?? ''));
         }
 
         final message = messages[index];
@@ -147,17 +146,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 .user
             : null;
 
-        final seenBy = threadInfo?.members
-            .where((member) =>
-                message.seen_by.contains(member.user.id) &&
-                member.user.id != currentUserId)
-            .toList();
+        final seenBy = [];
+        // threadInfo?.members
+        //     .where((member) =>
+        //         message.seen_by.contains(member.user.id) &&
+        //         member.user.id != currentUserId)
+        //     .toList();
 
-        final showSeenText = notifier.isSender(message) &&
+        final showSeenText =
+            false; /*notifier.isSender(message) &&
                 (seenBy?.isNotEmpty ?? false) &&
                 message.id == messages.first.id
             ? true
-            : false;
+            : false;*/
 
         if (messages.isEmpty) {
           return const AppProgressIndicator();
@@ -443,7 +444,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               const SizedBox(height: 8),
               Flexible(
                 child: Text(
-                  widget.spaceName ?? '',
+                  widget.space?.name ?? '',
                   style: AppTextStyle.caption
                       .copyWith(color: context.colorScheme.textPrimary),
                   overflow: TextOverflow.ellipsis,
@@ -531,12 +532,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             onTap: () {
               _checkUserInternet(() {
                 if (state.message.text.trim().isNotEmpty) {
-                  if (state.threadInfo != null || widget.threadId != null) {
-                    notifier.sendMessage(
-                        state.threadId.isEmpty
-                            ? widget.threadId ?? ''
-                            : state.threadId,
-                        state.message.text);
+                  if (state.thread != null || widget.threadId != null) {
+                    // notifier.sendMessage(
+                    //     state.threadId.isEmpty
+                    //         ? widget.threadId ?? ''
+                    //         : state.threadId,
+                    //     state.message.text);
                   } else {
                     notifier.createNewThread(state.message.text);
                   }
@@ -598,7 +599,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         chatViewStateProvider(widget.threadId ?? '')
             .select((state) => state.error), (previous, next) {
       if (next != null) {
-        showErrorSnackBar(context, next.toString());
+        showErrorSnackBar(context, next.l10nMessage(context));
       }
     });
   }
@@ -612,4 +613,44 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     notifier.cancelMessageSubscription();
     showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
+
+  String _formattedChatTitle(BuildContext context, ChatViewState state) {
+    if (state.spaceInfo?.space != null) {
+      return widget.space?.name ?? '';
+    }
+
+    final members = state.thread?.member_ids
+            .where((id) => id != notifier.currentUser?.id)
+            .map((id) => state.members[id])
+            .whereType<ApiUser>()
+            .toList() ??
+        [];
+
+    if (members.isEmpty) {
+      return context.l10n.chat_start_new_chat_title;
+    }
+
+    return members.map((e) => e.first_name ?? '').toList().getFormattedNames();
+  }
+
+/* void _formatMemberNames(List<ApiUserInfo>? members) {
+    final filteredMembers = members ?? [];
+    // state.threadInfo!.members
+    //     .where((member) => member.user.id != state.currentUserId)
+    //     .toList();
+    state = state.copyWith(title: '');
+    if (filteredMembers.length > 2) {
+      state = state.copyWith(
+          title:
+              '${filteredMembers[0].user.first_name}, ${filteredMembers[1].user.first_name} +${filteredMembers.length - 2}');
+    } else if (filteredMembers.length == 2) {
+      state = state.copyWith(
+          title:
+              '${filteredMembers[0].user.first_name}, ${filteredMembers[1].user.first_name}');
+    } else if (filteredMembers.length == 1) {
+      state = state.copyWith(title: filteredMembers[0].user.first_name ?? '');
+    } else {
+      state = state.copyWith(title: 'Start a new chat');
+    }
+  }*/
 }

@@ -38,6 +38,11 @@
   "on_internet_error_title": "No Internet!",
   "on_internet_error_sub_title": "No Internet Connection. Please check your network settings and try again.",
 
+  "@_ERROR": {
+  },
+  "errorNoConnection": "No internet connection detected.",
+  "errorGeneric": "Something went wrong. Please try again.",
+
    "@_INTRO": {
    },
   "intro_1_title": "Live location",

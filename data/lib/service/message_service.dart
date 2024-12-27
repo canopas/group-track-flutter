@@ -45,13 +45,8 @@ class MessageService {
     return messageService.getThreads(spaceId, currentUser?.id ?? '');
   }
 
-  Future<ThreadInfo?> getThreadInfo(String threadId) async {
-    final thread = await messageService.getThread(threadId).first;
-    final membersFutures = thread.member_ids.map((memberId) => userService.getUser(memberId));
-    final messages = await getMessages(threadId, DateTime.now());
-    final members = await Future.wait(membersFutures);
-    final userInfo = members.whereType<ApiUser>().map((user) => ApiUserInfo(user: user, isLocationEnabled: false)).toList();
-    return ThreadInfo(thread: thread, members: userInfo, threadMessage: messages);
+  Future<ApiThread?> getThreadInfo(String threadId) async {
+    return await messageService.getThread(threadId).first;
   }
 
   Future<List<ApiThreadMessage>> getMessages(String threadId, DateTime? from, {int limit = 20}) async {

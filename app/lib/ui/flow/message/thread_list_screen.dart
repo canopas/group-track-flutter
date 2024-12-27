@@ -63,12 +63,8 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
             ? LargeIconButton(
                 onTap: () {
                   AppRoute.chat(
-                          spaceId: widget.spaceInfo.space.id,
-                          spaceName: widget.spaceInfo.space.name,
-                          threadInfoList: state.threads
-                              .map((e) => ThreadInfo(
-                                  thread: e, threadMessage: [], members: []))
-                              .toList())
+                          spaceInfo: widget.spaceInfo,
+                          threads: state.threads)
                       .push(context);
                 },
                 icon: Icon(
@@ -124,16 +120,15 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
             behavior: HitTestBehavior.translucent,
             onTap: () {
               AppRoute.chat(
-                  spaceId: widget.spaceInfo.space.id,
-                  threadId: thread.id,
-                  threadMessage: []).push(context);
+                spaceInfo: widget.spaceInfo,
+                threadId: thread.id,
+              ).push(context);
             },
             child: Column(
               children: [
                 _threadItem(
                   context: context,
                   members: members,
-                  displayedMembers: members.take(2).toList(),
                   message: thread.last_message ?? '',
                   date: thread.last_message_at ?? DateTime.now(),
                   hasUnreadMessage: hasUnreadMessage,
@@ -166,7 +161,6 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
   Widget _threadItem({
     required BuildContext context,
     required List<ApiUser> members,
-    required List<ApiUser> displayedMembers,
     String? message,
     required DateTime date,
     required bool hasUnreadMessage,
@@ -180,9 +174,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
           const SizedBox(width: 16),
           Expanded(
               child: _threadNamesAndMessage(
-                  context: context,
-                  members: members,
-                  message: message)),
+                  context: context, members: members, message: message)),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.center,
