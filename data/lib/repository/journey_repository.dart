@@ -365,10 +365,12 @@ class JourneyRepository {
     LocationData extractedLocation,
     String userId,
   ) async {
-    var lastFiveLocations =
-        locationCache.getLastFiveLocations(userId).take(4).toList();
-    lastFiveLocations.insert(0, extractedLocation);
+    var lastFiveLocations = locationCache.getLastFiveLocations(userId).toList();
 
+    if (lastFiveLocations.length >= 5) {
+      lastFiveLocations.removeAt(0);
+    }
+    lastFiveLocations.add(extractedLocation);
     locationCache.putLastFiveLocations(lastFiveLocations, userId);
   }
 
