@@ -51,9 +51,6 @@ class JourneyRepository {
           lastKnownJourney: lastKnownJourney,
           userId: userId);
 
-      // to get all route position between location a -> b for moving user journey
-      locationCache.addLocation(extractedLocation, userId);
-
       // Check add add extracted location to last five locations to calculate geometric median
       await _checkAndSaveLastFiveLocations(extractedLocation, userId);
 
@@ -83,9 +80,6 @@ class JourneyRepository {
     _steadyLocationTimer = Timer(const Duration(minutes: 5), () async {
       try {
         await _saveSteadyLocation(position, userId);
-        // removing previous journey routes to get latest location route for next journey from start point to end
-        locationCache.clearLocationCache();
-        LocationManager.instance.updateLocationRequest(false);
       } catch (e, stack) {
         logger.e('Error saving steady location for user $userId: $e',
             stackTrace: stack);
@@ -199,8 +193,9 @@ class JourneyRepository {
           lastKnownJourney.toLocationFromMovingJourney());
     }
 
-    final timeDifference = (extractedLocation.timestamp.millisecondsSinceEpoch) -
-        (lastKnownJourney.update_at ?? 0);
+    final timeDifference =
+        (extractedLocation.timestamp.millisecondsSinceEpoch) -
+            (lastKnownJourney.update_at ?? 0);
 
     if (lastKnownJourney.isSteady()) {
       if (distance > MIN_DISTANCE) {
@@ -231,6 +226,8 @@ class JourneyRepository {
       ApiLocationJourney lastKnownJourney,
       double distance,
       int duration) async {
+    final lastFiveLocations = locationCache.getLastFiveLocations(userId);
+
     await journeyService.updateLastLocationJourney(
         userId,
         lastKnownJourney.copyWith(
@@ -242,7 +239,10 @@ class JourneyRepository {
         fromLongitude: lastKnownJourney.from_longitude,
         toLatitude: extractedLocation.latitude,
         toLongitude: extractedLocation.longitude,
-        routes: _getRoute(userId),
+        routes: lastFiveLocations
+            .map((location) => JourneyRoute(
+                latitude: location.latitude, longitude: location.longitude))
+            .toList(),
         routeDistance: distance,
         routeDuration: duration,
         type: JOURNEY_TYPE_MOVING);
@@ -306,6 +306,8 @@ class JourneyRepository {
           ],
     );
 
+    LocationManager.instance.updateLocationRequest(false);
+
     journeyService.updateLastLocationJourney(userId, movingJourney);
 
     // Save journey for steady user and update cache as well:
@@ -317,17 +319,6 @@ class JourneyRepository {
         type: JOURNEY_TYPE_STEADY);
 
     locationCache.putLastJourney(newJourney, userId);
-  }
-
-  List<JourneyRoute> _getRoute(String userId) {
-    var locations = locationCache.getLocations(userId);
-
-    return locations.map((location) {
-      return JourneyRoute(
-        latitude: location.latitude,
-        longitude: location.longitude,
-      );
-    }).toList();
   }
 
   bool _isOnlyOneDayChanged(
@@ -374,7 +365,8 @@ class JourneyRepository {
     LocationData extractedLocation,
     String userId,
   ) async {
-    var lastFiveLocations = locationCache.getLastFiveLocations(userId).take(4).toList();
+    var lastFiveLocations =
+        locationCache.getLastFiveLocations(userId).take(4).toList();
     lastFiveLocations.insert(0, extractedLocation);
 
     locationCache.putLastFiveLocations(lastFiveLocations, userId);
