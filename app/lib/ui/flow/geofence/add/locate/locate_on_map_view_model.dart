@@ -47,13 +47,18 @@ class LocateOnMapVieNotifier extends StateNotifier<LocateOnMapState> {
       final isEnabled = await permissionService.isLocationPermissionGranted();
       if (isEnabled && _currentUser != null) {
         state = state.copyWith(loading: true);
-        final location = await locationService.getCurrentLocation(_currentUser.id);
-        final latLng = LatLng(location!.first.latitude, location.first.longitude);
-        state = state.copyWith(
-          currentLatLng: latLng,
-          centerPosition: CameraPosition(target: latLng, zoom: defaultCameraZoom),
-          loading: false,
-        );
+        final location =
+            await locationService.getCurrentLocation(_currentUser.id);
+        if (location != null) {
+          final latLng =
+              LatLng(location.first.latitude, location.first.longitude);
+          state = state.copyWith(
+            currentLatLng: latLng,
+            centerPosition:
+                CameraPosition(target: latLng, zoom: defaultCameraZoom),
+            loading: false,
+          );
+        }
       }
     } catch (error, stack) {
       logger.e('LocateONMapViewNotifier: Error while fetch user last location',
@@ -79,14 +84,15 @@ class LocateOnMapVieNotifier extends StateNotifier<LocateOnMapState> {
       final members = await spaceService.getMemberBySpaceId(spaceId);
       final memberIds = members.map((member) => member.user_id).toList();
 
-      await placesService.addPlace(
-        spaceId,
-        placeName,
-        state.cameraLatLng!.latitude,
-        state.cameraLatLng!.longitude,
-        _currentUser!.id,
-        memberIds
-      );
+      if (_currentUser != null && state.cameraLatLng != null) {
+        await placesService.addPlace(
+            spaceId,
+            placeName,
+            state.cameraLatLng!.latitude,
+            state.cameraLatLng!.longitude,
+            _currentUser.id,
+            memberIds);
+      }
       state =
           state.copyWith(popToPlaceList: DateTime.now(), addingPlace: false);
     } catch (error, stack) {
