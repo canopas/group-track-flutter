@@ -42,6 +42,19 @@ class LocationService {
     });
   }
 
+  Future<ApiLocation?> getCurrentLocation(String userId) async {
+    var snapshot = await _locationRef(userId)
+        .where("user_id", isEqualTo: userId)
+        .orderBy('created_at', descending: true)
+        .limit(1)
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      return snapshot.docs.map((doc) => doc.data() as ApiLocation).first;
+    }
+    return null;
+  }
+
   Future<void> saveCurrentLocation(
     String userId,
     LocationData locationData,
