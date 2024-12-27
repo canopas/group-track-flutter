@@ -1,6 +1,6 @@
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/log/logger.dart';
-import 'package:data/service/location_manager.dart';
+import 'package:data/service/location_service.dart';
 import 'package:data/service/permission_service.dart';
 import 'package:data/service/place_service.dart';
 import 'package:data/service/space_service.dart';
@@ -17,42 +17,47 @@ final locateOnMapViewStateProvider =
     StateNotifierProvider.autoDispose<LocateOnMapVieNotifier, LocateOnMapState>(
         (ref) {
   return LocateOnMapVieNotifier(
-    ref.read(locationManagerProvider),
     ref.read(permissionServiceProvider),
     ref.read(currentUserPod),
     ref.read(placeServiceProvider),
     ref.read(spaceServiceProvider),
+    ref.read(locationServiceProvider),
   );
 });
 
 class LocateOnMapVieNotifier extends StateNotifier<LocateOnMapState> {
-  final LocationManager locationManager;
   final PermissionService permissionService;
   final ApiUser? _currentUser;
   final PlaceService placesService;
   final SpaceService spaceService;
+  final LocationService locationService;
 
   LocateOnMapVieNotifier(
-    this.locationManager,
     this.permissionService,
     this._currentUser,
     this.placesService,
     this.spaceService,
+    this.locationService,
   ) : super(const LocateOnMapState()) {
     getCurrentUserLocation();
   }
 
   void getCurrentUserLocation() async {
-    final isEnabled = await permissionService.isLocationPermissionGranted();
-    if (isEnabled) {
-      state = state.copyWith(loading: true);
-      final position = await locationManager.getLastLocation();
-      final latLng = LatLng(position!.latitude, position.longitude);
-      state = state.copyWith(
-        currentLatLng: latLng,
-        centerPosition: CameraPosition(target: latLng, zoom: defaultCameraZoom),
-        loading: false,
-      );
+    try {
+      final isEnabled = await permissionService.isLocationPermissionGranted();
+      if (isEnabled && _currentUser != null) {
+        state = state.copyWith(loading: true);
+        final location = await locationService.getCurrentLocation(_currentUser.id);
+        final latLng = LatLng(location!.first.latitude, location.first.longitude);
+        state = state.copyWith(
+          currentLatLng: latLng,
+          centerPosition: CameraPosition(target: latLng, zoom: defaultCameraZoom),
+          loading: false,
+        );
+      }
+    } catch (error, stack) {
+      logger.e('LocateONMapViewNotifier: Error while fetch user last location',
+          error: error, stackTrace: stack);
     }
   }
 
