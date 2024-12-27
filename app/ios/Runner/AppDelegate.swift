@@ -91,7 +91,6 @@ extension AppDelegate {
             (call: FlutterMethodCall, result: @escaping FlutterResult) in
             guard self != nil else { return }
             if call.method == "startTracking" {
-                print("XXX startTracking method invoked")
                 LocationManager.shared.startLocationUpdates()
                 result(true)
             } else if call.method == "stopTracking" {
