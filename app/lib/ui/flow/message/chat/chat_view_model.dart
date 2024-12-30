@@ -15,15 +15,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:style/extenstions/date_extenstions.dart';
 
-import '../../../components/no_internet_screen.dart';
-
 part 'chat_view_model.freezed.dart';
 
 const MAX_PAGE_LIMIT = 20;
 
 final chatViewStateProvider =
-    StateNotifierProvider.family<ChatViewNotifier, ChatViewState, String>(
-        (ref, threadId) {
+    StateNotifierProvider.autoDispose<ChatViewNotifier, ChatViewState>((ref) {
   return ChatViewNotifier(
     ref.read(messageServiceProvider),
     ref.read(apiMessageServiceProvider),
@@ -41,21 +38,13 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   final ApiUser? currentUser;
 
   bool _hasMoreItems = true;
-  bool loadingData = false;
+
   StreamSubscription<List<ApiThreadMessage>>? _messageSubscription;
 
   ChatViewNotifier(this.messageService, this.apiMessageService,
       this.userService, this.spaceService, this.currentUser)
       : super(ChatViewState(
-            message: TextEditingController(),
-            currentUserId: currentUser?.id ?? ''));
-
-  void onChange(String value) {
-    if (value.trim().isEmpty) {
-      state = state.copyWith(message: TextEditingController(text: ''));
-    }
-    state = state.copyWith(allowSend: value.trim().isNotEmpty);
-  }
+            message: TextEditingController(), currentUser: currentUser));
 
   void init({
     ApiSpace? space,
@@ -75,6 +64,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 
   void fetch() async {
     try {
+      _messageSubscription?.cancel();
+
       state = state.copyWith(loading: true, error: null);
       final spaceId = state.space?.id ?? '';
       final space = state.space ??
@@ -85,23 +76,28 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
               ? await messageService.getThread(state.threadId!)
               : null);
 
-      final members = (spaceId.isNotEmpty
+      final members = (spaceId.isNotEmpty && thread == null
           ? await spaceService.getMemberBySpaceId(spaceId)
           : null);
-      final membersIds = members?.map((e) => e.user_id).toList() ?? [];
+
+      final membersIds = thread != null
+          ? thread.member_ids.toList()
+          : members?.map((e) => e.user_id).toList() ?? [];
+
+      membersIds.removeWhere((e) => e == state.currentUser?.id);
+
       final users = await _getUsers(membersIds);
 
       state = state.copyWith(
         space: space,
         thread: thread,
         threadId: thread?.id,
-        showMemberSelectionView: thread?.id.isEmpty ?? true,
         members: users,
         loading: false,
       );
 
-      if (thread?.id.isNotEmpty ?? false) {
-        _listenMessages(thread!.id);
+      if (thread != null) {
+        _listenMessages(thread.id);
       }
     } catch (error, stack) {
       state = state.copyWith(error: error, loading: false);
@@ -116,6 +112,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   Future<Map<String, ApiUser>> _getUsers(
     List<String> memberIds,
   ) async {
+    if (memberIds.isEmpty) return {...state.members};
+
     final userIds = memberIds
         .where((id) => !state.members.containsKey(id))
         .toSet()
@@ -124,34 +122,9 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     final userList = await userService.getUsers(userIds);
     final users =
         userList.groupFoldBy((element) => element.id, (_, element) => element);
-    state = state.copyWith(members: {...state.members, ...users});
 
     return {...state.members, ...users};
   }
-
-  // void _getThreadInfo(String threadId) async {
-  //   try {
-  //     state = state.copyWith(loading: true);
-  //     final thread = await messageService.getThread(threadId);
-  //     //_getThreadMembers(threadInfo!.thread);
-  //     final userList = <ApiUserInfo>[];
-  //     // threadInfo.members
-  //     //     .where(
-  //     //       (user) => user.user.id != currentUser?.id,
-  //     //     )
-  //     //     .toList();
-  //     _formatMemberNames(threadId.isEmpty ? [] : userList);
-  //     state = state.copyWith(thread: thread, threadId: threadId, error: null);
-  //     _listenThread(threadId);
-  //   } catch (error, stack) {
-  //     state = state.copyWith(error: error);
-  //     logger.e(
-  //       "ChatViewNotifier: error while get thread info",
-  //       error: error,
-  //       stackTrace: stack,
-  //     );
-  //   }
-  // }
 
   void _listenMessages(String threadId) async {
     try {
@@ -162,6 +135,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
           .getLatestMessages(threadId, limit: 20)
           .listen((messages) {
         state = state.copyWith(messages: messages);
+        markMessageAsSeen(threadId);
       }, onError: _onError);
     } catch (error, stack) {
       _onError(error, stack);
@@ -169,7 +143,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   }
 
   void _onError(Object error, StackTrace stackTrace) {
-    state = state.copyWith(loading: false, error: error);
+    state = state.copyWith(actionError: error);
     logger.e(
       'ChatViewNotifier: error while listening messages',
       error: error,
@@ -177,107 +151,89 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     );
   }
 
-  // void markMessageAsSeen(
-  //     String threadId, List<ApiThreadMessage> message) async {
-  //   try {
-  //     final unReadMessage = message
-  //         .where((message) => !message.seen_by.contains(currentUser?.id ?? ''))
-  //         .map((message) => message.id)
-  //         .toSet()
-  //         .toList();
-  //
-  //     if (unReadMessage.isNotEmpty) {
-  //       await messageService.markMessageAsSeen(
-  //           threadId, unReadMessage, currentUser?.id ?? '');
-  //       state = state.copyWith(error: null);
-  //     }
-  //   } catch (error, stack) {
-  //     state = state.copyWith(loading: false, error: error);
-  //     logger.e(
-  //       'ChatViewNotifier: error while message mark as read',
-  //       error: error,
-  //       stackTrace: stack,
-  //     );
-  //   }
-  // }
-
-  void _getThreadMembers(ApiThread thread) async {
+  void markMessageAsSeen(String threadId) async {
     try {
-      if (thread.id.isEmpty) return;
-      state = state.copyWith(loading: true);
-      final users = await messageService.getLatestMessageMember(thread);
-      state = state.copyWith(sender: users, loading: false, error: null);
+      var thread = state.thread;
+      if (thread?.seen_by_ids.contains(currentUser?.id) ?? false) return;
+      await messageService.addThreadSeenBy(threadId, currentUser?.id ?? '');
+      print("XXX markMessageAsSeen $threadId");
     } catch (error, stack) {
-      state = state.copyWith(loading: false, error: error);
       logger.e(
-        'ChatViewNotifier: error while get thread',
+        'ChatViewNotifier: error while message mark as read',
         error: error,
         stackTrace: stack,
       );
     }
   }
 
-  // void sendMessage(String threadId, String message) async {
-  //   try {
-  //     if (message.isEmpty) return;
-  //     state = state.copyWith(messageSending: true);
-  //     final newMessage = await messageService.generateMessage(
-  //         threadId: threadId,
-  //         senderId: currentUser?.id ?? '',
-  //         message: message);
-  //     final newMessages = [newMessage, ...state.messages];
-  //     state = state.copyWith(messages: newMessages);
-  //     await messageService.sendMessage(newMessage);
-  //     state = state.copyWith(
-  //       messageSending: false,
-  //       message: TextEditingController(text: ''),
-  //       showMemberSelectionView: false,
-  //       error: null,
-  //     );
-  //   } catch (error, stack) {
-  //     state = state.copyWith(loading: false, error: error);
-  //     logger.e(
-  //       'ChatViewNotifier: error while sending message',
-  //       error: error,
-  //       stackTrace: stack,
-  //     );
-  //   }
-  // }
-
-  void createNewThread(String message) async {
+  void _sendMessage(String threadId, String message) async {
     try {
-      state = state.copyWith(creating: true);
-      _messageSubscription?.cancel();
-      List<String> selectedMembers = [];
-      if (!selectedMembers.contains(currentUser?.id) &&
-          state.selectedMember.isNotEmpty) {
-        selectedMembers.addAll(state.selectedMember);
-        selectedMembers.add(currentUser?.id ?? '');
-      }
-      // List<String>? threadMembersIds = state.selectedMember.isNotEmpty
-      //     ? selectedMembers
-      //     : state.members.map((members) => members.user.id).toList();
-      //
-      // final threadId = await messageService.createThread(
-      //     state.space?.id,
-      //     currentUser?.id ?? '',
-      //     threadMembersIds ?? []);
-      //
-      // state = state.copyWith(
-      //     showMemberSelectionView: false,
-      //     threadId: threadId,
-      //     isNewThread: true);
-      // if (threadId.isNotEmpty) {
-      //   // sendMessage(threadId, message);
-      //   // _getCreatedThread(threadId);
-      // }
-      // state = state.copyWith(
-      //     showMemberSelectionView: false,
-      //     threadId: threadId,
-      //     isNewThread: true,
-      //     error: null);
+      if (message.isEmpty || currentUser == null) return;
+      state = state.copyWith(messageSending: true, actionError: null);
+      final newMessage = await messageService.generateMessage(
+          threadId: threadId,
+          senderId: currentUser?.id ?? '',
+          message: message);
+      final newMessages = [newMessage, ...state.messages];
+      state = state.copyWith(messages: newMessages);
+      await messageService.sendMessage(newMessage);
+      state = state.copyWith(
+        messageSending: false,
+        message: TextEditingController(text: ''),
+        showMemberSelectionView: false,
+        actionError: null,
+      );
     } catch (error, stack) {
-      state = state.copyWith(loading: false, error: error);
+      state = state.copyWith(messageSending: false, actionError: error);
+      logger.e(
+        'ChatViewNotifier: error while sending message',
+        error: error,
+        stackTrace: stack,
+      );
+    }
+  }
+
+  void onMessageChange() {
+    state = state.copyWith(
+        allowSend: state.message.text.isNotEmpty && state.space != null);
+  }
+
+  void sendMessage() {
+    if (state.thread != null) {
+      _sendMessage(state.thread!.id, state.message.text);
+    } else {
+      _createNewThread(state.message.text);
+    }
+  }
+
+  void _createNewThread(String message) async {
+    try {
+      state = state.copyWith(creating: true, actionError: null);
+      _messageSubscription?.cancel();
+      final selectedMembers = state.selectedMember;
+      final threadMembers = selectedMembers.isNotEmpty
+          ? selectedMembers.toList()
+          : state.members.keys.toList();
+      if (threadMembers.isNotEmpty) {
+        threadMembers.add(currentUser?.id ?? '');
+      }
+
+      final threadId = await messageService.createThread(
+          state.space!.id, currentUser?.id ?? '', threadMembers);
+
+      state = state.copyWith(
+          showMemberSelectionView: false,
+          threadId: threadId,
+          members: {},
+          creating: false,
+          isNewThread: true);
+
+      if (threadId.isNotEmpty) {
+        _sendMessage(threadId, message);
+        fetch();
+      }
+    } catch (error, stack) {
+      state = state.copyWith(creating: false, actionError: error);
       logger.e(
         'ChatViewNotifier: error while create new thread',
         error: error,
@@ -286,121 +242,83 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     }
   }
 
-  // void _getCreatedThread(String threadId) async {
-  //   try {
-  //     final thread = await messageService.getThreadInfo(threadId);
-  //     _getThreadMembers(thread!);
-  //     state = state.copyWith(
-  //         thread: thread, /*sender: thread.members,*/ error: null);
-  //     final filteredMembers = /*thread.members
-  //         .where((member) => member.user.id != state.currentUserId)
-  //         .toList();*/
-  //         _formatMemberNames([]);
-  //   } catch (error, stack) {
-  //     logger.e('ChatViewNotifier: error while get threads',
-  //         error: error, stackTrace: stack);
-  //   }
-  // }
+  void _selectExistingThread() {
+    final userList = state.members.values.toList().map((e) => e.id).toList();
+    final List<String> selectedMembers = List.from(
+        state.selectedMember.isEmpty ? userList : state.selectedMember);
+    selectedMembers.add(currentUser?.id ?? '');
 
-  // void _selectExistingThread() {
-  //   final userList = state.users.map((e) => e.user.id).toList();
-  //   final List<String> selectedMembers = List.from(
-  //       state.selectedMember.isEmpty ? userList : state.selectedMember);
-  //   selectedMembers.add(currentUser?.id ?? '');
-  //
-  //   final List<List<String>> threadMembers = state.threadList
-  //       .map((threads) =>
-  //           threads.members.map((e) => e.user.id.toString()).toList())
-  //       .toList();
-  //
-  //   bool hasMatchingThread = threadMembers.any((threadMember) =>
-  //       _listsContainSameMembers(selectedMembers, threadMember));
-  //   if (hasMatchingThread) {
-  //     final matchingThreads = state.threadList.where((thread) {
-  //       final List<String> threadMemberIds =
-  //           thread.members.map((member) => member.user.id.toString()).toList();
-  //       return _listsContainSameMembers(selectedMembers, threadMemberIds);
-  //     }).toList();
-  //     if (matchingThreads.isNotEmpty) {
-  //       ThreadInfo matchedThread = matchingThreads.first;
-  //       _listenThread(matchedThread.thread.id);
-  //       _getThreadMembers(matchedThread.thread);
-  //       _formatMemberNames(matchedThread.members);
-  //       state = state.copyWith(
-  //         threadId: matchedThread.thread.id,
-  //         thread: matchedThread.thread,
-  //         sender: matchedThread.members,
-  //       );
-  //     }
-  //   } else {
-  //     state = state.copyWith(
-  //       sender: [],
-  //       messages: [],
-  //       isNewThread: true,
-  //       threadId: '',
-  //       thread: null,
-  //     );
-  //   }
-  // }
-  //
-  // bool _listsContainSameMembers(List<String> list1, List<String> list2) {
-  //   if (list1.length != list2.length) return false;
-  //   final set1 = Set<String>.from(list1);
-  //   final set2 = Set<String>.from(list2);
-  //   return set1.containsAll(set2) && set2.containsAll(set1);
-  // }
-  //
-  // void onLoadMore(String threadId) {
-  //   if (!_hasMoreItems || loadingData) return;
-  //   _loadMoreMessages(threadId, true);
-  // }
+    final List<List<String>> threadMembers =
+        state.threads.map((threads) => threads.member_ids.toList()).toList();
 
-  // void _loadMoreMessages(String threadId, bool append) async {
-  //   try {
-  //     if ((loadingData) && threadId.isEmpty) return;
-  //     state = state.copyWith(loadingMessages: state.messages.isEmpty);
-  //     loadingData = true;
-  //     final minMessage = state.messages
-  //         .reduce((a, b) => a.createdAtMs < b.createdAtMs ? a : b);
-  //     final newMessages = await messageService
-  //         .getMessages(threadId, minMessage.created_at, limit: MAX_PAGE_LIMIT);
-  //     _hasMoreItems = newMessages.length == MAX_PAGE_LIMIT;
-  //     final allMessages = state.messages;
-  //     final messages = append ? [...allMessages, ...newMessages] : allMessages;
-  //     state = state.copyWith(
-  //         messages: messages, loadingMessages: false, error: null);
-  //     loadingData = false;
-  //   } catch (error, stack) {
-  //     logger.e(
-  //       'ChatViewNotifier: error while load more chats',
-  //       error: error,
-  //       stackTrace: stack,
-  //     );
-  //   }
-  // }
+    bool hasMatchingThread = threadMembers.any((threadMember) =>
+        _listsContainSameMembers(selectedMembers, threadMember));
 
-  bool isSender(ApiThreadMessage message) {
-    return message.sender_id != currentUser?.id;
+    if (hasMatchingThread) {
+      final matchingThreads = state.threads.where((thread) {
+        final List<String> threadMemberIds = thread.member_ids.toList();
+        return _listsContainSameMembers(selectedMembers, threadMemberIds);
+      }).toList();
+
+      if (matchingThreads.isNotEmpty) {
+        ApiThread matchedThread = matchingThreads.first;
+        state = state.copyWith(
+          threadId: matchedThread.id,
+          thread: matchedThread,
+        );
+        fetch();
+      }
+    } else {
+      _messageSubscription?.cancel();
+      state = state.copyWith(
+        messages: [],
+        isNewThread: true,
+        threadId: '',
+        thread: null,
+      );
+    }
   }
 
-  void _formatMemberNames(List<ApiUserInfo>? members) {
-    final filteredMembers = members ?? [];
-    // state.threadInfo!.members
-    //     .where((member) => member.user.id != state.currentUserId)
-    //     .toList();
-    state = state.copyWith(title: '');
-    if (filteredMembers.length > 2) {
-      state = state.copyWith(
-          title:
-              '${filteredMembers[0].user.first_name}, ${filteredMembers[1].user.first_name} +${filteredMembers.length - 2}');
-    } else if (filteredMembers.length == 2) {
-      state = state.copyWith(
-          title:
-              '${filteredMembers[0].user.first_name}, ${filteredMembers[1].user.first_name}');
-    } else if (filteredMembers.length == 1) {
-      state = state.copyWith(title: filteredMembers[0].user.first_name ?? '');
-    } else {
-      state = state.copyWith(title: 'Start a new chat');
+  bool _listsContainSameMembers(List<String> list1, List<String> list2) {
+    if (list1.length != list2.length) return false;
+    final set1 = Set<String>.from(list1);
+    final set2 = Set<String>.from(list2);
+    return set1.containsAll(set2) && set2.containsAll(set1);
+  }
+
+  void onLoadMore() {
+    if (!_hasMoreItems || state.loadingMoreMessages || state.thread == null) {
+      return;
+    }
+    _loadMoreMessages();
+  }
+
+  void _loadMoreMessages() async {
+    try {
+      if (state.loadingMoreMessages || state.thread == null) return;
+
+      final threadId = state.thread!.id;
+      state = state.copyWith(loadingMoreMessages: true, actionError: null);
+
+      final minMessage = state.messages
+          .reduce((a, b) => a.createdAtMs < b.createdAtMs ? a : b);
+
+      final newMessages = await messageService
+          .getMessages(threadId, minMessage.created_at, limit: MAX_PAGE_LIMIT);
+
+      _hasMoreItems = newMessages.length == MAX_PAGE_LIMIT;
+
+      final messages = [...state.messages, ...newMessages];
+
+      state = state.copyWith(messages: messages, loadingMoreMessages: false);
+    } catch (error, stack) {
+      state = state.copyWith(loadingMoreMessages: false, actionError: error);
+
+      logger.e(
+        'ChatViewNotifier: error while load more chats',
+        error: error,
+        stackTrace: stack,
+      );
     }
   }
 
@@ -453,7 +371,8 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     return isDifferentTime || isDifferentSender;
   }
 
-  void toggleMemberSelection(String memberId) {
+  void toggleMemberSelection(String? memberId) {
+    if (memberId == null) return;
     final List<String> selectedMembers = [...state.selectedMember];
 
     if (selectedMembers.contains(memberId)) {
@@ -463,12 +382,18 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
     }
 
     state = state.copyWith(selectedMember: selectedMembers);
-    // _selectExistingThread();
+    _selectExistingThread();
   }
 
   void clearSelection() {
     state = state.copyWith(selectedMember: []);
-    //_selectExistingThread();
+    _selectExistingThread();
+  }
+
+  @override
+  void dispose() {
+    _messageSubscription?.cancel();
+    super.dispose();
   }
 }
 
@@ -477,18 +402,15 @@ class ChatViewState with _$ChatViewState {
   const factory ChatViewState({
     @Default(false) bool loading,
     @Default(false) bool creating,
-    @Default(false) bool loadingMessages,
+    @Default(false) bool loadingMoreMessages,
     @Default(false) bool messageSending,
     @Default(false) bool allowSend,
     @Default(false) bool showMemberSelectionView,
     @Default(false) bool isNewThread,
     @Default(false) bool isNetworkOff,
-    @Default([]) List<ApiUserInfo> users,
     String? threadId,
-    @Default('') String title,
     required TextEditingController message,
     @Default([]) List<ApiThreadMessage> messages,
-    @Default([]) List<ApiUserInfo> sender,
     @Default([]) List<String> selectedMember,
     Object? error,
     Object? actionError,
@@ -497,6 +419,5 @@ class ChatViewState with _$ChatViewState {
     @Default({}) Map<String, ApiUser> members,
     ApiUser? currentUser,
     @Default([]) List<ApiThread> threads,
-    required String currentUserId,
   }) = _ChatViewState;
 }

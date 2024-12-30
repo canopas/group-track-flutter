@@ -139,16 +139,10 @@ class ApiMessageService {
     await threadMessageRef(message.thread_id).doc(message.id).set(message);
   }
 
-  Future<void> markMessagesAsSeen(
-      String threadId, List<String> messageIds, String userId) async {
-    final batch = _db.batch();
-    for (final id in messageIds) {
-      final doc = threadMessageRef(threadId).doc(id);
-      batch.update(doc, {
-        "seen_by": FieldValue.arrayUnion([userId]),
-      });
-    }
-    await batch.commit();
+  Future<void> addThreadSeenBy(String threadId, String userId) async {
+    await _spaceThreadRef.doc(threadId).update({
+      "seen_by_ids": FieldValue.arrayUnion([userId]),
+    });
   }
 
   Stream<List<ThreadInfo>> getThreadsWithMembers(

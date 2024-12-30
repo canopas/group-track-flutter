@@ -107,7 +107,7 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
             .toList();
 
         final hasUnreadMessage = threads.any((message) =>
-            !message.seen_by_ids.contains(notifier.currentUser?.id));
+            !thread.seen_by_ids.contains(notifier.currentUser?.id));
 
         return Slidable(
           endActionPane: ActionPane(

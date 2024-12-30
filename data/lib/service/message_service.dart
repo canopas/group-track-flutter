@@ -61,7 +61,8 @@ class MessageService {
     return messageService.getLatestMessagesMembers(thread);
   }
 
-  Future<void> markMessageAsSeen(String threadId, List<String> messageIds, String userId) async {
-    messageService.markMessagesAsSeen(threadId, messageIds, userId);
+  Future<void> addThreadSeenBy(String threadId, String userId) async {
+    messageService.addThreadSeenBy(threadId, userId);
   }
+
  }
