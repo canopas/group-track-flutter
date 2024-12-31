@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/message/message_models.dart';
 import 'package:data/api/space/space_models.dart';
@@ -139,13 +138,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             : null;
         final isSender = message.sender_id != state.currentUser?.id;
 
-        final seenBy = (state.thread?.seen_by_ids
-                    .where((e) => e != state.currentUser?.id) ??
-                [])
+        final seenBy = (state.thread?.seen_by_ids ?? [])
             .map((id) => members.firstWhereOrNull((m) => m.id == id))
             .whereType<ApiUser>()
             .toList();
 
+        //print('seenBy: ${seenBy.length} seen_by_ids ${state.thread?.seen_by_ids} currentUser ${state.currentUser?.id}');
         final isSenderLatestMsg = message.sender_id == state.currentUser?.id &&
             message.id == messages.first.id;
 

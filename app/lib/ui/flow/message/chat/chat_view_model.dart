@@ -40,6 +40,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   bool _hasMoreItems = true;
 
   StreamSubscription<List<ApiThreadMessage>>? _messageSubscription;
+  StreamSubscription<ApiThread?>? _threadSubscription;
 
   ChatViewNotifier(this.messageService, this.apiMessageService,
       this.userService, this.spaceService, this.currentUser)
@@ -65,6 +66,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
   void fetch() async {
     try {
       _messageSubscription?.cancel();
+      _threadSubscription?.cancel();
 
       state = state.copyWith(loading: true, error: null);
       final spaceId = state.space?.id ?? '';
@@ -98,6 +100,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 
       if (thread != null) {
         _listenMessages(thread.id);
+        _listenThread(thread.id);
       }
     } catch (error, stack) {
       state = state.copyWith(error: error, loading: false);
@@ -124,6 +127,20 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
         userList.groupFoldBy((element) => element.id, (_, element) => element);
 
     return {...state.members, ...users};
+  }
+
+  void _listenThread(String threadId) async {
+    try {
+      if (threadId.isEmpty) return;
+
+      _threadSubscription?.cancel();
+      _threadSubscription =
+          messageService.streamThread(threadId).listen((thread) {
+        state = state.copyWith(thread: thread);
+      }, onError: _onError);
+    } catch (error, stack) {
+      _onError(error, stack);
+    }
   }
 
   void _listenMessages(String threadId) async {
@@ -153,10 +170,13 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 
   void markMessageAsSeen(String threadId) async {
     try {
+      await Future.delayed(const Duration(seconds: 2));
       var thread = state.thread;
-      if (thread?.seen_by_ids.contains(currentUser?.id) ?? false) return;
+      if (thread == null) return;
+      if (thread.seen_by_ids.contains(currentUser?.id)) {
+        return;
+      }
       await messageService.addThreadSeenBy(threadId, currentUser?.id ?? '');
-      print("XXX markMessageAsSeen $threadId");
     } catch (error, stack) {
       logger.e(
         'ChatViewNotifier: error while message mark as read',
@@ -175,13 +195,15 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
           senderId: currentUser?.id ?? '',
           message: message);
       final newMessages = [newMessage, ...state.messages];
-      state = state.copyWith(messages: newMessages);
+      state = state.copyWith(
+          messages: newMessages,
+          message: TextEditingController(text: ''),
+          actionError: null,
+          showMemberSelectionView: false,
+          thread: state.thread?.copyWith(seen_by_ids: []));
       await messageService.sendMessage(newMessage);
       state = state.copyWith(
         messageSending: false,
-        message: TextEditingController(text: ''),
-        showMemberSelectionView: false,
-        actionError: null,
       );
     } catch (error, stack) {
       state = state.copyWith(messageSending: false, actionError: error);
@@ -392,6 +414,7 @@ class ChatViewNotifier extends StateNotifier<ChatViewState> {
 
   @override
   void dispose() {
+    _threadSubscription?.cancel();
     _messageSubscription?.cancel();
     super.dispose();
   }

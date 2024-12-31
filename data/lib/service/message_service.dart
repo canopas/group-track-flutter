@@ -49,6 +49,10 @@ class MessageService {
     return await messageService.getThread(threadId).first;
   }
 
+  Stream<ApiThread?> streamThread(String threadId)  {
+    return messageService.getThread(threadId);
+  }
+
   Future<List<ApiThreadMessage>> getMessages(String threadId, DateTime? from, {int limit = 20}) async {
     return messageService.getMessages(threadId, from, limit: limit);
   }
