@@ -14,7 +14,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     private var manager: CLLocationManager
     private var trackingInvoked: Bool = false
-    private let distanceThreshold: CLLocationDistance = 10.0
+    private let distanceThreshold: CLLocationDistance = 100.0
     
     @Published var lastLocation = CLLocation()
   
@@ -23,7 +23,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         super.init()
         manager.delegate = self
         manager.distanceFilter = distanceThreshold
-        manager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         manager.allowsBackgroundLocationUpdates = true
         manager.pausesLocationUpdatesAutomatically = false
     }
@@ -55,15 +55,11 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last else { return }
         
-        guard currentLocation.horizontalAccuracy >= 0,
-              currentLocation.horizontalAccuracy <= 20 else {
-            return // Ignore updates with poor accuracy
-        }
-        
         let distance = lastLocation.distance(from: currentLocation)
         let timeInterval = currentLocation.timestamp.timeIntervalSince(lastLocation.timestamp)
 
-        if (distance >= distanceThreshold && timeInterval >= 10) || !isValid(lastLocation) {
+        if (distance >= (currentLocation.horizontalAccuracy * 0.5) &&
+        distance >= distanceThreshold && timeInterval >= 10) || !isValid(lastLocation) {
             lastLocation = currentLocation
         }
     }
