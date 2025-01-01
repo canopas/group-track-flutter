@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
+import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/message/api_message_service.dart';
 import 'package:data/api/message/message_models.dart';
@@ -20,6 +22,7 @@ final threadListViewStateProvider = StateNotifierProvider.family<
     spaceId,
     ref.read(spaceServiceProvider),
     ref.read(apiMessageServiceProvider),
+    ref.read(apiUserServiceProvider),
     ref.read(currentUserPod),
   );
 });
@@ -28,10 +31,13 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   final String spaceId;
   final SpaceService spaceService;
   final ApiMessageService messageService;
+  final ApiUserService userService;
   final ApiUser? currentUser;
 
-  ThreadListViewNotifier(
-      this.spaceId, this.spaceService, this.messageService, this.currentUser)
+  StreamSubscription<List<ApiThread>>? _streamSubscription;
+
+  ThreadListViewNotifier(this.spaceId, this.spaceService, this.messageService,
+      this.userService, this.currentUser)
       : super(const ThreadListViewState());
 
   void setSpace(SpaceInfo space) async {
@@ -43,63 +49,65 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
   }
 
   void listenThreads(String spaceId) async {
-    try {
-      state = state.copyWith(loading: state.threadInfo.isEmpty);
-      messageService
-          .getThreadsWithMembers(spaceId, currentUser!.id)
-          .listen((threads) {
-        final filteredThreads = _filterArchivedThreads(threads);
+    state = state.copyWith(loading: state.threads.isEmpty);
+    _streamSubscription?.cancel();
+    _streamSubscription = messageService
+        .getThreads(spaceId, currentUser!.id)
+        .listen((threads) async {
+      final filteredThreads = _filterArchivedThreads(threads);
 
-        filteredThreads.sort((a, b) {
-          final aTimestamp = a.threadMessage.isNotEmpty
-              ? a.threadMessage.first.created_at?.millisecondsSinceEpoch ?? 0
-              : 0;
-          final bTimestamp = b.threadMessage.isNotEmpty
-              ? b.threadMessage.first.created_at?.millisecondsSinceEpoch ?? 0
-              : 0;
-          return bTimestamp.compareTo(aTimestamp);
-        });
+      final memberIds = filteredThreads
+          .map((e) => e.member_ids)
+          .expand((element) => element)
+          .toSet()
+          .toList();
+      final members = await _getUsers(memberIds);
 
-        state = state.copyWith(
-            threadInfo: filteredThreads, loading: false, error: null);
-        getMessage();
-      });
-    } catch (error, stack) {
-      logger.e('ChatViewNotifier: error while listing message threads',
-          error: error, stackTrace: stack);
+      state = state.copyWith(
+          threads: filteredThreads,
+          users: members,
+          loading: false,
+          error: null);
+    }, onError: (error) {
       state = state.copyWith(error: error, loading: false);
-    }
+      logger.e(
+        'ThreadListViewModel: Error while observing thread',
+        error: error,
+      );
+    });
   }
 
-  void getMessage() async {
-    try {
-      final List<List<ApiThreadMessage>> newThreadMessages =
-          List.generate(state.threadInfo.length, (_) => []);
+  Future<Map<String, ApiUser>> _getUsers(
+    List<String> memberIds,
+  ) async {
+    final userIds =
+        memberIds.where((id) => !state.users.containsKey(id)).toSet().toList();
 
-      for (int i = 0; i < state.threadInfo.length; i++) {
-        final threads = state.threadInfo[i];
-        final threadMessages =
-            await messageService.getMessages(threads.thread.id, DateTime.now());
-        newThreadMessages[i] = threadMessages;
-      }
-      state = state.copyWith(threadMessages: List.from(newThreadMessages));
-    } catch (error, stack) {
-      logger.e('ChatViewNotifier: error while listening to latest messages',
-          error: error, stackTrace: stack);
-    }
+    final userList = await userService.getUsers(userIds);
+    final users =
+        userList.groupFoldBy((element) => element.id, (_, element) => element);
+    state = state.copyWith(users: {...state.users, ...users});
+
+    return {...state.users, ...users};
   }
 
-  List<ThreadInfo> _filterArchivedThreads(List<ThreadInfo> threads) {
-    return threads.where((info) {
-      final archiveTimestamp = info.thread.archived_for?[currentUser?.id];
+  List<ApiThread> _filterArchivedThreads(List<ApiThread> threads) {
+    final filteredThreads = threads.where((thread) {
+      final archiveTimestamp = thread.archived_for?[currentUser?.id];
       if (archiveTimestamp != null) {
-        final latestMessageTimestamp = info.threadMessage.isNotEmpty
-            ? info.threadMessage.first.created_at?.millisecondsSinceEpoch ?? 0
-            : 0;
+        final latestMessageTimestamp =
+            thread.last_message_at?.millisecondsSinceEpoch ?? 0;
         return archiveTimestamp < latestMessageTimestamp;
       }
       return true;
     }).toList();
+
+    filteredThreads.sort((a, b) {
+      final aTimestamp = a.last_message_at?.millisecondsSinceEpoch ?? 0;
+      final bTimestamp = b.last_message_at?.millisecondsSinceEpoch ?? 0;
+      return bTimestamp.compareTo(aTimestamp);
+    });
+    return filteredThreads;
   }
 
   void onAddNewMemberTap() async {
@@ -145,13 +153,17 @@ class ThreadListViewNotifier extends StateNotifier<ThreadListViewState> {
     state = state.copyWith(isNetworkOff: isNetworkOff);
     return isNetworkOff;
   }
+
+  @override
+  void dispose() {
+    _streamSubscription?.cancel();
+    super.dispose();
+  }
 }
 
 @freezed
 class ThreadListViewState with _$ThreadListViewState {
   const factory ThreadListViewState({
-    @Default(false) bool allowSave,
-    @Default(false) bool isCreating,
     @Default(false) bool loading,
     @Default(false) bool fetchingInviteCode,
     @Default(false) bool deleting,
@@ -159,9 +171,8 @@ class ThreadListViewState with _$ThreadListViewState {
     SpaceInfo? space,
     @Default('') String spaceInvitationCode,
     @Default('') String message,
-    @Default([]) List<SpaceInfo> spaceList,
-    @Default([]) List<ThreadInfo> threadInfo,
-    @Default([]) List<List<ApiThreadMessage>> threadMessages,
+    @Default([]) List<ApiThread> threads,
+    @Default({}) Map<String, ApiUser> users,
     Object? error,
   }) = _ThreadListViewState;
 }

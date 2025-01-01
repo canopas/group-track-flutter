@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/message/message_models.dart';
+import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
@@ -9,27 +11,28 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:style/text/app_text_field.dart';
+import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
+import 'package:yourspace_flutter/ui/components/on_visible_callback.dart';
 import 'package:yourspace_flutter/ui/components/profile_picture.dart';
 import 'package:yourspace_flutter/ui/flow/message/chat/chat_view_model.dart';
+import 'package:yourspace_flutter/ui/flow/message/thread_list_screen.dart';
 
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../components/no_internet_screen.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  final String? spaceId;
-  final String? spaceName;
   final String? threadId;
+  final ApiSpace? space;
   final List<ApiThreadMessage>? threadMessages;
-  final List<ThreadInfo>? threadInfoList;
+  final List<ApiThread>? threadInfoList;
 
   const ChatScreen({
     super.key,
-    this.spaceId,
-    this.spaceName,
+    this.space,
     this.threadMessages,
     this.threadId,
     this.threadInfoList,
@@ -46,30 +49,27 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void initState() {
     super.initState();
     runPostFrame(() {
-      notifier.setData(
-        spaceId: widget.spaceId ?? '',
-        threadId: widget.threadId ?? '',
-        show: widget.threadId == null,
-        threadInfoList: widget.threadInfoList ?? [],
+      notifier = ref.watch(chatViewStateProvider.notifier);
+      notifier.init(
+        space: widget.space,
+        threadId: widget.threadId,
+        threads: widget.threadInfoList ?? [],
       );
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    notifier = ref.watch(chatViewStateProvider(widget.threadId ?? '').notifier);
-    final state = ref.watch(chatViewStateProvider(widget.threadId ?? ''));
+    final state = ref.watch(chatViewStateProvider);
     _observeError();
 
-    if (widget.threadId != null) {
-      notifier.markMessageAsSeen(
-          widget.threadId ?? '', widget.threadMessages ?? state.messages);
-    }
+    // if (widget.threadId != null) {
+    //   notifier.markMessageAsSeen(
+    //       widget.threadId ?? '', widget.threadMessages ?? state.messages);
+    // }
 
     return AppPage(
-      title: state.threadInfo == null && widget.threadId == null
-          ? context.l10n.chat_start_new_chat_title
-          : state.title,
+      title: _formattedChatTitle(context, state),
       body: _body(context, state),
     );
   }
@@ -77,15 +77,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget _body(BuildContext context, ChatViewState state) {
     if (state.isNetworkOff) {
       return NoInternetScreen(onPressed: () {
-        notifier.setData(
-          spaceId: widget.spaceId ?? '',
-          threadId: widget.threadId ?? '',
-          show: widget.threadId == null,
-          threadInfoList: widget.threadInfoList ?? [],
-        );
+        notifier.fetch();
       });
     }
-    if ((widget.threadId != null) && state.sender.isEmpty) {
+    if (state.loading && state.messages.isEmpty) {
       return const Center(child: AppProgressIndicator());
     }
     return SafeArea(
@@ -96,13 +91,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               _memberSelectionView(context, state),
             Expanded(
                 child: _chatList(
-                    context,
-                    state.messages,
-                    state.sender,
-                    state.loadingMessages,
-                    state.threadId,
-                    state.currentUserId,
-                    state.threadInfo)),
+              context,
+            )),
             const SizedBox(height: 100),
           ],
         ),
@@ -112,93 +102,103 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   Widget _chatList(
-      BuildContext context,
-      List<ApiThreadMessage> messages,
-      List<ApiUserInfo>? sender,
-      bool loadingMessage,
-      String threadId,
-      String currentUserId,
-      ThreadInfo? threadInfo) {
-    if (sender == null && sender!.isEmpty) {
+    BuildContext context,
+  ) {
+    final state = ref.watch(
+      chatViewStateProvider.select(
+        (value) => (
+          messages: value.messages,
+          members: value.members,
+          currentUser: value.currentUser,
+          thread: value.thread,
+          loadMore: value.loadingMoreMessages,
+        ),
+      ),
+    );
+
+    if (state.members.isEmpty) {
       return const AppProgressIndicator();
     }
+
+    final messages = state.messages;
+    final members = state.members.values.toList();
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       reverse: true,
       itemCount: messages.length,
       itemBuilder: (context, index) {
-        if (loadingMessage && index == messages.length - 1) {
-          return const AppProgressIndicator(
-              size: AppProgressIndicatorSize.small);
-        }
-        if (index == messages.length - 1) {
-          runPostFrame(() => notifier.onLoadMore(
-              widget.threadId == null ? threadId : widget.threadId ?? ''));
-        }
-
         final message = messages[index];
         final showDateHeader = notifier.showDateHeader(index, message);
         final bool isDifferentSender = index < messages.length - 1 &&
             messages[index + 1].sender_id != message.sender_id;
-        final senderInfo = sender.isNotEmpty && sender.length > 2
-            ? sender
-                .firstWhere((member) => member.user.id == message.sender_id)
-                .user
-            : null;
 
-        final seenBy = threadInfo?.members
-            .where((member) =>
-                message.seen_by.contains(member.user.id) &&
-                member.user.id != currentUserId)
+        final sender = members.isNotEmpty && members.length > 2
+            ? members.firstWhereOrNull((m) => m.id == message.sender_id)
+            : null;
+        final isSender = message.sender_id != state.currentUser?.id;
+
+        final seenBy = (state.thread?.seen_by_ids ?? [])
+            .map((id) => members.firstWhereOrNull((m) => m.id == id))
+            .whereType<ApiUser>()
             .toList();
 
-        final showSeenText = notifier.isSender(message) &&
-                (seenBy?.isNotEmpty ?? false) &&
-                message.id == messages.first.id
-            ? true
-            : false;
+        //print('seenBy: ${seenBy.length} seen_by_ids ${state.thread?.seen_by_ids} currentUser ${state.currentUser?.id}');
+        final isSenderLatestMsg = message.sender_id == state.currentUser?.id &&
+            message.id == messages.first.id;
 
-        if (messages.isEmpty) {
-          return const AppProgressIndicator();
-        }
+        final showSeenText =
+            isSenderLatestMsg && seenBy.isNotEmpty ? true : false;
 
-        return Column(
-          crossAxisAlignment: notifier.isSender(message)
-              ? showSeenText
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start
-              : CrossAxisAlignment.end,
-          children: [
-            if (showDateHeader)
-              _dateHeader(message.created_at!
-                  .format(context, DateFormatType.relativeDate)),
-            _chatItem(
-              context: context,
-              message: message,
-              sender: senderInfo,
-              isSender: notifier.isSender(message),
-              showTimeHeader: notifier.showTimeHeader(index, message),
-              isFirstInGroup: notifier.isFirstInGroupAtIndex(index),
-              isLastInGroup: notifier.isLastInGroupAtIndex(index),
-              memberCount: sender.length,
-              isDifferentSender: isDifferentSender,
-            ),
-            if (showSeenText) ...[
-              const SizedBox(height: 4),
-              Text(
-                sender.length > 2
-                    ? context.l10n.chat_seen_by_message_text(
-                        seenBy!.map((e) => e.user.first_name).join(', '))
-                    : context.l10n.chat_seen_message_text,
-                style: AppTextStyle.caption.copyWith(
-                  color: context.colorScheme.textDisabled,
+        return OnVisibleCallback(
+            onVisible: () {
+              if (index >= messages.length - 1) {
+                runPostFrame(() => notifier.onLoadMore());
+              }
+            },
+            child: Column(
+              children: [
+                if (index == messages.length - 1 && state.loadMore)
+                  const AppProgressIndicator(
+                      size: AppProgressIndicatorSize.small),
+                Column(
+                  crossAxisAlignment: isSender
+                      ? showSeenText
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start
+                      : CrossAxisAlignment.end,
+                  children: [
+                    if (showDateHeader)
+                      _dateHeader(message.created_at!
+                          .format(context, DateFormatType.relativeDate)),
+                    _chatItem(
+                      context: context,
+                      message: message,
+                      sender: sender,
+                      isSender: isSender,
+                      showTimeHeader: notifier.showTimeHeader(index, message),
+                      isFirstInGroup: notifier.isFirstInGroupAtIndex(index),
+                      isLastInGroup: notifier.isLastInGroupAtIndex(index),
+                      memberCount: members.length,
+                      isDifferentSender: isDifferentSender,
+                    ),
+                    if (showSeenText) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        seenBy.length > 2
+                            ? context.l10n.chat_seen_by_message_text(
+                                seenBy.map((e) => e.first_name).join(', '))
+                            : context.l10n.chat_seen_message_text,
+                        style: AppTextStyle.caption.copyWith(
+                          color: context.colorScheme.textDisabled,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                    ],
+                  ],
                 ),
-                textAlign: TextAlign.right,
-              ),
-            ],
-          ],
-        );
+              ],
+            ));
       },
     );
   }
@@ -362,20 +362,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       child: Row(
         children: [
           const SizedBox(width: 16),
-          _allItem(context, state),
+          _allItem(context, state.selectedMember),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              itemCount: state.users.length,
+              itemCount: state.members.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                final member = state.users[index];
-                final isSelected =
-                    state.selectedMember.contains(member.user.id);
+                final members = state.members.values.toList();
+                final member = members[index];
+                final isSelected = state.selectedMember.contains(member.id);
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      notifier.toggleMemberSelection(member.user.id);
+                      notifier.toggleMemberSelection(member.id);
                     });
                   },
                   child: Padding(
@@ -386,11 +386,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         if (isSelected) ...[
                           _selectedView(context),
                         ] else ...[
-                          _profileImageView(context, member.user),
+                          _profileImageView(context, member),
                         ],
                         const SizedBox(height: 8),
                         Text(
-                          member.user.first_name ?? '',
+                          member.first_name ?? '',
                           style: AppTextStyle.caption
                               .copyWith(color: context.colorScheme.textPrimary),
                         ),
@@ -406,7 +406,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  Widget _allItem(BuildContext context, ChatViewState state) {
+  Widget _allItem(BuildContext context, List<String> selectedMember) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: SizedBox(
@@ -419,7 +419,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           },
           child: Column(
             children: [
-              if (state.selectedMember.isEmpty) ...[
+              if (selectedMember.isEmpty) ...[
                 _selectedView(context),
               ] else ...[
                 Container(
@@ -443,7 +443,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               const SizedBox(height: 8),
               Flexible(
                 child: Text(
-                  widget.spaceName ?? '',
+                  widget.space?.name ?? '',
                   style: AppTextStyle.caption
                       .copyWith(color: context.colorScheme.textPrimary),
                   overflow: TextOverflow.ellipsis,
@@ -471,9 +471,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  Widget _profileImageView(BuildContext context, ApiUser user) {
-    final profileImageUrl = user.profile_image ?? '';
-    final firstLetter = user.firstChar;
+  Widget _profileImageView(BuildContext context, ApiUser? user) {
+    final profileImageUrl = user?.profile_image ?? '';
+    final firstLetter = user?.firstChar ?? '';
 
     return SizedBox(
       width: 40,
@@ -511,7 +511,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
               child: AppTextField(
                 controller: state.message,
-                onChanged: notifier.onChange,
+                onChanged: (value) {
+                  notifier.onMessageChange();
+                },
                 maxLines: 6,
                 minLines: 1,
                 style: AppTextStyle.body2.copyWith(
@@ -530,27 +532,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           IconPrimaryButton(
             onTap: () {
               _checkUserInternet(() {
-                if (state.message.text.trim().isNotEmpty) {
-                  if (state.threadInfo != null || widget.threadId != null) {
-                    notifier.sendMessage(
-                        state.threadId.isEmpty
-                            ? widget.threadId ?? ''
-                            : state.threadId,
-                        state.message.text);
-                  } else {
-                    notifier.createNewThread(state.message.text);
-                  }
-                }
+                notifier.sendMessage();
               });
             },
             icon: Icon(Icons.arrow_forward_rounded,
-                color: state.allowSend && state.message.text.isNotEmpty
+                color: state.allowSend
                     ? context.colorScheme.textInversePrimary
                     : context.colorScheme.textDisabled),
             enabled: state.allowSend,
             radius: 23,
             size: 46,
-            bgColor: state.allowSend && state.message.text.isNotEmpty
+            bgColor: state.allowSend
                 ? context.colorScheme.primary
                 : context.colorScheme.containerLowOnSurface,
           )
@@ -594,11 +586,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void _observeError() {
-    ref.listen(
-        chatViewStateProvider(widget.threadId ?? '')
-            .select((state) => state.error), (previous, next) {
+    ref.listen(chatViewStateProvider.select((state) => state.error),
+        (previous, next) {
       if (next != null) {
-        showErrorSnackBar(context, next.toString());
+        showErrorSnackBar(context, next.l10nMessage(context));
+      }
+    });
+
+    ref.listen(chatViewStateProvider.select((state) => state.actionError),
+        (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.l10nMessage(context));
       }
     });
   }
@@ -609,7 +607,27 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   void _showSnackBar() {
-    notifier.cancelMessageSubscription();
     showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
+  }
+
+  String _formattedChatTitle(BuildContext context, ChatViewState state) {
+    final members = state.members.values.map((e) => e).toList();
+
+    if (members.isEmpty || state.showMemberSelectionView) {
+      return context.l10n.chat_start_new_chat_title;
+    }
+
+    if (members.isNotEmpty) {
+      return members
+          .map((e) => e.first_name ?? '')
+          .toList()
+          .getFormattedNames();
+    }
+
+    if (state.space != null) {
+      return widget.space?.name ?? '';
+    }
+
+    return '';
   }
 }

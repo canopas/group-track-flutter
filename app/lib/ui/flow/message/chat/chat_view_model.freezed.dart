@@ -18,24 +18,23 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ChatViewState {
   bool get loading => throw _privateConstructorUsedError;
   bool get creating => throw _privateConstructorUsedError;
-  bool get loadingMessages => throw _privateConstructorUsedError;
+  bool get loadingMoreMessages => throw _privateConstructorUsedError;
   bool get messageSending => throw _privateConstructorUsedError;
   bool get allowSend => throw _privateConstructorUsedError;
   bool get showMemberSelectionView => throw _privateConstructorUsedError;
   bool get isNewThread => throw _privateConstructorUsedError;
   bool get isNetworkOff => throw _privateConstructorUsedError;
-  List<ApiUserInfo> get users => throw _privateConstructorUsedError;
-  String get threadId => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
+  String? get threadId => throw _privateConstructorUsedError;
   TextEditingController get message => throw _privateConstructorUsedError;
   List<ApiThreadMessage> get messages => throw _privateConstructorUsedError;
-  List<ApiUserInfo> get sender => throw _privateConstructorUsedError;
   List<String> get selectedMember => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
-  SpaceInfo? get spaceInfo => throw _privateConstructorUsedError;
-  ThreadInfo? get threadInfo => throw _privateConstructorUsedError;
-  String get currentUserId => throw _privateConstructorUsedError;
-  List<ThreadInfo> get threadList => throw _privateConstructorUsedError;
+  Object? get actionError => throw _privateConstructorUsedError;
+  ApiSpace? get space => throw _privateConstructorUsedError;
+  ApiThread? get thread => throw _privateConstructorUsedError;
+  Map<String, ApiUser> get members => throw _privateConstructorUsedError;
+  ApiUser? get currentUser => throw _privateConstructorUsedError;
+  List<ApiThread> get threads => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ChatViewStateCopyWith<ChatViewState> get copyWith =>
@@ -51,27 +50,27 @@ abstract class $ChatViewStateCopyWith<$Res> {
   $Res call(
       {bool loading,
       bool creating,
-      bool loadingMessages,
+      bool loadingMoreMessages,
       bool messageSending,
       bool allowSend,
       bool showMemberSelectionView,
       bool isNewThread,
       bool isNetworkOff,
-      List<ApiUserInfo> users,
-      String threadId,
-      String title,
+      String? threadId,
       TextEditingController message,
       List<ApiThreadMessage> messages,
-      List<ApiUserInfo> sender,
       List<String> selectedMember,
       Object? error,
-      SpaceInfo? spaceInfo,
-      ThreadInfo? threadInfo,
-      String currentUserId,
-      List<ThreadInfo> threadList});
+      Object? actionError,
+      ApiSpace? space,
+      ApiThread? thread,
+      Map<String, ApiUser> members,
+      ApiUser? currentUser,
+      List<ApiThread> threads});
 
-  $SpaceInfoCopyWith<$Res>? get spaceInfo;
-  $ThreadInfoCopyWith<$Res>? get threadInfo;
+  $ApiSpaceCopyWith<$Res>? get space;
+  $ApiThreadCopyWith<$Res>? get thread;
+  $ApiUserCopyWith<$Res>? get currentUser;
 }
 
 /// @nodoc
@@ -89,24 +88,23 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
   $Res call({
     Object? loading = null,
     Object? creating = null,
-    Object? loadingMessages = null,
+    Object? loadingMoreMessages = null,
     Object? messageSending = null,
     Object? allowSend = null,
     Object? showMemberSelectionView = null,
     Object? isNewThread = null,
     Object? isNetworkOff = null,
-    Object? users = null,
-    Object? threadId = null,
-    Object? title = null,
+    Object? threadId = freezed,
     Object? message = null,
     Object? messages = null,
-    Object? sender = null,
     Object? selectedMember = null,
     Object? error = freezed,
-    Object? spaceInfo = freezed,
-    Object? threadInfo = freezed,
-    Object? currentUserId = null,
-    Object? threadList = null,
+    Object? actionError = freezed,
+    Object? space = freezed,
+    Object? thread = freezed,
+    Object? members = null,
+    Object? currentUser = freezed,
+    Object? threads = null,
   }) {
     return _then(_value.copyWith(
       loading: null == loading
@@ -117,9 +115,9 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
           ? _value.creating
           : creating // ignore: cast_nullable_to_non_nullable
               as bool,
-      loadingMessages: null == loadingMessages
-          ? _value.loadingMessages
-          : loadingMessages // ignore: cast_nullable_to_non_nullable
+      loadingMoreMessages: null == loadingMoreMessages
+          ? _value.loadingMoreMessages
+          : loadingMoreMessages // ignore: cast_nullable_to_non_nullable
               as bool,
       messageSending: null == messageSending
           ? _value.messageSending
@@ -141,18 +139,10 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
           ? _value.isNetworkOff
           : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
-      users: null == users
-          ? _value.users
-          : users // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
-      threadId: null == threadId
+      threadId: freezed == threadId
           ? _value.threadId
           : threadId // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -161,55 +151,68 @@ class _$ChatViewStateCopyWithImpl<$Res, $Val extends ChatViewState>
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
               as List<ApiThreadMessage>,
-      sender: null == sender
-          ? _value.sender
-          : sender // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
       selectedMember: null == selectedMember
           ? _value.selectedMember
           : selectedMember // ignore: cast_nullable_to_non_nullable
               as List<String>,
       error: freezed == error ? _value.error : error,
-      spaceInfo: freezed == spaceInfo
-          ? _value.spaceInfo
-          : spaceInfo // ignore: cast_nullable_to_non_nullable
-              as SpaceInfo?,
-      threadInfo: freezed == threadInfo
-          ? _value.threadInfo
-          : threadInfo // ignore: cast_nullable_to_non_nullable
-              as ThreadInfo?,
-      currentUserId: null == currentUserId
-          ? _value.currentUserId
-          : currentUserId // ignore: cast_nullable_to_non_nullable
-              as String,
-      threadList: null == threadList
-          ? _value.threadList
-          : threadList // ignore: cast_nullable_to_non_nullable
-              as List<ThreadInfo>,
+      actionError: freezed == actionError ? _value.actionError : actionError,
+      space: freezed == space
+          ? _value.space
+          : space // ignore: cast_nullable_to_non_nullable
+              as ApiSpace?,
+      thread: freezed == thread
+          ? _value.thread
+          : thread // ignore: cast_nullable_to_non_nullable
+              as ApiThread?,
+      members: null == members
+          ? _value.members
+          : members // ignore: cast_nullable_to_non_nullable
+              as Map<String, ApiUser>,
+      currentUser: freezed == currentUser
+          ? _value.currentUser
+          : currentUser // ignore: cast_nullable_to_non_nullable
+              as ApiUser?,
+      threads: null == threads
+          ? _value.threads
+          : threads // ignore: cast_nullable_to_non_nullable
+              as List<ApiThread>,
     ) as $Val);
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $SpaceInfoCopyWith<$Res>? get spaceInfo {
-    if (_value.spaceInfo == null) {
+  $ApiSpaceCopyWith<$Res>? get space {
+    if (_value.space == null) {
       return null;
     }
 
-    return $SpaceInfoCopyWith<$Res>(_value.spaceInfo!, (value) {
-      return _then(_value.copyWith(spaceInfo: value) as $Val);
+    return $ApiSpaceCopyWith<$Res>(_value.space!, (value) {
+      return _then(_value.copyWith(space: value) as $Val);
     });
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $ThreadInfoCopyWith<$Res>? get threadInfo {
-    if (_value.threadInfo == null) {
+  $ApiThreadCopyWith<$Res>? get thread {
+    if (_value.thread == null) {
       return null;
     }
 
-    return $ThreadInfoCopyWith<$Res>(_value.threadInfo!, (value) {
-      return _then(_value.copyWith(threadInfo: value) as $Val);
+    return $ApiThreadCopyWith<$Res>(_value.thread!, (value) {
+      return _then(_value.copyWith(thread: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $ApiUserCopyWith<$Res>? get currentUser {
+    if (_value.currentUser == null) {
+      return null;
+    }
+
+    return $ApiUserCopyWith<$Res>(_value.currentUser!, (value) {
+      return _then(_value.copyWith(currentUser: value) as $Val);
     });
   }
 }
@@ -225,29 +228,30 @@ abstract class _$$ChatViewStateImplCopyWith<$Res>
   $Res call(
       {bool loading,
       bool creating,
-      bool loadingMessages,
+      bool loadingMoreMessages,
       bool messageSending,
       bool allowSend,
       bool showMemberSelectionView,
       bool isNewThread,
       bool isNetworkOff,
-      List<ApiUserInfo> users,
-      String threadId,
-      String title,
+      String? threadId,
       TextEditingController message,
       List<ApiThreadMessage> messages,
-      List<ApiUserInfo> sender,
       List<String> selectedMember,
       Object? error,
-      SpaceInfo? spaceInfo,
-      ThreadInfo? threadInfo,
-      String currentUserId,
-      List<ThreadInfo> threadList});
+      Object? actionError,
+      ApiSpace? space,
+      ApiThread? thread,
+      Map<String, ApiUser> members,
+      ApiUser? currentUser,
+      List<ApiThread> threads});
 
   @override
-  $SpaceInfoCopyWith<$Res>? get spaceInfo;
+  $ApiSpaceCopyWith<$Res>? get space;
   @override
-  $ThreadInfoCopyWith<$Res>? get threadInfo;
+  $ApiThreadCopyWith<$Res>? get thread;
+  @override
+  $ApiUserCopyWith<$Res>? get currentUser;
 }
 
 /// @nodoc
@@ -263,24 +267,23 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
   $Res call({
     Object? loading = null,
     Object? creating = null,
-    Object? loadingMessages = null,
+    Object? loadingMoreMessages = null,
     Object? messageSending = null,
     Object? allowSend = null,
     Object? showMemberSelectionView = null,
     Object? isNewThread = null,
     Object? isNetworkOff = null,
-    Object? users = null,
-    Object? threadId = null,
-    Object? title = null,
+    Object? threadId = freezed,
     Object? message = null,
     Object? messages = null,
-    Object? sender = null,
     Object? selectedMember = null,
     Object? error = freezed,
-    Object? spaceInfo = freezed,
-    Object? threadInfo = freezed,
-    Object? currentUserId = null,
-    Object? threadList = null,
+    Object? actionError = freezed,
+    Object? space = freezed,
+    Object? thread = freezed,
+    Object? members = null,
+    Object? currentUser = freezed,
+    Object? threads = null,
   }) {
     return _then(_$ChatViewStateImpl(
       loading: null == loading
@@ -291,9 +294,9 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
           ? _value.creating
           : creating // ignore: cast_nullable_to_non_nullable
               as bool,
-      loadingMessages: null == loadingMessages
-          ? _value.loadingMessages
-          : loadingMessages // ignore: cast_nullable_to_non_nullable
+      loadingMoreMessages: null == loadingMoreMessages
+          ? _value.loadingMoreMessages
+          : loadingMoreMessages // ignore: cast_nullable_to_non_nullable
               as bool,
       messageSending: null == messageSending
           ? _value.messageSending
@@ -315,18 +318,10 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
           ? _value.isNetworkOff
           : isNetworkOff // ignore: cast_nullable_to_non_nullable
               as bool,
-      users: null == users
-          ? _value._users
-          : users // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
-      threadId: null == threadId
+      threadId: freezed == threadId
           ? _value.threadId
           : threadId // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -335,31 +330,32 @@ class __$$ChatViewStateImplCopyWithImpl<$Res>
           ? _value._messages
           : messages // ignore: cast_nullable_to_non_nullable
               as List<ApiThreadMessage>,
-      sender: null == sender
-          ? _value._sender
-          : sender // ignore: cast_nullable_to_non_nullable
-              as List<ApiUserInfo>,
       selectedMember: null == selectedMember
           ? _value._selectedMember
           : selectedMember // ignore: cast_nullable_to_non_nullable
               as List<String>,
       error: freezed == error ? _value.error : error,
-      spaceInfo: freezed == spaceInfo
-          ? _value.spaceInfo
-          : spaceInfo // ignore: cast_nullable_to_non_nullable
-              as SpaceInfo?,
-      threadInfo: freezed == threadInfo
-          ? _value.threadInfo
-          : threadInfo // ignore: cast_nullable_to_non_nullable
-              as ThreadInfo?,
-      currentUserId: null == currentUserId
-          ? _value.currentUserId
-          : currentUserId // ignore: cast_nullable_to_non_nullable
-              as String,
-      threadList: null == threadList
-          ? _value._threadList
-          : threadList // ignore: cast_nullable_to_non_nullable
-              as List<ThreadInfo>,
+      actionError: freezed == actionError ? _value.actionError : actionError,
+      space: freezed == space
+          ? _value.space
+          : space // ignore: cast_nullable_to_non_nullable
+              as ApiSpace?,
+      thread: freezed == thread
+          ? _value.thread
+          : thread // ignore: cast_nullable_to_non_nullable
+              as ApiThread?,
+      members: null == members
+          ? _value._members
+          : members // ignore: cast_nullable_to_non_nullable
+              as Map<String, ApiUser>,
+      currentUser: freezed == currentUser
+          ? _value.currentUser
+          : currentUser // ignore: cast_nullable_to_non_nullable
+              as ApiUser?,
+      threads: null == threads
+          ? _value._threads
+          : threads // ignore: cast_nullable_to_non_nullable
+              as List<ApiThread>,
     ));
   }
 }
@@ -370,29 +366,27 @@ class _$ChatViewStateImpl implements _ChatViewState {
   const _$ChatViewStateImpl(
       {this.loading = false,
       this.creating = false,
-      this.loadingMessages = false,
+      this.loadingMoreMessages = false,
       this.messageSending = false,
       this.allowSend = false,
       this.showMemberSelectionView = false,
       this.isNewThread = false,
       this.isNetworkOff = false,
-      final List<ApiUserInfo> users = const [],
-      this.threadId = '',
-      this.title = '',
+      this.threadId,
       required this.message,
       final List<ApiThreadMessage> messages = const [],
-      final List<ApiUserInfo> sender = const [],
       final List<String> selectedMember = const [],
       this.error,
-      this.spaceInfo,
-      this.threadInfo,
-      required this.currentUserId,
-      final List<ThreadInfo> threadList = const []})
-      : _users = users,
-        _messages = messages,
-        _sender = sender,
+      this.actionError,
+      this.space,
+      this.thread,
+      final Map<String, ApiUser> members = const {},
+      this.currentUser,
+      final List<ApiThread> threads = const []})
+      : _messages = messages,
         _selectedMember = selectedMember,
-        _threadList = threadList;
+        _members = members,
+        _threads = threads;
 
   @override
   @JsonKey()
@@ -402,7 +396,7 @@ class _$ChatViewStateImpl implements _ChatViewState {
   final bool creating;
   @override
   @JsonKey()
-  final bool loadingMessages;
+  final bool loadingMoreMessages;
   @override
   @JsonKey()
   final bool messageSending;
@@ -418,21 +412,8 @@ class _$ChatViewStateImpl implements _ChatViewState {
   @override
   @JsonKey()
   final bool isNetworkOff;
-  final List<ApiUserInfo> _users;
   @override
-  @JsonKey()
-  List<ApiUserInfo> get users {
-    if (_users is EqualUnmodifiableListView) return _users;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_users);
-  }
-
-  @override
-  @JsonKey()
-  final String threadId;
-  @override
-  @JsonKey()
-  final String title;
+  final String? threadId;
   @override
   final TextEditingController message;
   final List<ApiThreadMessage> _messages;
@@ -442,15 +423,6 @@ class _$ChatViewStateImpl implements _ChatViewState {
     if (_messages is EqualUnmodifiableListView) return _messages;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_messages);
-  }
-
-  final List<ApiUserInfo> _sender;
-  @override
-  @JsonKey()
-  List<ApiUserInfo> get sender {
-    if (_sender is EqualUnmodifiableListView) return _sender;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_sender);
   }
 
   final List<String> _selectedMember;
@@ -465,23 +437,34 @@ class _$ChatViewStateImpl implements _ChatViewState {
   @override
   final Object? error;
   @override
-  final SpaceInfo? spaceInfo;
+  final Object? actionError;
   @override
-  final ThreadInfo? threadInfo;
+  final ApiSpace? space;
   @override
-  final String currentUserId;
-  final List<ThreadInfo> _threadList;
+  final ApiThread? thread;
+  final Map<String, ApiUser> _members;
   @override
   @JsonKey()
-  List<ThreadInfo> get threadList {
-    if (_threadList is EqualUnmodifiableListView) return _threadList;
+  Map<String, ApiUser> get members {
+    if (_members is EqualUnmodifiableMapView) return _members;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_threadList);
+    return EqualUnmodifiableMapView(_members);
+  }
+
+  @override
+  final ApiUser? currentUser;
+  final List<ApiThread> _threads;
+  @override
+  @JsonKey()
+  List<ApiThread> get threads {
+    if (_threads is EqualUnmodifiableListView) return _threads;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_threads);
   }
 
   @override
   String toString() {
-    return 'ChatViewState(loading: $loading, creating: $creating, loadingMessages: $loadingMessages, messageSending: $messageSending, allowSend: $allowSend, showMemberSelectionView: $showMemberSelectionView, isNewThread: $isNewThread, isNetworkOff: $isNetworkOff, users: $users, threadId: $threadId, title: $title, message: $message, messages: $messages, sender: $sender, selectedMember: $selectedMember, error: $error, spaceInfo: $spaceInfo, threadInfo: $threadInfo, currentUserId: $currentUserId, threadList: $threadList)';
+    return 'ChatViewState(loading: $loading, creating: $creating, loadingMoreMessages: $loadingMoreMessages, messageSending: $messageSending, allowSend: $allowSend, showMemberSelectionView: $showMemberSelectionView, isNewThread: $isNewThread, isNetworkOff: $isNetworkOff, threadId: $threadId, message: $message, messages: $messages, selectedMember: $selectedMember, error: $error, actionError: $actionError, space: $space, thread: $thread, members: $members, currentUser: $currentUser, threads: $threads)';
   }
 
   @override
@@ -492,8 +475,8 @@ class _$ChatViewStateImpl implements _ChatViewState {
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.creating, creating) ||
                 other.creating == creating) &&
-            (identical(other.loadingMessages, loadingMessages) ||
-                other.loadingMessages == loadingMessages) &&
+            (identical(other.loadingMoreMessages, loadingMoreMessages) ||
+                other.loadingMoreMessages == loadingMoreMessages) &&
             (identical(other.messageSending, messageSending) ||
                 other.messageSending == messageSending) &&
             (identical(other.allowSend, allowSend) ||
@@ -505,24 +488,21 @@ class _$ChatViewStateImpl implements _ChatViewState {
                 other.isNewThread == isNewThread) &&
             (identical(other.isNetworkOff, isNetworkOff) ||
                 other.isNetworkOff == isNetworkOff) &&
-            const DeepCollectionEquality().equals(other._users, _users) &&
             (identical(other.threadId, threadId) ||
                 other.threadId == threadId) &&
-            (identical(other.title, title) || other.title == title) &&
             (identical(other.message, message) || other.message == message) &&
             const DeepCollectionEquality().equals(other._messages, _messages) &&
-            const DeepCollectionEquality().equals(other._sender, _sender) &&
             const DeepCollectionEquality()
                 .equals(other._selectedMember, _selectedMember) &&
             const DeepCollectionEquality().equals(other.error, error) &&
-            (identical(other.spaceInfo, spaceInfo) ||
-                other.spaceInfo == spaceInfo) &&
-            (identical(other.threadInfo, threadInfo) ||
-                other.threadInfo == threadInfo) &&
-            (identical(other.currentUserId, currentUserId) ||
-                other.currentUserId == currentUserId) &&
             const DeepCollectionEquality()
-                .equals(other._threadList, _threadList));
+                .equals(other.actionError, actionError) &&
+            (identical(other.space, space) || other.space == space) &&
+            (identical(other.thread, thread) || other.thread == thread) &&
+            const DeepCollectionEquality().equals(other._members, _members) &&
+            (identical(other.currentUser, currentUser) ||
+                other.currentUser == currentUser) &&
+            const DeepCollectionEquality().equals(other._threads, _threads));
   }
 
   @override
@@ -530,24 +510,23 @@ class _$ChatViewStateImpl implements _ChatViewState {
         runtimeType,
         loading,
         creating,
-        loadingMessages,
+        loadingMoreMessages,
         messageSending,
         allowSend,
         showMemberSelectionView,
         isNewThread,
         isNetworkOff,
-        const DeepCollectionEquality().hash(_users),
         threadId,
-        title,
         message,
         const DeepCollectionEquality().hash(_messages),
-        const DeepCollectionEquality().hash(_sender),
         const DeepCollectionEquality().hash(_selectedMember),
         const DeepCollectionEquality().hash(error),
-        spaceInfo,
-        threadInfo,
-        currentUserId,
-        const DeepCollectionEquality().hash(_threadList)
+        const DeepCollectionEquality().hash(actionError),
+        space,
+        thread,
+        const DeepCollectionEquality().hash(_members),
+        currentUser,
+        const DeepCollectionEquality().hash(_threads)
       ]);
 
   @JsonKey(ignore: true)
@@ -561,31 +540,30 @@ abstract class _ChatViewState implements ChatViewState {
   const factory _ChatViewState(
       {final bool loading,
       final bool creating,
-      final bool loadingMessages,
+      final bool loadingMoreMessages,
       final bool messageSending,
       final bool allowSend,
       final bool showMemberSelectionView,
       final bool isNewThread,
       final bool isNetworkOff,
-      final List<ApiUserInfo> users,
-      final String threadId,
-      final String title,
+      final String? threadId,
       required final TextEditingController message,
       final List<ApiThreadMessage> messages,
-      final List<ApiUserInfo> sender,
       final List<String> selectedMember,
       final Object? error,
-      final SpaceInfo? spaceInfo,
-      final ThreadInfo? threadInfo,
-      required final String currentUserId,
-      final List<ThreadInfo> threadList}) = _$ChatViewStateImpl;
+      final Object? actionError,
+      final ApiSpace? space,
+      final ApiThread? thread,
+      final Map<String, ApiUser> members,
+      final ApiUser? currentUser,
+      final List<ApiThread> threads}) = _$ChatViewStateImpl;
 
   @override
   bool get loading;
   @override
   bool get creating;
   @override
-  bool get loadingMessages;
+  bool get loadingMoreMessages;
   @override
   bool get messageSending;
   @override
@@ -597,29 +575,27 @@ abstract class _ChatViewState implements ChatViewState {
   @override
   bool get isNetworkOff;
   @override
-  List<ApiUserInfo> get users;
-  @override
-  String get threadId;
-  @override
-  String get title;
+  String? get threadId;
   @override
   TextEditingController get message;
   @override
   List<ApiThreadMessage> get messages;
   @override
-  List<ApiUserInfo> get sender;
-  @override
   List<String> get selectedMember;
   @override
   Object? get error;
   @override
-  SpaceInfo? get spaceInfo;
+  Object? get actionError;
   @override
-  ThreadInfo? get threadInfo;
+  ApiSpace? get space;
   @override
-  String get currentUserId;
+  ApiThread? get thread;
   @override
-  List<ThreadInfo> get threadList;
+  Map<String, ApiUser> get members;
+  @override
+  ApiUser? get currentUser;
+  @override
+  List<ApiThread> get threads;
   @override
   @JsonKey(ignore: true)
   _$$ChatViewStateImplCopyWith<_$ChatViewStateImpl> get copyWith =>

@@ -16,8 +16,6 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$ThreadListViewState {
-  bool get allowSave => throw _privateConstructorUsedError;
-  bool get isCreating => throw _privateConstructorUsedError;
   bool get loading => throw _privateConstructorUsedError;
   bool get fetchingInviteCode => throw _privateConstructorUsedError;
   bool get deleting => throw _privateConstructorUsedError;
@@ -25,10 +23,8 @@ mixin _$ThreadListViewState {
   SpaceInfo? get space => throw _privateConstructorUsedError;
   String get spaceInvitationCode => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
-  List<SpaceInfo> get spaceList => throw _privateConstructorUsedError;
-  List<ThreadInfo> get threadInfo => throw _privateConstructorUsedError;
-  List<List<ApiThreadMessage>> get threadMessages =>
-      throw _privateConstructorUsedError;
+  List<ApiThread> get threads => throw _privateConstructorUsedError;
+  Map<String, ApiUser> get users => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -43,18 +39,15 @@ abstract class $ThreadListViewStateCopyWith<$Res> {
       _$ThreadListViewStateCopyWithImpl<$Res, ThreadListViewState>;
   @useResult
   $Res call(
-      {bool allowSave,
-      bool isCreating,
-      bool loading,
+      {bool loading,
       bool fetchingInviteCode,
       bool deleting,
       bool isNetworkOff,
       SpaceInfo? space,
       String spaceInvitationCode,
       String message,
-      List<SpaceInfo> spaceList,
-      List<ThreadInfo> threadInfo,
-      List<List<ApiThreadMessage>> threadMessages,
+      List<ApiThread> threads,
+      Map<String, ApiUser> users,
       Object? error});
 
   $SpaceInfoCopyWith<$Res>? get space;
@@ -73,8 +66,6 @@ class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? allowSave = null,
-    Object? isCreating = null,
     Object? loading = null,
     Object? fetchingInviteCode = null,
     Object? deleting = null,
@@ -82,20 +73,11 @@ class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
     Object? space = freezed,
     Object? spaceInvitationCode = null,
     Object? message = null,
-    Object? spaceList = null,
-    Object? threadInfo = null,
-    Object? threadMessages = null,
+    Object? threads = null,
+    Object? users = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
-      allowSave: null == allowSave
-          ? _value.allowSave
-          : allowSave // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isCreating: null == isCreating
-          ? _value.isCreating
-          : isCreating // ignore: cast_nullable_to_non_nullable
-              as bool,
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
@@ -124,18 +106,14 @@ class _$ThreadListViewStateCopyWithImpl<$Res, $Val extends ThreadListViewState>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
-      spaceList: null == spaceList
-          ? _value.spaceList
-          : spaceList // ignore: cast_nullable_to_non_nullable
-              as List<SpaceInfo>,
-      threadInfo: null == threadInfo
-          ? _value.threadInfo
-          : threadInfo // ignore: cast_nullable_to_non_nullable
-              as List<ThreadInfo>,
-      threadMessages: null == threadMessages
-          ? _value.threadMessages
-          : threadMessages // ignore: cast_nullable_to_non_nullable
-              as List<List<ApiThreadMessage>>,
+      threads: null == threads
+          ? _value.threads
+          : threads // ignore: cast_nullable_to_non_nullable
+              as List<ApiThread>,
+      users: null == users
+          ? _value.users
+          : users // ignore: cast_nullable_to_non_nullable
+              as Map<String, ApiUser>,
       error: freezed == error ? _value.error : error,
     ) as $Val);
   }
@@ -162,18 +140,15 @@ abstract class _$$ThreadListViewStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {bool allowSave,
-      bool isCreating,
-      bool loading,
+      {bool loading,
       bool fetchingInviteCode,
       bool deleting,
       bool isNetworkOff,
       SpaceInfo? space,
       String spaceInvitationCode,
       String message,
-      List<SpaceInfo> spaceList,
-      List<ThreadInfo> threadInfo,
-      List<List<ApiThreadMessage>> threadMessages,
+      List<ApiThread> threads,
+      Map<String, ApiUser> users,
       Object? error});
 
   @override
@@ -191,8 +166,6 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? allowSave = null,
-    Object? isCreating = null,
     Object? loading = null,
     Object? fetchingInviteCode = null,
     Object? deleting = null,
@@ -200,20 +173,11 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
     Object? space = freezed,
     Object? spaceInvitationCode = null,
     Object? message = null,
-    Object? spaceList = null,
-    Object? threadInfo = null,
-    Object? threadMessages = null,
+    Object? threads = null,
+    Object? users = null,
     Object? error = freezed,
   }) {
     return _then(_$ThreadListViewStateImpl(
-      allowSave: null == allowSave
-          ? _value.allowSave
-          : allowSave // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isCreating: null == isCreating
-          ? _value.isCreating
-          : isCreating // ignore: cast_nullable_to_non_nullable
-              as bool,
       loading: null == loading
           ? _value.loading
           : loading // ignore: cast_nullable_to_non_nullable
@@ -242,18 +206,14 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
-      spaceList: null == spaceList
-          ? _value._spaceList
-          : spaceList // ignore: cast_nullable_to_non_nullable
-              as List<SpaceInfo>,
-      threadInfo: null == threadInfo
-          ? _value._threadInfo
-          : threadInfo // ignore: cast_nullable_to_non_nullable
-              as List<ThreadInfo>,
-      threadMessages: null == threadMessages
-          ? _value._threadMessages
-          : threadMessages // ignore: cast_nullable_to_non_nullable
-              as List<List<ApiThreadMessage>>,
+      threads: null == threads
+          ? _value._threads
+          : threads // ignore: cast_nullable_to_non_nullable
+              as List<ApiThread>,
+      users: null == users
+          ? _value._users
+          : users // ignore: cast_nullable_to_non_nullable
+              as Map<String, ApiUser>,
       error: freezed == error ? _value.error : error,
     ));
   }
@@ -263,29 +223,19 @@ class __$$ThreadListViewStateImplCopyWithImpl<$Res>
 
 class _$ThreadListViewStateImpl implements _ThreadListViewState {
   const _$ThreadListViewStateImpl(
-      {this.allowSave = false,
-      this.isCreating = false,
-      this.loading = false,
+      {this.loading = false,
       this.fetchingInviteCode = false,
       this.deleting = false,
       this.isNetworkOff = false,
       this.space,
       this.spaceInvitationCode = '',
       this.message = '',
-      final List<SpaceInfo> spaceList = const [],
-      final List<ThreadInfo> threadInfo = const [],
-      final List<List<ApiThreadMessage>> threadMessages = const [],
+      final List<ApiThread> threads = const [],
+      final Map<String, ApiUser> users = const {},
       this.error})
-      : _spaceList = spaceList,
-        _threadInfo = threadInfo,
-        _threadMessages = threadMessages;
+      : _threads = threads,
+        _users = users;
 
-  @override
-  @JsonKey()
-  final bool allowSave;
-  @override
-  @JsonKey()
-  final bool isCreating;
   @override
   @JsonKey()
   final bool loading;
@@ -306,31 +256,22 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
   @override
   @JsonKey()
   final String message;
-  final List<SpaceInfo> _spaceList;
+  final List<ApiThread> _threads;
   @override
   @JsonKey()
-  List<SpaceInfo> get spaceList {
-    if (_spaceList is EqualUnmodifiableListView) return _spaceList;
+  List<ApiThread> get threads {
+    if (_threads is EqualUnmodifiableListView) return _threads;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_spaceList);
+    return EqualUnmodifiableListView(_threads);
   }
 
-  final List<ThreadInfo> _threadInfo;
+  final Map<String, ApiUser> _users;
   @override
   @JsonKey()
-  List<ThreadInfo> get threadInfo {
-    if (_threadInfo is EqualUnmodifiableListView) return _threadInfo;
+  Map<String, ApiUser> get users {
+    if (_users is EqualUnmodifiableMapView) return _users;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_threadInfo);
-  }
-
-  final List<List<ApiThreadMessage>> _threadMessages;
-  @override
-  @JsonKey()
-  List<List<ApiThreadMessage>> get threadMessages {
-    if (_threadMessages is EqualUnmodifiableListView) return _threadMessages;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_threadMessages);
+    return EqualUnmodifiableMapView(_users);
   }
 
   @override
@@ -338,7 +279,7 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
 
   @override
   String toString() {
-    return 'ThreadListViewState(allowSave: $allowSave, isCreating: $isCreating, loading: $loading, fetchingInviteCode: $fetchingInviteCode, deleting: $deleting, isNetworkOff: $isNetworkOff, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, spaceList: $spaceList, threadInfo: $threadInfo, threadMessages: $threadMessages, error: $error)';
+    return 'ThreadListViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, deleting: $deleting, isNetworkOff: $isNetworkOff, space: $space, spaceInvitationCode: $spaceInvitationCode, message: $message, threads: $threads, users: $users, error: $error)';
   }
 
   @override
@@ -346,10 +287,6 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ThreadListViewStateImpl &&
-            (identical(other.allowSave, allowSave) ||
-                other.allowSave == allowSave) &&
-            (identical(other.isCreating, isCreating) ||
-                other.isCreating == isCreating) &&
             (identical(other.loading, loading) || other.loading == loading) &&
             (identical(other.fetchingInviteCode, fetchingInviteCode) ||
                 other.fetchingInviteCode == fetchingInviteCode) &&
@@ -361,20 +298,14 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
             (identical(other.spaceInvitationCode, spaceInvitationCode) ||
                 other.spaceInvitationCode == spaceInvitationCode) &&
             (identical(other.message, message) || other.message == message) &&
-            const DeepCollectionEquality()
-                .equals(other._spaceList, _spaceList) &&
-            const DeepCollectionEquality()
-                .equals(other._threadInfo, _threadInfo) &&
-            const DeepCollectionEquality()
-                .equals(other._threadMessages, _threadMessages) &&
+            const DeepCollectionEquality().equals(other._threads, _threads) &&
+            const DeepCollectionEquality().equals(other._users, _users) &&
             const DeepCollectionEquality().equals(other.error, error));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      allowSave,
-      isCreating,
       loading,
       fetchingInviteCode,
       deleting,
@@ -382,9 +313,8 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
       space,
       spaceInvitationCode,
       message,
-      const DeepCollectionEquality().hash(_spaceList),
-      const DeepCollectionEquality().hash(_threadInfo),
-      const DeepCollectionEquality().hash(_threadMessages),
+      const DeepCollectionEquality().hash(_threads),
+      const DeepCollectionEquality().hash(_users),
       const DeepCollectionEquality().hash(error));
 
   @JsonKey(ignore: true)
@@ -397,24 +327,17 @@ class _$ThreadListViewStateImpl implements _ThreadListViewState {
 
 abstract class _ThreadListViewState implements ThreadListViewState {
   const factory _ThreadListViewState(
-      {final bool allowSave,
-      final bool isCreating,
-      final bool loading,
+      {final bool loading,
       final bool fetchingInviteCode,
       final bool deleting,
       final bool isNetworkOff,
       final SpaceInfo? space,
       final String spaceInvitationCode,
       final String message,
-      final List<SpaceInfo> spaceList,
-      final List<ThreadInfo> threadInfo,
-      final List<List<ApiThreadMessage>> threadMessages,
+      final List<ApiThread> threads,
+      final Map<String, ApiUser> users,
       final Object? error}) = _$ThreadListViewStateImpl;
 
-  @override
-  bool get allowSave;
-  @override
-  bool get isCreating;
   @override
   bool get loading;
   @override
@@ -430,11 +353,9 @@ abstract class _ThreadListViewState implements ThreadListViewState {
   @override
   String get message;
   @override
-  List<SpaceInfo> get spaceList;
+  List<ApiThread> get threads;
   @override
-  List<ThreadInfo> get threadInfo;
-  @override
-  List<List<ApiThreadMessage>> get threadMessages;
+  Map<String, ApiUser> get users;
   @override
   Object? get error;
   @override
