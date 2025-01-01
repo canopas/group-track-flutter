@@ -28,8 +28,8 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
   final ApiUser? user;
   final PlaceService placeService;
 
-  EditSpaceViewNotifier(
-      this.spaceService, this.spaceInvitationService, this.user, this.placeService)
+  EditSpaceViewNotifier(this.spaceService, this.spaceInvitationService,
+      this.user, this.placeService)
       : super(EditSpaceViewState(spaceName: TextEditingController()));
 
   void getSpaceDetails(String spaceId) async {
@@ -100,22 +100,18 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
 
   void leaveSpace({String? userId}) async {
     try {
-      if (state.isAdmin) {
-        state = state.copyWith(deleting: true);
+      final memberId = userId ?? user?.id;
+      if (memberId == null) return;
+      state = state.copyWith(deleting: true, error: null);
+      if(state.isAdmin && user?.id == memberId && state.userInfo.isNotEmpty) {
         await spaceService.updateSpace(
           state.space!.space.copyWith(admin_id: state.userInfo.first.user.id),
         );
-        await _removeMemberFromPlace(userId);
-        await spaceService.leaveSpace(state.space!.space.id, userId: userId);
-        state = state.copyWith(deleting: false, deleted: true, error: null);
-      } else {
-        state = state.copyWith(deleting: true);
-        await _removeMemberFromPlace(userId);
-        await spaceService.leaveSpace(state.space!.space.id, userId: userId);
-        state = state.copyWith(deleting: false, deleted: true, error: null);
-        if (state.adminRemovingMember) {
-          getSpaceDetails(state.space!.space.id);
-        }
+      }
+      await spaceService.leaveSpace(state.space!.space.id, memberId);
+      state = state.copyWith(deleting: false, deleted: true);
+      if (state.adminRemovingMember) {
+        getSpaceDetails(state.space!.space.id);
       }
     } catch (error, stack) {
       logger.e(
@@ -129,9 +125,9 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
 
   void deleteSpace() async {
     try {
-      state = state.copyWith(deleting: true);
+      state = state.copyWith(deleting: true, error: null);
       await spaceService.deleteSpace(state.space!.space.id);
-      state = state.copyWith(deleting: false, deleted: true, error: null);
+      state = state.copyWith(deleting: false, deleted: true);
     } catch (error, stack) {
       logger.e(
         'EditSpaceViewNotifier: error while delete space',
@@ -139,22 +135,6 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
         stackTrace: stack,
       );
       state = state.copyWith(error: error, deleted: false);
-    }
-  }
-
-  Future<void> _removeMemberFromPlace(String? id) async {
-    try {
-      if (state.space == null || user == null) return;
-      final spaceMember = await spaceService.getMemberBySpaceId(state.space?.space.id ?? '');
-      final spaceMemberIds = List<String>.from(spaceMember.map((member) => member.user_id));
-      spaceMemberIds.remove(id ?? user?.id);
-      await placeService.removedUserFromExistingPlaces(state.space?.space.id ?? '', user?.id ?? '', spaceMemberIds);
-    } catch (error, stack) {
-      logger.e(
-          'EditSpaceViewNotifier: Error while removing member form place while member is leaving group',
-          error: error,
-          stackTrace: stack);
-      state = state.copyWith(error: error);
     }
   }
 
@@ -197,11 +177,13 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
       final space = state.space?.space;
       if (space == null) return;
 
-      state = state.copyWith(refreshingInviteCode: true, error:  null);
-      final invitationCode = await spaceInvitationService.regenerateInvitationCode(space.id);
-      state = state.copyWith(invitationCode: invitationCode, refreshingInviteCode: false);
+      state = state.copyWith(refreshingInviteCode: true, error: null);
+      final invitationCode =
+          await spaceInvitationService.regenerateInvitationCode(space.id);
+      state = state.copyWith(
+          invitationCode: invitationCode, refreshingInviteCode: false);
     } catch (error, stack) {
-      state = state.copyWith(refreshingInviteCode: false, error:  error);
+      state = state.copyWith(refreshingInviteCode: false, error: error);
       logger.e('EditSpaceViewNotifier: error while regenerate group code',
           error: error, stackTrace: stack);
     }

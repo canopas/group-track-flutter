@@ -111,11 +111,11 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
   }
 
   Widget _buildCodeBox(
-      BuildContext context,
-      double width,
-      int index,
-      JoinSpaceViewState state,
-      ) {
+    BuildContext context,
+    double width,
+    int index,
+    JoinSpaceViewState state,
+  ) {
     return Container(
       width: width,
       height: 64,
@@ -153,8 +153,6 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     return BottomStickyOverlay(
       child: Column(
         children: [
-          _joinSpaceError(context, state),
-          const SizedBox(height: 16),
           PrimaryButton(
             context.l10n.join_space_title,
             progress: state.verifying,
@@ -177,24 +175,6 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     );
   }
 
-  Widget _joinSpaceError(BuildContext context, JoinSpaceViewState state) {
-    return Visibility(
-      visible: state.errorInvalidInvitationCode || state.alreadySpaceMember,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(color: context.colorScheme.alert),
-        child: Text(
-          state.errorInvalidInvitationCode
-              ? context.l10n.join_space_invalid_code_error_text
-              : context.l10n.join_space_already_joined_error_text,
-          style: AppTextStyle.subtitle2.copyWith(
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
-
   void _observeError() {
     ref.listen(joinSpaceViewStateProvider.select((state) => state.error),
         (previous, next) {
@@ -202,10 +182,29 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
         showErrorSnackBar(context, next.toString());
       }
     });
+
+    ref.listen(
+        joinSpaceViewStateProvider.select(
+                (state) => state.errorInvalidInvitationCode), (previous, next) {
+      if (next) {
+        showErrorSnackBar(
+            context, context.l10n.join_space_invalid_code_error_text);
+      }
+    });
+
+    ref.listen(
+        joinSpaceViewStateProvider.select(
+                (state) => state.alreadySpaceMember), (previous, next) {
+      if (next) {
+        showErrorSnackBar(
+            context, context.l10n.join_space_already_joined_error_text);
+      }
+    });
   }
 
   void _observePop() {
-    ref.listen(joinSpaceViewStateProvider.select((state) => state.spaceJoined), (previous, next) {
+    ref.listen(joinSpaceViewStateProvider.select((state) => state.spaceJoined),
+        (previous, next) {
       if (next) {
         context.pop();
       }
@@ -232,9 +231,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
 
   void _checkInternet(String inviteCode) async {
     final isNetworkOff = await checkInternetConnectivity();
-    isNetworkOff
-        ? _showSnackBar()
-        : notifier.joinSpace();
+    isNetworkOff ? _showSnackBar() : notifier.joinSpace();
   }
 
   void _showSnackBar() {

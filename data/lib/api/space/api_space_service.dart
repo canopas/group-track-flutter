@@ -42,7 +42,7 @@ class ApiSpaceService {
         name: name,
         created_at: DateTime.now().millisecondsSinceEpoch);
     await doc.set(space);
-    joinSpace(doc.id);
+    joinSpace(doc.id, adminId);
     return doc.id;
   }
 
@@ -54,9 +54,8 @@ class ApiSpaceService {
     return null;
   }
 
-  Future<void> joinSpace(String spaceId,
+  Future<void> joinSpace(String spaceId, String userId,
       {int role = SPACE_MEMBER_ROLE_MEMBER}) async {
-    final userId = _currentUser?.id ?? '';
 
     final member = ApiSpaceMember(
       space_id: spaceId,
