@@ -42,7 +42,7 @@ class ApiSpaceService {
         name: name,
         created_at: DateTime.now().millisecondsSinceEpoch);
     await doc.set(space);
-    joinSpace(doc.id, adminId);
+    await joinSpace(doc.id, adminId);
     return doc.id;
   }
 
