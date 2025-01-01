@@ -51,21 +51,36 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 150),
-    );
+
+    _prepareAnimations();
 
     _buttonController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
       upperBound: 0.5,
     );
+  }
 
+  void _prepareAnimations() {
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
     _animation = CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
     );
+  }
+
+  void _performAnimation() {
+    if (!mounted) return;
+    if (widget.expand) {
+      _animationController.forward();
+      _buttonController.reverse(from: 0.5);
+    } else {
+      _animationController.reverse();
+      _buttonController.forward(from: 0.0);
+    }
   }
 
   @override
@@ -75,28 +90,16 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void performAnimation() {
-    if (!widget.expand) {
-      _animationController.forward();
-    } else {
-      _animationController.reverse(from: 1.0).orCancel;
-    }
-  }
-
-  void performArrowButtonAnimation() {
-    if (widget.expand) {
-      _buttonController.reverse(from: 0.5);
-    } else {
-      _buttonController.forward(from: 0.0);
+  @override
+  void didUpdateWidget(HomeTopBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.expand != oldWidget.expand) {
+      _performAnimation();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return _body(context);
-  }
-
-  Widget _body(BuildContext context) {
     return _topBar(context);
   }
 
@@ -186,8 +189,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
         onTap: () {
           setState(() {
             widget.onExpandChanged(!widget.expand);
-            performAnimation();
-            performArrowButtonAnimation();
           });
         },
         child: Container(
@@ -309,8 +310,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
         setState(() {
           widget.onSpaceItemTap(space);
           widget.onExpandChanged(!widget.expand);
-          performAnimation();
-          performArrowButtonAnimation();
         });
       },
       child: Container(
