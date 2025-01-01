@@ -136,7 +136,7 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
       final spaceId = await getInvitation(state.invitationCode);
       if (spaceId == null || spaceId.isEmpty) return;
 
-      final space = await spaceService.getSpace(spaceId ?? '');
+      final space = await spaceService.getSpace(spaceId);
       state = state.copyWith(space: space);
     } catch (error, stack) {
       logger.e('JoinSpaceViewNotifier: Error while get space',

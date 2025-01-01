@@ -30,7 +30,7 @@ mixin _$EditSpaceViewState {
   ApiUserInfo? get currentUserInfo => throw _privateConstructorUsedError;
   List<ApiUserInfo> get userInfo => throw _privateConstructorUsedError;
   TextEditingController get spaceName => throw _privateConstructorUsedError;
-  SpaceInfo? get space => throw _privateConstructorUsedError;
+  SpaceInfo? get spaceInfo => throw _privateConstructorUsedError;
   ApiSpaceInvitation? get invitationCode => throw _privateConstructorUsedError;
   bool get refreshingInviteCode => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
@@ -61,13 +61,13 @@ abstract class $EditSpaceViewStateCopyWith<$Res> {
       ApiUserInfo? currentUserInfo,
       List<ApiUserInfo> userInfo,
       TextEditingController spaceName,
-      SpaceInfo? space,
+      SpaceInfo? spaceInfo,
       ApiSpaceInvitation? invitationCode,
       bool refreshingInviteCode,
       Object? error});
 
   $ApiUserInfoCopyWith<$Res>? get currentUserInfo;
-  $SpaceInfoCopyWith<$Res>? get space;
+  $SpaceInfoCopyWith<$Res>? get spaceInfo;
   $ApiSpaceInvitationCopyWith<$Res>? get invitationCode;
 }
 
@@ -98,7 +98,7 @@ class _$EditSpaceViewStateCopyWithImpl<$Res, $Val extends EditSpaceViewState>
     Object? currentUserInfo = freezed,
     Object? userInfo = null,
     Object? spaceName = null,
-    Object? space = freezed,
+    Object? spaceInfo = freezed,
     Object? invitationCode = freezed,
     Object? refreshingInviteCode = null,
     Object? error = freezed,
@@ -160,9 +160,9 @@ class _$EditSpaceViewStateCopyWithImpl<$Res, $Val extends EditSpaceViewState>
           ? _value.spaceName
           : spaceName // ignore: cast_nullable_to_non_nullable
               as TextEditingController,
-      space: freezed == space
-          ? _value.space
-          : space // ignore: cast_nullable_to_non_nullable
+      spaceInfo: freezed == spaceInfo
+          ? _value.spaceInfo
+          : spaceInfo // ignore: cast_nullable_to_non_nullable
               as SpaceInfo?,
       invitationCode: freezed == invitationCode
           ? _value.invitationCode
@@ -190,13 +190,13 @@ class _$EditSpaceViewStateCopyWithImpl<$Res, $Val extends EditSpaceViewState>
 
   @override
   @pragma('vm:prefer-inline')
-  $SpaceInfoCopyWith<$Res>? get space {
-    if (_value.space == null) {
+  $SpaceInfoCopyWith<$Res>? get spaceInfo {
+    if (_value.spaceInfo == null) {
       return null;
     }
 
-    return $SpaceInfoCopyWith<$Res>(_value.space!, (value) {
-      return _then(_value.copyWith(space: value) as $Val);
+    return $SpaceInfoCopyWith<$Res>(_value.spaceInfo!, (value) {
+      return _then(_value.copyWith(spaceInfo: value) as $Val);
     });
   }
 
@@ -236,7 +236,7 @@ abstract class _$$EditSpaceViewStateImplCopyWith<$Res>
       ApiUserInfo? currentUserInfo,
       List<ApiUserInfo> userInfo,
       TextEditingController spaceName,
-      SpaceInfo? space,
+      SpaceInfo? spaceInfo,
       ApiSpaceInvitation? invitationCode,
       bool refreshingInviteCode,
       Object? error});
@@ -244,7 +244,7 @@ abstract class _$$EditSpaceViewStateImplCopyWith<$Res>
   @override
   $ApiUserInfoCopyWith<$Res>? get currentUserInfo;
   @override
-  $SpaceInfoCopyWith<$Res>? get space;
+  $SpaceInfoCopyWith<$Res>? get spaceInfo;
   @override
   $ApiSpaceInvitationCopyWith<$Res>? get invitationCode;
 }
@@ -274,7 +274,7 @@ class __$$EditSpaceViewStateImplCopyWithImpl<$Res>
     Object? currentUserInfo = freezed,
     Object? userInfo = null,
     Object? spaceName = null,
-    Object? space = freezed,
+    Object? spaceInfo = freezed,
     Object? invitationCode = freezed,
     Object? refreshingInviteCode = null,
     Object? error = freezed,
@@ -336,9 +336,9 @@ class __$$EditSpaceViewStateImplCopyWithImpl<$Res>
           ? _value.spaceName
           : spaceName // ignore: cast_nullable_to_non_nullable
               as TextEditingController,
-      space: freezed == space
-          ? _value.space
-          : space // ignore: cast_nullable_to_non_nullable
+      spaceInfo: freezed == spaceInfo
+          ? _value.spaceInfo
+          : spaceInfo // ignore: cast_nullable_to_non_nullable
               as SpaceInfo?,
       invitationCode: freezed == invitationCode
           ? _value.invitationCode
@@ -371,7 +371,7 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
       this.currentUserInfo,
       final List<ApiUserInfo> userInfo = const [],
       required this.spaceName,
-      this.space,
+      this.spaceInfo,
       this.invitationCode,
       this.refreshingInviteCode = false,
       this.error})
@@ -424,7 +424,7 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
   @override
   final TextEditingController spaceName;
   @override
-  final SpaceInfo? space;
+  final SpaceInfo? spaceInfo;
   @override
   final ApiSpaceInvitation? invitationCode;
   @override
@@ -435,7 +435,7 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
 
   @override
   String toString() {
-    return 'EditSpaceViewState(loading: $loading, allowSave: $allowSave, saving: $saving, isAdmin: $isAdmin, deleting: $deleting, deleted: $deleted, locationEnabled: $locationEnabled, isNetworkOff: $isNetworkOff, adminRemovingMember: $adminRemovingMember, selectedSpaceName: $selectedSpaceName, currentUserId: $currentUserId, currentUserInfo: $currentUserInfo, userInfo: $userInfo, spaceName: $spaceName, space: $space, invitationCode: $invitationCode, refreshingInviteCode: $refreshingInviteCode, error: $error)';
+    return 'EditSpaceViewState(loading: $loading, allowSave: $allowSave, saving: $saving, isAdmin: $isAdmin, deleting: $deleting, deleted: $deleted, locationEnabled: $locationEnabled, isNetworkOff: $isNetworkOff, adminRemovingMember: $adminRemovingMember, selectedSpaceName: $selectedSpaceName, currentUserId: $currentUserId, currentUserInfo: $currentUserInfo, userInfo: $userInfo, spaceName: $spaceName, spaceInfo: $spaceInfo, invitationCode: $invitationCode, refreshingInviteCode: $refreshingInviteCode, error: $error)';
   }
 
   @override
@@ -466,7 +466,8 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
             const DeepCollectionEquality().equals(other._userInfo, _userInfo) &&
             (identical(other.spaceName, spaceName) ||
                 other.spaceName == spaceName) &&
-            (identical(other.space, space) || other.space == space) &&
+            (identical(other.spaceInfo, spaceInfo) ||
+                other.spaceInfo == spaceInfo) &&
             (identical(other.invitationCode, invitationCode) ||
                 other.invitationCode == invitationCode) &&
             (identical(other.refreshingInviteCode, refreshingInviteCode) ||
@@ -491,7 +492,7 @@ class _$EditSpaceViewStateImpl implements _EditSpaceViewState {
       currentUserInfo,
       const DeepCollectionEquality().hash(_userInfo),
       spaceName,
-      space,
+      spaceInfo,
       invitationCode,
       refreshingInviteCode,
       const DeepCollectionEquality().hash(error));
@@ -520,7 +521,7 @@ abstract class _EditSpaceViewState implements EditSpaceViewState {
       final ApiUserInfo? currentUserInfo,
       final List<ApiUserInfo> userInfo,
       required final TextEditingController spaceName,
-      final SpaceInfo? space,
+      final SpaceInfo? spaceInfo,
       final ApiSpaceInvitation? invitationCode,
       final bool refreshingInviteCode,
       final Object? error}) = _$EditSpaceViewStateImpl;
@@ -554,7 +555,7 @@ abstract class _EditSpaceViewState implements EditSpaceViewState {
   @override
   TextEditingController get spaceName;
   @override
-  SpaceInfo? get space;
+  SpaceInfo? get spaceInfo;
   @override
   ApiSpaceInvitation? get invitationCode;
   @override

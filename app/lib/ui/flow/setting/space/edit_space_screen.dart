@@ -21,7 +21,6 @@ import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/profile_picture.dart';
-import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/setting/space/edit_space_view_model.dart';
 
 import '../../../components/alert.dart';
@@ -55,7 +54,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
     _observeError();
 
     return AppPage(
-      title: state.space?.space.name,
+      title: state.spaceInfo?.space.name,
       actions: [
         actionButton(
           context: context,
@@ -85,14 +84,11 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                 color: context.colorScheme.textPrimary,
               ),
               onPressed: () {
-                AppRoute.changeAdmin(state.space!).push(context);
+                AppRoute.changeAdmin(state.spaceInfo!).push(context);
               }),
         ]
       ],
-      body: SafeArea(
-          child: ResumeDetector(
-              onResume: () => notifier.getUpdatedSpaceDetails(),
-              child: _body(context, state))),
+      body: SafeArea(child: _body(context, state)),
     );
   }
 
@@ -163,7 +159,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           if (state.currentUserInfo != null) ...[
             _locationSharingItem(
                 context, state.currentUserInfo!, state.locationEnabled,
-                isCurrentUser: true, adminId: state.space!.space.admin_id),
+                isCurrentUser: true, adminId: state.spaceInfo!.space.admin_id),
           ],
         ],
       ),
@@ -187,7 +183,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
             Center(
               child: Text(
                 context.l10n.edit_space_no_member_in_space_text(
-                    state.space?.space.name ?? ''),
+                    state.spaceInfo?.space.name ?? ''),
                 style: AppTextStyle.subtitle3.copyWith(
                   color: context.colorScheme.textSecondary,
                 ),
@@ -203,7 +199,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                   child: _locationSharingItem(
                       context, member, member.isLocationEnabled,
                       isAdmin: state.isAdmin,
-                      adminId: state.space!.space.admin_id),
+                      adminId: state.spaceInfo!.space.admin_id),
                 );
               }).toList(),
             ),
@@ -272,7 +268,6 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
           OnTapScale(
             onTap: () => _showConfirmationToRemoveUserFromGroup(onTap: () {
               notifier.leaveSpace(userId: member.user.id);
-              notifier.isAdminRemovingMember(true);
             }),
             child: Icon(Icons.remove_circle_outline_rounded,
                 color: context.colorScheme.alert),
@@ -292,9 +287,10 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
   }
 
   Widget _deleteSpaceButton(BuildContext context, EditSpaceViewState state) {
+    final members = state.spaceInfo?.members ?? [];
     return BottomStickyOverlay(
       child: PrimaryButton(
-        state.space?.members.length == 1
+        state.spaceInfo?.members.length == 1
             ? context.l10n.edit_space_delete_space_title
             : context.l10n.edit_space_leave_space_title,
         expanded: false,
@@ -304,22 +300,23 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
         foreground: context.colorScheme.alert,
         background: context.colorScheme.containerLowOnSurface,
         onPressed: () {
-          if (state.isAdmin && state.space!.members.length >= 2) {
+          if (state.isAdmin && members.length >= 2) {
             _showPopupToChangeAdmin(state);
           } else {
             showConfirmation(context,
-                confirmBtnText: state.space?.members.length == 1
+                confirmBtnText: members.length == 1
                     ? context.l10n.common_delete
                     : context
                         .l10n.edit_space_leave_space_alert_confirm_button_text,
-                title: state.space?.members.length == 1
+                title: members.length == 1
                     ? context.l10n.edit_space_delete_space_title
                     : context.l10n.edit_space_leave_space_title,
-                message: state.space?.members.length == 1
+                message: members.length == 1
                     ? context.l10n.edit_space_delete_space_alert_message
                     : context.l10n.edit_space_leave_space_alert_message,
+                popBack: true,
                 onConfirm: () {
-              _checkUserInternet(() => state.space?.members.length == 1
+              _checkUserInternet(() => members.length == 1
                   ? notifier.deleteSpace()
                   : notifier.leaveSpace());
             });
@@ -405,7 +402,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
       confirmBtnText: context.l10n.common_remove,
       title: context.l10n.edit_space_remove_user_title,
       message: context.l10n.edit_space_remove_user_subtitle,
-      popBack: false,
+      popBack: true,
       onConfirm: () {
         _checkUserInternet(() => onTap());
       },
@@ -418,10 +415,9 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
       confirmBtnText: context.l10n.edit_space_change_admin_text,
       title: context.l10n.edit_space_change_admin_title,
       message: context.l10n.edit_space_change_admin_subtitle,
-      popBack: false,
+      popBack: true,
       onConfirm: () {
-        AppRoute.changeAdmin(state.space!).push(context);
-        context.pop();
+        AppRoute.changeAdmin(state.spaceInfo!).push(context);
       },
     );
   }
