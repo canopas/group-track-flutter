@@ -175,10 +175,13 @@ class ApiUserService {
 
     try {
       final deviceToken = await FirebaseMessaging.instance.getToken() ?? "";
+
       if (deviceToken.isEmpty) {
         logger.e('UserService: registerDevice error deviceToken is null');
         return;
       }
+      if (currentUser?.fcm_token != null &&
+          currentUser?.fcm_token == deviceToken) return;
       await registerFcmToken(currentUser!.id, deviceToken);
       logger.d('UserService: registerDevice success with token $deviceToken');
     } catch (error) {
