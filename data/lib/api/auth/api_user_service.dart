@@ -181,7 +181,9 @@ class ApiUserService {
         return;
       }
       if (currentUser?.fcm_token != null &&
-          currentUser?.fcm_token == deviceToken) return;
+          currentUser?.fcm_token == deviceToken) {
+        return;
+      }
       await registerFcmToken(currentUser!.id, deviceToken);
       logger.d('UserService: registerDevice success with token $deviceToken');
     } catch (error) {
