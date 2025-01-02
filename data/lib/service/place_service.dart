@@ -24,37 +24,46 @@ class PlaceService {
 
   PlaceService(this._db);
 
-  CollectionReference get _spaceRef =>
+  CollectionReference<ApiSpace> get _spaceRef =>
       _db.collection('spaces').withConverter<ApiSpace>(
           fromFirestore: ApiSpace.fromFireStore,
           toFirestore: (space, options) => space.toJson());
 
-  CollectionReference spacePlacesRef(String spaceId) =>
+  CollectionReference<ApiPlace> spacePlacesRef(String spaceId) =>
       _spaceRef.doc(spaceId).collection('space_places').withConverter<ApiPlace>(
           fromFirestore: ApiPlace.fromFireStore,
           toFirestore: (place, options) => place.toJson());
 
-  CollectionReference spacePlacesSettingsRef(String spaceId, String placeId) {
+  CollectionReference<ApiPlaceMemberSetting> spacePlacesSettingsRef(
+      String spaceId, String placeId) {
     return spacePlacesRef(spaceId)
         .doc(placeId)
-        .collection('place_settings_by_members');
+        .collection('place_settings_by_members')
+        .withConverter<ApiPlaceMemberSetting>(
+            fromFirestore: ApiPlaceMemberSetting.fromFireStore,
+            toFirestore: (settings, options) => settings.toJson());
   }
 
   Stream<List<ApiPlace>> getAllPlacesStream(String spaceId) {
-    return spacePlacesRef(spaceId).snapshots().map((snapshot) => snapshot.docs
-        .map((doc) => doc.data() as ApiPlace?)
+    return spacePlacesRef(spaceId).snapshots().map((snapshot) =>
+        snapshot.docs.map((doc) => doc.data()).whereType<ApiPlace>().toList());
+  }
+
+  Future<List<ApiPlace>> getAllPlaces(String spaceId) async {
+    final snapshot = await spacePlacesRef(spaceId).get();
+    return snapshot.docs
+        .map((doc) => doc.data())
         .whereType<ApiPlace>()
-        .toList());
+        .toList();
   }
 
   Future<ApiPlace?> getPlace(String placeId) async {
-    final querySnapshot = await _spaceRef.firestore
-        .collectionGroup('space_places')
+    final querySnapshot = await spacePlacesRef(placeId)
         .where("id", isEqualTo: placeId)
         .limit(1)
         .get();
 
-    return querySnapshot.docs.firstOrNull?.data() as ApiPlace?;
+    return querySnapshot.docs.firstOrNull?.data();
   }
 
   Future<void> deletePlace(String spaceId, String placeId) async {
@@ -82,7 +91,7 @@ class PlaceService {
       space_member_ids: spaceMemberIds,
     );
 
-    await placeDoc.set(place.toJson());
+    await placeDoc.set(place);
 
     final settings = spaceMemberIds.map((memberId) {
       final filterIds = spaceMemberIds.where((id) => id != memberId).toList();
@@ -98,7 +107,7 @@ class PlaceService {
     for (final setting in settings) {
       await spacePlacesSettingsRef(spaceId, place.id)
           .doc(setting.user_id)
-          .set(setting.toJson());
+          .set(setting);
     }
   }
 
@@ -113,8 +122,7 @@ class PlaceService {
         .get();
 
     if (setting.docs.isNotEmpty) {
-      return ApiPlaceMemberSetting.fromJson(
-          setting.docs.first.data() as Map<String, dynamic>);
+      return setting.docs.first.data();
     }
     return null;
   }
@@ -125,13 +133,74 @@ class PlaceService {
     String userId,
     ApiPlaceMemberSetting setting,
   ) async {
-    await spacePlacesSettingsRef(spaceId, placeId).doc(userId).set(
-          setting.toJson(),
-        );
+    await spacePlacesSettingsRef(spaceId, placeId).doc(userId).set(setting);
   }
 
   Future<void> updatePlace(ApiPlace place) async {
-    await spacePlacesRef(place.space_id).doc(place.id).set(place.toJson());
+    await spacePlacesRef(place.space_id).doc(place.id).set(place);
+  }
+
+  Future<void> joinUserToExistingPlaces({
+    required String userId,
+    required String spaceId,
+  }) async {
+    final allPlaces = await getAllPlaces(spaceId);
+
+    if (allPlaces.isEmpty) return;
+
+    for (final place in allPlaces) {
+      final settings = await spacePlacesSettingsRef(spaceId, place.id).get();
+      for (final settingDoc in settings.docs) {
+        final setting = settingDoc.data();
+        final updatedSetting = setting.copyWith(
+          arrival_alert_for: {...setting.arrival_alert_for, userId}.toList(),
+          leave_alert_for: {...setting.leave_alert_for, userId}.toList(),
+        );
+        await updatePlaceSetting(
+            spaceId, place.id, setting.user_id, updatedSetting);
+      }
+      await updatePlace(place
+          .copyWith(space_member_ids: [...place.space_member_ids, userId]));
+
+      final newUserSettings = ApiPlaceMemberSetting(
+        user_id: userId,
+        place_id: place.id,
+        alert_enable: true,
+        arrival_alert_for: place.space_member_ids,
+        leave_alert_for: place.space_member_ids,
+      );
+      await spacePlacesSettingsRef(spaceId, place.id)
+          .doc(userId)
+          .set(newUserSettings);
+    }
+  }
+
+  Future<void> removedUserFromExistingPlaces(
+      String spaceId, String userId) async {
+    final allPlaces = await getAllPlaces(spaceId);
+
+    for (final place in allPlaces) {
+      final spaceMemberIds =
+          place.space_member_ids.where((id) => id != userId).toList();
+
+      final settings = await spacePlacesSettingsRef(spaceId, place.id).get();
+      for (final settingDoc in settings.docs) {
+        final setting = settingDoc.data();
+        if (setting.user_id == userId) {
+          await spacePlacesSettingsRef(spaceId, place.id).doc(userId).delete();
+        } else {
+          final updatedSetting = setting.copyWith(
+            arrival_alert_for:
+                setting.arrival_alert_for.where((id) => id != userId).toList(),
+            leave_alert_for:
+                setting.leave_alert_for.where((id) => id != userId).toList(),
+          );
+          await updatePlaceSetting(
+              spaceId, place.id, setting.user_id, updatedSetting);
+        }
+      }
+      await updatePlace(place.copyWith(space_member_ids: spaceMemberIds));
+    }
   }
 
   Future<List<ApiNearbyPlace>> searchNearbyPlaces(

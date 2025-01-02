@@ -1,6 +1,9 @@
+import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/service/auth_service.dart';
+import 'package:data/service/place_service.dart';
+import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -15,6 +18,8 @@ final joinSpaceViewStateProvider = StateNotifierProvider.autoDispose<
     ref.read(spaceServiceProvider),
     ref.read(apiSpaceInvitationServiceProvider),
     ref.read(authServiceProvider),
+    ref.read(placeServiceProvider),
+    ref.read(currentUserPod),
   );
 });
 
@@ -22,17 +27,18 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
   final SpaceService spaceService;
   final ApiSpaceInvitationService spaceInvitationService;
   final AuthService authService;
+  final PlaceService placeService;
+  final ApiUser? _currentUser;
 
-  JoinSpaceViewNotifier(
-    this.spaceService,
-    this.spaceInvitationService,
-    this.authService,
-  ) : super(const JoinSpaceViewState(controllers: [], focusNodes: [])) {
+  JoinSpaceViewNotifier(this.spaceService, this.spaceInvitationService,
+      this.authService, this.placeService, this._currentUser)
+      : super(const JoinSpaceViewState(controllers: [], focusNodes: [])) {
     _initializeControllersAndFocusNodes();
   }
 
   void _initializeControllersAndFocusNodes() {
-    final controllers = List.generate(6, (index) => TextEditingController(text: '\u200b'));
+    final controllers =
+        List.generate(6, (index) => TextEditingController(text: '\u200b'));
     final focusNodes = List.generate(6, (index) => FocusNode());
     state = state.copyWith(controllers: controllers, focusNodes: focusNodes);
   }
@@ -50,7 +56,8 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
     } else if (text.length > 1) {
       // Handle multiple characters
       String newText = text.replaceAll('\u200b', '').toUpperCase();
-      controller.text = newText.substring(0, 1); // Keep only the first character
+      controller.text =
+          newText.substring(0, 1); // Keep only the first character
       controller.selection = const TextSelection.collapsed(offset: 1);
 
       // Pass extra characters to the next field
@@ -59,7 +66,7 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
         final nextFocusNode = state.focusNodes[index + 1];
 
         String nextText = (nextController.text.replaceAll('\u200b', '') +
-            newText.substring(1))
+                newText.substring(1))
             .toUpperCase();
 
         nextController.text = nextText;
@@ -79,9 +86,9 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
 
   Future<void> joinSpace() async {
     try {
-      if (state.space == null) return;
+      if (state.space == null || _currentUser == null) return;
       state = state.copyWith(verifying: true, error: null);
-      spaceService.joinSpace(state.space?.id ?? '');
+      await spaceService.joinSpace(state.space?.id ?? '', _currentUser.id);
       state = state.copyWith(verifying: false, spaceJoined: true, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error, verifying: false);
@@ -95,7 +102,10 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
 
   Future<String?> getInvitation(String code) async {
     try {
-      state = state.copyWith(verifying: true, errorInvalidInvitationCode: false, alreadySpaceMember: false);
+      state = state.copyWith(
+          verifying: true,
+          errorInvalidInvitationCode: false,
+          alreadySpaceMember: false);
       final invitation = await spaceInvitationService.getInvitation(code);
       if (invitation == null) {
         state =
@@ -107,7 +117,8 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
       final userSpaces = authService.currentUser?.space_ids ?? [];
 
       if (userSpaces.contains(spaceId)) {
-        state = state.copyWith(verifying: false, alreadySpaceMember: true, error: null);
+        state = state.copyWith(
+            verifying: false, alreadySpaceMember: true, error: null);
         _resetFlagsAfter30Sec();
         return '';
       }
@@ -115,39 +126,47 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
     } catch (error, stack) {
       logger.e('JoinSpaceViewNotifier: Error while get group invitation',
           error: error, stackTrace: stack);
+      state = state.copyWith(error: error, verifying: false);
       return null;
     }
   }
 
-  void getSpace(String code) async {
+  void getSpace() async {
     try {
-      final spaceId = await getInvitation(code);
-      final space = await spaceService.getSpace(spaceId ?? '');
+      final spaceId = await getInvitation(state.invitationCode);
+      if (spaceId == null || spaceId.isEmpty) return;
+
+      final space = await spaceService.getSpace(spaceId);
       state = state.copyWith(space: space);
     } catch (error, stack) {
       logger.e('JoinSpaceViewNotifier: Error while get space',
           error: error, stackTrace: stack);
+      state = state.copyWith(error: error);
     }
   }
 
   void _resetFlagsAfter30Sec() {
-    Future.delayed(const Duration(seconds: 10), () {
-      state = state.copyWith(
-        errorInvalidInvitationCode: false,
-        alreadySpaceMember: false,
-      );
-    });
+    if (mounted) {
+      Future.delayed(const Duration(seconds: 10), () {
+        state = state.copyWith(
+          errorInvalidInvitationCode: false,
+          alreadySpaceMember: false,
+        );
+      });
+    }
   }
 
   void onChange(String value, int index) {
     _handleTextChange(index);
-    state.controllers[index].text = state.controllers[index].value.text.toUpperCase();
+    state.controllers[index].text =
+        state.controllers[index].value.text.toUpperCase();
     _getInvitationCode();
   }
 
   void _getInvitationCode() {
     if (state.controllers.length == 6) {
-      final inviteCode = state.controllers.map((controller) => controller.text.trim()).join();
+      final inviteCode =
+          state.controllers.map((controller) => controller.text.trim()).join();
       state = state.copyWith(invitationCode: inviteCode);
     }
   }

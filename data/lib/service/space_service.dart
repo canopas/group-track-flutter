@@ -56,8 +56,10 @@ class SpaceService {
     return generatedCode;
   }
 
-  Future<void> joinSpace(String spaceId) async {
-    await spaceService.joinSpace(spaceId);
+  Future<void> joinSpace(String spaceId, String userId) async {
+    await spaceService.joinSpace(spaceId, userId);
+    await placeService.joinUserToExistingPlaces(
+        userId: userId, spaceId: spaceId);
     currentSpaceId = spaceId;
   }
 
@@ -156,7 +158,8 @@ class SpaceService {
   Future<String?> getInviteCode(String spaceId) async {
     final code = await spaceInvitationService.getSpaceInviteCode(spaceId);
     if (code?.isExpired ?? false) {
-      final newInvitation = await spaceInvitationService.regenerateInvitationCode(spaceId);
+      final newInvitation =
+          await spaceInvitationService.regenerateInvitationCode(spaceId);
       return newInvitation?.code;
     }
     return code?.code;
@@ -186,7 +189,7 @@ class SpaceService {
     }
 
     for (final space in joinedSpace) {
-      leaveSpace(space!.id, userId: userId);
+      leaveSpace(space!.id, userId);
     }
     currentSpaceId = null;
   }
@@ -198,10 +201,10 @@ class SpaceService {
     currentSpaceId = null;
   }
 
-  Future<void> leaveSpace(String spaceId, {String? userId}) async {
-    final currentUserId = currentUser?.id ?? '';
-    await spaceService.removeUserFromSpace(spaceId, userId ?? currentUserId);
-    await userService.removeSpaceId(userId: currentUserId, spaceId: spaceId);
+  Future<void> leaveSpace(String spaceId, String userId) async {
+    await spaceService.removeUserFromSpace(spaceId, userId);
+    await userService.removeSpaceId(userId: userId, spaceId: spaceId);
+    await placeService.removedUserFromExistingPlaces(spaceId, userId);
     currentSpaceId = null;
   }
 
