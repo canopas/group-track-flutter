@@ -36,19 +36,20 @@ class DottedLineView extends StatelessWidget {
           child: Center(
               child: isSteadyLocation
                   ? SvgPicture.asset(
-                      Assets.images.icTimelineLocationPinIcon,
-                      colorFilter: ColorFilter.mode(
-                        context.colorScheme.primary,
-                        BlendMode.srcATop,
-                      ),
-                    )
+                  Assets.images.icTimelineLocationPinIcon,
+                  colorFilter: ColorFilter.mode(
+                    context.colorScheme.primary,
+                    BlendMode.srcATop,
+                  ),
+                  width: 30, height: 30,
+              )
                   : SvgPicture.asset(
-                      Assets.images.icTimelineJourneyIcon,
-                      colorFilter: ColorFilter.mode(
-                        context.colorScheme.primary,
-                        BlendMode.srcATop,
-                      ),
-                    )),
+                Assets.images.icTimelineJourneyIcon,
+                colorFilter: ColorFilter.mode(
+                  context.colorScheme.primary,
+                  BlendMode.srcATop,
+                ),
+              )),
         ),
         if (!isLastItem)
           Expanded(
@@ -94,20 +95,20 @@ class DetailJourneyDottedLineView extends StatelessWidget {
           child: Center(
               child: !isSteadyLocation
                   ? Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: context.colorScheme.primary,
-                        shape: BoxShape.circle,
-                      ),
-                    )
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: context.colorScheme.primary,
+                  shape: BoxShape.circle,
+                ),
+              )
                   : SvgPicture.asset(
-                      Assets.images.icFlagIcon,
-                      colorFilter: ColorFilter.mode(
-                        context.colorScheme.primary,
-                        BlendMode.srcATop,
-                      ),
-                    )),
+                Assets.images.icFlagIcon,
+                colorFilter: ColorFilter.mode(
+                  context.colorScheme.primary,
+                  BlendMode.srcATop,
+                ),
+              )),
         ),
         if (!isSteadyLocation)
           Expanded(
