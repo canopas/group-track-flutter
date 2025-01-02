@@ -52,40 +52,44 @@ class _AppState extends ConsumerState<App> {
 
     return AppTheme(
       colorScheme: colorScheme,
-      child: Builder(
-        builder: (context) {
-          if (Platform.isAndroid) {
-            runPostFrame(() => configureAndroidSystemUi(context));
-          }
+      child: MediaQuery.withClampedTextScaling(
+        maxScaleFactor: 1.16,
+        minScaleFactor: 0.92,
+        child: Builder(
+          builder: (context) {
+            if (Platform.isAndroid) {
+              runPostFrame(() => configureAndroidSystemUi(context));
+            }
 
-          return Platform.isIOS
-              ? CupertinoApp.router(
-                  debugShowCheckedModeBanner: false,
-                  localizationsDelegates:
-                      AppLocalizations.localizationsDelegates,
-                  supportedLocales: AppLocalizations.supportedLocales,
-                  onGenerateTitle: (context) => context.l10n.app_title,
-                  routerConfig: _router,
-                  theme: CupertinoThemeData(
-                    brightness: context.brightness,
-                    primaryColor: colorScheme.primary,
-                    primaryContrastingColor: colorScheme.onPrimary,
-                    barBackgroundColor: colorScheme.surface,
-                    scaffoldBackgroundColor: colorScheme.surface,
-                    applyThemeToAll: true,
-                  ),
-                )
-              : MaterialApp.router(
-                  debugShowCheckedModeBanner: false,
-                  localizationsDelegates:
-                      AppLocalizations.localizationsDelegates,
-                  supportedLocales: AppLocalizations.supportedLocales,
-                  onGenerateTitle: (context) => context.l10n.app_title,
-                  routerConfig: _router,
-                  theme: materialThemeDataLight,
-                  darkTheme: materialThemeDataDark,
-                );
-        },
+            return Platform.isIOS
+                ? CupertinoApp.router(
+                    debugShowCheckedModeBanner: false,
+                    localizationsDelegates:
+                        AppLocalizations.localizationsDelegates,
+                    supportedLocales: AppLocalizations.supportedLocales,
+                    onGenerateTitle: (context) => context.l10n.app_title,
+                    routerConfig: _router,
+                    theme: CupertinoThemeData(
+                      brightness: context.brightness,
+                      primaryColor: colorScheme.primary,
+                      primaryContrastingColor: colorScheme.onPrimary,
+                      barBackgroundColor: colorScheme.surface,
+                      scaffoldBackgroundColor: colorScheme.surface,
+                      applyThemeToAll: true,
+                    ),
+                  )
+                : MaterialApp.router(
+                    debugShowCheckedModeBanner: false,
+                    localizationsDelegates:
+                        AppLocalizations.localizationsDelegates,
+                    supportedLocales: AppLocalizations.supportedLocales,
+                    onGenerateTitle: (context) => context.l10n.app_title,
+                    routerConfig: _router,
+                    theme: materialThemeDataLight,
+                    darkTheme: materialThemeDataDark,
+                  );
+          },
+        ),
       ),
     );
   }
