@@ -72,21 +72,37 @@ class ApiJourneyService {
 
   Future<List<ApiLocationJourney>> getJourneyHistory(
     String userId,
-    int? from,
-    int? to,
+    int from,
+    int to,
   ) async {
-    final querySnapshot = await _journeyRef(userId)
+
+    final createdQuerySnapshot = await _journeyRef(userId)
         .where('user_id', isEqualTo: userId)
-        .where('update_at', isGreaterThanOrEqualTo: from)
-        .where('update_at', isLessThanOrEqualTo: to)
+        .where('created_at', isGreaterThanOrEqualTo: from)
+        .where('created_at', isLessThanOrEqualTo: to)
         .orderBy('created_at', descending: true)
         .limit(20)
         .get();
 
-    final currentDayJourney =
-        querySnapshot.docs.map((doc) => doc.data()).toList();
+    final updatedQuerySnapshot = await _journeyRef(userId)
+        .where('user_id', isEqualTo: userId)
+        .where('update_at', isGreaterThanOrEqualTo: from)
+        .where('update_at', isLessThanOrEqualTo: to)
+        .orderBy('created_at', descending: true)
+        .limit(5)
+        .get();
 
-    return currentDayJourney;
+    final allDocsMap = <String, ApiLocationJourney>{};
+
+    for (var doc in createdQuerySnapshot.docs) {
+      allDocsMap[doc.id] = doc.data();
+    }
+
+    for (var doc in updatedQuerySnapshot.docs) {
+      allDocsMap[doc.id] = doc.data();
+    }
+
+    return allDocsMap.values.toList();
   }
 
   Future<List<ApiLocationJourney>> getMoreJourneyHistory(
