@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../log/logger.dart';
@@ -23,55 +22,32 @@ class ApiJourneyService {
 
   CollectionReference get _userRef => _db.collection("users");
 
-  CollectionReference _journeyRef(String userId) =>
-      _userRef.doc(userId).collection("user_journeys");
+  CollectionReference<ApiLocationJourney> _journeyRef(String userId) => _userRef
+      .doc(userId)
+      .collection("user_journeys")
+      .withConverter<ApiLocationJourney>(
+        fromFirestore: (snapshot, _) =>
+            ApiLocationJourney.fromFireStore(snapshot, null),
+        toFirestore: (journey, _) => journey.toJson(),
+      );
 
-  Future<ApiLocationJourney> saveCurrentJourney({
+  Future<ApiLocationJourney> addJourney({
     required String userId,
-    required double fromLatitude,
-    required double fromLongitude,
-    required String type,
-    double? toLatitude,
-    double? toLongitude,
-    LatLng? toLatLng,
-    List<JourneyRoute>? routes,
-    double? routeDistance,
-    int? routeDuration,
-    int? created_at,
-    int? updated_at,
-
+    required ApiLocationJourney newJourney,
   }) async {
-    final fromLatLng = LatLng(fromLatitude, fromLongitude);
-    final toLatLng = (toLatitude != null && toLongitude != null)
-        ? LatLng(toLatitude, toLongitude)
-        : null;
-
     final docRef = _journeyRef(userId).doc();
 
-    final journey = ApiLocationJourney(
-      id: docRef.id,
-      user_id: userId,
-      from_latitude: fromLatLng.latitude,
-      from_longitude: fromLatLng.longitude,
-      to_latitude: toLatLng?.latitude,
-      to_longitude: toLatLng?.longitude,
-      routes: routes ?? [],
-      route_distance: routeDistance,
-      route_duration: routeDuration,
-      created_at: created_at ?? DateTime.now().millisecondsSinceEpoch,
-      update_at: updated_at ?? DateTime.now().millisecondsSinceEpoch,
-      type: type
-    );
-    await docRef.set(journey.toJson());
+    final journey = newJourney.copyWith(id: newJourney.id ?? docRef.id);
+    await docRef.set(journey);
     return journey;
   }
 
-  Future<void> updateLastLocationJourney(
+  Future<void> updateJourney(
     String userId,
     ApiLocationJourney journey,
   ) async {
     try {
-      await _journeyRef(userId).doc(journey.id).set(journey.toJson());
+      await _journeyRef(userId).doc(journey.id).set(journey);
     } catch (error) {
       logger.e(
         'ApiJourneyService: Error while updating last location journey',
@@ -89,17 +65,17 @@ class ApiJourneyService {
 
     final doc = querySnapshot.docs.firstOrNull;
     if (doc != null) {
-      return ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>);
+      return doc.data();
     }
     return null;
   }
 
   Future<List<ApiLocationJourney>> getJourneyHistory(
     String userId,
-    int? from,
-    int? to,
+    int from,
+    int to,
   ) async {
-    final querySnapshot = await _journeyRef(userId)
+    final createdQuerySnapshot = await _journeyRef(userId)
         .where('user_id', isEqualTo: userId)
         .where('created_at', isGreaterThanOrEqualTo: from)
         .where('created_at', isLessThanOrEqualTo: to)
@@ -107,24 +83,25 @@ class ApiJourneyService {
         .limit(20)
         .get();
 
-    final currentDayJourney = querySnapshot.docs
-        .map((doc) =>
-            ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
-        .toList();
-
-    final previousDayJourneyQuery = await _journeyRef(userId)
+    final updatedQuerySnapshot = await _journeyRef(userId)
         .where('user_id', isEqualTo: userId)
-        .where('created_at', isLessThan: from)
         .where('update_at', isGreaterThanOrEqualTo: from)
-        .limit(1)
+        .where('update_at', isLessThanOrEqualTo: to)
+        .orderBy('created_at', descending: true)
+        .limit(5)
         .get();
 
-    final previousDayJourney = previousDayJourneyQuery.docs
-        .map((doc) =>
-            ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
-        .toList();
+    final allDocsMap = <String, ApiLocationJourney>{};
 
-    return previousDayJourney + currentDayJourney;
+    for (var doc in createdQuerySnapshot.docs) {
+      allDocsMap[doc.id] = doc.data();
+    }
+
+    for (var doc in updatedQuerySnapshot.docs) {
+      allDocsMap[doc.id] = doc.data();
+    }
+
+    return allDocsMap.values.toList();
   }
 
   Future<List<ApiLocationJourney>> getMoreJourneyHistory(
@@ -137,10 +114,7 @@ class ApiJourneyService {
           .orderBy('created_at', descending: true)
           .limit(20)
           .get();
-      return querySnapshot.docs
-          .map((doc) =>
-              ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
-          .toList();
+      return querySnapshot.docs.map((doc) => doc.data()).toList();
     }
     final querySnapshot = await _journeyRef(userId)
         .where('user_id', isEqualTo: userId)
@@ -148,10 +122,7 @@ class ApiJourneyService {
         .orderBy('created_at', descending: true)
         .limit(20)
         .get();
-    return querySnapshot.docs
-        .map((doc) =>
-            ApiLocationJourney.fromJson(doc.data() as Map<String, dynamic>))
-        .toList();
+    return querySnapshot.docs.map((doc) => doc.data()).toList();
   }
 
   Future<ApiLocationJourney?> getUserJourneyById(
@@ -161,9 +132,7 @@ class ApiJourneyService {
     final querySnapshot = await _journeyRef(userId).doc(journeyId).get();
 
     if (querySnapshot.exists) {
-      return ApiLocationJourney.fromJson(
-        querySnapshot.data() as Map<String, dynamic>,
-      );
+      return querySnapshot.data();
     }
     return null;
   }

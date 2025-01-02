@@ -77,20 +77,15 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
           ? await journeyService.getMoreJourneyHistory(userId, lastJourneyTime)
           : await journeyService.getJourneyHistory(userId, from, to);
 
-      // Filter by date range
-      final filteredJourneys = journeys.where((journey) {
-        return journey.created_at! >= from && journey.created_at! <= to;
-      }).toList();
-
       // Combine all journeys and sort
-      final allJourney = [...state.sortedJourney, ...filteredJourneys];
+      final allJourney = [...state.sortedJourney, ...journeys];
       final sortedJourney = _sortJourneysByUpdateAt(allJourney);
 
       // Update state with final data
       state = state.copyWith(
         isLoading: false,
         appending: false,
-        hasMore: filteredJourneys.isNotEmpty,
+        hasMore: journeys.length >= 20,
         sortedJourney: sortedJourney,
       );
     } catch (error, stack) {

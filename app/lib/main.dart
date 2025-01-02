@@ -77,9 +77,6 @@ void updateCurrentUserState(
   if (userId != null && isTypeUpdateState) {
     networkService.updateUserNetworkState(userId);
   }
-  if (userId != null) {
-    LocationManager.instance.onCurrentStateChangeRequest(userId);
-  }
 }
 
 Future<ProviderContainer> _initContainer() async {
