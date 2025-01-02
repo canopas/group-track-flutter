@@ -181,10 +181,15 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     String? spaceId,
   ) {
     final location = LatLng(journey.from_latitude, journey.from_longitude);
-    final steadyDuration =
-        notifier.getSteadyDuration(journey.created_at!, journey.update_at!);
-    final formattedTime = _getFormattedJourneyTime(
-        journey.created_at ?? 0, journey.update_at ?? 0);
+    final steadyDuration = isFirstItem
+        ? notifier.getSteadyDuration(
+            journey.created_at!, DateTime.now().millisecondsSinceEpoch)
+        : notifier.getSteadyDuration(journey.created_at!, journey.update_at!);
+
+    final formattedTime = isFirstItem && notifier.selectedDateIsTodayDate()
+        ? _getFormattedLocationTime(journey.created_at!)
+        : _getFormattedJourneyTime(
+            journey.created_at ?? 0, journey.update_at ?? 0);
 
     return Padding(
       padding: EdgeInsets.only(top: isFirstItem ? 16 : 0),
@@ -379,10 +384,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     bool? firstItem,
   }) {
     final steadyText = (isSteadyLocation ?? false)
-        ? ((firstItem ?? false) && notifier.selectedDateIsTodayDate())
-            ? ''
-            : context.l10n
-                .journey_timeline_steady_duration_text(steadyDuration!)
+        ? context.l10n.journey_timeline_steady_duration_text(steadyDuration!)
         : '';
 
     return Column(
@@ -502,7 +504,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     if (_markerCache.containsKey(cacheKey)) {
       return _markerCache[cacheKey]!;
     }
-    
+
     final fromIcon = await notifier
         .createCustomIcon('assets/images/ic_feed_location_icon.png');
     final toIcon =
