@@ -46,19 +46,11 @@ class HomeTopBar extends StatefulWidget {
 class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
-  late AnimationController _buttonController;
 
   @override
   void initState() {
     super.initState();
-
     _prepareAnimations();
-
-    _buttonController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-      upperBound: 0.5,
-    );
   }
 
   void _prepareAnimations() {
@@ -76,17 +68,14 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     if (!mounted) return;
     if (widget.expand) {
       _animationController.forward();
-      _buttonController.reverse(from: 0.5);
     } else {
       _animationController.reverse();
-      _buttonController.forward(from: 0.0);
     }
   }
 
   @override
   void dispose() {
     _animationController.dispose();
-    _buttonController.dispose();
     super.dispose();
   }
 
@@ -220,14 +209,13 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   const AppProgressIndicator(
                       size: AppProgressIndicatorSize.small)
                 ] else ...[
-                  RotationTransition(
-                    turns:
-                        Tween(begin: 0.0, end: 1.0).animate(_buttonController),
+                  Transform.rotate(
+                    angle: widget.expand ? 0 : 3.14,
                     child: Icon(
                       Icons.keyboard_arrow_up_rounded,
                       color: context.colorScheme.textPrimary,
                     ),
-                  )
+                  ),
                 ],
               ],
             ),
