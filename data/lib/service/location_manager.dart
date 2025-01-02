@@ -170,15 +170,6 @@ class LocationManager {
     }
   }
 
-  void onCurrentStateChangeRequest(String userId) async {
-    final lastKnownJourney =
-        await _journeyRepository.getLastKnownLocation(userId, null);
-    // _journeyRepository.checkAndSaveJourneyOnDayChange(
-    //     extractedLocation: null,
-    //     lastKnownJourney: lastKnownJourney,
-    //     userId: userId);
-  }
-
   double _distanceBetween(Position position1, Position position2) {
     return Geolocator.distanceBetween(
       position1.latitude,

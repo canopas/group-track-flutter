@@ -31,18 +31,18 @@ class ApiJourneyService {
         toFirestore: (journey, _) => journey.toJson(),
       );
 
-  Future<ApiLocationJourney> saveCurrentJourney({
+  Future<ApiLocationJourney> addJourney({
     required String userId,
     required ApiLocationJourney newJourney,
   }) async {
     final docRef = _journeyRef(userId).doc();
 
-    final journey = newJourney.copyWith(id: docRef.id);
+    final journey = newJourney.copyWith(id: newJourney.id ?? docRef.id);
     await docRef.set(journey);
     return journey;
   }
 
-  Future<void> updateLastLocationJourney(
+  Future<void> updateJourney(
     String userId,
     ApiLocationJourney journey,
   ) async {
@@ -75,7 +75,6 @@ class ApiJourneyService {
     int from,
     int to,
   ) async {
-
     final createdQuerySnapshot = await _journeyRef(userId)
         .where('user_id', isEqualTo: userId)
         .where('created_at', isGreaterThanOrEqualTo: from)

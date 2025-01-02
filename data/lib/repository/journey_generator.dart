@@ -2,10 +2,11 @@ import 'dart:math';
 
 import 'package:data/api/location/location.dart';
 import 'package:geolocator/geolocator.dart';
+// ignore_for_file: constant_identifier_names
 
 import '../api/location/journey/journey.dart';
 
-const MIN_DISTANCE = 150.0; // 150 meters
+const MIN_DISTANCE = 100.0; // 100 meters
 const MIN_TIME_DIFFERENCE = 5 * 60 * 1000; // 5 minutes
 const MIN_DISTANCE_FOR_MOVING = 10.0; // 10 meters
 const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 10 secs
@@ -47,15 +48,12 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 10 secs
 
   bool dayChanged = _isDayChanged(newLocation, lastKnownJourney);
 
-  print("XXX distance $distance timeDifference $timeDifference");
-
   if (lastKnownJourney.isSteady() && distance < MIN_DISTANCE && dayChanged) {
     final updateJourney = lastKnownJourney.copyWith(
       from_latitude: newLocation.latitude,
       from_longitude: newLocation.longitude,
       update_at: DateTime.now().millisecondsSinceEpoch,
     );
-    print("XXX day changed");
     return (updatedJourney: updateJourney, newJourney: null);
   }
 
@@ -99,7 +97,6 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 10 secs
         update_at: DateTime.now().millisecondsSinceEpoch,
       );
 
-      print("XXX user is stationary, distance > 150");
       return (updatedJourney: updatedJourney, newJourney: newJourney);
     } else if (distance < MIN_DISTANCE &&
         timeDifference > MIN_UPDATE_INTERVAL_MINUTE) {
@@ -108,7 +105,6 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 10 secs
         from_longitude: newLocation.longitude,
         update_at: DateTime.now().millisecondsSinceEpoch,
       );
-      print("XXX update stationary journey, distance < 150 timeDifference");
       return (updatedJourney: updateJourney, newJourney: null);
     }
   } else {
@@ -128,21 +124,19 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 10 secs
                 longitude: newLocation.longitude,
               )
             ],
-        update_at: DateTime.now().millisecondsSinceEpoch,
       );
 
       // create new steady journey
       final newJourney = ApiLocationJourney(
         user_id: userId,
-        from_latitude: lastKnownJourney.from_latitude,
-        from_longitude: lastKnownJourney.from_longitude,
+        from_latitude: newLocation.latitude,
+        from_longitude: newLocation.longitude,
         type: JOURNEY_TYPE_STEADY,
-        created_at: DateTime.now().millisecondsSinceEpoch,
+        created_at: lastKnownJourney.update_at ?? DateTime.now().millisecondsSinceEpoch,
         update_at: DateTime.now().millisecondsSinceEpoch,
       );
-      print("XXX moving journey, distance < 150 timeDifference > 1 mins");
       return (updatedJourney: updatedJourney, newJourney: newJourney);
-    } else if (distance > MIN_DISTANCE ||
+    } else if (distance > MIN_DISTANCE_FOR_MOVING &&
         timeDifference > MIN_UPDATE_INTERVAL_MINUTE) {
       // Update journey for continued moving user i.e., state is moving and user is still moving
       final updatedJourney = lastKnownJourney.copyWith(
@@ -160,7 +154,6 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 10 secs
             ],
         update_at: DateTime.now().millisecondsSinceEpoch,
       );
-      print("XXX moving journey, distance > 150 || timeDifference > 30 secs");
 
       return (updatedJourney: updatedJourney, newJourney: null);
     }
