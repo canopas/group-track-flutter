@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/location.dart';
 import 'package:data/service/location_manager.dart';
 import 'package:data/service/network_service.dart';
@@ -53,28 +52,21 @@ void main() async {
 
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  final networkService = NetworkService(FirebaseFirestore.instance);
-  updateSpaceUserNetworkState(message, networkService);
+  final networkService = NetworkService();
   updateCurrentUserState(message, networkService);
 }
 
-void updateSpaceUserNetworkState(
+void updateCurrentUserState(
     RemoteMessage message, NetworkService networkService) {
   final String? userId =
       message.data[NotificationNetworkStatusConst.KEY_USER_ID];
-  final bool isTypeNetworkStatus = message
+  final bool isTypeNetworkStatus =
+  message
       .data[NotificationNetworkStatusConst.NOTIFICATION_TYPE_NETWORK_STATUS];
-  if (userId != null && isTypeNetworkStatus) {
-    networkService.updateUserNetworkState(userId);
-  }
-}
-
-void updateCurrentUserState(
-    RemoteMessage message, NetworkService networkService) async {
-  final String? userId = message.data[NotificationUpdateStateConst.KEY_USER_ID];
   final bool isTypeUpdateState =
-      message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
-  if (userId != null && isTypeUpdateState) {
+  message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
+
+  if (userId != null && (isTypeNetworkStatus || isTypeUpdateState)) {
     networkService.updateUserNetworkState(userId);
   }
 }
@@ -143,12 +135,12 @@ Future<void> onStart(ServiceInstance service) async {
     if (await service.isForegroundService()) {
       flutterLocalNotificationsPlugin.show(
         NOTIFICATION_ID,
-        'Your space Location',
+        'GroupTrack Location',
         'Location is being tracked',
         const NotificationDetails(
           android: AndroidNotificationDetails(
             NOTIFICATION_CHANNEL_ID,
-            'MY FOREGROUND SERVICE',
+            'GroupTrack Location Service',
             icon: "app_notification_icon",
             ongoing: true,
             color: Color(0xFF1679AB),

@@ -283,7 +283,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     }
 
     if (state.selectedUser != null) {
-      getNetworkStatus();
+      _requestUserStatUpdates();
     }
   }
 
@@ -366,11 +366,13 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         ?.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
   }
 
-  void getNetworkStatus() async {
+  void _requestUserStatUpdates() async {
     try {
-      await authService.getUserNetworkStatus(state.selectedUser!.id, (user) {
-        state = state.copyWith(selectedUser: user);
-      });
+      final user = state.selectedUser;
+      if (user == null) return;
+      await authService.requestUserStatUpdates(user.id, (user) {
+        if (user != null) state = state.copyWith(selectedUser: user);
+      }, lastUpdatedTime: user.updated_at);
     } catch (error, stack) {
       logger.e(
         'MapViewNotifier: Error while getting network status',

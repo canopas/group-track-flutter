@@ -1,9 +1,14 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../log/logger.dart';
 import '../storage/app_preferences.dart';
+
+const NETWORK_STATUS_CHECK_INTERVAL = 3 * 60 * 1000;
 
 final authServiceProvider = Provider((ref) => AuthService(
     ref.read(currentUserPod),
@@ -66,23 +71,24 @@ class AuthService {
     await userService.deleteUser(currentUserId);
   }
 
-  Future<void> getUserNetworkStatus(
-      String userId, void Function(ApiUser) onStatusChecked) async {
+  Future<void> requestUserStatUpdates(
+      String userId, void Function(ApiUser?) onStatusChecked,
+      {int? lastUpdatedTime}) async {
     final data = {"userId": userId};
 
-    final user = await getUser(userId);
-
-    if (user?.updated_at == null ||
-        DateTime.now()
-                .difference(DateTime.fromMillisecondsSinceEpoch(
-                    user?.updated_at ?? DateTime.now().millisecondsSinceEpoch))
-                .inMinutes >=
-            3) {
-      final callable = FirebaseFunctions.instanceFor(region: 'asia-south1')
-          .httpsCallable('networkStatusCheck');
-      await callable.call(data).whenComplete(() async {
-        onStatusChecked(user!);
-      });
+    final currentTime = DateTime.now().millisecondsSinceEpoch;
+    if (lastUpdatedTime != null &&
+        currentTime - lastUpdatedTime < NETWORK_STATUS_CHECK_INTERVAL) {
+      logger.d(
+          "User status update requested too soon. Skipping call for $userId.");
+      return;
     }
+
+    final callable = FirebaseFunctions.instanceFor(region: 'asia-south1')
+        .httpsCallable('networkStatusCheck');
+    await callable.call(data).whenComplete(() async {
+      final user = await getUser(userId);
+      onStatusChecked(user);
+    });
   }
 }
