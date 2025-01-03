@@ -29,7 +29,7 @@ class ApiUserService {
   final StateController<String?> currentUserSpaceId;
   final StateController<String?> userSessionJsonNotifier;
   final StateController<bool?> onBoardNotifier;
-  final ApiUser? currentUser;
+  ApiUser? currentUser;
   final LocationManager locationManager;
 
   ApiUserService(
@@ -184,6 +184,8 @@ class ApiUserService {
           currentUser?.fcm_token == deviceToken) {
         return;
       }
+      currentUser = currentUser?.copyWith(fcm_token: deviceToken);
+      userJsonNotifier.state = currentUser?.toJsonString();
       await registerFcmToken(currentUser!.id, deviceToken);
       logger.d('UserService: registerDevice success with token $deviceToken');
     } catch (error) {
@@ -218,9 +220,10 @@ class ApiUserService {
     await batch.commit();
   }
 
-  Future<void> updateUserState(String id, int state) async {
+  Future<void> updateUserState(String id, int state, {int? battery_pct}) async {
     await _userRef.doc(id).update({
       "state": state,
+      "battery_pct": battery_pct ?? currentUser?.battery_pct,
       "updated_at": DateTime.now().millisecondsSinceEpoch,
     });
   }

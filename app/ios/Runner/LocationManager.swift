@@ -14,7 +14,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     private var manager: CLLocationManager
     private var trackingInvoked: Bool = false
-    private let distanceThreshold: CLLocationDistance = 100.0
+    private let distanceThreshold: CLLocationDistance = 50.0
     
     @Published var lastLocation = CLLocation()
   
@@ -23,7 +23,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         super.init()
         manager.delegate = self
         manager.distanceFilter = distanceThreshold
-        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        manager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         manager.allowsBackgroundLocationUpdates = true
         manager.pausesLocationUpdatesAutomatically = false
     }

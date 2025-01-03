@@ -64,7 +64,7 @@ dependencies:
       ref: master
   flutter_background_service: ^5.0.6
   url_launcher: ^6.3.0
-  battery_plus: ^6.2.0
+  battery_plus: ^6.2.1
   collection: any
 
   # map

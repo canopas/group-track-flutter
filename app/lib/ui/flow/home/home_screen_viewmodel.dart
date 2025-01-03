@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:battery_plus/battery_plus.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
@@ -11,6 +12,7 @@ import 'package:data/service/permission_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -165,7 +167,12 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     try {
       var connectivityResult = await Connectivity().checkConnectivity();
       final userState = await checkUserState(connectivityResult.first);
-      await userService.updateUserState(_currentUser!.id, userState);
+
+      final batterLevel = await Battery().batteryLevel.onError<PlatformException>((e, _) {
+         return _currentUser?.battery_pct ?? 0;
+      });
+
+      await userService.updateUserState(_currentUser!.id, userState, battery_pct: batterLevel);
     } catch (error, stack) {
       logger.e(
         'HomeViewNotifier: error while update current user state',

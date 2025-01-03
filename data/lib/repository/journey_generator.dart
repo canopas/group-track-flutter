@@ -1,8 +1,9 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:math';
 
 import 'package:data/api/location/location.dart';
 import 'package:geolocator/geolocator.dart';
-// ignore_for_file: constant_identifier_names
 
 import '../api/location/journey/journey.dart';
 
