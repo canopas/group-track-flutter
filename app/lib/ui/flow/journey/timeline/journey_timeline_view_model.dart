@@ -19,13 +19,13 @@ import '../../../components/no_internet_screen.dart';
 part 'journey_timeline_view_model.freezed.dart';
 
 final journeyTimelineStateProvider = StateNotifierProvider.autoDispose<
-        JourneyTimelineViewModel, JourneyTimelineState>(
-    (ref) => JourneyTimelineViewModel(
-          ref.read(currentUserPod),
-          ref.read(journeyServiceProvider),
-          ref.read(currentSpaceId.notifier),
-          ref.read(googleMapType.notifier),
-        ));
+    JourneyTimelineViewModel, JourneyTimelineState>(
+        (ref) => JourneyTimelineViewModel(
+      ref.read(currentUserPod),
+      ref.read(journeyServiceProvider),
+      ref.read(currentSpaceId.notifier),
+      ref.read(googleMapType.notifier),
+    ));
 
 class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
   final ApiUser? currentUser;
@@ -34,11 +34,11 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
   final StateController<String> mapTypeController;
 
   JourneyTimelineViewModel(
-    this.currentUser,
-    this.journeyService,
-    this._currentSpaceId,
-    this.mapTypeController,
-  ) : super(JourneyTimelineState(mapType: mapTypeController.state));
+      this.currentUser,
+      this.journeyService,
+      this._currentSpaceId,
+      this.mapTypeController,
+      ) : super(JourneyTimelineState(mapType: mapTypeController.state));
 
   void loadData(ApiUser selectedUser) async {
     final isNetworkOff = await _checkUserInternet();
@@ -77,15 +77,20 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
           ? await journeyService.getMoreJourneyHistory(userId, lastJourneyTime)
           : await journeyService.getJourneyHistory(userId, from, to);
 
+      // Filter by date range
+      final filteredJourneys = journeys.where((journey) {
+        return journey.created_at! >= from && journey.created_at! <= to;
+      }).toList();
+
       // Combine all journeys and sort
-      final allJourney = [...state.sortedJourney, ...journeys];
+      final allJourney = [...state.sortedJourney, ...filteredJourneys];
       final sortedJourney = _sortJourneysByUpdateAt(allJourney);
 
       // Update state with final data
       state = state.copyWith(
         isLoading: false,
         appending: false,
-        hasMore: journeys.length >= 20,
+        hasMore: filteredJourneys.isNotEmpty,
         sortedJourney: sortedJourney,
       );
     } catch (error, stack) {
@@ -119,14 +124,21 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     }
   }
 
-  void showDatePicker(bool showPicker) {
-    state = state.copyWith(showDatePicker: showPicker);
+  void showDatePicker() {
+    state = state.copyWith(showDatePicker: !state.showDatePicker);
   }
 
-  void onFilterBySelectedDate(DateTime pickedDate) async {
+  void onSelectDateFromPicker(DateTime pickedDate) async {
     final isNetworkOff = await _checkUserInternet();
     if (isNetworkOff) return;
-
+    if (pickedDate.isAfter(DateTime.now())) {
+      state = state.copyWith(
+        isLoading: false,
+        appending: false,
+        hasMore: false,
+        sortedJourney: [],
+      );
+    }
     final fromTimeStamp = pickedDate.millisecondsSinceEpoch;
     final toTimeStamp = pickedDate.endOfDay.millisecondsSinceEpoch;
     state = state.copyWith(
@@ -147,9 +159,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     Duration duration = DateTime.fromMillisecondsSinceEpoch(updatedAt)
         .difference(DateTime.fromMillisecondsSinceEpoch(createdAt));
 
-    if (duration.inDays > 0) {
-      return '${duration.inDays}d ${duration.inHours.remainder(24) > 0 ? '${duration.inHours.remainder(24)}h' : ''}';
-    } else if (duration.inHours > 0) {
+    if (duration.inHours > 0) {
       return '${duration.inHours}h ${duration.inMinutes.remainder(60) > 0 ? '${duration.inMinutes.remainder(60)}min' : ''}';
     } else if (duration.inMinutes > 0) {
       return '${duration.inMinutes} min';
@@ -221,7 +231,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     final frameInfo = await codec.getNextFrame();
 
     final byteData =
-        await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
+    await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
     final resizedBytes = byteData!.buffer.asUint8List();
 
     return BitmapDescriptor.bytes(resizedBytes,
