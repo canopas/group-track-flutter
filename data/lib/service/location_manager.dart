@@ -52,12 +52,12 @@ class LocationManager {
     return await bgService.isRunning();
   }
 
-  Future<Position?> getLastLocation() async {
+  Future<Position?> getLastLocation({Duration? timeout}) async {
     if (!await Geolocator.isLocationServiceEnabled()) return null;
 
     if (await Permission.location.isDenied) return null;
 
-    return await Geolocator.getCurrentPosition();
+    return await Geolocator.getCurrentPosition(timeLimit: timeout);
   }
 
   void startService() async {

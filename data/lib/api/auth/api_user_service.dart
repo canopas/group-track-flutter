@@ -220,12 +220,22 @@ class ApiUserService {
     await batch.commit();
   }
 
-  Future<void> updateUserState(String id, int state, {int? battery_pct}) async {
+  Future<void> updateCurrentUserState(int state, {int? battery_pct}) async {
+    final id = currentUser?.id;
+    if (id == null) return;
+
     await _userRef.doc(id).update({
       "state": state,
       "battery_pct": battery_pct ?? currentUser?.battery_pct,
       "updated_at": DateTime.now().millisecondsSinceEpoch,
     });
+
+    currentUser = currentUser?.copyWith(
+        state: state,
+        battery_pct: battery_pct ?? currentUser?.battery_pct,
+        updated_at: DateTime.now().millisecondsSinceEpoch);
+
+    userJsonNotifier.state = currentUser?.toJsonString();
   }
 
   Future<ApiSession?> getUserSession(String userId) async {
