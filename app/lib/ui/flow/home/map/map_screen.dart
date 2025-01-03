@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 
@@ -379,7 +380,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     ref.listen(mapViewStateProvider.select((state) => state.error),
         (previous, next) {
       if (next != null) {
-        showErrorSnackBar(context, next.toString());
+        showErrorSnackBar(context, next.l10nMessage(context));
       }
     });
   }

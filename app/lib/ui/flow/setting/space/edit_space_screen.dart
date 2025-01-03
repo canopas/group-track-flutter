@@ -14,6 +14,7 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:style/text/app_text_field.dart';
+import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/gen/assets.gen.dart';
@@ -21,6 +22,7 @@ import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/profile_picture.dart';
+import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/setting/space/edit_space_view_model.dart';
 
 import '../../../components/alert.dart';
@@ -75,7 +77,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
             });
           },
         ),
-        if (state.isAdmin) ...[
+        if (state.isAdmin && state.userInfo.isNotEmpty) ...[
           actionButton(
               context: context,
               icon: Icon(
@@ -88,7 +90,10 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
               }),
         ]
       ],
-      body: SafeArea(child: _body(context, state)),
+      body: SafeArea(
+          child: ResumeDetector(onResume: () {
+            notifier.getSpaceDetails(widget.spaceId);
+          }, child: _body(context, state))),
     );
   }
 
@@ -314,8 +319,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                 message: members.length == 1
                     ? context.l10n.edit_space_delete_space_alert_message
                     : context.l10n.edit_space_leave_space_alert_message,
-                popBack: true,
-                onConfirm: () {
+                popBack: true, onConfirm: () {
               _checkUserInternet(() => members.length == 1
                   ? notifier.deleteSpace()
                   : notifier.leaveSpace());
@@ -435,7 +439,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
     ref.listen(editSpaceViewStateProvider.select((state) => state.error),
         (previous, next) {
       if (next != null) {
-        showErrorSnackBar(context, next.toString());
+        showErrorSnackBar(context, next.l10nMessage(context));
       }
     });
   }

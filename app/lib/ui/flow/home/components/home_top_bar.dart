@@ -76,6 +76,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return TapRegion(
+        enabled: expand,
         onTapOutside: (tap) {
           setState(() {
             expand = false;
