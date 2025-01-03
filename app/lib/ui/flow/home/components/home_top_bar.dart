@@ -44,7 +44,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
 
   late AnimationController _animationController;
   late Animation<double> _animation;
-  late AnimationController _buttonController;
 
   @override
   void initState() {
@@ -52,12 +51,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 150),
-    );
-
-    _buttonController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-      upperBound: 0.5,
     );
 
     _animation = CurvedAnimation(
@@ -69,7 +62,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
   @override
   void dispose() {
     _animationController.dispose();
-    _buttonController.dispose();
     super.dispose();
   }
 
@@ -81,21 +73,16 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
     }
   }
 
-  void performArrowButtonAnimation() {
-    if (expand) {
-      _buttonController.reverse(from: 0.5);
-    } else {
-      _buttonController.forward(from: 0.0);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return _body(context);
-  }
-
-  Widget _body(BuildContext context) {
-    return _topBar(context);
+    return TapRegion(
+        onTapOutside: (tap) {
+          setState(() {
+            expand = false;
+            performAnimation();
+          });
+        },
+        child: _topBar(context));
   }
 
   Widget _topBar(BuildContext context) {
@@ -185,7 +172,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
           setState(() {
             expand = !expand;
             performAnimation();
-            performArrowButtonAnimation();
           });
         },
         child: Container(
@@ -217,9 +203,8 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                   const AppProgressIndicator(
                       size: AppProgressIndicatorSize.small)
                 ] else ...[
-                  RotationTransition(
-                    turns:
-                        Tween(begin: 0.0, end: 1.0).animate(_buttonController),
+                  Transform.rotate(
+                    angle: expand ? 0 : 3.14,
                     child: Icon(
                       Icons.keyboard_arrow_up_rounded,
                       color: context.colorScheme.textPrimary,
@@ -272,16 +257,11 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
         final space = entry.value;
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          child: GestureDetector(
-            onTap: () {
-              widget.onSpaceItemTap(space);
-            },
-            child: _spaceListItem(
-              context,
-              space,
-              index,
-              widget.selectedSpace?.space.id == space.space.id,
-            ),
+          child: _spaceListItem(
+            context,
+            space,
+            index,
+            widget.selectedSpace?.space.id == space.space.id,
           ),
         );
       }).toList(),
@@ -308,7 +288,6 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
           widget.onSpaceItemTap(space);
           expand = false;
           performAnimation();
-          performArrowButtonAnimation();
         });
       },
       child: Container(
