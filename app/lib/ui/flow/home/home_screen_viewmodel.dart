@@ -7,7 +7,9 @@ import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/place/api_place.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/log/logger.dart';
+import 'package:data/service/auth_service.dart';
 import 'package:data/service/geofence_service.dart';
+import 'package:data/service/location_manager.dart';
 import 'package:data/service/permission_service.dart';
 import 'package:data/service/space_service.dart';
 import 'package:data/storage/app_preferences.dart';
@@ -27,6 +29,7 @@ final homeViewStateProvider =
     ref.read(currentSpaceId.notifier),
     ref.read(permissionServiceProvider),
     ref.read(lastBatteryDialogPod.notifier),
+    ref.read(locationManagerProvider),
     ref.read(currentUserPod),
     ref.read(apiUserServiceProvider),
     ref.read(currentUserSessionPod),
@@ -47,6 +50,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final PermissionService permissionService;
   final StateController<String?> _currentSpaceIdController;
   final StateController<String?> _lastBatteryDialogDate;
+  final LocationManager locationManager;
   ApiUser? _currentUser;
   final ApiUserService userService;
   final ApiSession? _userSession;
@@ -56,10 +60,12 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this._currentSpaceIdController,
     this.permissionService,
     this._lastBatteryDialogDate,
+    this.locationManager,
     this._currentUser,
     this.userService,
     this._userSession,
   ) : super(const HomeViewState()) {
+    updateUser();
     fetchData();
     _listenPlaces();
   }
@@ -80,6 +86,20 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     listenUserSession();
   }
 
+  void updateUser() async {
+    if (_currentUser == null) return;
+    try {
+      final user = await userService.getUser(_currentUser!.id);
+      if (user != null) {
+        _currentUser = user;
+        userService.updateUser(user);
+      }
+    } catch (error) {
+      logger.e(
+          'HomeScreenViewModel: error while updating user ${_currentUser?.id}');
+    }
+  }
+
   void _listenPlaces() async {
     if (_currentUser == null) return;
     try {
@@ -93,11 +113,10 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
           return;
         }
 
-
         GeofenceService.startMonitoring(places);
       });
     } catch (error) {
-      logger.e('GeofenceRepository: error while get user space $error');
+      logger.e('HomeScreenViewModel: error while get user space $error');
     }
   }
 
@@ -168,11 +187,20 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       var connectivityResult = await Connectivity().checkConnectivity();
       final userState = await checkUserState(connectivityResult.first);
 
-      final batterLevel = await Battery().batteryLevel.onError<PlatformException>((e, _) {
-         return _currentUser?.battery_pct ?? 0;
+      final batterLevel =
+          await Battery().batteryLevel.onError<PlatformException>((e, _) {
+        return _currentUser?.battery_pct ?? 0;
       });
 
-      await userService.updateUserState(_currentUser!.id, userState, battery_pct: batterLevel);
+      final currentTime = DateTime.now().millisecondsSinceEpoch;
+      final lastUpdatedTime = _currentUser?.updated_at ?? 0;
+      if (currentTime - lastUpdatedTime < NETWORK_STATUS_CHECK_INTERVAL) {
+        return;
+      }
+
+      await userService.updateCurrentUserState(userState,
+          battery_pct: batterLevel);
+
     } catch (error, stack) {
       logger.e(
         'HomeViewNotifier: error while update current user state',
@@ -181,6 +209,8 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       );
     }
   }
+
+
 
   Future<int> checkUserState(ConnectivityResult result) async {
     final isLocationEnabled = await permissionService.isLocationAlwaysEnabled();

@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../log/logger.dart';
 import '../storage/app_preferences.dart';
 
-const NETWORK_STATUS_CHECK_INTERVAL = 3 * 60 * 1000;
+const NETWORK_STATUS_CHECK_INTERVAL = 5 * 60 * 1000;
 
 final authServiceProvider = Provider((ref) => AuthService(
     ref.read(currentUserPod),
