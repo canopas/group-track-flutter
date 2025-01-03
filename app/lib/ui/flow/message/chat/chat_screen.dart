@@ -63,11 +63,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final state = ref.watch(chatViewStateProvider);
     _observeError();
 
-    // if (widget.threadId != null) {
-    //   notifier.markMessageAsSeen(
-    //       widget.threadId ?? '', widget.threadMessages ?? state.messages);
-    // }
-
     return AppPage(
       title: _formattedChatTitle(context, state),
       body: _body(context, state),
