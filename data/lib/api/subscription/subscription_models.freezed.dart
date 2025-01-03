@@ -21,9 +21,7 @@ mixin _$SubscriptionPlan {
   String get planDetail => throw _privateConstructorUsedError;
   String get planInfo => throw _privateConstructorUsedError;
 
-  /// Create a copy of SubscriptionPlan
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $SubscriptionPlanCopyWith<SubscriptionPlan> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -47,8 +45,6 @@ class _$SubscriptionPlanCopyWithImpl<$Res, $Val extends SubscriptionPlan>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of SubscriptionPlan
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -97,8 +93,6 @@ class __$$SubscriptionPlanImplCopyWithImpl<$Res>
       $Res Function(_$SubscriptionPlanImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of SubscriptionPlan
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -167,9 +161,7 @@ class _$SubscriptionPlanImpl implements _SubscriptionPlan {
   @override
   int get hashCode => Object.hash(runtimeType, id, name, planDetail, planInfo);
 
-  /// Create a copy of SubscriptionPlan
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$SubscriptionPlanImplCopyWith<_$SubscriptionPlanImpl> get copyWith =>
@@ -192,11 +184,8 @@ abstract class _SubscriptionPlan implements SubscriptionPlan {
   String get planDetail;
   @override
   String get planInfo;
-
-  /// Create a copy of SubscriptionPlan
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$SubscriptionPlanImplCopyWith<_$SubscriptionPlanImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
