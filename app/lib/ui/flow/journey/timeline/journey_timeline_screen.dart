@@ -14,7 +14,7 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
-import 'package:yourspace_flutter/ui/flow/journey/calender/horizontal_calender_view_model.dart';
+import 'package:yourspace_flutter/ui/flow/journey/calender/horizontal_calendar_view_model.dart';
 import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_view_model.dart';
 
 import '../../../../domain/extenstions/widget_extensions.dart';
@@ -22,7 +22,7 @@ import '../../../../gen/assets.gen.dart';
 import '../../../app_route.dart';
 import '../../../components/error_snakebar.dart';
 import '../../../components/no_internet_screen.dart';
-import '../calender/horizontal_calender_view.dart';
+import '../calender/horizontal_calendar_view.dart';
 import '../components/dotted_line_view.dart';
 import '../components/journey_map.dart';
 
@@ -40,7 +40,7 @@ class JourneyTimelineScreen extends ConsumerStatefulWidget {
 
 class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   late JourneyTimelineViewModel notifier;
-  late HorizontalCalenderViewModel calenderNotifier;
+  late HorizontalCalendarViewModel calendarNotifier;
   final Map<LatLng, String> _addressCache = {};
   final Map<String, String> _movingJourneyAddressCache = {};
   final Map<String, List<Marker>> _markerCache = {};
@@ -56,8 +56,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
 
   @override
   Widget build(BuildContext context) {
-    calenderNotifier = ref.watch(horizontalCalenderViewStateProvider.notifier);
-    final calendarState = ref.watch(horizontalCalenderViewStateProvider);
+    calendarNotifier = ref.watch(horizontalCalendarViewStateProvider.notifier);
+    final calendarState = ref.watch(horizontalCalendarViewStateProvider);
 
     final state = ref.watch(journeyTimelineStateProvider);
     final title = (state.selectedUser == null)
@@ -94,20 +94,20 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
 
     return Column(
       children: [
-        HorizontalCalenderView(
+        HorizontalCalendarView(
           showDatePicker: state.showDatePicker,
           weekStartDate: calendarState.weekStartDate,
           selectedDate: calendarState.selectedDate,
           onTap: (date) {
-            calenderNotifier.setSelectedDate(date);
+            calendarNotifier.setSelectedDate(date);
             notifier.onSelectDateFromPicker(date);
           },
           onSwipeWeek: (direction) {
-            calenderNotifier.onSwipeWeek(direction);
+            calendarNotifier.onSwipeWeek(direction);
           },
           showTodayBtn: !calendarState.containsToday,
           onTodayTap: () {
-            calenderNotifier.goToToday();
+            calendarNotifier.goToToday();
             notifier.onSelectDateFromPicker(DateTime.now());
           },
         ),

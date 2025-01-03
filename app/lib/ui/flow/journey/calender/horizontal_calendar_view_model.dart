@@ -2,16 +2,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:style/extenstions/date_extenstions.dart';
 
-part 'horizontal_calender_view_model.freezed.dart';
+part 'horizontal_calendar_view_model.freezed.dart';
 
-final horizontalCalenderViewStateProvider = StateNotifierProvider.autoDispose<
-    HorizontalCalenderViewModel, CalendarViewState>((ref) {
-  return HorizontalCalenderViewModel();
+final horizontalCalendarViewStateProvider = StateNotifierProvider.autoDispose<
+    HorizontalCalendarViewModel, CalendarViewState>((ref) {
+  return HorizontalCalendarViewModel();
 });
 
-class HorizontalCalenderViewModel extends StateNotifier<CalendarViewState> {
+class HorizontalCalendarViewModel extends StateNotifier<CalendarViewState> {
 
-  HorizontalCalenderViewModel() : super(
+  HorizontalCalendarViewModel() : super(
     CalendarViewState(
       weekStartDate: DateTime.now().startOfDay,
       selectedDate: DateTime.now().startOfDay,

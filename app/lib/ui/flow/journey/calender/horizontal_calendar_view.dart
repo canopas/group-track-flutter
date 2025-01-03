@@ -9,7 +9,7 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/ui/flow/journey/calender/three_page_scroller.dart';
 
-class HorizontalCalenderView extends StatefulWidget {
+class HorizontalCalendarView extends StatefulWidget {
   final bool showDatePicker;
   final DateTime weekStartDate;
   final DateTime selectedDate;
@@ -18,7 +18,7 @@ class HorizontalCalenderView extends StatefulWidget {
   final bool showTodayBtn;
   final VoidCallback onTodayTap;
 
-  const HorizontalCalenderView({
+  const HorizontalCalendarView({
     super.key,
     required this.showDatePicker,
     required this.weekStartDate,
@@ -30,10 +30,10 @@ class HorizontalCalenderView extends StatefulWidget {
   });
 
   @override
-  State<HorizontalCalenderView> createState() => _HorizontalCalenderViewState();
+  State<HorizontalCalendarView> createState() => _HorizontalCalendarViewState();
 }
 
-class _HorizontalCalenderViewState extends State<HorizontalCalenderView> {
+class _HorizontalCalendarViewState extends State<HorizontalCalendarView> {
   @override
   Widget build(BuildContext context) {
     return AnimatedSize(
