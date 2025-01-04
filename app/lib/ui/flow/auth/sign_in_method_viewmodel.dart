@@ -15,9 +15,9 @@ final googleSignInProvider = Provider<GoogleSignIn>((ref) {
 final signInMethodsStateProvider = StateNotifierProvider.autoDispose<
     SignInMethodsScreenViewNotifier, SignInMethodsScreenState>((ref) {
   return SignInMethodsScreenViewNotifier(
-      ref.read(googleSignInProvider),
-      ref.read(authServiceProvider),
-      FirebaseAuth.instance,
+    ref.read(googleSignInProvider),
+    ref.read(authServiceProvider),
+    FirebaseAuth.instance,
   );
 });
 
@@ -92,6 +92,8 @@ class SignInMethodsScreenViewNotifier
 
       final appleProvider = AppleAuthProvider();
       appleProvider.addScope('email');
+      appleProvider.addScope('fullName');
+
       final credential =
           await FirebaseAuth.instance.signInWithProvider(appleProvider);
       final email = FirebaseAuth.instance.currentUser?.email;
