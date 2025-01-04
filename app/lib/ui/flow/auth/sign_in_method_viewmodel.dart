@@ -92,7 +92,7 @@ class SignInMethodsScreenViewNotifier
 
       final appleProvider = AppleAuthProvider();
       appleProvider.addScope('email');
-      appleProvider.addScope('fullName');
+      appleProvider.addScope('name');
 
       final credential =
           await FirebaseAuth.instance.signInWithProvider(appleProvider);
