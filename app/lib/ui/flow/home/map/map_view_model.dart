@@ -80,10 +80,10 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
                 target: LatLng(0.0, 0.0), zoom: defaultCameraZoom))) {
     _lastCameraPosition = state.defaultPosition;
     checkUserPermission();
-    loadData(_currentSpaceId);
+    _loadData(_currentSpaceId);
   }
 
-  void loadData(String? spaceId) {
+  void _loadData(String? spaceId) {
     _resetState();
     if (spaceId == null) return;
     _listenMemberLocation(spaceId);
@@ -91,8 +91,9 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   }
 
   void _onUpdateUser({ApiUser? prevUser, ApiUser? currentUser}) {
-    _resetState();
+    if(currentUser == null) _resetState();
     if (currentUser != null && prevUser?.id != currentUser.id) {
+      _resetState();
       fetchCurrentUserLocation();
     }
   }
@@ -106,7 +107,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
     }
     if (prev == current) return;
     _resetState();
-    loadData(current);
+    _loadData(current);
   }
 
   void _resetState() {
