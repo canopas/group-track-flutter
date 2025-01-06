@@ -131,14 +131,14 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (journey.type == JOURNEY_TYPE_STEADY) ...[
+                            if (journey.isSteady()) ...[
                               _steadyLocationItem(
                                 journey,
                                 state.sortedJourney.first.id == journey.id,
                                 state.sortedJourney.last.id == journey.id,
                                 state.spaceId,
                               )
-                            ] else if (journey.type == JOURNEY_TYPE_MOVING) ...[
+                            ] else if (journey.isMoving()) ...[
                               _journeyLocationItem(
                                 journey,
                                 state.sortedJourney.first.id == journey.id,
@@ -240,7 +240,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                     _buildPlaceInfo(
                         location,
                         formattedTime,
-                        journey.type == JOURNEY_TYPE_STEADY,
+                        journey.isSteady(),
                         steadyDuration,
                         isFirstItem),
                     const SizedBox(height: 16),
