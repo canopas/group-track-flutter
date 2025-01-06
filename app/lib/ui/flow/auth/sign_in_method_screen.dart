@@ -53,7 +53,10 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
         child: Column(
           children: [
             const Spacer(flex: 1),
-            const AppLogo(),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 60.0),
+              child: AppLogo(),
+            ),
             const Spacer(flex: 2),
             _appleSignInButton(),
             _googleSignInButton(),

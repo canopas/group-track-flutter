@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:style/extenstions/context_extenstions.dart';
 
 import '../../gen/assets.gen.dart';
 
@@ -15,9 +14,7 @@ class AppLogo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SvgPicture.asset(
-          context.brightness == Brightness.dark ? Assets.images.appNameDark : Assets.images.appName,
-        ),
+        SvgPicture.asset(Assets.images.appNameLogo),
       ],
     );
   }

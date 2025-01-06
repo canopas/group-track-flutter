@@ -14,7 +14,7 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="Group track">
+        android:label="Grouptrack">
 
         <!-- Firebase Notification -->
         <meta-data
@@ -22,7 +22,7 @@
             android:value="notification_channel_your_space_regional" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/app_icon" />
+            android:resource="@drawable/app_logo" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/ic_launcher_background" />

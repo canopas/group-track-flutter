@@ -135,13 +135,13 @@ Future<void> onStart(ServiceInstance service) async {
     if (await service.isForegroundService()) {
       flutterLocalNotificationsPlugin.show(
         NOTIFICATION_ID,
-        'GroupTrack Location',
+        'Grouptrack Location',
         'Location is being tracked',
         const NotificationDetails(
           android: AndroidNotificationDetails(
             NOTIFICATION_CHANNEL_ID,
-            'GroupTrack Location Service',
-            icon: "app_notification_icon",
+            'Grouptrack Location Service',
+            icon: "app_logo",
             ongoing: true,
             color: Color(0xFF1679AB),
           ),

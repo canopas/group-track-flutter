@@ -1,23 +1,23 @@
 <p align="center"> <a href="https://canopas.com/contact"><img src="screenshots/cta_banner.png" alt=""></a></p>
 
-# GroupTrack - Stay connected, Anywhere!
+# Grouptrack - Stay connected, Anywhere!
 Enhancing family safety and communication with real-time location sharing and modern UIs.
 
 <img src="screenshots/cover_image.png"  alt="cover"  width="100%"/>
 
 ## Overview
-Welcome to GroupTrack, an open-source Flutter application designed to enhance family safety 👫 through real-time location sharing 📍 and communication features 💬. GroupTrack aims to provide peace of mind by ensuring the safety 🛣 of your loved ones while facilitating seamless communication regardless of their location.
+Welcome to Grouptrack, an open-source Flutter application designed to enhance family safety 👫 through real-time location sharing 📍 and communication features 💬. Grouptrack aims to provide peace of mind by ensuring the safety 🛣 of your loved ones while facilitating seamless communication regardless of their location.
 
-GroupTrack adopts a declarative UI approach with Flutter and utilizes [flutter riverpod](https://pub.dev/packages/flutter_riverpod) for state management. This architecture promotes a clear separation of concerns, making the codebase more maintainable, scalable, and testable. Flutter’s widget-based system allows for the creation of highly responsive UIs, while flutter riverpod ensures efficient state handling across different components, leading to a smooth and intuitive user experience.
+Grouptrack adopts a declarative UI approach with Flutter and utilizes [flutter riverpod](https://pub.dev/packages/flutter_riverpod) for state management. This architecture promotes a clear separation of concerns, making the codebase more maintainable, scalable, and testable. Flutter’s widget-based system allows for the creation of highly responsive UIs, while flutter riverpod ensures efficient state handling across different components, leading to a smooth and intuitive user experience.
 
 ## Download App
 <a href="https://play.google.com/store/apps/details?id=com.canopas.yourspace"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" width="200"></img></a>
 
 
 ## Features
-GroupTrack is currently in active development 🚧, with plans to incorporate additional features shortly.
+Grouptrack is currently in active development 🚧, with plans to incorporate additional features shortly.
 
-GroupTrack ensures your loved ones' well-being with:
+Grouptrack ensures your loved ones' well-being with:
 
 - Create and Join Spaces: Set up your own personalised spaces and invite others to join, or become part of an existing group to stay connected.
 - Live Location Sharing: Share your real-time location with members of your space, allowing them to follow your journey and stay informed about your whereabouts.
@@ -84,14 +84,14 @@ Use the `applicationId` value specified in the `app/build.gradle` file of the ap
 Once the project is created, you will need to add the `google-services.json` file to the `android/app` module for android and `ios/Runner` module for IOS.
 For more information, refer to the [Firebase documentation](https://firebase.google.com/docs/flutter/setup?platform=android).
 
-GroupTrack uses the following Firebase services, Make sure you enable them in your Firebase project:
+Grouptrack uses the following Firebase services, Make sure you enable them in your Firebase project:
 - Authentication (Phone, Google, Apple)
 - Firestore (To store user data)
 </details>
 
 ## Tech stack
 
-GroupTrack utilizes the latest Flutter technologies and adheres to industry best practices. Below is the current tech stack used in the development process:
+Grouptrack utilizes the latest Flutter technologies and adheres to industry best practices. Below is the current tech stack used in the development process:
 
 - Flutter Riverpod
 - Dart
@@ -108,13 +108,13 @@ GroupTrack utilizes the latest Flutter technologies and adheres to industry best
 The Canopas team enthusiastically welcomes contributions and project participation! There are a bunch of things you can do if you want to contribute! The [Contributor Guide](CONTRIBUTING.md) has all the information you need for everything from reporting bugs to contributing entire new features. Please don't hesitate to jump in if you'd like to, or even ask us questions if something isn't clear.
 
 ## Credits
-GroupTrack is owned and maintained by the [Canopas team](https://canopas.com/). You can follow them on X at [@canopassoftware](https://x.com/canopassoftware) for project updates and releases. If you are interested in building apps or designing products, please let us know. We'd love to hear from you!
+Grouptrack is owned and maintained by the [Canopas team](https://canopas.com/). You can follow them on X at [@canopassoftware](https://x.com/canopassoftware) for project updates and releases. If you are interested in building apps or designing products, please let us know. We'd love to hear from you!
 
 <a href="https://canopas.com/contact"><img src="./screenshots/cta_btn.png" width=300></a>
 
 ## License
 
-GroupTrack is licensed under the Apache License, Version 2.0.
+Grouptrack is licensed under the Apache License, Version 2.0.
 
 ```
 Copyright 2024 Canopas Software LLP
