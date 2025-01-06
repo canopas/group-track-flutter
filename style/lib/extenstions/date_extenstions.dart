@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-DateTime max(DateTime a, DateTime b) => a.isAfter(b) ? a : b;
+DateTime dateMax(DateTime a, DateTime b) => a.isAfter(b) ? a : b;
 
-DateTime min(DateTime a, DateTime b) => a.isBefore(b) ? a : b;
+DateTime dateMin(DateTime a, DateTime b) => a.isBefore(b) ? a : b;
 
 enum DateRangeType {
   day,
@@ -117,7 +117,7 @@ extension DateTimeExtensions on DateTime {
       }) =>
       DateTimeRange(
         start: start ?? startOf(type),
-        end: maxEnd == null ? endOf(type) : min(endOf(type), maxEnd),
+        end: maxEnd == null ? endOf(type) : dateMin(endOf(type), maxEnd),
       );
 
   int get weekOfYear {

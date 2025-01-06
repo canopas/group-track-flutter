@@ -33,6 +33,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/ic_add_user_icon.svg
   String get icAddUserIcon => 'assets/images/ic_add_user_icon.svg';
 
+  /// File path: assets/images/ic_calendar_icon.svg
+  String get icCalendarIcon => 'assets/images/ic_calendar_icon.svg';
+
   /// File path: assets/images/ic_close_icon.svg
   String get icCloseIcon => 'assets/images/ic_close_icon.svg';
 
@@ -215,6 +218,7 @@ class $AssetsImagesGen {
         icAboutUs,
         icAddMember,
         icAddUserIcon,
+        icCalendarIcon,
         icCloseIcon,
         icContactSupport,
         icDistanceIcon,
