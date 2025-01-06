@@ -424,10 +424,10 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
 
   @override
   void dispose() {
-    super.dispose();
     state.mapController?.dispose();
     _userInfoSubscription?.cancel();
     _placeSubscription?.cancel();
+    super.dispose();
   }
 
   bool isCurrentUser() {

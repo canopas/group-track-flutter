@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 part 'sign_in_method_viewmodel.freezed.dart';
 
@@ -90,22 +91,19 @@ class SignInMethodsScreenViewNotifier
     try {
       state = state.copyWith(showAppleLoading: true, error: null);
 
-      final appleProvider = AppleAuthProvider();
-      appleProvider.addScope('email');
-      appleProvider.addScope('name');
+      final (userCredential, firstName, lastName) = await _getUserCredentialFromApple();
 
-      final credential =
-          await FirebaseAuth.instance.signInWithProvider(appleProvider);
-      final email = FirebaseAuth.instance.currentUser?.email;
-      final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+      final String userIdToken = await userCredential.user?.getIdToken() ?? '';
 
       final isNewUser = await authService.verifiedLogin(
-        uid: uid,
-        firebaseToken: await credential.user?.getIdToken(),
-        email: email,
-        firstName: credential.user?.displayName,
+        uid: userCredential.user?.uid ?? '',
+        firebaseToken: userIdToken,
+        email: userCredential.user?.email,
+        firstName: firstName,
+        lastName: lastName,
         authType: LOGIN_TYPE_APPLE,
       );
+
       state = state.copyWith(
           showAppleLoading: false,
           socialSignInCompleted: true,
@@ -119,6 +117,22 @@ class SignInMethodsScreenViewNotifier
         stackTrace: stack,
       );
     }
+  }
+
+  Future<(UserCredential, String?, String?)> _getUserCredentialFromApple() async {
+    final credential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+    );
+    final user = await firebaseAuth.signInWithCredential(
+      OAuthProvider("apple.com").credential(
+        idToken: credential.identityToken,
+        accessToken: credential.authorizationCode,
+      ),
+    );
+    return (user, credential.givenName, credential.familyName);
   }
 }
 
