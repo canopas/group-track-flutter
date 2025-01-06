@@ -83,6 +83,7 @@ dependencies:
   logger: ^2.3.0
   flutter_svg: ^2.0.9
   firebase_crashlytics: ^4.1.5
+  sign_in_with_apple: ^6.1.4
 
   connectivity_plus: ^6.0.5
 
