@@ -7,6 +7,7 @@ import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
@@ -298,7 +299,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
     ref.listen(placesListViewStateProvider.select((state) => state.error),
         (previous, next) {
       if (next != null) {
-        showErrorSnackBar(context, next.toString());
+        showErrorSnackBar(context, next.l10nMessage(context));
       }
     });
   }

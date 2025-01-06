@@ -6,6 +6,7 @@ import 'package:style/button/action_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
@@ -142,7 +143,7 @@ class _ChangeAdminScreenState extends ConsumerState<ChangeAdminScreen> {
     ref.listen(changeAdminViewStateProvider.select((state) => state.error),
         (previous, next) {
       if (next != null) {
-        showErrorSnackBar(context, next.toString());
+        showErrorSnackBar(context, next.l10nMessage(context));
       }
     });
   }

@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
@@ -189,7 +190,7 @@ class _UserJourneyDetailScreenState
     ref.listen(userJourneyDetailStateProvider.select((state) => state.error),
         (_, next) {
       if (next != null) {
-        showErrorSnackBar(context, next.toString());
+        showErrorSnackBar(context, next.l10nMessage(context));
       }
     });
   }

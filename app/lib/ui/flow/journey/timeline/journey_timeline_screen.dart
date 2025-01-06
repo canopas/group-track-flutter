@@ -11,6 +11,7 @@ import 'package:style/button/action_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
+import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
@@ -62,6 +63,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                 state.selectedUser?.first_name ?? '');
 
     _observeShowDatePicker(state);
+    _observeError();
 
     return AppPage(
       title: title,
@@ -556,6 +558,15 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   void _checkUserInternet(VoidCallback onCallback) async {
     final isNetworkOff = await checkInternetConnectivity();
     isNetworkOff ? _showSnackBar() : onCallback();
+  }
+
+  void _observeError() {
+    ref.listen(journeyTimelineStateProvider.select((state) => state.error),
+        (previous, next) {
+      if (next != null) {
+        showErrorSnackBar(context, next.l10nMessage(context));
+      }
+    });
   }
 
   void _showSnackBar() {
