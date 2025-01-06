@@ -5,10 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/button/action_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
+import 'package:style/extenstions/date_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
@@ -63,9 +63,11 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     final title = (state.selectedUser == null)
         ? context.l10n.journey_timeline_title
         : (state.isCurrentUser)
-        ? context.l10n.journey_timeline_title_your_timeline
-        : context.l10n.journey_timeline_title_other_user(
-        state.selectedUser?.first_name ?? '');
+            ? context.l10n.journey_timeline_title_your_timeline
+            : context.l10n.journey_timeline_title_other_user(
+                state.selectedUser?.first_name ?? '');
+
+    _observeShowDatePicker(calendarState.selectedDate);
 
     return AppPage(
       title: title,
@@ -73,9 +75,14 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         actionButton(
           context: context,
           onPressed: () => notifier.showDatePicker(),
-          icon: Icon(
-            Icons.calendar_month_outlined,
-            color: context.colorScheme.textPrimary,
+          icon: SvgPicture.asset(
+            Assets.images.icCalendarIcon,
+            colorFilter: ColorFilter.mode(
+              context.colorScheme.textPrimary,
+              BlendMode.srcATop,
+            ),
+            width: 24,
+            height: 24,
           ),
         ),
       ],
@@ -84,8 +91,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }
 
   Widget _body(JourneyTimelineState state, CalendarViewState calendarState) {
-    final selectedDate = _onSelectDatePickerDate(state.selectedTimeFrom);
-
     if (state.isNetworkOff) {
       return NoInternetScreen(onPressed: () {
         notifier.loadData(widget.selectedUser);
@@ -94,22 +99,16 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
 
     return Column(
       children: [
+        _dateHeaderView(
+            calendarState.selectedDate, !calendarState.containsToday, () {
+          calendarNotifier.goToToday();
+          notifier.onSelectDateFromPicker(DateTime.now());
+        }),
         HorizontalCalendarView(
-          showDatePicker: state.showDatePicker,
           weekStartDate: calendarState.weekStartDate,
           selectedDate: calendarState.selectedDate,
-          onTap: (date) {
-            calendarNotifier.setSelectedDate(date);
-            notifier.onSelectDateFromPicker(date);
-          },
-          onSwipeWeek: (direction) {
-            calendarNotifier.onSwipeWeek(direction);
-          },
-          showTodayBtn: !calendarState.containsToday,
-          onTodayTap: () {
-            calendarNotifier.goToToday();
-            notifier.onSelectDateFromPicker(DateTime.now());
-          },
+          onSwipeWeek: calendarNotifier.onSwipeWeek,
+          onTap: onSelectDate,
         ),
         if (state.isLoading)
           const Expanded(child: Center(child: AppProgressIndicator())),
@@ -117,63 +116,78 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           Expanded(child: _emptyHistoryView()),
         (!state.isLoading && state.sortedJourney.isNotEmpty)
             ? Expanded(
-          child: ListView.builder(
-              padding: EdgeInsets.only(
-                left: 16,
-                right: 16,
-                bottom: context.mediaQueryPadding.bottom,
-              ),
-              itemCount: state.sortedJourney.length + 2,
-              itemBuilder: (_, index) {
-                if (index == 0) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Row(children: [
-                      state.showDatePicker
-                          ? const SizedBox.shrink()
-                          : Text(selectedDate,
-                          style: AppTextStyle.subtitle1.copyWith(
-                            color: context.colorScheme.textDisabled,
-                          ))
-                    ]),
-                  );
-                }
-
-                final itemIndex = index - 1;
-                if (itemIndex < state.sortedJourney.length) {
-                  final journey = state.sortedJourney[itemIndex];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (journey.type == JOURNEY_TYPE_STEADY) ...[
-                        _steadyLocationItem(
-                          journey,
-                          state.sortedJourney.first.id == journey.id,
-                          state.sortedJourney.last.id == journey.id,
-                          state.spaceId,
-                        )
-                      ] else
-                        if (journey.type == JOURNEY_TYPE_MOVING) ...[
-                          _journeyLocationItem(
-                            journey,
-                            state.sortedJourney.first.id == journey.id,
-                            state.sortedJourney.last.id == journey.id,
-                            state.mapType,
-                          )
-                        ]
-                    ],
-                  );
-                } else {
-                  if (state.hasMore) {
-                    _checkUserInternet(() => notifier.loadMoreJourney());
-                    return const AppProgressIndicator();
-                  }
-                }
-                return const SizedBox();
-              }),
-        )
+                child: ListView.builder(
+                    padding: EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      bottom: context.mediaQueryPadding.bottom,
+                    ),
+                    itemCount: state.sortedJourney.length + 1,
+                    itemBuilder: (_, index) {
+                      if (index < state.sortedJourney.length) {
+                        final journey = state.sortedJourney[index];
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (journey.type == JOURNEY_TYPE_STEADY) ...[
+                              _steadyLocationItem(
+                                journey,
+                                state.sortedJourney.first.id == journey.id,
+                                state.sortedJourney.last.id == journey.id,
+                                state.spaceId,
+                              )
+                            ] else if (journey.type == JOURNEY_TYPE_MOVING) ...[
+                              _journeyLocationItem(
+                                journey,
+                                state.sortedJourney.first.id == journey.id,
+                                state.sortedJourney.last.id == journey.id,
+                                state.mapType,
+                              )
+                            ]
+                          ],
+                        );
+                      } else {
+                        if (state.hasMore) {
+                          _checkUserInternet(() => notifier.loadMoreJourney());
+                          return const AppProgressIndicator();
+                        }
+                      }
+                      return const SizedBox();
+                    }),
+              )
             : const SizedBox(),
       ],
+    );
+  }
+
+  Widget _dateHeaderView(
+    DateTime selectedDate,
+    bool showTodayBtn,
+    VoidCallback onTodayTap,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, left: 16, right: 16),
+      child: Row(
+        children: [
+          Text(selectedDate.format(context, DateFormatType.relativeDate),
+              style: AppTextStyle.subtitle1.copyWith(
+                color: context.colorScheme.textPrimary,
+              )),
+          const Spacer(),
+          Visibility(
+            visible: showTodayBtn,
+            child: OnTapScale(
+              onTap: () => onTodayTap(),
+              child: Text(
+                context.l10n.common_today,
+                style: AppTextStyle.button.copyWith(
+                  color: context.colorScheme.primary,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -195,13 +209,15 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     );
   }
 
-  Widget _steadyLocationItem(ApiLocationJourney journey,
-      bool isFirstItem,
-      bool isLastItem,
-      String? spaceId,) {
+  Widget _steadyLocationItem(
+    ApiLocationJourney journey,
+    bool isFirstItem,
+    bool isLastItem,
+    String? spaceId,
+  ) {
     final location = LatLng(journey.from_latitude, journey.from_longitude);
     final steadyDuration =
-    notifier.getSteadyDuration(journey.created_at!, journey.update_at!);
+        notifier.getSteadyDuration(journey.created_at!, journey.update_at!);
     final formattedTime = _getFormattedJourneyTime(
         journey.created_at ?? 0, journey.update_at ?? 0);
 
@@ -244,16 +260,18 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     );
   }
 
-  Widget _journeyLocationItem(ApiLocationJourney journey,
-      bool isFirstItem,
-      bool isLastItem,
-      String mapType,) {
+  Widget _journeyLocationItem(
+    ApiLocationJourney journey,
+    bool isFirstItem,
+    bool isLastItem,
+    String mapType,
+  ) {
     final time = _getFormattedJourneyTime(
         journey.created_at ?? 0, journey.update_at ?? 0);
     final distance = notifier.getDistanceString(journey.route_distance ?? 0);
     final fromLatLng = LatLng(journey.from_latitude, journey.from_longitude);
     final toLatLng =
-    LatLng(journey.to_latitude ?? 0.0, journey.to_longitude ?? 0.0);
+        LatLng(journey.to_latitude ?? 0.0, journey.to_longitude ?? 0.0);
 
     return SizedBox(
       height: 210,
@@ -351,9 +369,11 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     );
   }
 
-  Widget _buildMovingPlaceInfo(LatLng fromLatLng,
-      LatLng toLatLng,
-      String formattedTime,) {
+  Widget _buildMovingPlaceInfo(
+    LatLng fromLatLng,
+    LatLng toLatLng,
+    String formattedTime,
+  ) {
     final cacheKey = '${fromLatLng.latitude},${fromLatLng.longitude}_'
         '${toLatLng.latitude},${toLatLng.longitude}';
 
@@ -395,9 +415,9 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   }) {
     final steadyText = (isSteadyLocation ?? false)
         ? ((firstItem ?? false) && notifier.selectedDateIsTodayDate())
-        ? ''
-        : context.l10n
-        .journey_timeline_steady_duration_text(steadyDuration!)
+            ? ''
+            : context.l10n
+                .journey_timeline_steady_duration_text(steadyDuration!)
         : '';
 
     return Column(
@@ -484,8 +504,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     if (startDate == endDate) {
       return '${_getFormattedLocationTime(startAt)} - $endTime';
     } else {
-      return '${_getFormattedLocationTime(
-          startAt)} - ${_getFormattedLocationTime(endAt)}';
+      return '${_getFormattedLocationTime(startAt)} - ${_getFormattedLocationTime(endAt)}';
     }
   }
 
@@ -497,17 +516,18 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
       final time = createdAtDate.format(context, DateFormatType.time);
       return context.l10n.journey_timeline_today_text(time);
     } else {
-      return '${createdAtDate.format(
-          context, DateFormatType.dayMonthFull)} $startTime';
+      return '${createdAtDate.format(context, DateFormatType.dayMonthFull)} $startTime';
     }
   }
 
-  Future<String> _getMovingJourneyAddress(LatLng fromLatLng,
-      LatLng toLatLng) async {
+  Future<String> _getMovingJourneyAddress(
+    LatLng fromLatLng,
+    LatLng toLatLng,
+  ) async {
     final fromPlaceMarks = await placemarkFromCoordinates(
         fromLatLng.latitude, fromLatLng.longitude);
     final toPlaceMarks =
-    await placemarkFromCoordinates(toLatLng.latitude, toLatLng.longitude);
+        await placemarkFromCoordinates(toLatLng.latitude, toLatLng.longitude);
 
     return notifier.formattedAddress(fromPlaceMarks.first, toPlaceMarks.first);
   }
@@ -523,7 +543,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     final fromIcon = await notifier
         .createCustomIcon('assets/images/ic_feed_location_icon.png');
     final toIcon =
-    await notifier.createCustomIcon('assets/images/ic_distance_icon.png');
+        await notifier.createCustomIcon('assets/images/ic_distance_icon.png');
 
     final List<Marker> markers = [
       Marker(
@@ -553,18 +573,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 
-  String _onSelectDatePickerDate(int? timestamp) {
-    if (timestamp == null) return context.l10n.common_today;
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-
-    if (dateTime.isToday) {
-      return context.l10n.common_today;
-    } else {
-      final date = DateFormat('dd MMM').format(dateTime);
-      return date.toString();
-    }
-  }
-
   MapType getMapTypeInfo(String mapType) {
     if (mapType == 'Terrain') {
       return MapType.terrain;
@@ -573,5 +581,32 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     } else {
       return MapType.normal;
     }
+  }
+
+  void _observeShowDatePicker(DateTime selectedDate) {
+    ref.listen(
+        journeyTimelineStateProvider.select((state) => state.showDatePicker),
+        (_, next) async {
+      if (next) {
+        final pickedDate = await showDatePicker(
+          context: context,
+          initialDate: selectedDate,
+          firstDate:
+              DateTime.fromMillisecondsSinceEpoch(widget.groupCreatedDate),
+          lastDate: DateTime.now(),
+          confirmText: context.l10n.journey_timeline_date_picker_select_text,
+        );
+        notifier.showDatePicker();
+        if (pickedDate != null) {
+          onSelectDate(pickedDate);
+        }
+      }
+    });
+  }
+
+  void onSelectDate(DateTime date) {
+    if (date.isAfter(DateTime.now().startOfDay)) return;
+    calendarNotifier.setSelectedDate(date);
+    notifier.onSelectDateFromPicker(date);
   }
 }

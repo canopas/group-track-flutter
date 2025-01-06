@@ -34,6 +34,9 @@ class HorizontalCalendarViewModel extends StateNotifier<CalendarViewState> {
     final currentWeekStartDate = state.weekStartDate;
     final newWeekStartDate =
     currentWeekStartDate.add(Duration(days: direction * 7));
+    if(newWeekStartDate.isAfter(DateTime.now().startOfDay)) {
+      return;
+    }
     state = state.copyWith(weekStartDate: newWeekStartDate);
     setContainsToday();
   }

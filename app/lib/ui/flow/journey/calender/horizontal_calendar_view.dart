@@ -1,32 +1,24 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/extenstions/date_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
-import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/ui/flow/journey/calender/three_page_scroller.dart';
 
 class HorizontalCalendarView extends StatefulWidget {
-  final bool showDatePicker;
   final DateTime weekStartDate;
   final DateTime selectedDate;
   final ValueChanged<int> onSwipeWeek;
   final void Function(DateTime date) onTap;
-  final bool showTodayBtn;
-  final VoidCallback onTodayTap;
 
   const HorizontalCalendarView({
     super.key,
-    required this.showDatePicker,
     required this.weekStartDate,
     required this.selectedDate,
     required this.onSwipeWeek,
     required this.onTap,
-    required this.showTodayBtn,
-    required this.onTodayTap,
   });
 
   @override
@@ -36,23 +28,12 @@ class HorizontalCalendarView extends StatefulWidget {
 class _HorizontalCalendarViewState extends State<HorizontalCalendarView> {
   @override
   Widget build(BuildContext context) {
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      child: widget.showDatePicker
-          ? _calendar(context)
-          : const SizedBox(height: 0),
-    );
-  }
-
-  Widget _calendar(BuildContext context) {
     final previousWeekDate =
         widget.weekStartDate.subtract(const Duration(days: 7));
     final nextWeekDate = widget.weekStartDate.add(const Duration(days: 7));
 
     return Column(
       children: [
-        _dateHeaderView(),
         Padding(
           padding: const EdgeInsets.only(top: 12, bottom: 16),
           child: ThreePageScroller(
@@ -67,33 +48,6 @@ class _HorizontalCalendarViewState extends State<HorizontalCalendarView> {
     );
   }
 
-  Widget _dateHeaderView() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 4,left: 16, right: 16),
-      child: Row(
-        children: [
-          Text(
-            widget.selectedDate.format(context, DateFormatType.relativeDate),
-            style: AppTextStyle.header4,
-          ),
-          const Spacer(),
-          Visibility(
-            visible: widget.showTodayBtn,
-            child: OnTapScale(
-              onTap: () => widget.onTodayTap(),
-              child: Text(
-                context.l10n.common_today,
-                style: AppTextStyle.button.copyWith(
-                  color: context.colorScheme.primary,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _weekDays({
     required DateTime startDate,
   }) {
@@ -101,13 +55,16 @@ class _HorizontalCalendarViewState extends State<HorizontalCalendarView> {
     for (var i = 0; i < 7; i++) {
       weekDays.add(startDate.add(Duration(days: i)));
     }
+    final isWeekAfter = weekDays.first.isAfter(DateTime.now());
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
         children: weekDays.map(
           (date) {
-            return _weekDayItem(date: date, context: context);
+            return isWeekAfter
+                ? const SizedBox()
+                : _weekDayItem(date: date, context: context);
           },
         ).toList(),
       ),
@@ -116,6 +73,10 @@ class _HorizontalCalendarViewState extends State<HorizontalCalendarView> {
 
   Widget _weekDayItem({required BuildContext context, required DateTime date}) {
     final bool isSelected = date.isSameDay(widget.selectedDate);
+    final isDayAfter = date.isAfter(DateTime.now());
+    final textColor = isDayAfter
+        ? context.colorScheme.textDisabled
+        : context.colorScheme.textPrimary;
 
     return Expanded(
       child: GestureDetector(
@@ -156,7 +117,7 @@ class _HorizontalCalendarViewState extends State<HorizontalCalendarView> {
                       style: AppTextStyle.bodyBold.copyWith(
                         color: isSelected
                             ? context.colorScheme.textInversePrimary
-                            : context.colorScheme.textPrimary,
+                            : textColor,
                       ),
                       textScaler: TextScaler.noScaling,
                     ),
