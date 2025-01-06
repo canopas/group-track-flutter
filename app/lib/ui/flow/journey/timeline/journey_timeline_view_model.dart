@@ -19,13 +19,13 @@ import '../../../components/no_internet_screen.dart';
 part 'journey_timeline_view_model.freezed.dart';
 
 final journeyTimelineStateProvider = StateNotifierProvider.autoDispose<
-    JourneyTimelineViewModel, JourneyTimelineState>(
-        (ref) => JourneyTimelineViewModel(
-      ref.read(currentUserPod),
-      ref.read(journeyServiceProvider),
-      ref.read(currentSpaceId.notifier),
-      ref.read(googleMapType.notifier),
-    ));
+        JourneyTimelineViewModel, JourneyTimelineState>(
+    (ref) => JourneyTimelineViewModel(
+          ref.read(currentUserPod),
+          ref.read(journeyServiceProvider),
+          ref.read(currentSpaceId.notifier),
+          ref.read(googleMapType.notifier),
+        ));
 
 class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
   final ApiUser? currentUser;
@@ -34,11 +34,11 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
   final StateController<String> mapTypeController;
 
   JourneyTimelineViewModel(
-      this.currentUser,
-      this.journeyService,
-      this._currentSpaceId,
-      this.mapTypeController,
-      ) : super(JourneyTimelineState(mapType: mapTypeController.state));
+    this.currentUser,
+    this.journeyService,
+    this._currentSpaceId,
+    this.mapTypeController,
+  ) : super(JourneyTimelineState(mapType: mapTypeController.state));
 
   void loadData(ApiUser selectedUser) async {
     final isNetworkOff = await _checkUserInternet();
@@ -231,7 +231,7 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     final frameInfo = await codec.getNextFrame();
 
     final byteData =
-    await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
+        await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
     final resizedBytes = byteData!.buffer.asUint8List();
 
     return BitmapDescriptor.bytes(resizedBytes,

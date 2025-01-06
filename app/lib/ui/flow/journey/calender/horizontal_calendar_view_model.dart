@@ -10,13 +10,13 @@ final horizontalCalendarViewStateProvider = StateNotifierProvider.autoDispose<
 });
 
 class HorizontalCalendarViewModel extends StateNotifier<CalendarViewState> {
-
-  HorizontalCalendarViewModel() : super(
-    CalendarViewState(
-      weekStartDate: DateTime.now().startOfDay,
-      selectedDate: DateTime.now().startOfDay,
-    ),
-  ) {
+  HorizontalCalendarViewModel()
+      : super(
+          CalendarViewState(
+            weekStartDate: DateTime.now().startOfDay,
+            selectedDate: DateTime.now().startOfDay,
+          ),
+        ) {
     setCurrentWeekStartDate();
   }
 
@@ -26,30 +26,37 @@ class HorizontalCalendarViewModel extends StateNotifier<CalendarViewState> {
     final dayOfWeek = currentDate.weekday;
     final daysToSubtract = dayOfWeek == 1 ? 0 : dayOfWeek - 1;
     final currentWeekStartDate =
-    currentDate.subtract(Duration(days: daysToSubtract));
+        currentDate.subtract(Duration(days: daysToSubtract));
     state = state.copyWith(weekStartDate: currentWeekStartDate);
   }
 
   void onSwipeWeek(int direction) {
     final currentWeekStartDate = state.weekStartDate;
     final newWeekStartDate =
-    currentWeekStartDate.add(Duration(days: direction * 7));
-    if(newWeekStartDate.isAfter(DateTime.now().startOfDay)) {
+        currentWeekStartDate.add(Duration(days: direction * 7));
+    if (newWeekStartDate.isAfter(DateTime.now().startOfDay)) {
       return;
     }
     state = state.copyWith(weekStartDate: newWeekStartDate);
     setContainsToday();
   }
 
-  void setSelectedDate(DateTime? date) {
-    state =
-        state.copyWith(selectedDate: date?.startOfDay ?? DateTime.now().startOfDay);
+  void setSelectedDate(DateTime? date, {bool isPickerDate = false}) {
+    state = state.copyWith(
+        selectedDate: date?.startOfDay ?? DateTime.now().startOfDay);
+    if (isPickerDate && date != null) {
+      onSelectDateFromDatePicker(date);
+    }
+  }
+
+  void onSelectDateFromDatePicker(DateTime date) {
+    state = state.copyWith(weekStartDate: date.startOfWeek);
+    setContainsToday();
   }
 
   void setContainsToday() {
     final DateTime today = DateTime.now();
-    final DateTime endOfWeek =
-    state.weekStartDate.add(const Duration(days: 6));
+    final DateTime endOfWeek = state.weekStartDate.add(const Duration(days: 6));
 
     final containsToday =
         today.isAfter(state.weekStartDate) && today.isBefore(endOfWeek);

@@ -108,7 +108,9 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           weekStartDate: calendarState.weekStartDate,
           selectedDate: calendarState.selectedDate,
           onSwipeWeek: calendarNotifier.onSwipeWeek,
-          onTap: onSelectDate,
+          onTap: (date) {
+            onSelectDate(date, false);
+          },
         ),
         if (state.isLoading)
           const Expanded(child: Center(child: AppProgressIndicator())),
@@ -598,15 +600,15 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         );
         notifier.showDatePicker();
         if (pickedDate != null) {
-          onSelectDate(pickedDate);
+          onSelectDate(pickedDate, true);
         }
       }
     });
   }
 
-  void onSelectDate(DateTime date) {
+  void onSelectDate(DateTime date, bool isFromPicker) {
     if (date.isAfter(DateTime.now().startOfDay)) return;
-    calendarNotifier.setSelectedDate(date);
+    calendarNotifier.setSelectedDate(date, isPickerDate: isFromPicker);
     notifier.onSelectDateFromPicker(date);
   }
 }
