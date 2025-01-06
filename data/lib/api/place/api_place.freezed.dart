@@ -31,12 +31,8 @@ mixin _$ApiPlace {
   DateTime? get created_at => throw _privateConstructorUsedError;
   List<String> get space_member_ids => throw _privateConstructorUsedError;
 
-  /// Serializes this ApiPlace to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of ApiPlace
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $ApiPlaceCopyWith<ApiPlace> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -68,8 +64,6 @@ class _$ApiPlaceCopyWithImpl<$Res, $Val extends ApiPlace>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ApiPlace
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -152,8 +146,6 @@ class __$$ApiPlaceImplCopyWithImpl<$Res>
       _$ApiPlaceImpl _value, $Res Function(_$ApiPlaceImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ApiPlace
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -282,7 +274,7 @@ class _$ApiPlaceImpl extends _ApiPlace {
                 .equals(other._space_member_ids, _space_member_ids));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -296,9 +288,7 @@ class _$ApiPlaceImpl extends _ApiPlace {
       created_at,
       const DeepCollectionEquality().hash(_space_member_ids));
 
-  /// Create a copy of ApiPlace
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiPlaceImplCopyWith<_$ApiPlaceImpl> get copyWith =>
@@ -347,11 +337,8 @@ abstract class _ApiPlace extends ApiPlace {
   DateTime? get created_at;
   @override
   List<String> get space_member_ids;
-
-  /// Create a copy of ApiPlace
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$ApiPlaceImplCopyWith<_$ApiPlaceImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -369,12 +356,8 @@ mixin _$ApiPlaceMemberSetting {
   List<String> get arrival_alert_for => throw _privateConstructorUsedError;
   List<String> get leave_alert_for => throw _privateConstructorUsedError;
 
-  /// Serializes this ApiPlaceMemberSetting to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of ApiPlaceMemberSetting
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $ApiPlaceMemberSettingCopyWith<ApiPlaceMemberSetting> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -404,8 +387,6 @@ class _$ApiPlaceMemberSettingCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ApiPlaceMemberSetting
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -466,8 +447,6 @@ class __$$ApiPlaceMemberSettingImplCopyWithImpl<$Res>
       $Res Function(_$ApiPlaceMemberSettingImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ApiPlaceMemberSetting
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -565,7 +544,7 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
                 .equals(other._leave_alert_for, _leave_alert_for));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -575,9 +554,7 @@ class _$ApiPlaceMemberSettingImpl extends _ApiPlaceMemberSetting {
       const DeepCollectionEquality().hash(_arrival_alert_for),
       const DeepCollectionEquality().hash(_leave_alert_for));
 
-  /// Create a copy of ApiPlaceMemberSetting
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiPlaceMemberSettingImplCopyWith<_$ApiPlaceMemberSettingImpl>
@@ -614,11 +591,8 @@ abstract class _ApiPlaceMemberSetting extends ApiPlaceMemberSetting {
   List<String> get arrival_alert_for;
   @override
   List<String> get leave_alert_for;
-
-  /// Create a copy of ApiPlaceMemberSetting
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$ApiPlaceMemberSettingImplCopyWith<_$ApiPlaceMemberSettingImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -635,12 +609,8 @@ mixin _$ApiNearbyPlace {
   double get lat => throw _privateConstructorUsedError;
   double get lng => throw _privateConstructorUsedError;
 
-  /// Serializes this ApiNearbyPlace to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of ApiNearbyPlace
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $ApiNearbyPlaceCopyWith<ApiNearbyPlace> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -669,8 +639,6 @@ class _$ApiNearbyPlaceCopyWithImpl<$Res, $Val extends ApiNearbyPlace>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ApiNearbyPlace
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -729,8 +697,6 @@ class __$$ApiNearbyPlaceImplCopyWithImpl<$Res>
       _$ApiNearbyPlaceImpl _value, $Res Function(_$ApiNearbyPlaceImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ApiNearbyPlace
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -808,14 +774,12 @@ class _$ApiNearbyPlaceImpl extends _ApiNearbyPlace {
             (identical(other.lng, lng) || other.lng == lng));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, name, formatted_address, lat, lng);
 
-  /// Create a copy of ApiNearbyPlace
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiNearbyPlaceImplCopyWith<_$ApiNearbyPlaceImpl> get copyWith =>
@@ -852,11 +816,8 @@ abstract class _ApiNearbyPlace extends ApiNearbyPlace {
   double get lat;
   @override
   double get lng;
-
-  /// Create a copy of ApiNearbyPlace
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$ApiNearbyPlaceImplCopyWith<_$ApiNearbyPlaceImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

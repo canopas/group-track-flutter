@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <inset xmlns:android="http://schemas.android.com/apk/res/android"
-    android:drawable="@drawable/ic_your_space_logo"
-    android:insetLeft="50dp"
-    android:insetTop="40dp"
-    android:insetRight="50dp"
-    android:insetBottom="40dp" />
+    android:drawable="@drawable/app_splash_icon"
+    android:insetLeft="30dp"
+    android:insetTop="30dp"
+    android:insetRight="30dp"
+    android:insetBottom="30dp"
+    />

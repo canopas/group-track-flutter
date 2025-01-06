@@ -12,15 +12,8 @@ import 'package:flutter/widgets.dart';
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
-  /// File path: assets/images/app name dark.svg
-  String get appNameDark => 'assets/images/app name dark.svg';
-
-  /// File path: assets/images/app name.svg
-  String get appName => 'assets/images/app name.svg';
-
-  /// File path: assets/images/app_logo.png
-  AssetGenImage get appLogo =>
-      const AssetGenImage('assets/images/app_logo.png');
+  /// File path: assets/images/app_name_logo.svg
+  String get appNameLogo => 'assets/images/app_name_logo.svg';
 
   /// File path: assets/images/connection.svg
   String get connection => 'assets/images/connection.svg';
@@ -215,9 +208,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<dynamic> get values => [
-        appNameDark,
-        appName,
-        appLogo,
+        appNameLogo,
         connection,
         ic30BatteryIcon,
         ic50BatteryIcon,
