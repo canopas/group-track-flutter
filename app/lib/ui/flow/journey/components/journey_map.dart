@@ -70,7 +70,7 @@ class _JourneyMapState extends State<JourneyMap> {
             rotateGesturesEnabled: widget.gestureEnable,
             mapType: widget.mapType,
             markers: widget.markers.toSet(),
-            polylines:ployLines.toSet(),
+            polylines: ployLines.toSet(),
           ),
         ),
       ),
@@ -82,8 +82,15 @@ class _JourneyMapState extends State<JourneyMap> {
     ApiLocationJourney journey,
   ) async {
     _controller = controller;
-    LatLngBounds bounds = _createLatLngBounds(journey.toRoute());
-    await _controller?.animateCamera(CameraUpdate.newLatLngBounds(bounds, 20));
+    if (journey.isSteady()) {
+      final latLng = journey.toLocationFromSteadyJourney();
+      await _controller?.animateCamera(
+          CameraUpdate.newLatLngZoom(LatLng(latLng.latitude, latLng.longitude), 16));
+    } else {
+      LatLngBounds bounds = _createLatLngBounds(journey.toRoute());
+      await _controller
+          ?.animateCamera(CameraUpdate.newLatLngBounds(bounds, 20));
+    }
   }
 
   LatLngBounds _createLatLngBounds(List<LatLng> points) {
@@ -109,6 +116,9 @@ class _JourneyMapState extends State<JourneyMap> {
     ApiLocationJourney journey,
   ) {
     List<Polyline> polyline = [];
+    if (journey.isSteady()) {
+      return (polyline, _fromLatLng, INITIAL_ZOOM_LEVEL.toDouble());
+    }
 
     polyline.add(Polyline(
       polylineId: PolylineId(journey.id!),

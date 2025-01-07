@@ -88,10 +88,6 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 10 secs
         to_latitude: newLocation.latitude,
         to_longitude: newLocation.longitude,
         type: JOURNEY_TYPE_MOVING,
-        routes: lastLocations
-            .map((location) => JourneyRoute(
-                latitude: location.latitude, longitude: location.longitude))
-            .toList(),
         route_distance: distance,
         route_duration: timeDifference,
         created_at: DateTime.now().millisecondsSinceEpoch,
