@@ -123,6 +123,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
                     padding: EdgeInsets.only(
                       left: 16,
                       right: 16,
+                      top: 16,
                       bottom: context.mediaQueryPadding.bottom,
                     ),
                     itemCount: state.sortedJourney.length + 1,
@@ -233,27 +234,28 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           children: [
             DottedLineView(isSteadyLocation: true, isLastItem: isLastItem),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildPlaceInfo(
-                        location,
-                        formattedTime,
-                        journey.isSteady(),
-                        steadyDuration,
-                        isFirstItem),
-                    const SizedBox(height: 16),
-                    _appPlaceButton(location, spaceId),
-                    const SizedBox(height: 8),
-                    Visibility(
-                        visible: !isLastItem,
-                        child: Divider(
-                          thickness: 1,
-                          color: context.colorScheme.outline,
-                        )),
-                  ],
+              child: GestureDetector(
+                onTap: () {
+                  AppRoute.journeyDetail(journey).push(context);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildPlaceInfo(location, formattedTime,
+                          journey.isSteady(), steadyDuration, isFirstItem),
+                      const SizedBox(height: 16),
+                      _appPlaceButton(location, spaceId),
+                      const SizedBox(height: 8),
+                      Visibility(
+                          visible: !isLastItem,
+                          child: Divider(
+                            thickness: 1,
+                            color: context.colorScheme.outline,
+                          )),
+                    ],
+                  ),
                 ),
               ),
             )

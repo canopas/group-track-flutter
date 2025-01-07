@@ -79,7 +79,8 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
 
       // Filter by date range
       final filteredJourneys = journeys.where((journey) {
-        return journey.created_at! >= from && journey.created_at! <= to;
+        return journey.created_at! >= from && journey.created_at! <= to ||
+            (journey.update_at! >= from && journey.update_at! <= to);
       }).toList();
 
       // Combine all journeys and sort
