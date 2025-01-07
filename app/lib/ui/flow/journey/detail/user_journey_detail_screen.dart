@@ -99,19 +99,21 @@ class _UserJourneyDetailScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '$distance - $duration',
-            style: AppTextStyle.subtitle1
-                .copyWith(color: context.colorScheme.textDisabled),
-            textAlign: TextAlign.start,
-          ),
+          if (state.journey!.isMoving())
+            Text(
+              '$distance - $duration',
+              style: AppTextStyle.subtitle1
+                  .copyWith(color: context.colorScheme.textDisabled),
+              textAlign: TextAlign.start,
+            ),
           const SizedBox(height: 16),
           _journeyPlacesInfo(
             state.addressFrom,
             state.journey!.created_at,
-            false,
+            state.journey!.isSteady(),
           ),
-          _journeyPlacesInfo(state.addressTo, state.journey!.update_at, true),
+          if (state.journey!.isMoving())
+            _journeyPlacesInfo(state.addressTo, state.journey!.update_at, true),
         ],
       ),
     );
@@ -200,9 +202,10 @@ class _UserJourneyDetailScreenState
         (_, next) async {
       if (next != null) {
         final fromLatLng = LatLng(next.from_latitude, next.from_longitude);
-        final toLatLng =
-            LatLng(next.to_latitude ?? 0.0, next.to_longitude ?? 0.0);
-        final markers = await _buildMarkers(fromLatLng, toLatLng);
+        final toLatLng = next.isMoving()
+            ? LatLng(next.to_latitude ?? 0.0, next.to_longitude ?? 0.0)
+            : null;
+        final markers = await _buildMarkers(fromLatLng, toLatLng: toLatLng);
         setState(() {
           _markers.addAll(markers);
         });
@@ -257,7 +260,8 @@ class _UserJourneyDetailScreenState
     return parts.where((part) => part.isNotEmpty).join(', ');
   }
 
-  Future<List<Marker>> _buildMarkers(LatLng fromLatLng, LatLng toLatLng) async {
+  Future<List<Marker>> _buildMarkers(LatLng fromLatLng,
+      {LatLng? toLatLng}) async {
     final fromIcon = await notifier
         .createCustomIcon('assets/images/ic_timeline_start_location_icon.png');
     final toIcon = await notifier.createCustomIcon(
@@ -271,13 +275,14 @@ class _UserJourneyDetailScreenState
         consumeTapEvents: true,
         icon: fromIcon,
       ),
-      Marker(
-        markerId: const MarkerId('toLocation'),
-        anchor: const Offset(0.5, 0.5),
-        position: toLatLng,
-        consumeTapEvents: true,
-        icon: toIcon,
-      ),
+      if (toLatLng != null)
+        Marker(
+          markerId: const MarkerId('toLocation'),
+          anchor: const Offset(0.5, 0.5),
+          position: toLatLng,
+          consumeTapEvents: true,
+          icon: toIcon,
+        ),
     ];
 
     return markers;

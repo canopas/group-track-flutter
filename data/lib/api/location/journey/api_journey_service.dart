@@ -88,7 +88,7 @@ class ApiJourneyService {
         .where('update_at', isGreaterThanOrEqualTo: from)
         .where('update_at', isLessThanOrEqualTo: to)
         .orderBy('created_at', descending: true)
-        .limit(5)
+        .limit(1)
         .get();
 
     final allDocsMap = <String, ApiLocationJourney>{};
