@@ -1,5 +1,6 @@
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/location/journey/journey.dart';
+import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -28,10 +29,10 @@ import '../components/journey_map.dart';
 
 class JourneyTimelineScreen extends ConsumerStatefulWidget {
   final ApiUser selectedUser;
-  final int groupCreatedDate;
+  final ApiSpace? group;
 
   const JourneyTimelineScreen(
-      {super.key, required this.selectedUser, required this.groupCreatedDate});
+      {super.key, required this.selectedUser, required this.group});
 
   @override
   ConsumerState<JourneyTimelineScreen> createState() =>
@@ -594,7 +595,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           context: context,
           initialDate: selectedDate,
           firstDate:
-              DateTime.fromMillisecondsSinceEpoch(widget.groupCreatedDate),
+              DateTime.fromMillisecondsSinceEpoch(widget.group?.created_at ?? 0),
           lastDate: DateTime.now(),
           confirmText: context.l10n.journey_timeline_date_picker_select_text,
         );

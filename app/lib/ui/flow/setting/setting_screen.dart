@@ -15,6 +15,7 @@ import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/profile_picture.dart';
 import 'package:yourspace_flutter/ui/components/resume_detector.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 import 'package:yourspace_flutter/ui/flow/setting/setting_view_model.dart';
 
 import '../../../gen/assets.gen.dart';
@@ -79,7 +80,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
 
     return GestureDetector(
       onTap: () {
-        AppRoute.profile.push(context);
+        ProfileRoute().push(context);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,7 +316,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     ref.listen(settingViewStateProvider.select((state) => state.logOut),
         (previous, next) {
       if (next) {
-        AppRoute.signInMethod.go(context);
+        SignInMethodRoute().go(context);
       }
     });
   }

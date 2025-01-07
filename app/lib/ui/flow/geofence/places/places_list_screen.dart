@@ -12,6 +12,7 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view_model.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../gen/assets.gen.dart';
@@ -233,8 +234,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
     );
   }
 
-  Widget _emptyViewWith0Member(
-      BuildContext context, PlacesListState state) {
+  Widget _emptyViewWith0Member(BuildContext context, PlacesListState state) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -327,7 +327,9 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
         placesListViewStateProvider
             .select((state) => state.spaceInvitationCode), (previous, next) {
       if (next.isNotEmpty) {
-        AppRoute.inviteCode(code: next, spaceName: '').push(context);
+        InviteCodeRoute(InviteCodeRouteData(
+                inviteCode: next, spaceName: '', fromOnboard: false))
+            .push(context);
       }
     });
   }

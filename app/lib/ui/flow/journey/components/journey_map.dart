@@ -8,6 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 
+import '../../navigation/routes.dart';
+
 const INITIAL_ZOOM_LEVEL = 6;
 
 class JourneyMap extends StatefulWidget {
@@ -47,7 +49,7 @@ class _JourneyMapState extends State<JourneyMap> {
       behavior: HitTestBehavior.translucent,
       onTap: () {
         if (widget.isTimeLine) {
-          AppRoute.journeyDetail(widget.journey).push(context);
+          JourneyDetailsRoute(widget.journey).push(context);
         }
       },
       child: ClipRRect(

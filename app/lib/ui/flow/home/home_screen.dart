@@ -15,6 +15,7 @@ import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/home/home_screen_viewmodel.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../domain/fcm/notification_handler.dart';
 import '../../components/alert.dart';
@@ -182,7 +183,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ref.listen(homeViewStateProvider.select((state) => state.popToSignIn),
         (_, next) {
       if (next != null) {
-        AppRoute.signInMethod.go(context);
+        SignInMethodRoute().go(context);
       }
     });
   }

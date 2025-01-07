@@ -18,6 +18,7 @@ import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 import 'package:yourspace_flutter/ui/flow/setting/profile/profile_view_model.dart';
 
 import '../../../../gen/assets.gen.dart';
@@ -327,7 +328,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         editProfileViewStateProvider.select((state) => state.accountDeleted),
         (previous, next) {
       if (next) {
-        AppRoute.signInMethod.go(context);
+        SignInMethodRoute().go(context);
       }
     });
   }

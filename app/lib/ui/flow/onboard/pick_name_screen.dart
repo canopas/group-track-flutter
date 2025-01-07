@@ -11,6 +11,7 @@ import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 import 'package:yourspace_flutter/ui/flow/onboard/pick_name_view_model.dart';
 
 import '../../components/no_internet_screen.dart';
@@ -99,7 +100,7 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
     ref.listen(pickNameStateNotifierProvider.select((value) => value.saved),
         (previous, next) {
       if (next) {
-        AppRoute.connection.go(context);
+        ConnectionRoute().go(context);
       }
     });
   }

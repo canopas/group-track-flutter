@@ -12,6 +12,7 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../../gen/assets.gen.dart';
 import '../../../app_route.dart';
@@ -117,7 +118,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           onPlacesTap: () {
             final space = widget.space;
             if (space != null) {
-              AppRoute.placesList(space.space.id).push(context);
+              PlacesListRoute(spaceId: space.space.id).push(context);
             }
           },
           onDismiss: () => notifier.onDismissMemberDetail(),
@@ -138,7 +139,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       onTap: () {
         (!locationEnabled)
             ? notifier.showEnableLocationDialog()
-            : AppRoute.enablePermission.push(context);
+            : EnablePermissionRoute().push(context);
       },
       child: Container(
         padding: const EdgeInsets.all(16),

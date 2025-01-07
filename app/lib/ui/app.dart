@@ -2,7 +2,6 @@ library ui;
 
 import 'dart:io';
 
-import 'package:data/storage/app_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,7 +14,7 @@ import 'package:style/theme/theme.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 
 import '../domain/extenstions/widget_extensions.dart';
-import 'app_route.dart';
+import 'flow/navigation/routes.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -25,28 +24,23 @@ class App extends ConsumerStatefulWidget {
 }
 
 class _AppState extends ConsumerState<App> {
-  late GoRouter _router;
+  GoRouter? _router;
 
   @override
   void initState() {
     super.initState();
-    final AppRoute initialRoute;
-    if (!ref.read(isIntroScreenShownPod)) {
-      initialRoute = AppRoute.intro;
-    } else if (ref.read(currentUserPod) == null) {
-      initialRoute = AppRoute.signInMethod;
-    } else if (ref.read(currentUserPod)?.first_name?.isEmpty ?? true) {
-      initialRoute = AppRoute.pickName();
-    } else {
-      initialRoute = AppRoute.home;
-    }
-
-    _router =
-        GoRouter(routes: AppRoute.routes, initialLocation: initialRoute.path);
+    ref.read(goRouterProvider.future).then((router) {
+      _router = router;
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_router == null) {
+      return Container();
+    }
+
     final isDarkMode = context.brightness == Brightness.dark;
     final colorScheme = isDarkMode ? appColorSchemeDark : appColorSchemeLight;
 

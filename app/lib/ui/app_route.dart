@@ -134,22 +134,10 @@ class AppRoute {
         builder: (context, state) => state.widget(context),
       );
 
-  static AppRoute get intro =>
-      AppRoute("/intro", builder: (_) => const IntroScreen());
 
   static AppRoute get home =>
       AppRoute("/home", builder: (_) => const HomeScreen());
 
-  static AppRoute get signInMethod =>
-      AppRoute("/sign-in", builder: (_) => const SignInMethodScreen());
-
-  static AppRoute pickName({ApiUser? user}) => AppRoute(
-        pathPickName,
-        builder: (_) => PickNameScreen(user: user),
-      );
-
-  static AppRoute get connection =>
-      AppRoute(pathConnection, builder: (_) => const ConnectionScreen());
 
   static AppRoute createSpace({bool fromOnboard = false}) =>
       AppRoute(pathCreateSpace,
@@ -170,15 +158,6 @@ class AppRoute {
           spaceName: spaceName, inviteCode: code, fromOnboard: fromOnboard),
     );
   }
-
-  static AppRoute get enablePermission => AppRoute(pathEnablePermission,
-      builder: (_) => const EnablePermissionView());
-
-  static AppRoute get setting =>
-      AppRoute(pathCreateSpace, builder: (_) => const SettingScreen());
-
-  static AppRoute get profile =>
-      AppRoute(pathProfile, builder: (_) => const ProfileScreen());
 
   static AppRoute editSpace(String spaceId) {
     return AppRoute(
@@ -242,25 +221,6 @@ class AppRoute {
     );
   }
 
-  static AppRoute journeyTimeline(ApiUser user, int groupCreatedDate) {
-    return AppRoute(pathJourneyTimeline,
-        builder: (_) => JourneyTimelineScreen(selectedUser: user, groupCreatedDate: groupCreatedDate));
-  }
-
-  static AppRoute journeyDetail(ApiLocationJourney journey) {
-    return AppRoute(
-      pathJourneyDetail,
-      builder: (_) => UserJourneyDetailScreen(journey: journey),
-    );
-  }
-
-  static AppRoute message(SpaceInfo space) {
-    return AppRoute(
-      pathMessage,
-      builder: (_) => ThreadListScreen(spaceInfo: space),
-    );
-  }
-
   static AppRoute chat({
     ApiSpace? space,
     String? threadId,
@@ -278,13 +238,6 @@ class AppRoute {
 
   static final routes = [
     GoRoute(
-        path: intro.path,
-        builder: (context, state) {
-          return state.extra == null
-              ? const IntroScreen()
-              : state.widget(context);
-        }),
-    GoRoute(
       path: pathPickName,
       builder: (context, state) {
         return state.extra == null
@@ -296,14 +249,6 @@ class AppRoute {
       path: home.path,
       builder: (context, state) {
         return state.extra == null ? const HomeScreen() : state.widget(context);
-      },
-    ),
-    GoRoute(
-      path: signInMethod.path,
-      builder: (context, state) {
-        return state.extra == null
-            ? const SignInMethodScreen()
-            : state.widget(context);
       },
     ),
     GoRoute(
