@@ -30,7 +30,7 @@ Grouptrack ensures your loved ones' well-being with:
 ### End-to-End Encryption (Coming Soon)
 Enhanced privacy and security through robust end-to-end encryption, leveraging the Signal Protocol to ensure your location data remains private and secure.
 
-Key Security Features:
+Planned Security Features:
 - Industry-standard Signal Protocol integration for secure data transmission
 - Client-side encryption with AES-256
 - Zero-knowledge architecture - only group members can access location data
