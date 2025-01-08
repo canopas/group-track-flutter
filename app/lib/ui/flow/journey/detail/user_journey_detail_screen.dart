@@ -113,7 +113,7 @@ class _UserJourneyDetailScreenState
             state.journey!.isSteady(),
           ),
           if (state.journey!.isMoving())
-            _journeyPlacesInfo(state.addressTo, state.journey!.update_at, true),
+            _journeyPlacesInfo(state.addressTo, state.journey!.updated_at, true),
         ],
       ),
     );

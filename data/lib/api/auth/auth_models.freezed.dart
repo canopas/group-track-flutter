@@ -31,12 +31,22 @@ mixin _$ApiUser {
   List<String>? get space_ids => throw _privateConstructorUsedError;
   int? get battery_pct => throw _privateConstructorUsedError;
   String? get fcm_token => throw _privateConstructorUsedError;
+  @BlobConverter()
+  Blob? get identity_key_public => throw _privateConstructorUsedError;
+  @BlobConverter()
+  Blob? get identity_key_private => throw _privateConstructorUsedError;
+  @BlobConverter()
+  Blob? get identity_key_salt => throw _privateConstructorUsedError;
   int? get state => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
   int? get updated_at => throw _privateConstructorUsedError;
 
+  /// Serializes this ApiUser to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiUser
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ApiUserCopyWith<ApiUser> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -57,6 +67,9 @@ abstract class $ApiUserCopyWith<$Res> {
       List<String>? space_ids,
       int? battery_pct,
       String? fcm_token,
+      @BlobConverter() Blob? identity_key_public,
+      @BlobConverter() Blob? identity_key_private,
+      @BlobConverter() Blob? identity_key_salt,
       int? state,
       int? created_at,
       int? updated_at});
@@ -72,6 +85,8 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ApiUser
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -86,6 +101,9 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
     Object? space_ids = freezed,
     Object? battery_pct = freezed,
     Object? fcm_token = freezed,
+    Object? identity_key_public = freezed,
+    Object? identity_key_private = freezed,
+    Object? identity_key_salt = freezed,
     Object? state = freezed,
     Object? created_at = freezed,
     Object? updated_at = freezed,
@@ -135,6 +153,18 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
           ? _value.fcm_token
           : fcm_token // ignore: cast_nullable_to_non_nullable
               as String?,
+      identity_key_public: freezed == identity_key_public
+          ? _value.identity_key_public
+          : identity_key_public // ignore: cast_nullable_to_non_nullable
+              as Blob?,
+      identity_key_private: freezed == identity_key_private
+          ? _value.identity_key_private
+          : identity_key_private // ignore: cast_nullable_to_non_nullable
+              as Blob?,
+      identity_key_salt: freezed == identity_key_salt
+          ? _value.identity_key_salt
+          : identity_key_salt // ignore: cast_nullable_to_non_nullable
+              as Blob?,
       state: freezed == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -170,6 +200,9 @@ abstract class _$$ApiUserImplCopyWith<$Res> implements $ApiUserCopyWith<$Res> {
       List<String>? space_ids,
       int? battery_pct,
       String? fcm_token,
+      @BlobConverter() Blob? identity_key_public,
+      @BlobConverter() Blob? identity_key_private,
+      @BlobConverter() Blob? identity_key_salt,
       int? state,
       int? created_at,
       int? updated_at});
@@ -183,6 +216,8 @@ class __$$ApiUserImplCopyWithImpl<$Res>
       _$ApiUserImpl _value, $Res Function(_$ApiUserImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiUser
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -197,6 +232,9 @@ class __$$ApiUserImplCopyWithImpl<$Res>
     Object? space_ids = freezed,
     Object? battery_pct = freezed,
     Object? fcm_token = freezed,
+    Object? identity_key_public = freezed,
+    Object? identity_key_private = freezed,
+    Object? identity_key_salt = freezed,
     Object? state = freezed,
     Object? created_at = freezed,
     Object? updated_at = freezed,
@@ -246,6 +284,18 @@ class __$$ApiUserImplCopyWithImpl<$Res>
           ? _value.fcm_token
           : fcm_token // ignore: cast_nullable_to_non_nullable
               as String?,
+      identity_key_public: freezed == identity_key_public
+          ? _value.identity_key_public
+          : identity_key_public // ignore: cast_nullable_to_non_nullable
+              as Blob?,
+      identity_key_private: freezed == identity_key_private
+          ? _value.identity_key_private
+          : identity_key_private // ignore: cast_nullable_to_non_nullable
+              as Blob?,
+      identity_key_salt: freezed == identity_key_salt
+          ? _value.identity_key_salt
+          : identity_key_salt // ignore: cast_nullable_to_non_nullable
+              as Blob?,
       state: freezed == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -277,6 +327,9 @@ class _$ApiUserImpl extends _ApiUser {
       final List<String>? space_ids = const [],
       this.battery_pct,
       this.fcm_token = "",
+      @BlobConverter() this.identity_key_public,
+      @BlobConverter() this.identity_key_private,
+      @BlobConverter() this.identity_key_salt,
       this.state,
       this.created_at,
       this.updated_at})
@@ -320,6 +373,15 @@ class _$ApiUserImpl extends _ApiUser {
   @JsonKey()
   final String? fcm_token;
   @override
+  @BlobConverter()
+  final Blob? identity_key_public;
+  @override
+  @BlobConverter()
+  final Blob? identity_key_private;
+  @override
+  @BlobConverter()
+  final Blob? identity_key_salt;
+  @override
   final int? state;
   @override
   final int? created_at;
@@ -328,7 +390,7 @@ class _$ApiUserImpl extends _ApiUser {
 
   @override
   String toString() {
-    return 'ApiUser(id: $id, first_name: $first_name, last_name: $last_name, email: $email, provider_firebase_id_token: $provider_firebase_id_token, auth_type: $auth_type, profile_image: $profile_image, location_enabled: $location_enabled, space_ids: $space_ids, battery_pct: $battery_pct, fcm_token: $fcm_token, state: $state, created_at: $created_at, updated_at: $updated_at)';
+    return 'ApiUser(id: $id, first_name: $first_name, last_name: $last_name, email: $email, provider_firebase_id_token: $provider_firebase_id_token, auth_type: $auth_type, profile_image: $profile_image, location_enabled: $location_enabled, space_ids: $space_ids, battery_pct: $battery_pct, fcm_token: $fcm_token, identity_key_public: $identity_key_public, identity_key_private: $identity_key_private, identity_key_salt: $identity_key_salt, state: $state, created_at: $created_at, updated_at: $updated_at)';
   }
 
   @override
@@ -358,6 +420,12 @@ class _$ApiUserImpl extends _ApiUser {
                 other.battery_pct == battery_pct) &&
             (identical(other.fcm_token, fcm_token) ||
                 other.fcm_token == fcm_token) &&
+            (identical(other.identity_key_public, identity_key_public) ||
+                other.identity_key_public == identity_key_public) &&
+            (identical(other.identity_key_private, identity_key_private) ||
+                other.identity_key_private == identity_key_private) &&
+            (identical(other.identity_key_salt, identity_key_salt) ||
+                other.identity_key_salt == identity_key_salt) &&
             (identical(other.state, state) || other.state == state) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at) &&
@@ -365,7 +433,7 @@ class _$ApiUserImpl extends _ApiUser {
                 other.updated_at == updated_at));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -380,11 +448,16 @@ class _$ApiUserImpl extends _ApiUser {
       const DeepCollectionEquality().hash(_space_ids),
       battery_pct,
       fcm_token,
+      identity_key_public,
+      identity_key_private,
+      identity_key_salt,
       state,
       created_at,
       updated_at);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiUser
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiUserImplCopyWith<_$ApiUserImpl> get copyWith =>
@@ -411,6 +484,9 @@ abstract class _ApiUser extends ApiUser {
       final List<String>? space_ids,
       final int? battery_pct,
       final String? fcm_token,
+      @BlobConverter() final Blob? identity_key_public,
+      @BlobConverter() final Blob? identity_key_private,
+      @BlobConverter() final Blob? identity_key_salt,
       final int? state,
       final int? created_at,
       final int? updated_at}) = _$ApiUserImpl;
@@ -441,13 +517,25 @@ abstract class _ApiUser extends ApiUser {
   @override
   String? get fcm_token;
   @override
+  @BlobConverter()
+  Blob? get identity_key_public;
+  @override
+  @BlobConverter()
+  Blob? get identity_key_private;
+  @override
+  @BlobConverter()
+  Blob? get identity_key_salt;
+  @override
   int? get state;
   @override
   int? get created_at;
   @override
   int? get updated_at;
+
+  /// Create a copy of ApiUser
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiUserImplCopyWith<_$ApiUserImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -467,8 +555,12 @@ mixin _$ApiSession {
   int? get created_at => throw _privateConstructorUsedError;
   int? get app_version => throw _privateConstructorUsedError;
 
+  /// Serializes this ApiSession to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiSession
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ApiSessionCopyWith<ApiSession> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -500,6 +592,8 @@ class _$ApiSessionCopyWithImpl<$Res, $Val extends ApiSession>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ApiSession
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -576,6 +670,8 @@ class __$$ApiSessionImplCopyWithImpl<$Res>
       _$ApiSessionImpl _value, $Res Function(_$ApiSessionImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiSession
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -686,12 +782,14 @@ class _$ApiSessionImpl extends _ApiSession {
                 other.app_version == app_version));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, user_id, platform,
       session_active, device_name, device_id, created_at, app_version);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiSession
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiSessionImplCopyWith<_$ApiSessionImpl> get copyWith =>
@@ -736,8 +834,11 @@ abstract class _ApiSession extends ApiSession {
   int? get created_at;
   @override
   int? get app_version;
+
+  /// Create a copy of ApiSession
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiSessionImplCopyWith<_$ApiSessionImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -753,8 +854,12 @@ mixin _$ApiUserInfo {
   bool get isLocationEnabled => throw _privateConstructorUsedError;
   ApiSession? get session => throw _privateConstructorUsedError;
 
+  /// Serializes this ApiUserInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiUserInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ApiUserInfoCopyWith<ApiUserInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -786,6 +891,8 @@ class _$ApiUserInfoCopyWithImpl<$Res, $Val extends ApiUserInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ApiUserInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -814,6 +921,8 @@ class _$ApiUserInfoCopyWithImpl<$Res, $Val extends ApiUserInfo>
     ) as $Val);
   }
 
+  /// Create a copy of ApiUserInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ApiUserCopyWith<$Res> get user {
@@ -822,6 +931,8 @@ class _$ApiUserInfoCopyWithImpl<$Res, $Val extends ApiUserInfo>
     });
   }
 
+  /// Create a copy of ApiUserInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ApiLocationCopyWith<$Res>? get location {
@@ -834,6 +945,8 @@ class _$ApiUserInfoCopyWithImpl<$Res, $Val extends ApiUserInfo>
     });
   }
 
+  /// Create a copy of ApiUserInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ApiSessionCopyWith<$Res>? get session {
@@ -877,6 +990,8 @@ class __$$ApiUserInfoImplCopyWithImpl<$Res>
       _$ApiUserInfoImpl _value, $Res Function(_$ApiUserInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiUserInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -946,12 +1061,14 @@ class _$ApiUserInfoImpl extends _ApiUserInfo {
             (identical(other.session, session) || other.session == session));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, user, location, isLocationEnabled, session);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiUserInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiUserInfoImplCopyWith<_$ApiUserInfoImpl> get copyWith =>
@@ -984,8 +1101,11 @@ abstract class _ApiUserInfo extends ApiUserInfo {
   bool get isLocationEnabled;
   @override
   ApiSession? get session;
+
+  /// Create a copy of ApiUserInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiUserInfoImplCopyWith<_$ApiUserInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.46"
+  adaptive_number:
+    dependency: transitive
+    description:
+      name: adaptive_number
+      sha256: "3a567544e9b5c9c803006f51140ad544aedc79604fd4f3f2c1380003f97c1d77"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   analyzer:
     dependency: transitive
     description:
@@ -321,6 +329,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.6"
+  cryptography:
+    dependency: transitive
+    description:
+      name: cryptography
+      sha256: d146b76d33d94548cf035233fbc2f4338c1242fa119013bead807d033fc4ae05
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.7.0"
+  cryptography_flutter:
+    dependency: transitive
+    description:
+      name: cryptography_flutter
+      sha256: a7fc3f0de42fb0947cbf213257aa3a69c89df561d104723ede8050658621f292
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.2"
   csslib:
     dependency: transitive
     description:
@@ -408,6 +432,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
+  ed25519_edwards:
+    dependency: transitive
+    description:
+      name: ed25519_edwards
+      sha256: "6ce0112d131327ec6d42beede1e5dfd526069b18ad45dcf654f15074ad9276cd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.1"
   fake_async:
     dependency: transitive
     description:
@@ -1153,10 +1185,10 @@ packages:
     dependency: transitive
     description:
       name: js
-      sha256: c1b2e9b5ea78c45e1a0788d29606ba27dc5f71f019f32ca5140f61ef071838cf
+      sha256: f2c445dce49627136094980615a031419f7f3eb393237e4ecd97ac15dea343f3
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.1"
+    version: "0.6.7"
   json_annotation:
     dependency: "direct main"
     description:
@@ -1197,6 +1229,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  libsignal_protocol_dart:
+    dependency: transitive
+    description:
+      name: libsignal_protocol_dart
+      sha256: "2a8d54cddb89eab0301d333c4346d7edc920da0a0c0daa5e324878de2841dce6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.1"
   lints:
     dependency: transitive
     description:
@@ -1269,6 +1309,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  optional:
+    dependency: transitive
+    description:
+      name: optional
+      sha256: f80327d7a3335a0be68418072668043c7ab291df575c21aa42e0c5633641da39
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.0+1"
   package_config:
     dependency: transitive
     description:
@@ -1429,6 +1477,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  pointycastle:
+    dependency: transitive
+    description:
+      name: pointycastle
+      sha256: "4be0097fcf3fd3e8449e53730c631200ebc7b88016acecab2b0da2f0149222fe"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.9.1"
   pool:
     dependency: transitive
     description:
@@ -1437,6 +1493,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.1"
+  protobuf:
+    dependency: transitive
+    description:
+      name: protobuf
+      sha256: "01dd9bd0fa02548bf2ceee13545d4a0ec6046459d847b6b061d8a27237108a08"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   pub_semver:
     dependency: transitive
     description:
@@ -1881,6 +1945,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  very_good_analysis:
+    dependency: transitive
+    description:
+      name: very_good_analysis
+      sha256: "9ae7f3a3bd5764fb021b335ca28a34f040cd0ab6eec00a1b213b445dae58a4b8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.0"
   visibility_detector:
     dependency: "direct main"
     description:
@@ -1945,6 +2017,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.5"
+  x25519:
+    dependency: transitive
+    description:
+      name: x25519
+      sha256: cec3c125f0d934dccba6c4cab48f3fbf866dc78895dcc5a1584d35b0a845005b
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   xdg_directories:
     dependency: transitive
     description:

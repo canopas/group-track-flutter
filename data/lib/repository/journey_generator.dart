@@ -26,7 +26,7 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 30 secs
         from_longitude: newLocation.longitude,
         type: JOURNEY_TYPE_STEADY,
         created_at: DateTime.now().millisecondsSinceEpoch,
-        update_at: DateTime.now().millisecondsSinceEpoch,
+        updated_at: DateTime.now().millisecondsSinceEpoch,
       )
     );
   }
@@ -45,7 +45,7 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 30 secs
   }
 
   final timeDifference = (newLocation.timestamp.millisecondsSinceEpoch) -
-      (lastKnownJourney.update_at ?? 0);
+      lastKnownJourney.updated_at;
 
   bool dayChanged = _isDayChanged(newLocation, lastKnownJourney);
 
@@ -53,7 +53,7 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 30 secs
     final updateJourney = lastKnownJourney.copyWith(
       from_latitude: newLocation.latitude,
       from_longitude: newLocation.longitude,
-      update_at: DateTime.now().millisecondsSinceEpoch,
+      updated_at: DateTime.now().millisecondsSinceEpoch,
     );
     return (updatedJourney: updateJourney, newJourney: null);
   }
@@ -77,7 +77,7 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 30 secs
       final updatedJourney = lastKnownJourney.copyWith(
         from_latitude: newLocation.latitude,
         from_longitude: newLocation.longitude,
-        update_at: DateTime.now().millisecondsSinceEpoch,
+        updated_at: DateTime.now().millisecondsSinceEpoch,
       );
 
       // create new moving journey
@@ -91,7 +91,7 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 30 secs
         route_distance: distance,
         route_duration: timeDifference,
         created_at: DateTime.now().millisecondsSinceEpoch,
-        update_at: DateTime.now().millisecondsSinceEpoch,
+        updated_at: DateTime.now().millisecondsSinceEpoch,
       );
 
       return (updatedJourney: updatedJourney, newJourney: newJourney);
@@ -100,7 +100,7 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 30 secs
       final updateJourney = lastKnownJourney.copyWith(
         from_latitude: newLocation.latitude,
         from_longitude: newLocation.longitude,
-        update_at: DateTime.now().millisecondsSinceEpoch,
+        updated_at: DateTime.now().millisecondsSinceEpoch,
       );
       return (updatedJourney: updateJourney, newJourney: null);
     }
@@ -112,8 +112,8 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 30 secs
         to_latitude: newLocation.latitude,
         to_longitude: newLocation.longitude,
         route_distance: distance,
-        route_duration: (lastKnownJourney.update_at ?? 0) -
-            (lastKnownJourney.created_at ?? 0),
+        route_duration:
+            lastKnownJourney.updated_at - lastKnownJourney.created_at,
         routes: lastKnownJourney.routes +
             [
               JourneyRoute(
@@ -129,8 +129,8 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 30 secs
         from_latitude: newLocation.latitude,
         from_longitude: newLocation.longitude,
         type: JOURNEY_TYPE_STEADY,
-        created_at: lastKnownJourney.update_at ?? DateTime.now().millisecondsSinceEpoch,
-        update_at: DateTime.now().millisecondsSinceEpoch,
+        created_at: lastKnownJourney.updated_at,
+        updated_at: DateTime.now().millisecondsSinceEpoch,
       );
       return (updatedJourney: updatedJourney, newJourney: newJourney);
     } else if (distance > MIN_DISTANCE_FOR_MOVING &&
@@ -140,8 +140,8 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 30 secs
         to_latitude: newLocation.latitude,
         to_longitude: newLocation.longitude,
         route_distance: distance + (lastKnownJourney.route_distance ?? 0),
-        route_duration: (lastKnownJourney.update_at ?? 0) -
-            (lastKnownJourney.created_at ?? 0),
+        route_duration:
+            lastKnownJourney.updated_at - lastKnownJourney.created_at,
         routes: lastKnownJourney.routes +
             [
               JourneyRoute(
@@ -149,7 +149,7 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 30 secs
                 longitude: newLocation.longitude,
               )
             ],
-        update_at: DateTime.now().millisecondsSinceEpoch,
+        updated_at: DateTime.now().millisecondsSinceEpoch,
       );
 
       return (updatedJourney: updatedJourney, newJourney: null);
@@ -161,8 +161,8 @@ const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 30 secs
 
 bool _isDayChanged(
     LocationData? extractedLocation, ApiLocationJourney lastKnownJourney) {
-  DateTime lastKnownDate = DateTime.fromMillisecondsSinceEpoch(
-      lastKnownJourney.update_at ?? DateTime.now().millisecondsSinceEpoch);
+  DateTime lastKnownDate =
+      DateTime.fromMillisecondsSinceEpoch(lastKnownJourney.updated_at);
   int lastKnownDay = lastKnownDate.day;
 
   DateTime currentDate = extractedLocation != null

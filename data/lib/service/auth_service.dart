@@ -1,10 +1,15 @@
 // ignore_for_file: constant_identifier_names
 
+import 'dart:math';
+import 'dart:typed_data';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:libsignal_protocol_dart/libsignal_protocol_dart.dart';
+import '../utils/private_key_helper.dart';
 import '../log/logger.dart';
 import '../storage/app_preferences.dart';
 
@@ -14,16 +19,18 @@ final authServiceProvider = Provider((ref) => AuthService(
     ref.read(currentUserPod),
     ref.read(apiUserServiceProvider),
     ref.read(currentUserJsonPod.notifier),
-    ref.read(currentUserSessionJsonPod.notifier)));
+    ref.read(currentUserSessionJsonPod.notifier),
+    ref.read(userPassKeyPod.notifier)));
 
 class AuthService {
-  final ApiUser? _currentUser;
+  ApiUser? _currentUser;
   final ApiUserService userService;
   final StateController<String?> userJsonNotifier;
   final StateController<String?> userSessionJsonNotifier;
+  final StateController<String?> userPassKeyNotifier;
 
   AuthService(this._currentUser, this.userService, this.userJsonNotifier,
-      this.userSessionJsonNotifier);
+      this.userSessionJsonNotifier, this.userPassKeyNotifier);
 
   ApiUser? get currentUser => _currentUser;
 
@@ -46,11 +53,14 @@ class AuthService {
       profileImage: profileImg,
       authType: authType,
     );
-    userJsonNotifier.state = (data['user'] as ApiUser).toJsonString();
+    _currentUser = data['user'] as ApiUser;
+    userJsonNotifier.state = _currentUser!.toJsonString();
     userSessionJsonNotifier.state =
         (data['session'] as ApiSession).toJsonString();
 
-    return data['isNewUser'] as bool;
+    final isNewUser = data['isNewUser'] as bool;
+    if (isNewUser) generateAndSaveUserKeys("1111");
+    return isNewUser;
   }
 
   Future<void> updateCurrentUser(ApiUser user) async {
@@ -90,5 +100,46 @@ class AuthService {
       final user = await getUser(userId);
       onStatusChecked(user);
     });
+  }
+
+  Future<void> generateAndSaveUserKeys(String passKey) async {
+    final user = currentUser;
+    if (user == null) {
+      throw Exception("No user logged in");
+    }
+
+    final updatedUser = await _generateAndSaveUserKeys(user, passKey);
+    userJsonNotifier.state = updatedUser.toJsonString();
+  }
+
+  Future<ApiUser> _generateAndSaveUserKeys(ApiUser user, String passKey) async {
+    final identityKeyPair = generateIdentityKeyPair();
+    final salt = Uint8List(16)
+      ..setAll(0, List.generate(16, (_) => Random().nextInt(256)));
+    final encryptedPrivateKey = await encryptPrivateKey(
+      identityKeyPair.getPrivateKey().serialize(),
+      passKey,
+      salt,
+    );
+
+    final publicKey =
+        Blob(identityKeyPair.getPublicKey().publicKey.serialize());
+    final privateKey = Blob(encryptedPrivateKey);
+    final saltBlob = Blob(salt);
+
+    // Store passkey in preferences
+    userPassKeyNotifier.state = passKey;
+    await userService.updateKeys(
+      user.id,
+      publicKey,
+      privateKey,
+      saltBlob,
+    );
+
+    return user.copyWith(
+      identity_key_public: publicKey,
+      identity_key_private: privateKey,
+      identity_key_salt: saltBlob,
+    );
   }
 }

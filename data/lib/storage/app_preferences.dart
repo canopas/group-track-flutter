@@ -58,3 +58,8 @@ final lastBatteryDialogPod = createPrefProvider<String?>(
   prefKey: 'show_battery_dialog',
   defaultValue: null,
 );
+
+final userPassKeyPod = createPrefProvider<String?>(
+  prefKey: "user_passkey",
+  defaultValue: null,
+);

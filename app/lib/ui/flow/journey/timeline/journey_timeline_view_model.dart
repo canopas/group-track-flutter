@@ -79,8 +79,8 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
 
       // Filter by date range
       final filteredJourneys = journeys.where((journey) {
-        return journey.created_at! >= from && journey.created_at! <= to ||
-            (journey.update_at! >= from && journey.update_at! <= to);
+        return journey.created_at >= from && journey.created_at <= to ||
+            (journey.updated_at >= from && journey.updated_at <= to);
       }).toList();
 
       // Combine all journeys and sort
@@ -108,13 +108,13 @@ class JourneyTimelineViewModel extends StateNotifier<JourneyTimelineState> {
     if (allJourneys.isEmpty) return null;
     int earliestTimestamp = allJourneys
         .map((journey) => journey.created_at)
-        .fold<int>(allJourneys.first.created_at!, (a, b) => a < b! ? a : b);
+        .fold<int>(allJourneys.first.created_at, (a, b) => a < b ? a : b);
     return earliestTimestamp;
   }
 
   List<ApiLocationJourney> _sortJourneysByUpdateAt(
       List<ApiLocationJourney> journeys) {
-    journeys.sort((a, b) => (b.update_at ?? 0).compareTo(a.update_at ?? 0));
+    journeys.sort((a, b) => b.updated_at.compareTo(a.updated_at));
     return journeys;
   }
 

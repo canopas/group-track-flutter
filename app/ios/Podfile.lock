@@ -18,6 +18,8 @@ PODS:
   - connectivity_plus (0.0.1):
     - Flutter
     - FlutterMacOS
+  - cryptography_flutter (0.2.0):
+    - Flutter
   - device_info_plus (0.0.1):
     - Flutter
   - Firebase/Auth (11.4.0):
@@ -261,6 +263,7 @@ DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - cloud_functions (from `.symlinks/plugins/cloud_functions/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/darwin`)
+  - cryptography_flutter (from `.symlinks/plugins/cryptography_flutter/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -337,6 +340,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/cloud_functions/ios"
   connectivity_plus:
     :path: ".symlinks/plugins/connectivity_plus/darwin"
+  cryptography_flutter:
+    :path: ".symlinks/plugins/cryptography_flutter/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   firebase_auth:
@@ -402,6 +407,7 @@ SPEC CHECKSUMS:
   cloud_firestore: 8794ea2885e367f0a2096338964ddfd49739b2c7
   cloud_functions: d1dc9179c2db1729cb9bd0c9683909216a0f2230
   connectivity_plus: 4c41c08fc6d7c91f63bc7aec70ffe3730b04f563
+  cryptography_flutter: 381bdacc984abcfbe3ca45ef7c76566ff061614c
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Firebase: cf1b19f21410b029b6786a54e9764a0cacad3c99
   firebase_auth: 42718683069d35d73af7a986b55b194589039e5e

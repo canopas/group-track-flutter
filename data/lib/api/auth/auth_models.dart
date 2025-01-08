@@ -6,7 +6,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/location.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../converter/blob_converter.dart';
+
 part 'auth_models.freezed.dart';
+
 part 'auth_models.g.dart';
 
 const LOGIN_TYPE_GOOGLE = 1;
@@ -31,6 +34,9 @@ class ApiUser with _$ApiUser {
     @Default([]) List<String>? space_ids,
     int? battery_pct,
     @Default("") String? fcm_token,
+    @BlobConverter() Blob? identity_key_public,
+    @BlobConverter() Blob? identity_key_private,
+    @BlobConverter() Blob? identity_key_salt,
     int? state,
     int? created_at,
     int? updated_at,

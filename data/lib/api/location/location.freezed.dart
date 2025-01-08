@@ -24,11 +24,14 @@ mixin _$ApiLocation {
   String get user_id => throw _privateConstructorUsedError;
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
-  int? get user_state => throw _privateConstructorUsedError;
-  int? get created_at => throw _privateConstructorUsedError;
+  int get created_at => throw _privateConstructorUsedError;
 
+  /// Serializes this ApiLocation to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiLocation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ApiLocationCopyWith<ApiLocation> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -44,8 +47,7 @@ abstract class $ApiLocationCopyWith<$Res> {
       String user_id,
       double latitude,
       double longitude,
-      int? user_state,
-      int? created_at});
+      int created_at});
 }
 
 /// @nodoc
@@ -58,6 +60,8 @@ class _$ApiLocationCopyWithImpl<$Res, $Val extends ApiLocation>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ApiLocation
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -65,8 +69,7 @@ class _$ApiLocationCopyWithImpl<$Res, $Val extends ApiLocation>
     Object? user_id = null,
     Object? latitude = null,
     Object? longitude = null,
-    Object? user_state = freezed,
-    Object? created_at = freezed,
+    Object? created_at = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -85,14 +88,10 @@ class _$ApiLocationCopyWithImpl<$Res, $Val extends ApiLocation>
           ? _value.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
               as double,
-      user_state: freezed == user_state
-          ? _value.user_state
-          : user_state // ignore: cast_nullable_to_non_nullable
-              as int?,
-      created_at: freezed == created_at
+      created_at: null == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
     ) as $Val);
   }
 }
@@ -110,8 +109,7 @@ abstract class _$$ApiLocationImplCopyWith<$Res>
       String user_id,
       double latitude,
       double longitude,
-      int? user_state,
-      int? created_at});
+      int created_at});
 }
 
 /// @nodoc
@@ -122,6 +120,8 @@ class __$$ApiLocationImplCopyWithImpl<$Res>
       _$ApiLocationImpl _value, $Res Function(_$ApiLocationImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiLocation
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -129,8 +129,7 @@ class __$$ApiLocationImplCopyWithImpl<$Res>
     Object? user_id = null,
     Object? latitude = null,
     Object? longitude = null,
-    Object? user_state = freezed,
-    Object? created_at = freezed,
+    Object? created_at = null,
   }) {
     return _then(_$ApiLocationImpl(
       id: null == id
@@ -149,14 +148,10 @@ class __$$ApiLocationImplCopyWithImpl<$Res>
           ? _value.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
               as double,
-      user_state: freezed == user_state
-          ? _value.user_state
-          : user_state // ignore: cast_nullable_to_non_nullable
-              as int?,
-      created_at: freezed == created_at
+      created_at: null == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as int,
     ));
   }
 }
@@ -169,8 +164,7 @@ class _$ApiLocationImpl extends _ApiLocation {
       required this.user_id,
       required this.latitude,
       required this.longitude,
-      this.user_state,
-      this.created_at})
+      required this.created_at})
       : super._();
 
   factory _$ApiLocationImpl.fromJson(Map<String, dynamic> json) =>
@@ -185,13 +179,11 @@ class _$ApiLocationImpl extends _ApiLocation {
   @override
   final double longitude;
   @override
-  final int? user_state;
-  @override
-  final int? created_at;
+  final int created_at;
 
   @override
   String toString() {
-    return 'ApiLocation(id: $id, user_id: $user_id, latitude: $latitude, longitude: $longitude, user_state: $user_state, created_at: $created_at)';
+    return 'ApiLocation(id: $id, user_id: $user_id, latitude: $latitude, longitude: $longitude, created_at: $created_at)';
   }
 
   @override
@@ -205,18 +197,18 @@ class _$ApiLocationImpl extends _ApiLocation {
                 other.latitude == latitude) &&
             (identical(other.longitude, longitude) ||
                 other.longitude == longitude) &&
-            (identical(other.user_state, user_state) ||
-                other.user_state == user_state) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, user_id, latitude, longitude, user_state, created_at);
+  int get hashCode =>
+      Object.hash(runtimeType, id, user_id, latitude, longitude, created_at);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiLocation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiLocationImplCopyWith<_$ApiLocationImpl> get copyWith =>
@@ -236,8 +228,7 @@ abstract class _ApiLocation extends ApiLocation {
       required final String user_id,
       required final double latitude,
       required final double longitude,
-      final int? user_state,
-      final int? created_at}) = _$ApiLocationImpl;
+      required final int created_at}) = _$ApiLocationImpl;
   const _ApiLocation._() : super._();
 
   factory _ApiLocation.fromJson(Map<String, dynamic> json) =
@@ -252,11 +243,260 @@ abstract class _ApiLocation extends ApiLocation {
   @override
   double get longitude;
   @override
-  int? get user_state;
+  int get created_at;
+
+  /// Create a copy of ApiLocation
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  int? get created_at;
-  @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiLocationImplCopyWith<_$ApiLocationImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+EncryptedApiLocation _$EncryptedApiLocationFromJson(Map<String, dynamic> json) {
+  return _EncryptedApiLocation.fromJson(json);
+}
+
+/// @nodoc
+mixin _$EncryptedApiLocation {
+  String get id => throw _privateConstructorUsedError;
+  String get user_id => throw _privateConstructorUsedError;
+  @BlobConverter()
+  Blob get latitude => throw _privateConstructorUsedError;
+  @BlobConverter()
+  Blob get longitude => throw _privateConstructorUsedError;
+  int get created_at => throw _privateConstructorUsedError;
+
+  /// Serializes this EncryptedApiLocation to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of EncryptedApiLocation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $EncryptedApiLocationCopyWith<EncryptedApiLocation> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $EncryptedApiLocationCopyWith<$Res> {
+  factory $EncryptedApiLocationCopyWith(EncryptedApiLocation value,
+          $Res Function(EncryptedApiLocation) then) =
+      _$EncryptedApiLocationCopyWithImpl<$Res, EncryptedApiLocation>;
+  @useResult
+  $Res call(
+      {String id,
+      String user_id,
+      @BlobConverter() Blob latitude,
+      @BlobConverter() Blob longitude,
+      int created_at});
+}
+
+/// @nodoc
+class _$EncryptedApiLocationCopyWithImpl<$Res,
+        $Val extends EncryptedApiLocation>
+    implements $EncryptedApiLocationCopyWith<$Res> {
+  _$EncryptedApiLocationCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of EncryptedApiLocation
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? user_id = null,
+    Object? latitude = null,
+    Object? longitude = null,
+    Object? created_at = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      user_id: null == user_id
+          ? _value.user_id
+          : user_id // ignore: cast_nullable_to_non_nullable
+              as String,
+      latitude: null == latitude
+          ? _value.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as Blob,
+      longitude: null == longitude
+          ? _value.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as Blob,
+      created_at: null == created_at
+          ? _value.created_at
+          : created_at // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$EncryptedApiLocationImplCopyWith<$Res>
+    implements $EncryptedApiLocationCopyWith<$Res> {
+  factory _$$EncryptedApiLocationImplCopyWith(_$EncryptedApiLocationImpl value,
+          $Res Function(_$EncryptedApiLocationImpl) then) =
+      __$$EncryptedApiLocationImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String user_id,
+      @BlobConverter() Blob latitude,
+      @BlobConverter() Blob longitude,
+      int created_at});
+}
+
+/// @nodoc
+class __$$EncryptedApiLocationImplCopyWithImpl<$Res>
+    extends _$EncryptedApiLocationCopyWithImpl<$Res, _$EncryptedApiLocationImpl>
+    implements _$$EncryptedApiLocationImplCopyWith<$Res> {
+  __$$EncryptedApiLocationImplCopyWithImpl(_$EncryptedApiLocationImpl _value,
+      $Res Function(_$EncryptedApiLocationImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of EncryptedApiLocation
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? user_id = null,
+    Object? latitude = null,
+    Object? longitude = null,
+    Object? created_at = null,
+  }) {
+    return _then(_$EncryptedApiLocationImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      user_id: null == user_id
+          ? _value.user_id
+          : user_id // ignore: cast_nullable_to_non_nullable
+              as String,
+      latitude: null == latitude
+          ? _value.latitude
+          : latitude // ignore: cast_nullable_to_non_nullable
+              as Blob,
+      longitude: null == longitude
+          ? _value.longitude
+          : longitude // ignore: cast_nullable_to_non_nullable
+              as Blob,
+      created_at: null == created_at
+          ? _value.created_at
+          : created_at // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$EncryptedApiLocationImpl extends _EncryptedApiLocation {
+  const _$EncryptedApiLocationImpl(
+      {required this.id,
+      required this.user_id,
+      @BlobConverter() required this.latitude,
+      @BlobConverter() required this.longitude,
+      required this.created_at})
+      : super._();
+
+  factory _$EncryptedApiLocationImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EncryptedApiLocationImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String user_id;
+  @override
+  @BlobConverter()
+  final Blob latitude;
+  @override
+  @BlobConverter()
+  final Blob longitude;
+  @override
+  final int created_at;
+
+  @override
+  String toString() {
+    return 'EncryptedApiLocation(id: $id, user_id: $user_id, latitude: $latitude, longitude: $longitude, created_at: $created_at)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EncryptedApiLocationImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.user_id, user_id) || other.user_id == user_id) &&
+            (identical(other.latitude, latitude) ||
+                other.latitude == latitude) &&
+            (identical(other.longitude, longitude) ||
+                other.longitude == longitude) &&
+            (identical(other.created_at, created_at) ||
+                other.created_at == created_at));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, id, user_id, latitude, longitude, created_at);
+
+  /// Create a copy of EncryptedApiLocation
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$EncryptedApiLocationImplCopyWith<_$EncryptedApiLocationImpl>
+      get copyWith =>
+          __$$EncryptedApiLocationImplCopyWithImpl<_$EncryptedApiLocationImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$EncryptedApiLocationImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _EncryptedApiLocation extends EncryptedApiLocation {
+  const factory _EncryptedApiLocation(
+      {required final String id,
+      required final String user_id,
+      @BlobConverter() required final Blob latitude,
+      @BlobConverter() required final Blob longitude,
+      required final int created_at}) = _$EncryptedApiLocationImpl;
+  const _EncryptedApiLocation._() : super._();
+
+  factory _EncryptedApiLocation.fromJson(Map<String, dynamic> json) =
+      _$EncryptedApiLocationImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get user_id;
+  @override
+  @BlobConverter()
+  Blob get latitude;
+  @override
+  @BlobConverter()
+  Blob get longitude;
+  @override
+  int get created_at;
+
+  /// Create a copy of EncryptedApiLocation
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$EncryptedApiLocationImplCopyWith<_$EncryptedApiLocationImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }

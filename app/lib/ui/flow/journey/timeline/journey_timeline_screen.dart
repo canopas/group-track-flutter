@@ -223,9 +223,9 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
   ) {
     final location = LatLng(journey.from_latitude, journey.from_longitude);
     final steadyDuration =
-        notifier.getSteadyDuration(journey.created_at!, journey.update_at!);
-    final formattedTime = _getFormattedJourneyTime(
-        journey.created_at ?? 0, journey.update_at ?? 0);
+        notifier.getSteadyDuration(journey.created_at, journey.updated_at);
+    final formattedTime =
+        _getFormattedJourneyTime(journey.created_at, journey.updated_at);
 
     return Padding(
       padding: EdgeInsets.only(top: isFirstItem ? 16 : 0),
@@ -273,8 +273,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     bool isLastItem,
     String mapType,
   ) {
-    final time = _getFormattedJourneyTime(
-        journey.created_at ?? 0, journey.update_at ?? 0);
+    final time =
+        _getFormattedJourneyTime(journey.created_at, journey.updated_at);
     final distance = notifier.getDistanceString(journey.route_distance ?? 0);
     final fromLatLng = LatLng(journey.from_latitude, journey.from_longitude);
     final toLatLng =

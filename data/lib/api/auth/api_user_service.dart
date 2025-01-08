@@ -12,15 +12,15 @@ import '../../storage/app_preferences.dart';
 import 'auth_models.dart';
 
 final apiUserServiceProvider = StateProvider((ref) => ApiUserService(
-      ref.read(firestoreProvider),
-      ref.read(deviceServiceProvider),
-      ref.read(currentUserJsonPod.notifier),
-      ref.read(currentSpaceId.notifier),
-      ref.read(currentUserSessionJsonPod.notifier),
-      ref.read(isOnboardingShownPod.notifier),
-      ref.read(currentUserPod),
-      ref.read(locationManagerProvider),
-    ));
+    ref.read(firestoreProvider),
+    ref.read(deviceServiceProvider),
+    ref.read(currentUserJsonPod.notifier),
+    ref.read(currentSpaceId.notifier),
+    ref.read(currentUserSessionJsonPod.notifier),
+    ref.read(isOnboardingShownPod.notifier),
+    ref.read(currentUserPod),
+    ref.read(locationManagerProvider),
+    ref.read(userPassKeyPod.notifier)));
 
 class ApiUserService {
   final FirebaseFirestore _db;
@@ -29,19 +29,20 @@ class ApiUserService {
   final StateController<String?> currentUserSpaceId;
   final StateController<String?> userSessionJsonNotifier;
   final StateController<bool?> onBoardNotifier;
+  final StateController<String?> userPassKeyNotifier;
   ApiUser? currentUser;
   final LocationManager locationManager;
 
   ApiUserService(
-    this._db,
-    this._device,
-    this.userJsonNotifier,
-    this.currentUserSpaceId,
-    this.userSessionJsonNotifier,
-    this.onBoardNotifier,
-    this.currentUser,
-    this.locationManager,
-  );
+      this._db,
+      this._device,
+      this.userJsonNotifier,
+      this.currentUserSpaceId,
+      this.userSessionJsonNotifier,
+      this.onBoardNotifier,
+      this.currentUser,
+      this.locationManager,
+      this.userPassKeyNotifier);
 
   CollectionReference<ApiUser> get _userRef =>
       _db.collection("users").withConverter<ApiUser>(
@@ -284,5 +285,16 @@ class ApiUserService {
     userSessionJsonNotifier.state = null;
     onBoardNotifier.state = false;
     currentUserSpaceId.state = null;
+    userPassKeyNotifier.state = null;
+  }
+
+  Future<void> updateKeys(
+      String id, Blob publicKey, Blob privateKey, Blob saltBlob) async {
+
+    await _userRef.doc(id).update({
+      "identity_key_public": publicKey,
+      "identity_key_private": privateKey,
+      "identity_key_salt": saltBlob,
+    });
   }
 }
