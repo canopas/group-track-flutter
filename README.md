@@ -25,6 +25,20 @@ Grouptrack ensures your loved ones' well-being with:
 - Place Notifications: Add specific places within your space, and get notified whenever a member enters or leaves that location, making coordination effortless.
 - Real-Time Chat: Stay in touch with other space members through built-in chat functionality, enabling you to coordinate, plan, or simply catch up in real-time.
 
+## Upcoming Features 🚀
+
+### End-to-End Encryption (Coming Soon)
+Enhanced privacy and security through robust end-to-end encryption, leveraging the Signal Protocol to ensure your location data remains private and secure.
+
+Planned Security Features:
+- Industry-standard Signal Protocol integration for secure data transmission
+- Client-side encryption with AES-256
+- Zero-knowledge architecture - only group members can access location data
+- Unique encryption keys per user and space
+- Secure key exchange protocols
+
+Your location data will be encrypted before leaving your device and can only be decrypted by authorized group members, ensuring complete privacy and protection against unauthorized access.
+
 ## Screenshots
 
 <table>
