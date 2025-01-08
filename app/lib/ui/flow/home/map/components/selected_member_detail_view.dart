@@ -23,7 +23,7 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../components/user_battery_status.dart';
 
 class SelectedMemberDetailView extends StatefulWidget {
-  final ApiSpace? group;
+  final ApiSpace group;
   final MapUserInfo? userInfo;
   final void Function() onDismiss;
   final bool isCurrentUser;

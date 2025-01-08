@@ -304,11 +304,11 @@ class EditPlaceRoute extends GoRouteData {
 
 class JourneyTimelineRouteData {
   final ApiUser user;
-  final ApiSpace? space;
+  final ApiSpace space;
 
   const JourneyTimelineRouteData({
     required this.user,
-    this.space,
+    required this.space,
   });
 }
 

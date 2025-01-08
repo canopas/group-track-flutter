@@ -69,10 +69,10 @@ class _SpaceUserFooterState extends State<SpaceUserFooter> {
                 child: ScaleTransition(scale: animation, child: child),
               );
             },
-            child: widget.selectedUser != null
+            child: widget.selectedUser != null && widget.selectedSpace != null
                 ? SelectedMemberDetailView(
                     key: const ValueKey('detailView'),
-                    group: widget.selectedSpace?.space,
+                    group: widget.selectedSpace!.space,
                     userInfo: widget.selectedUser,
                     onDismiss: widget.onDismiss,
                     isCurrentUser: widget.isCurrentUser,

@@ -29,7 +29,7 @@ import '../components/journey_map.dart';
 
 class JourneyTimelineScreen extends ConsumerStatefulWidget {
   final ApiUser selectedUser;
-  final ApiSpace? group;
+  final ApiSpace group;
 
   const JourneyTimelineScreen(
       {super.key, required this.selectedUser, required this.group});
@@ -106,6 +106,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           notifier.onSelectDateFromPicker(DateTime.now());
         }),
         HorizontalCalendarView(
+          allowedAfterDate: DateTime.fromMillisecondsSinceEpoch(
+              widget.group.created_at ?? DateTime.now().millisecondsSinceEpoch),
           weekStartDate: calendarState.weekStartDate,
           selectedDate: calendarState.selectedDate,
           onSwipeWeek: calendarNotifier.onSwipeWeek,
@@ -599,7 +601,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           context: context,
           initialDate: selectedDate,
           firstDate: DateTime.fromMillisecondsSinceEpoch(
-              widget.group?.created_at ?? 0),
+              widget.group.created_at ?? DateTime.now().millisecondsSinceEpoch),
           lastDate: DateTime.now(),
           confirmText: context.l10n.journey_timeline_date_picker_select_text,
         );

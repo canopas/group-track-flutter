@@ -8,6 +8,7 @@ import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/ui/flow/journey/calender/three_page_scroller.dart';
 
 class HorizontalCalendarView extends StatefulWidget {
+  final DateTime allowedAfterDate;
   final DateTime weekStartDate;
   final DateTime selectedDate;
   final ValueChanged<int> onSwipeWeek;
@@ -15,6 +16,7 @@ class HorizontalCalendarView extends StatefulWidget {
 
   const HorizontalCalendarView({
     super.key,
+    required this.allowedAfterDate,
     required this.weekStartDate,
     required this.selectedDate,
     required this.onSwipeWeek,
@@ -74,13 +76,14 @@ class _HorizontalCalendarViewState extends State<HorizontalCalendarView> {
   Widget _weekDayItem({required BuildContext context, required DateTime date}) {
     final bool isSelected = date.isSameDay(widget.selectedDate);
     final isDayAfter = date.isAfter(DateTime.now());
-    final textColor = isDayAfter
+    final isDayBefore = date.isBefore(widget.allowedAfterDate);
+    final textColor = isDayAfter || isDayBefore
         ? context.colorScheme.textDisabled
         : context.colorScheme.textPrimary;
 
     return Expanded(
       child: GestureDetector(
-        onTap: () => widget.onTap(date),
+        onTap: () => (!isDayAfter && !isDayBefore) ? widget.onTap(date) : null,
         child: LayoutBuilder(
           builder: (context, constraints) {
             return Center(
