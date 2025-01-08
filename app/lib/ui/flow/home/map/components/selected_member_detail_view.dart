@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:data/api/auth/auth_models.dart';
+import 'package:data/api/space/space_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -14,15 +15,15 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/lat_lng_extenstion.dart';
 import 'package:yourspace_flutter/domain/extenstions/time_ago_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/profile_picture.dart';
 import 'package:yourspace_flutter/ui/flow/home/map/map_view_model.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../components/user_battery_status.dart';
 
 class SelectedMemberDetailView extends StatefulWidget {
-  final int groupCreatedDate;
+  final ApiSpace group;
   final MapUserInfo? userInfo;
   final void Function() onDismiss;
   final bool isCurrentUser;
@@ -30,7 +31,7 @@ class SelectedMemberDetailView extends StatefulWidget {
 
   const SelectedMemberDetailView({
     super.key,
-    required this.groupCreatedDate,
+    required this.group,
     required this.userInfo,
     required this.onDismiss,
     required this.isCurrentUser,
@@ -183,7 +184,9 @@ class _SelectedMemberDetailViewState extends State<SelectedMemberDetailView> {
   Widget _timeLineButtonView() {
     return IconPrimaryButton(
       onTap: () {
-        AppRoute.journeyTimeline(widget.userInfo!.user, widget.groupCreatedDate)
+        JourneyTimelineRoute(
+            JourneyTimelineRouteData(
+                user: widget.userInfo!.user, space: widget.group))
             .push(context);
       },
       icon: SvgPicture.asset(

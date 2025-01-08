@@ -2,12 +2,12 @@ import 'package:data/api/subscription/subscription_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/setting/subscription/subscription_view_model.dart';
 
@@ -36,7 +36,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return AppPage(
         title: '',
         leading: OnTapScale(
-            onTap: () => AppRoute.popBack(context),
+            onTap: () => context.pop(),
             child: const Icon(Icons.clear, size: 24.0)),
         body: _body(state));
   }

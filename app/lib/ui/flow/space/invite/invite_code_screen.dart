@@ -6,8 +6,8 @@ import 'package:style/button/secondary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 class InviteCode extends StatefulWidget {
   final String spaceName;
@@ -44,16 +44,14 @@ class _InviteCodeState extends State<InviteCode> {
               const SizedBox(height: 8),
               Text(
                 context.l10n.invite_code_invite_member_title(widget.spaceName),
-                style: AppTextStyle.header4.copyWith(
-                  color: context.colorScheme.textPrimary
-                ),
+                style: AppTextStyle.header4
+                    .copyWith(color: context.colorScheme.textPrimary),
               ),
               const SizedBox(height: 16),
               Text(
                 context.l10n.invite_code_invite_member_subtitle,
-                style: AppTextStyle.body1.copyWith(
-                  color: context.colorScheme.textDisabled
-                ),
+                style: AppTextStyle.body1
+                    .copyWith(color: context.colorScheme.textDisabled),
               ),
               const SizedBox(height: 40),
               _inviteCode(context),
@@ -76,16 +74,14 @@ class _InviteCodeState extends State<InviteCode> {
         children: [
           SelectableText(
             widget.inviteCode,
-            style: AppTextStyle.header1.copyWith(
-              color: context.colorScheme.primary
-            ),
+            style: AppTextStyle.header1
+                .copyWith(color: context.colorScheme.primary),
           ),
           const SizedBox(height: 16),
           Text(
             context.l10n.invite_code_active_code_text,
-            style: AppTextStyle.subtitle1.copyWith(
-              color: context.colorScheme.textSecondary
-            ),
+            style: AppTextStyle.subtitle1
+                .copyWith(color: context.colorScheme.textSecondary),
           )
         ],
       ),
@@ -99,7 +95,8 @@ class _InviteCodeState extends State<InviteCode> {
           PrimaryButton(
             context.l10n.invite_code_share_code_title,
             onPressed: () {
-              Share.share(context.l10n.invite_code_share_code_text(widget.inviteCode));
+              Share.share(
+                  context.l10n.invite_code_share_code_text(widget.inviteCode));
             },
           ),
           if (widget.fromOnboard) ...[
@@ -107,7 +104,7 @@ class _InviteCodeState extends State<InviteCode> {
             SecondaryButton(
               context.l10n.common_skip,
               onPressed: () {
-                AppRoute.home.go(context);
+                HomeRoute().go(context);
               },
             )
           ],

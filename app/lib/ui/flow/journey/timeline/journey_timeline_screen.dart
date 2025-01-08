@@ -1,5 +1,6 @@
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/api/location/journey/journey.dart';
+import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -16,10 +17,10 @@ import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/journey/calender/horizontal_calendar_view_model.dart';
 import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_view_model.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../app_route.dart';
 import '../../../components/error_snakebar.dart';
 import '../../../components/no_internet_screen.dart';
 import '../calender/horizontal_calendar_view.dart';
@@ -28,10 +29,10 @@ import '../components/journey_map.dart';
 
 class JourneyTimelineScreen extends ConsumerStatefulWidget {
   final ApiUser selectedUser;
-  final int groupCreatedDate;
+  final ApiSpace group;
 
   const JourneyTimelineScreen(
-      {super.key, required this.selectedUser, required this.groupCreatedDate});
+      {super.key, required this.selectedUser, required this.group});
 
   @override
   ConsumerState<JourneyTimelineScreen> createState() =>
@@ -105,6 +106,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           notifier.onSelectDateFromPicker(DateTime.now());
         }),
         HorizontalCalendarView(
+          allowedAfterDate: DateTime.fromMillisecondsSinceEpoch(
+              widget.group.created_at ?? DateTime.now().millisecondsSinceEpoch),
           weekStartDate: calendarState.weekStartDate,
           selectedDate: calendarState.selectedDate,
           onSwipeWeek: calendarNotifier.onSwipeWeek,
@@ -235,7 +238,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  AppRoute.journeyDetail(journey).push(context);
+                  JourneyDetailsRoute(journey).push(context);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16),
@@ -465,8 +468,10 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         OnTapScale(
           onTap: () {
             if (spaceId != null) {
-              AppRoute.choosePlaceName(location: location, spaceId: spaceId)
-                  .push(context);
+              ChoosePlaceNameRoute(
+                spaceId: spaceId,
+                $extra: location,
+              ).push(context);
             }
           },
           child: Container(
@@ -595,8 +600,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         final pickedDate = await showDatePicker(
           context: context,
           initialDate: selectedDate,
-          firstDate:
-              DateTime.fromMillisecondsSinceEpoch(widget.groupCreatedDate),
+          firstDate: DateTime.fromMillisecondsSinceEpoch(
+              widget.group.created_at ?? DateTime.now().millisecondsSinceEpoch),
           lastDate: DateTime.now(),
           confirmText: context.l10n.journey_timeline_date_picker_select_text,
         );

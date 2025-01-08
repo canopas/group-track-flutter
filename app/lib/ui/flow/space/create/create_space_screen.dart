@@ -7,11 +7,12 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/no_internet_screen.dart';
 import 'package:yourspace_flutter/ui/flow/space/create/create_space_view_model.dart';
+
+import '../../navigation/routes.dart';
 
 class CreateSpace extends ConsumerStatefulWidget {
   final bool fromOnboard;
@@ -185,13 +186,14 @@ class _CreateSpaceState extends ConsumerState<CreateSpace> {
         (_, next) {
       if (next.isNotEmpty) {
         if (widget.fromOnboard) {
-          AppRoute.inviteCode(
-                  code: next,
+          InviteCodeRoute(InviteCodeRouteData(
+                  inviteCode: next,
                   spaceName: state.spaceName.text,
-                  fromOnboard: true)
-              .go(context);
+                  fromOnboard: true))
+              .push(context);
         } else {
-          AppRoute.inviteCode(code: next, spaceName: state.spaceName.text)
+          InviteCodeRoute(InviteCodeRouteData(
+                  inviteCode: next, spaceName: state.spaceName.text))
               .pushReplacement(context);
         }
       }

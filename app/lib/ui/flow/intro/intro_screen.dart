@@ -8,8 +8,7 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/intro/intro_page_item.dart';
-
-import '../../app_route.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 class IntroScreen extends ConsumerStatefulWidget {
   const IntroScreen({super.key});
@@ -77,7 +76,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
             onPressed: () {
               if (_controller.page == _items.length - 1) {
                 ref.read(isIntroScreenShownPod.notifier).state = true;
-                AppRoute.signInMethod.pushReplacement(context);
+                SignInMethodRoute().go(context);
               } else {
                 _controller.nextPage(
                   duration: const Duration(milliseconds: 300),

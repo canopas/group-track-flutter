@@ -5,16 +5,18 @@ import 'package:style/button/primary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../../../../gen/assets.gen.dart';
 import '../../../home/map/map_screen.dart';
 
 void showPlaceAddedDialog(
-    BuildContext context,
-    double lat,
-    double lng,
-    String placeName,
-    ) {
+  BuildContext context,
+  String spaceId,
+  double lat,
+  double lng,
+  String placeName,
+) {
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -22,6 +24,7 @@ void showPlaceAddedDialog(
       return PlaceAddedDialog(
         lat: lat,
         lng: lng,
+        spaceId: spaceId,
         placeName: placeName,
       );
     },
@@ -31,12 +34,14 @@ void showPlaceAddedDialog(
 class PlaceAddedDialog extends StatefulWidget {
   final double lat;
   final double lng;
+  final String spaceId;
   final String placeName;
 
   const PlaceAddedDialog({
     super.key,
     required this.lat,
     required this.lng,
+    required this.spaceId,
     required this.placeName,
   });
 
@@ -61,7 +66,8 @@ class _PlaceAddedDialogState extends State<PlaceAddedDialog> {
             ),
             const SizedBox(height: 24),
             Text(
-              context.l10n.choose_place_prompt_added_title_text(widget.placeName),
+              context.l10n
+                  .choose_place_prompt_added_title_text(widget.placeName),
               style: AppTextStyle.header1.copyWith(
                 color: context.colorScheme.textPrimary,
               ),
@@ -79,7 +85,7 @@ class _PlaceAddedDialogState extends State<PlaceAddedDialog> {
             PrimaryButton(
               context.l10n.choose_place_prompt_got_it_btn_text,
               onPressed: () {
-                Navigator.of(context).pop();
+                PlacesListRoute(spaceId: widget.spaceId).go(context);
               },
             ),
             const SizedBox(height: 24),

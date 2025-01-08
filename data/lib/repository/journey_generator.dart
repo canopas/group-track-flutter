@@ -10,7 +10,7 @@ import '../api/location/journey/journey.dart';
 const MIN_DISTANCE = 100.0; // 100 meters
 const MIN_TIME_DIFFERENCE = 5 * 60 * 1000; // 5 minutes
 const MIN_DISTANCE_FOR_MOVING = 10.0; // 10 meters
-const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 10 secs
+const MIN_UPDATE_INTERVAL_MINUTE = 30000; // 30 secs
 
 ({ApiLocationJourney? updatedJourney, ApiLocationJourney? newJourney})?
     getJourney(String userId,

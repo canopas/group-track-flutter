@@ -7,7 +7,7 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../../gen/assets.gen.dart';
 
@@ -107,7 +107,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                           icon: Assets.images.icSetting,
                           visibility: !expand,
                           onTap: () {
-                            AppRoute.setting.push(context);
+                            SettingsRoute().push(context);
                           }),
                       const SizedBox(width: 8),
                       _spaceSelection(
@@ -124,8 +124,7 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
                           visibility: !expand,
                           onTap: () {
                             if (widget.selectedSpace != null) {
-                              AppRoute.message(widget.selectedSpace!)
-                                  .push(context);
+                              ThreadsRoute(widget.selectedSpace!).push(context);
                             }
                           },
                         ),
@@ -375,17 +374,21 @@ class _HomeTopBarState extends State<HomeTopBar> with TickerProviderStateMixin {
           Row(
             children: [
               Expanded(
-                child: PrimaryButton(context.l10n.home_create_space_title,
-                    onPressed: () {
-                  AppRoute.createSpace().push(context);
-                }),
+                child: PrimaryButton(
+                  context.l10n.home_create_space_title,
+                  onPressed: () {
+                    const CreateSpaceRoute().push(context);
+                  },
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: PrimaryButton(context.l10n.home_join_space_title,
-                    onPressed: () {
-                  AppRoute.joinSpace().push(context);
-                }),
+                child: PrimaryButton(
+                  context.l10n.home_join_space_title,
+                  onPressed: () {
+                    const JoinSpaceRoute().push(context);
+                  },
+                ),
               ),
             ],
           ),

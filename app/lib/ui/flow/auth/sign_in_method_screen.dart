@@ -10,9 +10,9 @@ import 'package:yourspace_flutter/ui/components/app_logo.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/auth/sign_in_method_viewmodel.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../gen/assets.gen.dart';
-import '../../app_route.dart';
 import 'component/sign_in_method_button.dart';
 
 class SignInMethodScreen extends ConsumerStatefulWidget {
@@ -109,18 +109,18 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
     final user = ref.read(currentUserPod);
 
     if (mounted && (user?.first_name == null || user!.first_name!.isEmpty)) {
-      await AppRoute.pickName(user: user).push(context);
+      PickNameRoute(user!).go(context);
     }
 
     if (state.isNewUser && mounted) {
-      AppRoute.connection.go(context);
+      ConnectionRoute().go(context);
     } else {
       navigateToHome();
     }
   }
 
   void navigateToHome() {
-    if (mounted) AppRoute.home.go(context);
+    if (mounted) HomeRoute().go(context);
   }
 
   void _listenSignInSuccess() {

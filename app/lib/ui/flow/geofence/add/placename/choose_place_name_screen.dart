@@ -10,7 +10,6 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/placename/choose_place_name_view_model.dart';
 
@@ -175,9 +174,10 @@ class _ChoosePlaceNameViewState extends ConsumerState<ChoosePlaceNameScreen> {
     ref.listen(
         choosePlaceViewStateProvider.select((state) => state.popToPlaceList),
         (_, next) {
-      AppRoute.popTo(context, AppRoute.pathPlacesList);
+
       showPlaceAddedDialog(
         context,
+        widget.spaceId,
         widget.location.latitude,
         widget.location.longitude,
         title,

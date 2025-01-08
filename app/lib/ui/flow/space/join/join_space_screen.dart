@@ -8,9 +8,9 @@ import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/alert.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 import 'package:yourspace_flutter/ui/flow/space/join/join_space_view_model.dart';
 
 import '../../../components/app_page.dart';
@@ -167,7 +167,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
             SecondaryButton(
               context.l10n.join_space_create_new_space_title,
               onPressed: () {
-                AppRoute.createSpace(fromOnboard: true).push(context);
+                const CreateSpaceRoute(fromOnboard: true).push(context);
               },
             )
           ],
@@ -186,7 +186,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
 
     ref.listen(
         joinSpaceViewStateProvider.select(
-                (state) => state.errorInvalidInvitationCode), (previous, next) {
+            (state) => state.errorInvalidInvitationCode), (previous, next) {
       if (next) {
         showErrorSnackBar(
             context, context.l10n.join_space_invalid_code_error_text);
@@ -194,8 +194,8 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     });
 
     ref.listen(
-        joinSpaceViewStateProvider.select(
-                (state) => state.alreadySpaceMember), (previous, next) {
+        joinSpaceViewStateProvider.select((state) => state.alreadySpaceMember),
+        (previous, next) {
       if (next) {
         showErrorSnackBar(
             context, context.l10n.join_space_already_joined_error_text);

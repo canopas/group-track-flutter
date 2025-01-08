@@ -4,6 +4,7 @@ import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:style/animation/on_tap_scale.dart';
@@ -12,9 +13,9 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../../gen/assets.gen.dart';
-import '../../../app_route.dart';
 import '../../../components/action_bottom_sheet.dart';
 import '../../../components/permission_dialog.dart';
 import '../../../components/resume_detector.dart';
@@ -117,7 +118,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           onPlacesTap: () {
             final space = widget.space;
             if (space != null) {
-              AppRoute.placesList(space.space.id).push(context);
+              PlacesListRoute(spaceId: space.space.id).push(context);
             }
           },
           onDismiss: () => notifier.onDismissMemberDetail(),
@@ -138,7 +139,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       onTap: () {
         (!locationEnabled)
             ? notifier.showEnableLocationDialog()
-            : AppRoute.enablePermission.push(context);
+            : EnablePermissionRoute().push(context);
       },
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -260,8 +261,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         mapViewStateProvider.select((state) => state.spaceInvitationCode),
         (_, next) {
       if (next.isNotEmpty) {
-        AppRoute.inviteCode(
-                code: next, spaceName: widget.space?.space.name ?? '')
+        InviteCodeRoute(InviteCodeRouteData(inviteCode: next, spaceName: ''))
             .push(context);
       }
     });
@@ -280,7 +280,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               onDismiss: () {},
               goToSettings: () {
                 openAppSettings();
-                Navigator.of(context).pop();
+                context.pop();
               },
             );
           },

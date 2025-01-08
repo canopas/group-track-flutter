@@ -5,16 +5,17 @@ import 'package:data/repository/geofence_repository.dart';
 import 'package:data/service/geofence_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/resume_detector.dart';
 import 'package:yourspace_flutter/ui/flow/home/home_screen_viewmodel.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../domain/fcm/notification_handler.dart';
 import '../../components/alert.dart';
@@ -120,8 +121,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         homeViewStateProvider.select((state) => state.spaceInvitationCode),
         (_, next) {
       if (next.isNotEmpty) {
-        AppRoute.inviteCode(
-                code: next, spaceName: state.selectedSpace?.space.name ?? '')
+        InviteCodeRoute(InviteCodeRouteData(
+                inviteCode: next,
+                spaceName: state.selectedSpace?.space.name ?? ''))
             .push(context);
       }
     });
@@ -150,12 +152,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     context.l10n.battery_optimization_dialog_btn_change_now,
                 dismissBtn: context.l10n.common_cancel,
                 onDismiss: () {
-                  Navigator.of(context).pop();
+                  context.pop();
                 },
                 goToSettings: () {
                   if (Platform.isAndroid) openAppSettings();
                   notifier.requestIgnoreBatteryOptimizations();
-                  Navigator.of(context).pop();
+                  context.pop();
                 },
               );
             });
@@ -182,7 +184,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ref.listen(homeViewStateProvider.select((state) => state.popToSignIn),
         (_, next) {
       if (next != null) {
-        AppRoute.signInMethod.go(context);
+        SignInMethodRoute().go(context);
       }
     });
   }
