@@ -15,7 +15,6 @@ import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/flow/message/thread_list_view_model.dart';
@@ -23,6 +22,7 @@ import 'package:yourspace_flutter/ui/flow/message/thread_list_view_model.dart';
 import '../../../gen/assets.gen.dart';
 import '../../components/alert.dart';
 import '../../components/no_internet_screen.dart';
+import '../navigation/routes.dart';
 
 class ThreadListScreen extends ConsumerStatefulWidget {
   final SpaceInfo spaceInfo;
@@ -62,9 +62,9 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
         floatingActionButton: widget.spaceInfo.members.length >= 2
             ? LargeIconButton(
                 onTap: () {
-                  AppRoute.chat(
+                  ChatRoute(ChatRouteData(
                           space: widget.spaceInfo.space,
-                          threads: state.threads)
+                          threads: state.threads))
                       .push(context);
                 },
                 icon: Icon(
@@ -119,10 +119,10 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
-              AppRoute.chat(
+              ChatRoute(ChatRouteData(
                 space: widget.spaceInfo.space,
                 threadId: thread.id,
-              ).push(context);
+              )).push(context);
             },
             child: Column(
               children: [
@@ -377,7 +377,8 @@ class _ThreadListScreenState extends ConsumerState<ThreadListScreen> {
             .select((state) => state.spaceInvitationCode), (previous, next) {
       if (next.isNotEmpty) {
         notifier.cleanSpaceInvitationCode();
-        AppRoute.inviteCode(code: next, spaceName: widget.spaceInfo.space.name)
+        InviteCodeRoute(InviteCodeRouteData(
+                inviteCode: next, spaceName: widget.spaceInfo.space.name))
             .push(context);
       }
     });

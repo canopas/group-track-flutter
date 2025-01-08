@@ -10,8 +10,6 @@ import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/intro/intro_page_item.dart';
 import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
-import '../../app_route.dart';
-
 class IntroScreen extends ConsumerStatefulWidget {
   const IntroScreen({super.key});
 

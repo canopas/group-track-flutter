@@ -18,11 +18,11 @@ import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
 import 'package:yourspace_flutter/domain/extenstions/widget_extensions.dart';
 import 'package:yourspace_flutter/gen/assets.gen.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/profile_picture.dart';
 import 'package:yourspace_flutter/ui/components/resume_detector.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 import 'package:yourspace_flutter/ui/flow/setting/space/edit_space_view_model.dart';
 
 import '../../../components/alert.dart';
@@ -86,14 +86,16 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
                 color: context.colorScheme.textPrimary,
               ),
               onPressed: () {
-                AppRoute.changeAdmin(state.spaceInfo!).push(context);
+                ChangeAdminRoute($extra: state.spaceInfo!).push(context);
               }),
         ]
       ],
       body: SafeArea(
-          child: ResumeDetector(onResume: () {
-            notifier.getSpaceDetails(widget.spaceId);
-          }, child: _body(context, state))),
+          child: ResumeDetector(
+              onResume: () {
+                notifier.getSpaceDetails(widget.spaceId);
+              },
+              child: _body(context, state))),
     );
   }
 
@@ -421,7 +423,7 @@ class _EditSpaceScreenState extends ConsumerState<EditSpaceScreen> {
       message: context.l10n.edit_space_change_admin_subtitle,
       popBack: true,
       onConfirm: () {
-        AppRoute.changeAdmin(state.spaceInfo!).push(context);
+        ChangeAdminRoute($extra: state.spaceInfo!).push(context);
       },
     );
   }

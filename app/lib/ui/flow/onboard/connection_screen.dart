@@ -6,8 +6,8 @@ import 'package:style/button/secondary_button.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../gen/assets.gen.dart';
 
@@ -67,14 +67,14 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
         PrimaryButton(
           context.l10n.connection_continue_title,
           onPressed: () {
-            AppRoute.joinSpace(fromOnboard: true).go(context);
+            const JoinSpaceRoute(fromOnboard: true).go(context);
           },
         ),
         const SizedBox(height: 16),
         SecondaryButton(
           context.l10n.common_skip,
           onPressed: () {
-            AppRoute.home.go(context);
+            HomeRoute().go(context);
           },
         )
       ]),

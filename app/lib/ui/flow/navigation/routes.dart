@@ -233,9 +233,6 @@ class ChangeAdminRoute extends GoRouteData {
   }
 }
 
-@TypedGoRoute<PlacesListRoute>(
-    path: '/places/:spaceId',
-    routes: [TypedGoRoute<EditPlaceRoute>(path: '/edit-place')])
 class PlacesListRoute extends GoRouteData {
   final String spaceId;
 
@@ -243,15 +240,10 @@ class PlacesListRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return PlacesListScreen(
-      spaceId: spaceId,
-    );
+    return PlacesListScreen(spaceId: spaceId);
   }
 }
 
-@TypedGoRoute<AddPlaceRoute>(
-  path: '/add-place/:spaceId',
-)
 class AddPlaceRoute extends GoRouteData {
   final String spaceId;
 
@@ -265,25 +257,21 @@ class AddPlaceRoute extends GoRouteData {
   }
 }
 
-@TypedGoRoute<LocateOnMapRoute>(
-  path: '/locate-on-map/:spaceId',
-)
 class LocateOnMapRoute extends GoRouteData {
   final String spaceId;
+  final String? placeName;
 
-  const LocateOnMapRoute({required this.spaceId});
+  const LocateOnMapRoute({required this.spaceId, this.placeName});
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return LocateOnMapScreen(
       spaceId: spaceId,
+      placesName: placeName,
     );
   }
 }
 
-@TypedGoRoute<ChoosePlaceNameRoute>(
-  path: '/choose-place-name/:spaceId',
-)
 class ChoosePlaceNameRoute extends GoRouteData {
   final String spaceId;
   final String? placeName;
@@ -304,8 +292,9 @@ class ChoosePlaceNameRoute extends GoRouteData {
 
 class EditPlaceRoute extends GoRouteData {
   final ApiPlace $extra;
+  final String spaceId;
 
-  const EditPlaceRoute({required this.$extra});
+  const EditPlaceRoute({required this.spaceId, required this.$extra});
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -350,11 +339,7 @@ class JourneyDetailsRoute extends GoRouteData {
   }
 }
 
-@TypedGoRoute<ThreadsRoute>(path: '/thread', routes: [
-  TypedGoRoute<ChatRoute>(
-    path: '/chat',
-  )
-])
+@TypedGoRoute<ThreadsRoute>(path: '/thread')
 class ThreadsRoute extends GoRouteData {
   final SpaceInfo $extra;
 
@@ -369,17 +354,20 @@ class ThreadsRoute extends GoRouteData {
 }
 
 class ChatRouteData {
-  final ApiSpace space;
+  final ApiSpace? space;
   final List<ApiThread>? threads;
   final String? threadId;
 
   const ChatRouteData({
-    required this.space,
+    this.space,
     this.threadId,
-    this.threads,
+    this.threads = const [],
   });
 }
 
+@TypedGoRoute<ChatRoute>(
+  path: '/chat',
+)
 class ChatRoute extends GoRouteData {
   final ChatRouteData $extra;
 
@@ -412,7 +400,20 @@ class ChatRoute extends GoRouteData {
       path: 'subscription',
     ),
     TypedGoRoute<EditSpaceRoute>(path: 'edit-space/:spaceId')
-  ])
+  ]),
+  TypedGoRoute<PlacesListRoute>(
+    path: 'places/:spaceId',
+    routes: [
+      TypedGoRoute<EditPlaceRoute>(path: 'edit-place'),
+      TypedGoRoute<LocateOnMapRoute>(
+        path: 'locate-on-map',
+      ),
+      TypedGoRoute<AddPlaceRoute>(path: 'add-place'),
+      TypedGoRoute<ChoosePlaceNameRoute>(
+        path: 'choose-place-name',
+      )
+    ],
+  )
 ])
 class HomeRoute extends GoRouteData {
   @override

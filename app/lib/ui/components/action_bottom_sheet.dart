@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:style/animation/on_tap_scale.dart';
 import 'package:style/extenstions/column_builder.dart';
 import 'package:style/extenstions/context_extenstions.dart';
@@ -60,7 +61,7 @@ Widget _buildHorizontalLayout(BuildContext context,
                   .copyWith(color: context.colorScheme.textPrimary)),
           IconButton(
             icon: Icon(Icons.close, color: context.colorScheme.textSecondary),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
           ),
         ]),
       ),

@@ -13,7 +13,6 @@ import 'package:yourspace_flutter/ui/flow/auth/sign_in_method_viewmodel.dart';
 import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../gen/assets.gen.dart';
-import '../../app_route.dart';
 import 'component/sign_in_method_button.dart';
 
 class SignInMethodScreen extends ConsumerStatefulWidget {

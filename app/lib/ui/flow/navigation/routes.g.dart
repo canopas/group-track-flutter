@@ -15,11 +15,8 @@ List<RouteBase> get $appRoutes => [
       $joinSpaceRoute,
       $inviteCodeRoute,
       $changeAdminRoute,
-      $placesListRoute,
-      $addPlaceRoute,
-      $locateOnMapRoute,
-      $choosePlaceNameRoute,
       $threadsRoute,
+      $chatRoute,
       $homeRoute,
     ];
 
@@ -246,146 +243,9 @@ extension $ChangeAdminRouteExtension on ChangeAdminRoute {
       context.replace(location, extra: $extra);
 }
 
-RouteBase get $placesListRoute => GoRouteData.$route(
-      path: '/places/:spaceId',
-      factory: $PlacesListRouteExtension._fromState,
-      routes: [
-        GoRouteData.$route(
-          path: '/edit-place',
-          factory: $EditPlaceRouteExtension._fromState,
-        ),
-      ],
-    );
-
-extension $PlacesListRouteExtension on PlacesListRoute {
-  static PlacesListRoute _fromState(GoRouterState state) => PlacesListRoute(
-        spaceId: state.pathParameters['spaceId']!,
-      );
-
-  String get location => GoRouteData.$location(
-        '/places/${Uri.encodeComponent(spaceId)}',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-extension $EditPlaceRouteExtension on EditPlaceRoute {
-  static EditPlaceRoute _fromState(GoRouterState state) => EditPlaceRoute(
-        $extra: state.extra as ApiPlace,
-      );
-
-  String get location => GoRouteData.$location(
-        '/edit-place',
-      );
-
-  void go(BuildContext context) => context.go(location, extra: $extra);
-
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
-
-  void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
-}
-
-RouteBase get $addPlaceRoute => GoRouteData.$route(
-      path: '/add-place/:spaceId',
-      factory: $AddPlaceRouteExtension._fromState,
-    );
-
-extension $AddPlaceRouteExtension on AddPlaceRoute {
-  static AddPlaceRoute _fromState(GoRouterState state) => AddPlaceRoute(
-        spaceId: state.pathParameters['spaceId']!,
-      );
-
-  String get location => GoRouteData.$location(
-        '/add-place/${Uri.encodeComponent(spaceId)}',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $locateOnMapRoute => GoRouteData.$route(
-      path: '/locate-on-map/:spaceId',
-      factory: $LocateOnMapRouteExtension._fromState,
-    );
-
-extension $LocateOnMapRouteExtension on LocateOnMapRoute {
-  static LocateOnMapRoute _fromState(GoRouterState state) => LocateOnMapRoute(
-        spaceId: state.pathParameters['spaceId']!,
-      );
-
-  String get location => GoRouteData.$location(
-        '/locate-on-map/${Uri.encodeComponent(spaceId)}',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $choosePlaceNameRoute => GoRouteData.$route(
-      path: '/choose-place-name/:spaceId',
-      factory: $ChoosePlaceNameRouteExtension._fromState,
-    );
-
-extension $ChoosePlaceNameRouteExtension on ChoosePlaceNameRoute {
-  static ChoosePlaceNameRoute _fromState(GoRouterState state) =>
-      ChoosePlaceNameRoute(
-        spaceId: state.pathParameters['spaceId']!,
-        placeName: state.uri.queryParameters['place-name'],
-        $extra: state.extra as LatLng,
-      );
-
-  String get location => GoRouteData.$location(
-        '/choose-place-name/${Uri.encodeComponent(spaceId)}',
-        queryParams: {
-          if (placeName != null) 'place-name': placeName,
-        },
-      );
-
-  void go(BuildContext context) => context.go(location, extra: $extra);
-
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
-
-  void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
-}
-
 RouteBase get $threadsRoute => GoRouteData.$route(
       path: '/thread',
       factory: $ThreadsRouteExtension._fromState,
-      routes: [
-        GoRouteData.$route(
-          path: '/chat',
-          factory: $ChatRouteExtension._fromState,
-        ),
-      ],
     );
 
 extension $ThreadsRouteExtension on ThreadsRoute {
@@ -408,6 +268,11 @@ extension $ThreadsRouteExtension on ThreadsRoute {
   void replace(BuildContext context) =>
       context.replace(location, extra: $extra);
 }
+
+RouteBase get $chatRoute => GoRouteData.$route(
+      path: '/chat',
+      factory: $ChatRouteExtension._fromState,
+    );
 
 extension $ChatRouteExtension on ChatRoute {
   static ChatRoute _fromState(GoRouterState state) => ChatRoute(
@@ -465,6 +330,28 @@ RouteBase get $homeRoute => GoRouteData.$route(
             GoRouteData.$route(
               path: 'edit-space/:spaceId',
               factory: $EditSpaceRouteExtension._fromState,
+            ),
+          ],
+        ),
+        GoRouteData.$route(
+          path: 'places/:spaceId',
+          factory: $PlacesListRouteExtension._fromState,
+          routes: [
+            GoRouteData.$route(
+              path: 'edit-place',
+              factory: $EditPlaceRouteExtension._fromState,
+            ),
+            GoRouteData.$route(
+              path: 'locate-on-map',
+              factory: $LocateOnMapRouteExtension._fromState,
+            ),
+            GoRouteData.$route(
+              path: 'add-place',
+              factory: $AddPlaceRouteExtension._fromState,
+            ),
+            GoRouteData.$route(
+              path: 'choose-place-name',
+              factory: $ChoosePlaceNameRouteExtension._fromState,
             ),
           ],
         ),
@@ -637,4 +524,114 @@ extension $EditSpaceRouteExtension on EditSpaceRoute {
       context.pushReplacement(location);
 
   void replace(BuildContext context) => context.replace(location);
+}
+
+extension $PlacesListRouteExtension on PlacesListRoute {
+  static PlacesListRoute _fromState(GoRouterState state) => PlacesListRoute(
+        spaceId: state.pathParameters['spaceId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/places/${Uri.encodeComponent(spaceId)}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $EditPlaceRouteExtension on EditPlaceRoute {
+  static EditPlaceRoute _fromState(GoRouterState state) => EditPlaceRoute(
+        spaceId: state.pathParameters['spaceId']!,
+        $extra: state.extra as ApiPlace,
+      );
+
+  String get location => GoRouteData.$location(
+        '/places/${Uri.encodeComponent(spaceId)}/edit-place',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
+}
+
+extension $LocateOnMapRouteExtension on LocateOnMapRoute {
+  static LocateOnMapRoute _fromState(GoRouterState state) => LocateOnMapRoute(
+        spaceId: state.pathParameters['spaceId']!,
+        placeName: state.uri.queryParameters['place-name'],
+      );
+
+  String get location => GoRouteData.$location(
+        '/places/${Uri.encodeComponent(spaceId)}/locate-on-map',
+        queryParams: {
+          if (placeName != null) 'place-name': placeName,
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $AddPlaceRouteExtension on AddPlaceRoute {
+  static AddPlaceRoute _fromState(GoRouterState state) => AddPlaceRoute(
+        spaceId: state.pathParameters['spaceId']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/places/${Uri.encodeComponent(spaceId)}/add-place',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $ChoosePlaceNameRouteExtension on ChoosePlaceNameRoute {
+  static ChoosePlaceNameRoute _fromState(GoRouterState state) =>
+      ChoosePlaceNameRoute(
+        spaceId: state.pathParameters['spaceId']!,
+        placeName: state.uri.queryParameters['place-name'],
+        $extra: state.extra as LatLng,
+      );
+
+  String get location => GoRouteData.$location(
+        '/places/${Uri.encodeComponent(spaceId)}/choose-place-name',
+        queryParams: {
+          if (placeName != null) 'place-name': placeName,
+        },
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }

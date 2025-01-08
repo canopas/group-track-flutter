@@ -17,10 +17,10 @@ import 'package:yourspace_flutter/domain/extenstions/date_formatter.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/journey/calender/horizontal_calendar_view_model.dart';
 import 'package:yourspace_flutter/ui/flow/journey/timeline/journey_timeline_view_model.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../../domain/extenstions/widget_extensions.dart';
 import '../../../../gen/assets.gen.dart';
-import '../../../app_route.dart';
 import '../../../components/error_snakebar.dart';
 import '../../../components/no_internet_screen.dart';
 import '../calender/horizontal_calendar_view.dart';
@@ -236,7 +236,7 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  AppRoute.journeyDetail(journey).push(context);
+                  JourneyDetailsRoute(journey).push(context);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16),
@@ -466,8 +466,10 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         OnTapScale(
           onTap: () {
             if (spaceId != null) {
-              AppRoute.choosePlaceName(location: location, spaceId: spaceId)
-                  .push(context);
+              ChoosePlaceNameRoute(
+                spaceId: spaceId,
+                $extra: location,
+              ).push(context);
             }
           },
           child: Container(
@@ -596,8 +598,8 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         final pickedDate = await showDatePicker(
           context: context,
           initialDate: selectedDate,
-          firstDate:
-              DateTime.fromMillisecondsSinceEpoch(widget.group?.created_at ?? 0),
+          firstDate: DateTime.fromMillisecondsSinceEpoch(
+              widget.group?.created_at ?? 0),
           lastDate: DateTime.now(),
           confirmText: context.l10n.journey_timeline_date_picker_select_text,
         );

@@ -10,7 +10,6 @@ import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/components/error_snakebar.dart';
 import 'package:yourspace_flutter/ui/components/profile_picture.dart';
@@ -140,7 +139,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: OnTapScale(
                 onTap: () {
-                  AppRoute.editSpace(space.id).push(context);
+                  EditSpaceRoute(spaceId: space.id).push(context);
                 },
                 child: Column(
                   children: [
@@ -216,7 +215,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
               title: context.l10n.settings_subscriptions_title,
               icon: Assets.images.icSubscriptionIcon,
               onTap: () {
-                AppRoute.subscription.push(context);
+                SubscriptionRoute().push(context);
               }),
         },
         _otherOptionItem(
@@ -224,7 +223,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
             title: context.l10n.settings_other_option_contact_support_text,
             icon: Assets.images.icContactSupport,
             onTap: () {
-              AppRoute.contactSupport.push(context);
+              ContactSupportRoute().push(context);
             }),
         _otherOptionItem(
             context: context,

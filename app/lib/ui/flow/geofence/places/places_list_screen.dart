@@ -9,7 +9,6 @@ import 'package:style/indicator/progress_indicator.dart';
 import 'package:style/text/app_text_dart.dart';
 import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/places/places_list_view_model.dart';
 import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
@@ -125,7 +124,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
       allowDelete: allowDelete,
       isDeleting: isDeleting,
       onTap: () {
-        AppRoute.editPlaceScreen(item).push(context);
+        EditPlaceRoute(spaceId: item.space_id, $extra: item).push(context);
       },
       onDeletePlace: () {
         notifier.onClickDeletePlace(item);
@@ -202,7 +201,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
   Widget _addPlaceButton() {
     return OnTapScale(
       onTap: () {
-        AppRoute.addNewPlace(widget.spaceId).push(context);
+        AddPlaceRoute(spaceId: widget.spaceId).push(context);
       },
       child: Container(
         margin: const EdgeInsets.only(right: 16, bottom: 16),
@@ -291,7 +290,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
   }
 
   void onSuggestionItemTap(String placeName) {
-    AppRoute.locateOnMapScreen(spaceId: widget.spaceId, placesName: placeName)
+    LocateOnMapRoute(spaceId: widget.spaceId, placeName: placeName)
         .push(context);
   }
 
@@ -327,8 +326,7 @@ class _PlacesViewState extends ConsumerState<PlacesListScreen> {
         placesListViewStateProvider
             .select((state) => state.spaceInvitationCode), (previous, next) {
       if (next.isNotEmpty) {
-        InviteCodeRoute(InviteCodeRouteData(
-                inviteCode: next, spaceName: '', fromOnboard: false))
+        InviteCodeRoute(InviteCodeRouteData(inviteCode: next, spaceName: ''))
             .push(context);
       }
     });

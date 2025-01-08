@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:style/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 
 import '../../navigation/routes.dart';
 

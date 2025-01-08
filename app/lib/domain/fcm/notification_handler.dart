@@ -7,7 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 const YOUR_SPACE_CHANNEL_MESSAGE = "your_space_notification_channel_messages";
 const YOUR_SPACE_CHANNEL_PLACES = "your_space_notification_channel_places";
@@ -158,7 +158,7 @@ extension on NotificationHandler {
     if (!context.mounted) return;
     final String? spaceId = data[NotificationPlaceConst.KEY_SPACE_ID];
     if (spaceId != null) {
-      AppRoute.placesList(spaceId).push(context);
+      PlacesListRoute(spaceId: spaceId).push(context);
     } else {
       logger.e("Space ID is null for place added notification");
     }
@@ -166,13 +166,13 @@ extension on NotificationHandler {
 
   void _handleGeoFenceNotificationTap(BuildContext context) {
     if (!context.mounted) return;
-    AppRoute.home.go(context);
+    HomeRoute().go(context);
   }
 
   void _handleChatMessage(BuildContext context, Map<String, dynamic> data) {
     final String? threadId = data[NotificationChatConst.KEY_THREAD_ID];
     if (threadId != null) {
-      AppRoute.chat(threadId: threadId).push(context);
+      ChatRoute(ChatRouteData(threadId: threadId)).push(context);
     } else {
       logger.e("Thread ID is null for chat notification");
     }

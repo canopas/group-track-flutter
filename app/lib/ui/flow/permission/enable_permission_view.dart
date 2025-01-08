@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
 import 'package:style/extenstions/context_extenstions.dart';
@@ -189,7 +190,7 @@ class _EnablePermissionViewState extends ConsumerState<EnablePermissionView>
               onDismiss: () {},
               goToSettings: () {
                 _openAppSettingInfoScreen();
-                Navigator.of(context).pop();
+                context.pop();
               },
             );
           },

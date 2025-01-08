@@ -11,7 +11,6 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
 import 'package:yourspace_flutter/ui/flow/geofence/add/locate/locate_on_map_view_model.dart';
 
@@ -19,6 +18,7 @@ import '../../../../../gen/assets.gen.dart';
 import '../../../../components/error_snakebar.dart';
 import '../../../../components/no_internet_screen.dart';
 import '../../../home/map/map_screen.dart';
+import '../../../navigation/routes.dart';
 import '../components/place_added_dialog.dart';
 
 class LocateOnMapScreen extends ConsumerStatefulWidget {
@@ -65,9 +65,9 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
             _checkUserInternet(() {
               if (widget.placesName == null) {
                 if (state.cameraLatLng != null) {
-                  AppRoute.choosePlaceName(
-                    location: state.cameraLatLng!,
+                  ChoosePlaceNameRoute(
                     spaceId: widget.spaceId,
+                    $extra: state.cameraLatLng!,
                   ).push(context);
                 }
               } else {
@@ -242,9 +242,9 @@ class _LocateOnMapViewState extends ConsumerState<LocateOnMapScreen> {
     ref.listen(
         locateOnMapViewStateProvider.select((state) => state.popToPlaceList),
         (_, next) {
-      AppRoute.popTo(context, AppRoute.pathPlacesList);
       showPlaceAddedDialog(
         context,
+        widget.spaceId,
         latLng!.latitude,
         latLng.longitude,
         widget.placesName ?? '',

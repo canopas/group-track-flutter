@@ -10,8 +10,8 @@ import 'package:style/text/app_text_dart.dart';
 import 'package:style/text/app_text_field.dart';
 import 'package:yourspace_flutter/domain/extenstions/api_error_extension.dart';
 import 'package:yourspace_flutter/domain/extenstions/context_extenstions.dart';
-import 'package:yourspace_flutter/ui/app_route.dart';
 import 'package:yourspace_flutter/ui/components/app_page.dart';
+import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 
 import '../../../../../gen/assets.gen.dart';
 import '../../../../components/error_snakebar.dart';
@@ -122,7 +122,7 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
   Widget _locateOnMapView() {
     return OnTapScale(
       onTap: () {
-        AppRoute.locateOnMapScreen(spaceId: widget.spaceId).push(context);
+        LocateOnMapRoute(spaceId: widget.spaceId).push(context);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -164,10 +164,10 @@ class _AddNewPlaceViewState extends ConsumerState<AddNewPlaceScreen> {
       children: [
         OnTapScale(
           onTap: () {
-            AppRoute.choosePlaceName(
-              location: latLng,
+            ChoosePlaceNameRoute(
               spaceId: widget.spaceId,
               placeName: place.name,
+              $extra: latLng,
             ).push(context);
           },
           child: Padding(
