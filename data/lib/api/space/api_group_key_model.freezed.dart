@@ -202,8 +202,8 @@ ApiMemberKeyData _$ApiMemberKeyDataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ApiMemberKeyData {
-  int get memberDeviceId => throw _privateConstructorUsedError;
-  int get dataUpdatedAt => throw _privateConstructorUsedError;
+  int get member_device_id => throw _privateConstructorUsedError;
+  int get data_updated_at => throw _privateConstructorUsedError;
   List<EncryptedDistribution> get distributions =>
       throw _privateConstructorUsedError;
 
@@ -224,8 +224,8 @@ abstract class $ApiMemberKeyDataCopyWith<$Res> {
       _$ApiMemberKeyDataCopyWithImpl<$Res, ApiMemberKeyData>;
   @useResult
   $Res call(
-      {int memberDeviceId,
-      int dataUpdatedAt,
+      {int member_device_id,
+      int data_updated_at,
       List<EncryptedDistribution> distributions});
 }
 
@@ -244,18 +244,18 @@ class _$ApiMemberKeyDataCopyWithImpl<$Res, $Val extends ApiMemberKeyData>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? memberDeviceId = null,
-    Object? dataUpdatedAt = null,
+    Object? member_device_id = null,
+    Object? data_updated_at = null,
     Object? distributions = null,
   }) {
     return _then(_value.copyWith(
-      memberDeviceId: null == memberDeviceId
-          ? _value.memberDeviceId
-          : memberDeviceId // ignore: cast_nullable_to_non_nullable
+      member_device_id: null == member_device_id
+          ? _value.member_device_id
+          : member_device_id // ignore: cast_nullable_to_non_nullable
               as int,
-      dataUpdatedAt: null == dataUpdatedAt
-          ? _value.dataUpdatedAt
-          : dataUpdatedAt // ignore: cast_nullable_to_non_nullable
+      data_updated_at: null == data_updated_at
+          ? _value.data_updated_at
+          : data_updated_at // ignore: cast_nullable_to_non_nullable
               as int,
       distributions: null == distributions
           ? _value.distributions
@@ -274,8 +274,8 @@ abstract class _$$ApiMemberKeyDataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int memberDeviceId,
-      int dataUpdatedAt,
+      {int member_device_id,
+      int data_updated_at,
       List<EncryptedDistribution> distributions});
 }
 
@@ -292,18 +292,18 @@ class __$$ApiMemberKeyDataImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? memberDeviceId = null,
-    Object? dataUpdatedAt = null,
+    Object? member_device_id = null,
+    Object? data_updated_at = null,
     Object? distributions = null,
   }) {
     return _then(_$ApiMemberKeyDataImpl(
-      memberDeviceId: null == memberDeviceId
-          ? _value.memberDeviceId
-          : memberDeviceId // ignore: cast_nullable_to_non_nullable
+      member_device_id: null == member_device_id
+          ? _value.member_device_id
+          : member_device_id // ignore: cast_nullable_to_non_nullable
               as int,
-      dataUpdatedAt: null == dataUpdatedAt
-          ? _value.dataUpdatedAt
-          : dataUpdatedAt // ignore: cast_nullable_to_non_nullable
+      data_updated_at: null == data_updated_at
+          ? _value.data_updated_at
+          : data_updated_at // ignore: cast_nullable_to_non_nullable
               as int,
       distributions: null == distributions
           ? _value._distributions
@@ -317,8 +317,8 @@ class __$$ApiMemberKeyDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ApiMemberKeyDataImpl implements _ApiMemberKeyData {
   const _$ApiMemberKeyDataImpl(
-      {this.memberDeviceId = 0,
-      this.dataUpdatedAt = 0,
+      {this.member_device_id = 0,
+      this.data_updated_at = 0,
       final List<EncryptedDistribution> distributions = const []})
       : _distributions = distributions;
 
@@ -327,10 +327,10 @@ class _$ApiMemberKeyDataImpl implements _ApiMemberKeyData {
 
   @override
   @JsonKey()
-  final int memberDeviceId;
+  final int member_device_id;
   @override
   @JsonKey()
-  final int dataUpdatedAt;
+  final int data_updated_at;
   final List<EncryptedDistribution> _distributions;
   @override
   @JsonKey()
@@ -342,7 +342,7 @@ class _$ApiMemberKeyDataImpl implements _ApiMemberKeyData {
 
   @override
   String toString() {
-    return 'ApiMemberKeyData(memberDeviceId: $memberDeviceId, dataUpdatedAt: $dataUpdatedAt, distributions: $distributions)';
+    return 'ApiMemberKeyData(member_device_id: $member_device_id, data_updated_at: $data_updated_at, distributions: $distributions)';
   }
 
   @override
@@ -350,18 +350,18 @@ class _$ApiMemberKeyDataImpl implements _ApiMemberKeyData {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ApiMemberKeyDataImpl &&
-            (identical(other.memberDeviceId, memberDeviceId) ||
-                other.memberDeviceId == memberDeviceId) &&
-            (identical(other.dataUpdatedAt, dataUpdatedAt) ||
-                other.dataUpdatedAt == dataUpdatedAt) &&
+            (identical(other.member_device_id, member_device_id) ||
+                other.member_device_id == member_device_id) &&
+            (identical(other.data_updated_at, data_updated_at) ||
+                other.data_updated_at == data_updated_at) &&
             const DeepCollectionEquality()
                 .equals(other._distributions, _distributions));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, memberDeviceId, dataUpdatedAt,
-      const DeepCollectionEquality().hash(_distributions));
+  int get hashCode => Object.hash(runtimeType, member_device_id,
+      data_updated_at, const DeepCollectionEquality().hash(_distributions));
 
   /// Create a copy of ApiMemberKeyData
   /// with the given fields replaced by the non-null parameter values.
@@ -382,8 +382,8 @@ class _$ApiMemberKeyDataImpl implements _ApiMemberKeyData {
 
 abstract class _ApiMemberKeyData implements ApiMemberKeyData {
   const factory _ApiMemberKeyData(
-          {final int memberDeviceId,
-          final int dataUpdatedAt,
+          {final int member_device_id,
+          final int data_updated_at,
           final List<EncryptedDistribution> distributions}) =
       _$ApiMemberKeyDataImpl;
 
@@ -391,9 +391,9 @@ abstract class _ApiMemberKeyData implements ApiMemberKeyData {
       _$ApiMemberKeyDataImpl.fromJson;
 
   @override
-  int get memberDeviceId;
+  int get member_device_id;
   @override
-  int get dataUpdatedAt;
+  int get data_updated_at;
   @override
   List<EncryptedDistribution> get distributions;
 
@@ -638,4 +638,268 @@ abstract class _EncryptedDistribution extends EncryptedDistribution {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$EncryptedDistributionImplCopyWith<_$EncryptedDistributionImpl>
       get copyWith => throw _privateConstructorUsedError;
+}
+
+ApiSenderKeyRecord _$ApiSenderKeyRecordFromJson(Map<String, dynamic> json) {
+  return _ApiSenderKeyRecord.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ApiSenderKeyRecord {
+  String get id => throw _privateConstructorUsedError;
+  int get device_id => throw _privateConstructorUsedError;
+  String get distribution_id => throw _privateConstructorUsedError;
+  @BlobConverter()
+  Blob get record => throw _privateConstructorUsedError;
+  String get address => throw _privateConstructorUsedError;
+  int get created_at => throw _privateConstructorUsedError;
+
+  /// Serializes this ApiSenderKeyRecord to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ApiSenderKeyRecord
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ApiSenderKeyRecordCopyWith<ApiSenderKeyRecord> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ApiSenderKeyRecordCopyWith<$Res> {
+  factory $ApiSenderKeyRecordCopyWith(
+          ApiSenderKeyRecord value, $Res Function(ApiSenderKeyRecord) then) =
+      _$ApiSenderKeyRecordCopyWithImpl<$Res, ApiSenderKeyRecord>;
+  @useResult
+  $Res call(
+      {String id,
+      int device_id,
+      String distribution_id,
+      @BlobConverter() Blob record,
+      String address,
+      int created_at});
+}
+
+/// @nodoc
+class _$ApiSenderKeyRecordCopyWithImpl<$Res, $Val extends ApiSenderKeyRecord>
+    implements $ApiSenderKeyRecordCopyWith<$Res> {
+  _$ApiSenderKeyRecordCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of ApiSenderKeyRecord
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? device_id = null,
+    Object? distribution_id = null,
+    Object? record = null,
+    Object? address = null,
+    Object? created_at = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      device_id: null == device_id
+          ? _value.device_id
+          : device_id // ignore: cast_nullable_to_non_nullable
+              as int,
+      distribution_id: null == distribution_id
+          ? _value.distribution_id
+          : distribution_id // ignore: cast_nullable_to_non_nullable
+              as String,
+      record: null == record
+          ? _value.record
+          : record // ignore: cast_nullable_to_non_nullable
+              as Blob,
+      address: null == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String,
+      created_at: null == created_at
+          ? _value.created_at
+          : created_at // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ApiSenderKeyRecordImplCopyWith<$Res>
+    implements $ApiSenderKeyRecordCopyWith<$Res> {
+  factory _$$ApiSenderKeyRecordImplCopyWith(_$ApiSenderKeyRecordImpl value,
+          $Res Function(_$ApiSenderKeyRecordImpl) then) =
+      __$$ApiSenderKeyRecordImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      int device_id,
+      String distribution_id,
+      @BlobConverter() Blob record,
+      String address,
+      int created_at});
+}
+
+/// @nodoc
+class __$$ApiSenderKeyRecordImplCopyWithImpl<$Res>
+    extends _$ApiSenderKeyRecordCopyWithImpl<$Res, _$ApiSenderKeyRecordImpl>
+    implements _$$ApiSenderKeyRecordImplCopyWith<$Res> {
+  __$$ApiSenderKeyRecordImplCopyWithImpl(_$ApiSenderKeyRecordImpl _value,
+      $Res Function(_$ApiSenderKeyRecordImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ApiSenderKeyRecord
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? device_id = null,
+    Object? distribution_id = null,
+    Object? record = null,
+    Object? address = null,
+    Object? created_at = null,
+  }) {
+    return _then(_$ApiSenderKeyRecordImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      device_id: null == device_id
+          ? _value.device_id
+          : device_id // ignore: cast_nullable_to_non_nullable
+              as int,
+      distribution_id: null == distribution_id
+          ? _value.distribution_id
+          : distribution_id // ignore: cast_nullable_to_non_nullable
+              as String,
+      record: null == record
+          ? _value.record
+          : record // ignore: cast_nullable_to_non_nullable
+              as Blob,
+      address: null == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String,
+      created_at: null == created_at
+          ? _value.created_at
+          : created_at // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ApiSenderKeyRecordImpl extends _ApiSenderKeyRecord {
+  const _$ApiSenderKeyRecordImpl(
+      {required this.id,
+      required this.device_id,
+      required this.distribution_id,
+      @BlobConverter() required this.record,
+      this.address = '',
+      required this.created_at})
+      : super._();
+
+  factory _$ApiSenderKeyRecordImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ApiSenderKeyRecordImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final int device_id;
+  @override
+  final String distribution_id;
+  @override
+  @BlobConverter()
+  final Blob record;
+  @override
+  @JsonKey()
+  final String address;
+  @override
+  final int created_at;
+
+  @override
+  String toString() {
+    return 'ApiSenderKeyRecord(id: $id, device_id: $device_id, distribution_id: $distribution_id, record: $record, address: $address, created_at: $created_at)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ApiSenderKeyRecordImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.device_id, device_id) ||
+                other.device_id == device_id) &&
+            (identical(other.distribution_id, distribution_id) ||
+                other.distribution_id == distribution_id) &&
+            (identical(other.record, record) || other.record == record) &&
+            (identical(other.address, address) || other.address == address) &&
+            (identical(other.created_at, created_at) ||
+                other.created_at == created_at));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, device_id, distribution_id, record, address, created_at);
+
+  /// Create a copy of ApiSenderKeyRecord
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ApiSenderKeyRecordImplCopyWith<_$ApiSenderKeyRecordImpl> get copyWith =>
+      __$$ApiSenderKeyRecordImplCopyWithImpl<_$ApiSenderKeyRecordImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ApiSenderKeyRecordImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _ApiSenderKeyRecord extends ApiSenderKeyRecord {
+  const factory _ApiSenderKeyRecord(
+      {required final String id,
+      required final int device_id,
+      required final String distribution_id,
+      @BlobConverter() required final Blob record,
+      final String address,
+      required final int created_at}) = _$ApiSenderKeyRecordImpl;
+  const _ApiSenderKeyRecord._() : super._();
+
+  factory _ApiSenderKeyRecord.fromJson(Map<String, dynamic> json) =
+      _$ApiSenderKeyRecordImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  int get device_id;
+  @override
+  String get distribution_id;
+  @override
+  @BlobConverter()
+  Blob get record;
+  @override
+  String get address;
+  @override
+  int get created_at;
+
+  /// Create a copy of ApiSenderKeyRecord
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ApiSenderKeyRecordImplCopyWith<_$ApiSenderKeyRecordImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

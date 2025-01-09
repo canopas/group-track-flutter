@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../api/auth/auth_models.dart';
+import '../api/space/api_group_key_model.dart';
 
 final isIntroScreenShownPod = createPrefProvider<bool>(
   prefKey: "show_intro_screen",
@@ -63,3 +64,13 @@ final userPassKeyPod = createPrefProvider<String?>(
   prefKey: "user_passkey",
   defaultValue: null,
 );
+
+final senderKeyJsonPod = createPrefProvider<String?>(
+  prefKey: "sender_key",
+  defaultValue: null,
+);
+
+final senderKeyPod = Provider<ApiSenderKeyRecord?>((ref) {
+  final json = ref.watch(senderKeyJsonPod);
+  return json == null ? null : ApiSenderKeyRecord.fromJson(jsonDecode(json));
+});

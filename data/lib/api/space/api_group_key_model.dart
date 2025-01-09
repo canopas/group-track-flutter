@@ -32,8 +32,8 @@ class ApiGroupKey with _$ApiGroupKey {
 @freezed
 class ApiMemberKeyData with _$ApiMemberKeyData {
   const factory ApiMemberKeyData({
-    @Default(0)int memberDeviceId,
-    @Default(0) int dataUpdatedAt,
+    @Default(0)int member_device_id,
+    @Default(0) int data_updated_at,
     @Default([]) List<EncryptedDistribution> distributions,
   }) = _ApiMemberKeyData;
 
@@ -70,4 +70,30 @@ class EncryptedDistribution with _$EncryptedDistribution {
           "Invalid size for ciphertext: maximum allowed size is 64 KB, got ${ciphertext.bytes.length} bytes.");
     }
   }
+}
+
+@freezed
+class ApiSenderKeyRecord with _$ApiSenderKeyRecord {
+  const ApiSenderKeyRecord._();
+
+  const factory ApiSenderKeyRecord({
+    required String id,
+    required int device_id,
+    required String distribution_id,
+    @BlobConverter() required Blob record,
+    @Default('') String address,
+    required int created_at,
+  }) = _ApiSenderKeyRecord;
+
+  factory ApiSenderKeyRecord.fromJson(Map<String, dynamic> json) =>
+      _$ApiSenderKeyRecordFromJson(json);
+
+  factory ApiSenderKeyRecord.fromFireStore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot,
+      SnapshotOptions? options) {
+    Map<String, dynamic>? data = snapshot.data();
+    return ApiSenderKeyRecord.fromJson(data!);
+  }
+
+  Map<String, dynamic> toFireStore(ApiSenderKeyRecord instance) => instance.toJson();
 }

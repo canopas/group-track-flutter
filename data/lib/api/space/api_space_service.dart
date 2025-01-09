@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/network/client.dart';
+import 'package:data/api/space/api_group_key_model.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,6 +34,17 @@ class ApiSpaceService {
         .collection('space_members');
   }
 
+  DocumentReference<ApiGroupKey> spaceGroupKeysDocRef(String spaceId) {
+    return FirebaseFirestore.instance
+        .collection('spaces')
+        .doc(spaceId)
+        .collection('group_keys')
+        .doc('group_keys')
+        .withConverter<ApiGroupKey>(
+            fromFirestore: ApiGroupKey.fromFireStore,
+            toFirestore: (key, options) => key.toJson());
+  }
+
   Future<String> createSpace(String name) async {
     final doc = _spaceRef.doc();
     final adminId = _currentUser?.id ?? "";
@@ -56,7 +68,6 @@ class ApiSpaceService {
 
   Future<void> joinSpace(String spaceId, String userId,
       {int role = SPACE_MEMBER_ROLE_MEMBER}) async {
-
     final member = ApiSpaceMember(
       space_id: spaceId,
       user_id: userId,
@@ -153,5 +164,32 @@ class ApiSpaceService {
 
   Future<void> updateSpace(ApiSpace space) async {
     await _spaceRef.doc(space.id).set(space);
+  }
+
+  Future<void> updateGroupKeys(
+      String spaceId, String userId, ApiMemberKeyData membersKeyData) async {
+    await _db.runTransaction((transaction) async {
+      final groupKeysDocRef = spaceGroupKeysDocRef(spaceId);
+      final snapshot = await transaction.get(groupKeysDocRef);
+
+      final updatedAt = DateTime.now().millisecondsSinceEpoch;
+      final data = snapshot.data() ?? ApiGroupKey(docUpdatedAt: updatedAt);
+
+      final oldMemberKeyData =
+          data.memberKeys[userId] ?? const ApiMemberKeyData();
+
+      final newMemberKeyData = oldMemberKeyData.copyWith(
+        member_device_id: membersKeyData.member_device_id,
+        data_updated_at: updatedAt,
+        distributions: membersKeyData.distributions,
+      );
+
+      final updates = {
+        'member_keys.$userId': newMemberKeyData,
+        'doc_updated_at': DateTime.now().millisecondsSinceEpoch,
+      };
+
+      transaction.update(groupKeysDocRef, updates);
+    });
   }
 }

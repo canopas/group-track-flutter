@@ -5,23 +5,25 @@ import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/api_space_service.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/service/place_service.dart';
+import 'package:data/utils/buffered_sender_keystore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../api/auth/auth_models.dart';
 import '../api/place/api_place.dart';
 import '../storage/app_preferences.dart';
+import '../utils/distribution_key_generator.dart';
 import 'location_service.dart';
 
 final spaceServiceProvider = Provider((ref) => SpaceService(
-      ref.read(currentUserPod),
-      ref.read(apiSpaceServiceProvider),
-      ref.read(apiSpaceInvitationServiceProvider),
-      ref.read(currentSpaceId.notifier),
-      ref.read(apiUserServiceProvider),
-      ref.read(locationServiceProvider),
-      ref.read(placeServiceProvider),
-    ));
+    ref.read(currentUserPod),
+    ref.read(apiSpaceServiceProvider),
+    ref.read(apiSpaceInvitationServiceProvider),
+    ref.read(currentSpaceId.notifier),
+    ref.read(apiUserServiceProvider),
+    ref.read(locationServiceProvider),
+    ref.read(placeServiceProvider),
+    ref.read(bufferedSenderKeystoreProvider)));
 
 class SpaceService {
   final ApiUser? currentUser;
@@ -31,6 +33,7 @@ class SpaceService {
   final ApiUserService userService;
   final LocationService locationService;
   final PlaceService placeService;
+  final BufferedSenderKeystore bufferedSenderKeystore;
 
   SpaceService(
     this.currentUser,
@@ -40,6 +43,7 @@ class SpaceService {
     this.userService,
     this.locationService,
     this.placeService,
+    this.bufferedSenderKeystore,
   );
 
   String? get currentSpaceId => _currentSpaceIdController.state;
@@ -61,6 +65,7 @@ class SpaceService {
     await placeService.joinUserToExistingPlaces(
         userId: userId, spaceId: spaceId);
     currentSpaceId = spaceId;
+    await _distributeSenderKeyToSpaceMembers(spaceId, userId);
   }
 
   Stream<List<SpaceInfo>> streamAllSpace(String userId) {
@@ -256,5 +261,16 @@ class SpaceService {
     return CombineLatestStream.list(placeStreams).map((placesLists) {
       return placesLists.expand((places) => places).toList();
     });
+  }
+
+  Future<void> _distributeSenderKeyToSpaceMembers(
+      String spaceId, String userId) async {
+    final spaceMembers = await spaceService.getMembersBySpaceId(spaceId);
+    final membersKeyData = await generateMemberKeyData(spaceId,
+        senderUserId: userId,
+        spaceMembers: spaceMembers,
+        bufferedSenderKeyStore: bufferedSenderKeystore);
+
+    await spaceService.updateGroupKeys(spaceId, userId, membersKeyData);
   }
 }
