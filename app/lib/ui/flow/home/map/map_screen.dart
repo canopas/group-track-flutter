@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -42,24 +43,39 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   late MapViewNotifier notifier;
 
   String? _mapStyle;
-  bool _isDarkMode = false;
-
   final List<Marker> _markers = [];
   List<Circle> _places = [];
 
   @override
+  void initState() {
+    super.initState();
+
+    var dispatcher = SchedulerBinding.instance.platformDispatcher;
+    final brightness = dispatcher.platformBrightness;
+    _updateMapStyle(brightness == Brightness.dark);
+
+    dispatcher.onPlatformBrightnessChanged = () {
+      final checkBrightness = dispatcher.platformBrightness;
+      print("XXX check model:$checkBrightness");
+      final isDarkMoe = checkBrightness == Brightness.dark;
+      _updateMapStyle(isDarkMoe);
+      notifier.reloadMarker(isDarkMoe);
+    };
+  }
+
+  @override
   Widget build(BuildContext context) {
+    notifier = ref.watch(mapViewStateProvider.notifier);
+    final state = ref.watch(mapViewStateProvider);
+
     _observeNavigation();
     _observeMarkerChange();
     _observeShowEnableLocationPrompt(context);
     _observeMemberPlace(context);
     _observePermissionChange();
     _observeError();
+    _observeReloadMarker(state.userInfos);
 
-    notifier = ref.watch(mapViewStateProvider.notifier);
-    final state = ref.watch(mapViewStateProvider);
-
-    _updateMapStyle(context.brightness == Brightness.dark);
     return ResumeDetector(
       onResume: () {
         notifier.checkUserPermission();
@@ -209,11 +225,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   void _updateMapStyle(bool isDarkMode) async {
-    if (_isDarkMode == isDarkMode) return;
     final style =
         await rootBundle.loadString('assets/map/map_theme_night.json');
     setState(() {
-      _isDarkMode = isDarkMode;
       if (isDarkMode) {
         _mapStyle = style;
       } else {
@@ -289,6 +303,24 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     });
   }
 
+  void _observeReloadMarker(Map<String, MapUserInfo> userInfos) {
+    ref.listen(mapViewStateProvider.select((state) => state.isDarMode),
+        (previous, next) async {
+      if (previous != next && userInfos.isNotEmpty) {
+        _markers.clear();
+        final color = (next) ? Colors.white : Colors.black;
+
+        final markersToAdd = await createMarkerFromAsset(
+            context, userInfos.values.toList(), color, onTap: (userId) {
+          notifier.onTapUserMarker(userId);
+        });
+
+        _markers.addAll(markersToAdd);
+        setState(() {});
+      }
+    });
+  }
+
   void _observePermissionChange() {
     ref.listen(
         permissionStateProvider.select((state) => state.isLocationGranted),
@@ -307,7 +339,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       }
       if (next.isNotEmpty) {
         final markersToAdd = await createMarkerFromAsset(
-            context, next.values.toList(), onTap: (userId) {
+            context, next.values.toList(), context.colorScheme.textPrimary,
+            onTap: (userId) {
           notifier.onTapUserMarker(userId);
         });
         _markers.addAll(markersToAdd);

@@ -91,7 +91,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   }
 
   void _onUpdateUser({ApiUser? prevUser, ApiUser? currentUser}) {
-    if(currentUser == null) _resetState();
+    if (currentUser == null) _resetState();
     if (currentUser != null && prevUser?.id != currentUser.id) {
       _resetState();
       fetchCurrentUserLocation();
@@ -276,7 +276,7 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
         : null;
 
     state = state.copyWith(selectedUser: selectedMember?.user);
-    _onSelectUserMarker(member.user.id);
+    _onSelectUserMarker(selectedMember?.user.id);
 
     if (position != null) {
       _mapCameraPosition(position,
@@ -438,6 +438,10 @@ class MapViewNotifier extends StateNotifier<MapViewState> {
   void onMapCreated(GoogleMapController controller) async {
     state = state.copyWith(mapController: controller);
   }
+
+  void reloadMarker(bool isDarkMode) {
+    state = state.copyWith(isDarMode: isDarkMode);
+  }
 }
 
 @freezed
@@ -458,6 +462,7 @@ class MapViewState with _$MapViewState {
     required String mapType,
     Object? error,
     DateTime? showLocationDialog,
+    @Default(false) isDarMode,
     GoogleMapController? mapController,
   }) = _MapViewState;
 }

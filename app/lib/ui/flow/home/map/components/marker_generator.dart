@@ -12,7 +12,8 @@ double markerRadius = Platform.isAndroid ? 60.0 : 30.0;
 
 Future<List<Marker>> createMarkerFromAsset(
   BuildContext context,
-  List<MapUserInfo> users, {
+  List<MapUserInfo> users,
+  Color markerColor, {
   required Function(String)? onTap,
 }) async {
   if (!context.mounted) return [];
@@ -21,8 +22,8 @@ Future<List<Marker>> createMarkerFromAsset(
       item.user.fullName,
       item.imageUrl,
       item.isSelected
-          ? context.colorScheme.secondary
-          : context.colorScheme.surface,
+          ? context.colorScheme.primary
+          : markerColor,
       context.colorScheme.primary,
       AppTextStyle.subtitle2.copyWith(
           fontSize: Platform.isAndroid ? 70 : 40,

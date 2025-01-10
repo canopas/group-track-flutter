@@ -31,6 +31,7 @@ mixin _$MapViewState {
   String get mapType => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   DateTime? get showLocationDialog => throw _privateConstructorUsedError;
+  dynamic get isDarMode => throw _privateConstructorUsedError;
   GoogleMapController? get mapController => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -60,6 +61,7 @@ abstract class $MapViewStateCopyWith<$Res> {
       String mapType,
       Object? error,
       DateTime? showLocationDialog,
+      dynamic isDarMode,
       GoogleMapController? mapController});
 
   $ApiUserCopyWith<$Res>? get selectedUser;
@@ -93,6 +95,7 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
     Object? mapType = null,
     Object? error = freezed,
     Object? showLocationDialog = freezed,
+    Object? isDarMode = freezed,
     Object? mapController = freezed,
   }) {
     return _then(_value.copyWith(
@@ -153,6 +156,10 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
           ? _value.showLocationDialog
           : showLocationDialog // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      isDarMode: freezed == isDarMode
+          ? _value.isDarMode
+          : isDarMode // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       mapController: freezed == mapController
           ? _value.mapController
           : mapController // ignore: cast_nullable_to_non_nullable
@@ -197,6 +204,7 @@ abstract class _$$MapViewStateImplCopyWith<$Res>
       String mapType,
       Object? error,
       DateTime? showLocationDialog,
+      dynamic isDarMode,
       GoogleMapController? mapController});
 
   @override
@@ -229,6 +237,7 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
     Object? mapType = null,
     Object? error = freezed,
     Object? showLocationDialog = freezed,
+    Object? isDarMode = freezed,
     Object? mapController = freezed,
   }) {
     return _then(_$MapViewStateImpl(
@@ -286,6 +295,7 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
           ? _value.showLocationDialog
           : showLocationDialog // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      isDarMode: freezed == isDarMode ? _value.isDarMode! : isDarMode,
       mapController: freezed == mapController
           ? _value.mapController
           : mapController // ignore: cast_nullable_to_non_nullable
@@ -313,6 +323,7 @@ class _$MapViewStateImpl implements _MapViewState {
       required this.mapType,
       this.error,
       this.showLocationDialog,
+      this.isDarMode = false,
       this.mapController})
       : _places = places,
         _userInfos = userInfos;
@@ -369,11 +380,14 @@ class _$MapViewStateImpl implements _MapViewState {
   @override
   final DateTime? showLocationDialog;
   @override
+  @JsonKey()
+  final dynamic isDarMode;
+  @override
   final GoogleMapController? mapController;
 
   @override
   String toString() {
-    return 'MapViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, hasLocationEnabled: $hasLocationEnabled, hasLocationServiceEnabled: $hasLocationServiceEnabled, hasNotificationEnabled: $hasNotificationEnabled, hasFineLocationEnabled: $hasFineLocationEnabled, places: $places, userInfos: $userInfos, selectedUser: $selectedUser, currentUserLocation: $currentUserLocation, defaultPosition: $defaultPosition, spaceInvitationCode: $spaceInvitationCode, mapType: $mapType, error: $error, showLocationDialog: $showLocationDialog, mapController: $mapController)';
+    return 'MapViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, hasLocationEnabled: $hasLocationEnabled, hasLocationServiceEnabled: $hasLocationServiceEnabled, hasNotificationEnabled: $hasNotificationEnabled, hasFineLocationEnabled: $hasFineLocationEnabled, places: $places, userInfos: $userInfos, selectedUser: $selectedUser, currentUserLocation: $currentUserLocation, defaultPosition: $defaultPosition, spaceInvitationCode: $spaceInvitationCode, mapType: $mapType, error: $error, showLocationDialog: $showLocationDialog, isDarMode: $isDarMode, mapController: $mapController)';
   }
 
   @override
@@ -408,6 +422,7 @@ class _$MapViewStateImpl implements _MapViewState {
             const DeepCollectionEquality().equals(other.error, error) &&
             (identical(other.showLocationDialog, showLocationDialog) ||
                 other.showLocationDialog == showLocationDialog) &&
+            const DeepCollectionEquality().equals(other.isDarMode, isDarMode) &&
             (identical(other.mapController, mapController) ||
                 other.mapController == mapController));
   }
@@ -430,6 +445,7 @@ class _$MapViewStateImpl implements _MapViewState {
       mapType,
       const DeepCollectionEquality().hash(error),
       showLocationDialog,
+      const DeepCollectionEquality().hash(isDarMode),
       mapController);
 
   @JsonKey(ignore: true)
@@ -456,6 +472,7 @@ abstract class _MapViewState implements MapViewState {
       required final String mapType,
       final Object? error,
       final DateTime? showLocationDialog,
+      final dynamic isDarMode,
       final GoogleMapController? mapController}) = _$MapViewStateImpl;
 
   @override
@@ -488,6 +505,8 @@ abstract class _MapViewState implements MapViewState {
   Object? get error;
   @override
   DateTime? get showLocationDialog;
+  @override
+  dynamic get isDarMode;
   @override
   GoogleMapController? get mapController;
   @override
