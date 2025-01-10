@@ -56,7 +56,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
     dispatcher.onPlatformBrightnessChanged = () {
       final checkBrightness = dispatcher.platformBrightness;
-      print("XXX check model:$checkBrightness");
       final isDarkMoe = checkBrightness == Brightness.dark;
       _updateMapStyle(isDarkMoe);
       notifier.reloadMarker(isDarkMoe);
