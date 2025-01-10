@@ -31,7 +31,7 @@ mixin _$MapViewState {
   String get mapType => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   DateTime? get showLocationDialog => throw _privateConstructorUsedError;
-  dynamic get isDarMode => throw _privateConstructorUsedError;
+  bool get isDarMode => throw _privateConstructorUsedError;
   GoogleMapController? get mapController => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -61,7 +61,7 @@ abstract class $MapViewStateCopyWith<$Res> {
       String mapType,
       Object? error,
       DateTime? showLocationDialog,
-      dynamic isDarMode,
+      bool isDarMode,
       GoogleMapController? mapController});
 
   $ApiUserCopyWith<$Res>? get selectedUser;
@@ -95,7 +95,7 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
     Object? mapType = null,
     Object? error = freezed,
     Object? showLocationDialog = freezed,
-    Object? isDarMode = freezed,
+    Object? isDarMode = null,
     Object? mapController = freezed,
   }) {
     return _then(_value.copyWith(
@@ -156,10 +156,10 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
           ? _value.showLocationDialog
           : showLocationDialog // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      isDarMode: freezed == isDarMode
+      isDarMode: null == isDarMode
           ? _value.isDarMode
           : isDarMode // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as bool,
       mapController: freezed == mapController
           ? _value.mapController
           : mapController // ignore: cast_nullable_to_non_nullable
@@ -204,7 +204,7 @@ abstract class _$$MapViewStateImplCopyWith<$Res>
       String mapType,
       Object? error,
       DateTime? showLocationDialog,
-      dynamic isDarMode,
+      bool isDarMode,
       GoogleMapController? mapController});
 
   @override
@@ -237,7 +237,7 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
     Object? mapType = null,
     Object? error = freezed,
     Object? showLocationDialog = freezed,
-    Object? isDarMode = freezed,
+    Object? isDarMode = null,
     Object? mapController = freezed,
   }) {
     return _then(_$MapViewStateImpl(
@@ -295,7 +295,10 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
           ? _value.showLocationDialog
           : showLocationDialog // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      isDarMode: freezed == isDarMode ? _value.isDarMode! : isDarMode,
+      isDarMode: null == isDarMode
+          ? _value.isDarMode
+          : isDarMode // ignore: cast_nullable_to_non_nullable
+              as bool,
       mapController: freezed == mapController
           ? _value.mapController
           : mapController // ignore: cast_nullable_to_non_nullable
@@ -381,7 +384,7 @@ class _$MapViewStateImpl implements _MapViewState {
   final DateTime? showLocationDialog;
   @override
   @JsonKey()
-  final dynamic isDarMode;
+  final bool isDarMode;
   @override
   final GoogleMapController? mapController;
 
@@ -422,7 +425,8 @@ class _$MapViewStateImpl implements _MapViewState {
             const DeepCollectionEquality().equals(other.error, error) &&
             (identical(other.showLocationDialog, showLocationDialog) ||
                 other.showLocationDialog == showLocationDialog) &&
-            const DeepCollectionEquality().equals(other.isDarMode, isDarMode) &&
+            (identical(other.isDarMode, isDarMode) ||
+                other.isDarMode == isDarMode) &&
             (identical(other.mapController, mapController) ||
                 other.mapController == mapController));
   }
@@ -445,7 +449,7 @@ class _$MapViewStateImpl implements _MapViewState {
       mapType,
       const DeepCollectionEquality().hash(error),
       showLocationDialog,
-      const DeepCollectionEquality().hash(isDarMode),
+      isDarMode,
       mapController);
 
   @JsonKey(ignore: true)
@@ -472,7 +476,7 @@ abstract class _MapViewState implements MapViewState {
       required final String mapType,
       final Object? error,
       final DateTime? showLocationDialog,
-      final dynamic isDarMode,
+      final bool isDarMode,
       final GoogleMapController? mapController}) = _$MapViewStateImpl;
 
   @override
@@ -506,7 +510,7 @@ abstract class _MapViewState implements MapViewState {
   @override
   DateTime? get showLocationDialog;
   @override
-  dynamic get isDarMode;
+  bool get isDarMode;
   @override
   GoogleMapController? get mapController;
   @override

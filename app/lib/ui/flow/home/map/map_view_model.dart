@@ -462,7 +462,7 @@ class MapViewState with _$MapViewState {
     required String mapType,
     Object? error,
     DateTime? showLocationDialog,
-    @Default(false) isDarMode,
+    @Default(false) bool isDarMode,
     GoogleMapController? mapController,
   }) = _MapViewState;
 }
