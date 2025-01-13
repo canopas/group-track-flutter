@@ -202,9 +202,9 @@ class SpaceService {
   }
 
   Future<void> leaveSpace(String spaceId, String userId) async {
+    await placeService.removedUserFromExistingPlaces(spaceId, userId);
     await spaceService.removeUserFromSpace(spaceId, userId);
     await userService.removeSpaceId(userId: userId, spaceId: spaceId);
-    await placeService.removedUserFromExistingPlaces(spaceId, userId);
     currentSpaceId = null;
   }
 
