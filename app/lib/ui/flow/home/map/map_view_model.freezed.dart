@@ -523,7 +523,7 @@ abstract class _MapViewState implements MapViewState {
 mixin _$MapUserInfo {
   String get userId => throw _privateConstructorUsedError;
   ApiUser get user => throw _privateConstructorUsedError;
-  ui.Image? get imageUrl => throw _privateConstructorUsedError;
+  String? get imageUrl => throw _privateConstructorUsedError;
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
   bool get isSelected => throw _privateConstructorUsedError;
@@ -543,7 +543,7 @@ abstract class $MapUserInfoCopyWith<$Res> {
   $Res call(
       {String userId,
       ApiUser user,
-      ui.Image? imageUrl,
+      String? imageUrl,
       double latitude,
       double longitude,
       bool isSelected,
@@ -585,7 +585,7 @@ class _$MapUserInfoCopyWithImpl<$Res, $Val extends MapUserInfo>
       imageUrl: freezed == imageUrl
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
-              as ui.Image?,
+              as String?,
       latitude: null == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
@@ -625,7 +625,7 @@ abstract class _$$MapUserInfoImplCopyWith<$Res>
   $Res call(
       {String userId,
       ApiUser user,
-      ui.Image? imageUrl,
+      String? imageUrl,
       double latitude,
       double longitude,
       bool isSelected,
@@ -666,7 +666,7 @@ class __$$MapUserInfoImplCopyWithImpl<$Res>
       imageUrl: freezed == imageUrl
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
-              as ui.Image?,
+              as String?,
       latitude: null == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
@@ -705,7 +705,7 @@ class _$MapUserInfoImpl extends _MapUserInfo {
   @override
   final ApiUser user;
   @override
-  final ui.Image? imageUrl;
+  final String? imageUrl;
   @override
   final double latitude;
   @override
@@ -755,7 +755,7 @@ abstract class _MapUserInfo extends MapUserInfo {
   const factory _MapUserInfo(
       {required final String userId,
       required final ApiUser user,
-      required final ui.Image? imageUrl,
+      required final String? imageUrl,
       required final double latitude,
       required final double longitude,
       required final bool isSelected,
@@ -767,7 +767,7 @@ abstract class _MapUserInfo extends MapUserInfo {
   @override
   ApiUser get user;
   @override
-  ui.Image? get imageUrl;
+  String? get imageUrl;
   @override
   double get latitude;
   @override
