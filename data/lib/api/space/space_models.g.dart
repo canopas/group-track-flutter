@@ -29,8 +29,8 @@ _$ApiSpaceMemberImpl _$$ApiSpaceMemberImplFromJson(Map<String, dynamic> json) =>
       user_id: json['user_id'] as String,
       role: (json['role'] as num).toInt(),
       location_enabled: json['location_enabled'] as bool,
-      identity_key_public: const BlobConverter()
-          .fromJson(json['identity_key_public'] as Map<String, dynamic>?),
+      identity_key_public:
+          const BlobConverter().fromJson(json['identity_key_public']),
       created_at: (json['created_at'] as num?)?.toInt(),
     );
 
@@ -42,7 +42,7 @@ Map<String, dynamic> _$$ApiSpaceMemberImplToJson(
       'user_id': instance.user_id,
       'role': instance.role,
       'location_enabled': instance.location_enabled,
-      'identity_key_public': _$JsonConverterToJson<Map<String, dynamic>?, Blob>(
+      'identity_key_public': _$JsonConverterToJson<dynamic, Blob>(
           instance.identity_key_public, const BlobConverter().toJson),
       'created_at': instance.created_at,
     };

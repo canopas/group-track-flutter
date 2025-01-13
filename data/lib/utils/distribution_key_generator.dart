@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 
-import 'package:data/utils/private_key_helper.dart';
+import 'package:data/log/logger.dart';
 import 'package:libsignal_protocol_dart/libsignal_protocol_dart.dart';
-import 'package:uuid/uuid.dart';
 
 import '../api/space/api_group_key_model.dart';
 import '../api/space/space_models.dart';
@@ -18,7 +15,7 @@ Future<ApiMemberKeyData> generateMemberKeyData(String spaceId,
   final deviceId = Random.secure().nextInt(0x7FFFFFFF);
   final groupAddress = SignalProtocolAddress(spaceId, deviceId);
   final sessionBuilder = GroupSessionBuilder(bufferedSenderKeyStore);
-  final senderKey = SenderKeyName(const Uuid().v4(), groupAddress);
+  final senderKey = SenderKeyName(Random().nextInt(0x7FFFFFFF).toString(), groupAddress);
 
   final distributionMessage = await sessionBuilder.create(senderKey);
   final distributionBytes = distributionMessage.serialize();
@@ -33,7 +30,7 @@ Future<ApiMemberKeyData> generateMemberKeyData(String spaceId,
     try {
       final publicKeyBytes = publicBlob.bytes;
       if (publicKeyBytes.length != 33) {
-        print("Invalid public key size for member ${member.user_id}");
+        logger.e("Invalid public key size for member ${member.user_id}");
         continue;
       }
 
@@ -46,10 +43,11 @@ Future<ApiMemberKeyData> generateMemberKeyData(String spaceId,
       );
       distributions.add(encryptedDistribution);
     } catch (e) {
-      print("Failed to decode public key for member ${member.user_id}: $e");
+      logger.e("Failed to decode public key for member ${member.user_id}: $e");
       continue;
     }
   }
+
 
   return ApiMemberKeyData(
       data_updated_at: DateTime.now().millisecondsSinceEpoch,

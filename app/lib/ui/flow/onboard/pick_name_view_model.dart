@@ -8,11 +8,12 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'pick_name_view_model.freezed.dart';
 
-final pickNameStateNotifierProvider = StateNotifierProvider.autoDispose<
-    PickNameStateNotifier, PickNameState>((ref) {
+final pickNameStateNotifierProvider =
+    StateNotifierProvider.autoDispose<PickNameStateNotifier, PickNameState>(
+        (ref) {
   return PickNameStateNotifier(
-      ref.watch(authServiceProvider),
-      ref.watch(currentUserPod),
+    ref.read(authServiceProvider),
+    ref.read(currentUserPod),
   );
 });
 
@@ -21,17 +22,24 @@ class PickNameStateNotifier extends StateNotifier<PickNameState> {
   final ApiUser? user;
 
   PickNameStateNotifier(this._authService, this.user)
-      : super(PickNameState(firstName: TextEditingController(), lastName: TextEditingController(), user: user!));
+      : super(PickNameState(
+            firstName: TextEditingController(),
+            lastName: TextEditingController()));
 
   void enableNextButton() {
-    state = state.copyWith(enableBtn: state.firstName.text.isNotEmpty && state.firstName.text.length >= 3);
+    state = state.copyWith(
+        enableBtn: state.firstName.text.isNotEmpty &&
+            state.firstName.text.length >= 3);
   }
 
-  Future<void> saveUser(ApiUser user) async {
+  Future<void> saveUser() async {
     try {
+      if (user == null) return;
       state = state.copyWith(savingUser: true, error: null);
-      final newUser = user.copyWith(first_name: state.firstName.text, last_name: state.lastName.text);
-      _authService.updateCurrentUser(newUser);
+      final firstName = state.firstName.text;
+      final lastName = state.lastName.text;
+
+      _authService.updateUserName(firstName: firstName, lastName: lastName);
       state = state.copyWith(savingUser: false, saved: true, error: null);
     } catch (error, stack) {
       state = state.copyWith(savingUser: false, error: error);
@@ -41,6 +49,13 @@ class PickNameStateNotifier extends StateNotifier<PickNameState> {
         stackTrace: stack,
       );
     }
+  }
+
+  @override
+  void dispose() {
+    state.firstName.dispose();
+    state.lastName.dispose();
+    super.dispose();
   }
 }
 
@@ -53,6 +68,5 @@ class PickNameState with _$PickNameState {
     Object? error,
     required TextEditingController firstName,
     required TextEditingController lastName,
-    required ApiUser user,
   }) = _PickNameState;
 }

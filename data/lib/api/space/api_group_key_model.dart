@@ -11,8 +11,8 @@ class ApiGroupKey with _$ApiGroupKey {
   const ApiGroupKey._();
 
   const factory ApiGroupKey({
-    required int docUpdatedAt,
-    @Default({}) Map<String, ApiMemberKeyData> memberKeys,
+    required int doc_updated_at,
+    @Default({}) Map<String, ApiMemberKeyData> member_keys,
   }) = _ApiGroupKey;
 
   factory ApiGroupKey.fromJson(Map<String, dynamic> data) =>

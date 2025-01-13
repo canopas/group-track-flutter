@@ -2,25 +2,29 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/network/client.dart';
 import 'package:data/api/space/api_group_key_model.dart';
 import 'package:data/api/space/space_models.dart';
-import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../utils/buffered_sender_keystore.dart';
+import '../../utils/distribution_key_generator.dart';
 import '../auth/api_user_service.dart';
-import '../auth/auth_models.dart';
 
 final apiSpaceServiceProvider = StateProvider((ref) => ApiSpaceService(
       ref.read(firestoreProvider),
-      ref.read(currentUserPod),
       ref.read(apiUserServiceProvider),
+      ref.read(bufferedSenderKeystoreProvider),
     ));
 
 class ApiSpaceService {
   final FirebaseFirestore _db;
-  final ApiUser? _currentUser;
   final ApiUserService userService;
+  final BufferedSenderKeystore bufferedSenderKeystore;
 
-  ApiSpaceService(this._db, this._currentUser, this.userService);
+  ApiSpaceService(
+    this._db,
+    this.userService,
+    this.bufferedSenderKeystore,
+  );
 
   CollectionReference get _spaceRef =>
       _db.collection("spaces").withConverter<ApiSpace>(
@@ -45,16 +49,24 @@ class ApiSpaceService {
             toFirestore: (key, options) => key.toJson());
   }
 
-  Future<String> createSpace(String name) async {
+  Future<String> createSpace(
+    String name,
+    String adminId,
+    Blob? identityKeyPublic,
+  ) async {
     final doc = _spaceRef.doc();
-    final adminId = _currentUser?.id ?? "";
     final space = ApiSpace(
         id: doc.id,
         admin_id: adminId,
         name: name,
         created_at: DateTime.now().millisecondsSinceEpoch);
     await doc.set(space);
-    await joinSpace(doc.id, adminId);
+
+    final emptyGroupKeys =
+        ApiGroupKey(doc_updated_at: DateTime.now().millisecondsSinceEpoch);
+
+    await spaceGroupKeysDocRef(doc.id).set(emptyGroupKeys);
+    await joinSpace(doc.id, adminId, identityKeyPublic);
     return doc.id;
   }
 
@@ -66,12 +78,14 @@ class ApiSpaceService {
     return null;
   }
 
-  Future<void> joinSpace(String spaceId, String userId,
+  Future<void> joinSpace(String spaceId, String userId, Blob? identityKeyPublic,
       {int role = SPACE_MEMBER_ROLE_MEMBER}) async {
+
     final member = ApiSpaceMember(
       space_id: spaceId,
       user_id: userId,
       role: role,
+      identity_key_public: identityKeyPublic,
       location_enabled: true,
       id: const Uuid().v4(),
       created_at: DateTime.now().millisecondsSinceEpoch,
@@ -79,6 +93,8 @@ class ApiSpaceService {
 
     await spaceMemberRef(spaceId).doc(userId).set(member.toJson());
     await userService.addSpaceId(userId, spaceId);
+
+    await _distributeSenderKeyToSpaceMembers(spaceId, userId);
   }
 
   Future<List<ApiSpaceMember>> getMembersBySpaceId(String spaceId) async {
@@ -160,23 +176,40 @@ class ApiSpaceService {
     for (final doc in querySnapshot.docs) {
       await doc.reference.delete();
     }
+
+    final docRef = spaceGroupKeysDocRef(spaceId);
+    await docRef.update({
+      "doc_updated_at": DateTime.now().millisecondsSinceEpoch,
+      "member_keys.$userId": FieldValue.delete()
+    });
   }
 
   Future<void> updateSpace(ApiSpace space) async {
     await _spaceRef.doc(space.id).set(space);
   }
 
-  Future<void> updateGroupKeys(
+  Future<void> _distributeSenderKeyToSpaceMembers(
+      String spaceId, String userId) async {
+    final spaceMembers = await getMembersBySpaceId(spaceId);
+    final membersKeyData = await generateMemberKeyData(spaceId,
+        senderUserId: userId,
+        spaceMembers: spaceMembers,
+        bufferedSenderKeyStore: bufferedSenderKeystore);
+
+    await _updateGroupKeys(spaceId, userId, membersKeyData);
+  }
+
+  Future<void> _updateGroupKeys(
       String spaceId, String userId, ApiMemberKeyData membersKeyData) async {
     await _db.runTransaction((transaction) async {
       final groupKeysDocRef = spaceGroupKeysDocRef(spaceId);
       final snapshot = await transaction.get(groupKeysDocRef);
 
       final updatedAt = DateTime.now().millisecondsSinceEpoch;
-      final data = snapshot.data() ?? ApiGroupKey(docUpdatedAt: updatedAt);
+      final data = snapshot.data() ?? ApiGroupKey(doc_updated_at: updatedAt);
 
       final oldMemberKeyData =
-          data.memberKeys[userId] ?? const ApiMemberKeyData();
+          data.member_keys[userId] ?? const ApiMemberKeyData();
 
       final newMemberKeyData = oldMemberKeyData.copyWith(
         member_device_id: membersKeyData.member_device_id,
@@ -185,7 +218,7 @@ class ApiSpaceService {
       );
 
       final updates = {
-        'member_keys.$userId': newMemberKeyData,
+        'member_keys.$userId': newMemberKeyData.toJson(),
         'doc_updated_at': DateTime.now().millisecondsSinceEpoch,
       };
 

@@ -20,8 +20,8 @@ ApiGroupKey _$ApiGroupKeyFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ApiGroupKey {
-  int get docUpdatedAt => throw _privateConstructorUsedError;
-  Map<String, ApiMemberKeyData> get memberKeys =>
+  int get doc_updated_at => throw _privateConstructorUsedError;
+  Map<String, ApiMemberKeyData> get member_keys =>
       throw _privateConstructorUsedError;
 
   /// Serializes this ApiGroupKey to a JSON map.
@@ -40,7 +40,7 @@ abstract class $ApiGroupKeyCopyWith<$Res> {
           ApiGroupKey value, $Res Function(ApiGroupKey) then) =
       _$ApiGroupKeyCopyWithImpl<$Res, ApiGroupKey>;
   @useResult
-  $Res call({int docUpdatedAt, Map<String, ApiMemberKeyData> memberKeys});
+  $Res call({int doc_updated_at, Map<String, ApiMemberKeyData> member_keys});
 }
 
 /// @nodoc
@@ -58,17 +58,17 @@ class _$ApiGroupKeyCopyWithImpl<$Res, $Val extends ApiGroupKey>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? docUpdatedAt = null,
-    Object? memberKeys = null,
+    Object? doc_updated_at = null,
+    Object? member_keys = null,
   }) {
     return _then(_value.copyWith(
-      docUpdatedAt: null == docUpdatedAt
-          ? _value.docUpdatedAt
-          : docUpdatedAt // ignore: cast_nullable_to_non_nullable
+      doc_updated_at: null == doc_updated_at
+          ? _value.doc_updated_at
+          : doc_updated_at // ignore: cast_nullable_to_non_nullable
               as int,
-      memberKeys: null == memberKeys
-          ? _value.memberKeys
-          : memberKeys // ignore: cast_nullable_to_non_nullable
+      member_keys: null == member_keys
+          ? _value.member_keys
+          : member_keys // ignore: cast_nullable_to_non_nullable
               as Map<String, ApiMemberKeyData>,
     ) as $Val);
   }
@@ -82,7 +82,7 @@ abstract class _$$ApiGroupKeyImplCopyWith<$Res>
       __$$ApiGroupKeyImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int docUpdatedAt, Map<String, ApiMemberKeyData> memberKeys});
+  $Res call({int doc_updated_at, Map<String, ApiMemberKeyData> member_keys});
 }
 
 /// @nodoc
@@ -98,17 +98,17 @@ class __$$ApiGroupKeyImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? docUpdatedAt = null,
-    Object? memberKeys = null,
+    Object? doc_updated_at = null,
+    Object? member_keys = null,
   }) {
     return _then(_$ApiGroupKeyImpl(
-      docUpdatedAt: null == docUpdatedAt
-          ? _value.docUpdatedAt
-          : docUpdatedAt // ignore: cast_nullable_to_non_nullable
+      doc_updated_at: null == doc_updated_at
+          ? _value.doc_updated_at
+          : doc_updated_at // ignore: cast_nullable_to_non_nullable
               as int,
-      memberKeys: null == memberKeys
-          ? _value._memberKeys
-          : memberKeys // ignore: cast_nullable_to_non_nullable
+      member_keys: null == member_keys
+          ? _value._member_keys
+          : member_keys // ignore: cast_nullable_to_non_nullable
               as Map<String, ApiMemberKeyData>,
     ));
   }
@@ -118,28 +118,28 @@ class __$$ApiGroupKeyImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ApiGroupKeyImpl extends _ApiGroupKey {
   const _$ApiGroupKeyImpl(
-      {required this.docUpdatedAt,
-      final Map<String, ApiMemberKeyData> memberKeys = const {}})
-      : _memberKeys = memberKeys,
+      {required this.doc_updated_at,
+      final Map<String, ApiMemberKeyData> member_keys = const {}})
+      : _member_keys = member_keys,
         super._();
 
   factory _$ApiGroupKeyImpl.fromJson(Map<String, dynamic> json) =>
       _$$ApiGroupKeyImplFromJson(json);
 
   @override
-  final int docUpdatedAt;
-  final Map<String, ApiMemberKeyData> _memberKeys;
+  final int doc_updated_at;
+  final Map<String, ApiMemberKeyData> _member_keys;
   @override
   @JsonKey()
-  Map<String, ApiMemberKeyData> get memberKeys {
-    if (_memberKeys is EqualUnmodifiableMapView) return _memberKeys;
+  Map<String, ApiMemberKeyData> get member_keys {
+    if (_member_keys is EqualUnmodifiableMapView) return _member_keys;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(_memberKeys);
+    return EqualUnmodifiableMapView(_member_keys);
   }
 
   @override
   String toString() {
-    return 'ApiGroupKey(docUpdatedAt: $docUpdatedAt, memberKeys: $memberKeys)';
+    return 'ApiGroupKey(doc_updated_at: $doc_updated_at, member_keys: $member_keys)';
   }
 
   @override
@@ -147,16 +147,16 @@ class _$ApiGroupKeyImpl extends _ApiGroupKey {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ApiGroupKeyImpl &&
-            (identical(other.docUpdatedAt, docUpdatedAt) ||
-                other.docUpdatedAt == docUpdatedAt) &&
+            (identical(other.doc_updated_at, doc_updated_at) ||
+                other.doc_updated_at == doc_updated_at) &&
             const DeepCollectionEquality()
-                .equals(other._memberKeys, _memberKeys));
+                .equals(other._member_keys, _member_keys));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, docUpdatedAt,
-      const DeepCollectionEquality().hash(_memberKeys));
+  int get hashCode => Object.hash(runtimeType, doc_updated_at,
+      const DeepCollectionEquality().hash(_member_keys));
 
   /// Create a copy of ApiGroupKey
   /// with the given fields replaced by the non-null parameter values.
@@ -176,17 +176,17 @@ class _$ApiGroupKeyImpl extends _ApiGroupKey {
 
 abstract class _ApiGroupKey extends ApiGroupKey {
   const factory _ApiGroupKey(
-      {required final int docUpdatedAt,
-      final Map<String, ApiMemberKeyData> memberKeys}) = _$ApiGroupKeyImpl;
+      {required final int doc_updated_at,
+      final Map<String, ApiMemberKeyData> member_keys}) = _$ApiGroupKeyImpl;
   const _ApiGroupKey._() : super._();
 
   factory _ApiGroupKey.fromJson(Map<String, dynamic> json) =
       _$ApiGroupKeyImpl.fromJson;
 
   @override
-  int get docUpdatedAt;
+  int get doc_updated_at;
   @override
-  Map<String, ApiMemberKeyData> get memberKeys;
+  Map<String, ApiMemberKeyData> get member_keys;
 
   /// Create a copy of ApiGroupKey
   /// with the given fields replaced by the non-null parameter values.

@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/converter/blob_converter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-
 part 'space_models.freezed.dart';
 part 'space_models.g.dart';
 

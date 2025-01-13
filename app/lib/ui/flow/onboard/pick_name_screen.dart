@@ -1,4 +1,3 @@
-import 'package:data/api/auth/auth_models.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:style/button/bottom_sticky_overlay.dart';
@@ -16,9 +15,7 @@ import 'package:yourspace_flutter/ui/flow/onboard/pick_name_view_model.dart';
 import '../../components/no_internet_screen.dart';
 
 class PickNameScreen extends ConsumerStatefulWidget {
-  final ApiUser? user;
-
-  const PickNameScreen({super.key, this.user});
+  const PickNameScreen({super.key});
 
   @override
   ConsumerState<PickNameScreen> createState() => _PickNameScreenState();
@@ -68,7 +65,7 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
               enabled: state.enableBtn,
               progress: state.savingUser,
               onPressed: () {
-                _checkInternet(widget.user ?? state.user);
+                _checkInternet();
               },
             ),
           )
@@ -113,9 +110,9 @@ class _PickNameScreenState extends ConsumerState<PickNameScreen> {
     });
   }
 
-  void _checkInternet(ApiUser user) async {
+  void _checkInternet() async {
     final isNetworkOff = await checkInternetConnectivity();
-    isNetworkOff ? _showSnackBar() : _notifier.saveUser(user);
+    isNetworkOff ? _showSnackBar() : _notifier.saveUser();
   }
 
   void _showSnackBar() {

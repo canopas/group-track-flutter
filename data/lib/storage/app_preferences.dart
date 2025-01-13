@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:data/storage/preferences_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';

@@ -33,6 +33,7 @@ final homeViewStateProvider =
     ref.read(currentUserPod),
     ref.read(apiUserServiceProvider),
     ref.read(currentUserSessionPod),
+    ref.read(authServiceProvider)
   );
   ref.listen(currentUserPod, (prev, user) {
     notifier._onUpdateUser(prevUser: prev, currentUser: user);
@@ -54,6 +55,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   ApiUser? _currentUser;
   final ApiUserService userService;
   final ApiSession? _userSession;
+  final AuthService authService;
 
   HomeViewNotifier(
     this.spaceService,
@@ -64,13 +66,15 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this._currentUser,
     this.userService,
     this._userSession,
+    this.authService,
   ) : super(const HomeViewState()) {
-    updateUser();
+    _listenUser();
     fetchData();
     _listenPlaces();
   }
 
   StreamSubscription<List<SpaceInfo>>? _spacesSubscription;
+  StreamSubscription<ApiUser?>? _userSubscription;
   StreamSubscription<ApiSession?>? _userSessionSubscription;
   StreamSubscription<List<ApiPlace>?>? _spacePlacesSubscription;
 
@@ -86,18 +90,18 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     listenUserSession();
   }
 
-  void updateUser() async {
+  void _listenUser() async {
     if (_currentUser == null) return;
-    try {
-      final user = await userService.getUser(_currentUser!.id);
-      if (user != null) {
-        _currentUser = user;
-        userService.updateUser(user);
+
+    _userSubscription?.cancel();
+    _userSubscription =
+        userService.getUserStream(_currentUser!.id).listen((user) {
+      if (_currentUser != user) {
+        authService.saveUser(user);
       }
-    } catch (error) {
-      logger.e(
-          'HomeScreenViewModel: error while updating user ${_currentUser?.id}');
-    }
+    }, onError: (error) {
+      logger.e('HomeScreenViewModel: error while get user $error');
+    });
   }
 
   void _listenPlaces() async {
@@ -148,6 +152,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   }
 
   void _cancelSubscriptions() {
+    _userSubscription?.cancel();
     _spacePlacesSubscription?.cancel();
     _spacesSubscription?.cancel();
     _userSessionSubscription?.cancel();
@@ -200,7 +205,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
 
       await userService.updateCurrentUserState(userState,
           battery_pct: batterLevel);
-
     } catch (error, stack) {
       logger.e(
         'HomeViewNotifier: error while update current user state',
@@ -209,8 +213,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       );
     }
   }
-
-
 
   Future<int> checkUserState(ConnectivityResult result) async {
     final isLocationEnabled = await permissionService.isLocationAlwaysEnabled();

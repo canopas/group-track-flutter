@@ -108,19 +108,15 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
     final state = ref.watch(signInMethodsStateProvider);
     final user = ref.read(currentUserPod);
 
-    if (mounted && (user?.first_name == null || user!.first_name!.isEmpty)) {
-      PickNameRoute(user!).go(context);
+    if (mounted) {
+      if ((user?.first_name == null || user!.first_name!.isEmpty)) {
+        const PickNameRoute().go(context);
+      } else if (state.isNewUser && mounted) {
+        ConnectionRoute().go(context);
+      } else {
+        HomeRoute().go(context);
+      }
     }
-
-    if (state.isNewUser && mounted) {
-      ConnectionRoute().go(context);
-    } else {
-      navigateToHome();
-    }
-  }
-
-  void navigateToHome() {
-    if (mounted) HomeRoute().go(context);
   }
 
   void _listenSignInSuccess() {

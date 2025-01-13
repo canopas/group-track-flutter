@@ -22,12 +22,12 @@ _$ApiUserImpl _$$ApiUserImplFromJson(Map<String, dynamic> json) =>
           const [],
       battery_pct: (json['battery_pct'] as num?)?.toInt(),
       fcm_token: json['fcm_token'] as String? ?? "",
-      identity_key_public: const BlobConverter()
-          .fromJson(json['identity_key_public'] as Map<String, dynamic>?),
-      identity_key_private: const BlobConverter()
-          .fromJson(json['identity_key_private'] as Map<String, dynamic>?),
-      identity_key_salt: const BlobConverter()
-          .fromJson(json['identity_key_salt'] as Map<String, dynamic>?),
+      identity_key_public:
+          const BlobConverter().fromJson(json['identity_key_public']),
+      identity_key_private:
+          const BlobConverter().fromJson(json['identity_key_private']),
+      identity_key_salt:
+          const BlobConverter().fromJson(json['identity_key_salt']),
       state: (json['state'] as num?)?.toInt(),
       created_at: (json['created_at'] as num?)?.toInt(),
       updated_at: (json['updated_at'] as num?)?.toInt(),
@@ -46,12 +46,11 @@ Map<String, dynamic> _$$ApiUserImplToJson(_$ApiUserImpl instance) =>
       'space_ids': instance.space_ids,
       'battery_pct': instance.battery_pct,
       'fcm_token': instance.fcm_token,
-      'identity_key_public': _$JsonConverterToJson<Map<String, dynamic>?, Blob>(
+      'identity_key_public': _$JsonConverterToJson<dynamic, Blob>(
           instance.identity_key_public, const BlobConverter().toJson),
-      'identity_key_private':
-          _$JsonConverterToJson<Map<String, dynamic>?, Blob>(
-              instance.identity_key_private, const BlobConverter().toJson),
-      'identity_key_salt': _$JsonConverterToJson<Map<String, dynamic>?, Blob>(
+      'identity_key_private': _$JsonConverterToJson<dynamic, Blob>(
+          instance.identity_key_private, const BlobConverter().toJson),
+      'identity_key_salt': _$JsonConverterToJson<dynamic, Blob>(
           instance.identity_key_salt, const BlobConverter().toJson),
       'state': instance.state,
       'created_at': instance.created_at,

@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/location.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-
 import '../../converter/blob_converter.dart';
 
 part 'auth_models.freezed.dart';

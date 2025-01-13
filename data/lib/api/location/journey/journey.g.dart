@@ -60,14 +60,10 @@ _$EncryptedLocationJourneyImpl _$$EncryptedLocationJourneyImplFromJson(
     _$EncryptedLocationJourneyImpl(
       id: json['id'] as String?,
       user_id: json['user_id'] as String,
-      from_latitude: const BlobConverter()
-          .fromJson(json['from_latitude'] as Map<String, dynamic>?),
-      from_longitude: const BlobConverter()
-          .fromJson(json['from_longitude'] as Map<String, dynamic>?),
-      to_latitude: const BlobConverter()
-          .fromJson(json['to_latitude'] as Map<String, dynamic>?),
-      to_longitude: const BlobConverter()
-          .fromJson(json['to_longitude'] as Map<String, dynamic>?),
+      from_latitude: const BlobConverter().fromJson(json['from_latitude']),
+      from_longitude: const BlobConverter().fromJson(json['from_longitude']),
+      to_latitude: const BlobConverter().fromJson(json['to_latitude']),
+      to_longitude: const BlobConverter().fromJson(json['to_longitude']),
       routes: (json['routes'] as List<dynamic>?)
               ?.map((e) =>
                   EncryptedJourneyRoute.fromJson(e as Map<String, dynamic>))
@@ -87,9 +83,9 @@ Map<String, dynamic> _$$EncryptedLocationJourneyImplToJson(
       'user_id': instance.user_id,
       'from_latitude': const BlobConverter().toJson(instance.from_latitude),
       'from_longitude': const BlobConverter().toJson(instance.from_longitude),
-      'to_latitude': _$JsonConverterToJson<Map<String, dynamic>?, Blob>(
+      'to_latitude': _$JsonConverterToJson<dynamic, Blob>(
           instance.to_latitude, const BlobConverter().toJson),
-      'to_longitude': _$JsonConverterToJson<Map<String, dynamic>?, Blob>(
+      'to_longitude': _$JsonConverterToJson<dynamic, Blob>(
           instance.to_longitude, const BlobConverter().toJson),
       'routes': instance.routes.map((e) => e.toJson()).toList(),
       'route_distance': instance.route_distance,
@@ -108,10 +104,8 @@ Json? _$JsonConverterToJson<Json, Value>(
 _$EncryptedJourneyRouteImpl _$$EncryptedJourneyRouteImplFromJson(
         Map<String, dynamic> json) =>
     _$EncryptedJourneyRouteImpl(
-      latitude: const BlobConverter()
-          .fromJson(json['latitude'] as Map<String, dynamic>?),
-      longitude: const BlobConverter()
-          .fromJson(json['longitude'] as Map<String, dynamic>?),
+      latitude: const BlobConverter().fromJson(json['latitude']),
+      longitude: const BlobConverter().fromJson(json['longitude']),
     );
 
 Map<String, dynamic> _$$EncryptedJourneyRouteImplToJson(

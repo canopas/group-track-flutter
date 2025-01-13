@@ -4,23 +4,32 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-class BlobConverter implements JsonConverter<Blob, Map<String, dynamic>?> {
+class BlobConverter implements JsonConverter<Blob, dynamic> {
   const BlobConverter();
 
   @override
-  Blob fromJson(Map<String, dynamic>? json) {
-    if (json == null || !json.containsKey('_byteString'))  return Blob(Uint8List(0));
-    final byteString = json['_byteString'] as String;
-    final bytes = base64Decode(byteString);
-    return Blob(Uint8List.fromList(bytes));
+  Blob fromJson(dynamic json) {
+    if (json is Blob) {
+      return json;
+    }
+
+    if (json is Map<String, dynamic> && json.containsKey('_byteString')) {
+      final base64String = json['_byteString'] as String;
+      return Blob(base64Decode(base64String));
+    }
+
+
+    if (json is List<dynamic>) {
+      return Blob(Uint8List.fromList(json.cast<int>()));
+    }
+
+    return Blob(Uint8List(0));
   }
 
   @override
-  Map<String, dynamic>? toJson(Blob? blob) {
-    if (blob == null) return null;
+  dynamic toJson(Blob blob) {
     return {
       '_byteString': base64Encode(blob.bytes),
     };
   }
-
 }

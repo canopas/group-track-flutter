@@ -108,7 +108,6 @@ class ApiUserService {
         created_at: DateTime.now().millisecondsSinceEpoch,
       );
       await sessionDocRef.set(session);
-      //  await _locationService.saveLastKnownLocation(uid);
       return {'isNewUser': true, 'user': user, 'session': session};
     }
   }
@@ -117,7 +116,7 @@ class ApiUserService {
     if (userId == null) return null;
     var snapshot = await _userRef.doc(userId).get();
     if (snapshot.exists) {
-      return snapshot.data() as ApiUser;
+      return snapshot.data();
     }
     return null;
   }
@@ -160,6 +159,14 @@ class ApiUserService {
 
   Future<void> updateUser(ApiUser user) async {
     await _userRef.doc(user.id).set(user);
+  }
+
+  Future<void> updateUserName(String userId,
+      {required String firstName, String? lastName}) async {
+    await _userRef.doc(userId).update({
+      "first_name": firstName,
+      "last_name": lastName,
+    });
   }
 
   Future<void> deleteUser(String userId) async {
@@ -290,7 +297,6 @@ class ApiUserService {
 
   Future<void> updateKeys(
       String id, Blob publicKey, Blob privateKey, Blob saltBlob) async {
-
     await _userRef.doc(id).update({
       "identity_key_public": publicKey,
       "identity_key_private": privateKey,

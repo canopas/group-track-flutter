@@ -1,49 +1,53 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/auth/api_user_service.dart';
 import 'package:data/api/space/api_space_invitation_service.dart';
 import 'package:data/api/space/api_space_service.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:data/service/place_service.dart';
-import 'package:data/utils/buffered_sender_keystore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../api/auth/auth_models.dart';
 import '../api/place/api_place.dart';
 import '../storage/app_preferences.dart';
-import '../utils/distribution_key_generator.dart';
 import 'location_service.dart';
 
-final spaceServiceProvider = Provider((ref) => SpaceService(
-    ref.read(currentUserPod),
-    ref.read(apiSpaceServiceProvider),
-    ref.read(apiSpaceInvitationServiceProvider),
-    ref.read(currentSpaceId.notifier),
-    ref.read(apiUserServiceProvider),
-    ref.read(locationServiceProvider),
-    ref.read(placeServiceProvider),
-    ref.read(bufferedSenderKeystoreProvider)));
+final spaceServiceProvider = Provider((ref) {
+  final provider = SpaceService(
+      ref.read(currentUserPod),
+      ref.read(apiSpaceServiceProvider),
+      ref.read(apiSpaceInvitationServiceProvider),
+      ref.read(currentSpaceId.notifier),
+      ref.read(apiUserServiceProvider),
+      ref.read(locationServiceProvider),
+      ref.read(placeServiceProvider));
+
+  ref.listen(currentUserPod, (prev, user) {
+    provider._onUpdateUser(prevUser: prev, currentUser: user);
+  });
+
+  return provider;
+});
 
 class SpaceService {
-  final ApiUser? currentUser;
+  ApiUser? _currentUser;
   final ApiSpaceService spaceService;
   final ApiSpaceInvitationService spaceInvitationService;
   final StateController<String?> _currentSpaceIdController;
   final ApiUserService userService;
   final LocationService locationService;
   final PlaceService placeService;
-  final BufferedSenderKeystore bufferedSenderKeystore;
 
   SpaceService(
-    this.currentUser,
+    this._currentUser,
     this.spaceService,
     this.spaceInvitationService,
     this._currentSpaceIdController,
     this.userService,
     this.locationService,
     this.placeService,
-    this.bufferedSenderKeystore,
   );
 
   String? get currentSpaceId => _currentSpaceIdController.state;
@@ -52,20 +56,31 @@ class SpaceService {
     _currentSpaceIdController.state = value;
   }
 
-  Future<String> createSpaceAndGetInviteCode(String spaceName) async {
-    final spaceId = await spaceService.createSpace(spaceName);
+  void _onUpdateUser({ApiUser? prevUser, ApiUser? currentUser}) {
+    _currentUser = currentUser;
+  }
+
+  Future<String> createSpaceAndGetInviteCode({
+    required String spaceName,
+    required String userId,
+    required Blob? identityKeyPublic,
+  }) async {
+    final spaceId =
+        await spaceService.createSpace(spaceName, userId, identityKeyPublic);
     final generatedCode =
         await spaceInvitationService.createInvitation(spaceId);
     currentSpaceId = spaceId;
     return generatedCode;
   }
 
-  Future<void> joinSpace(String spaceId, String userId) async {
-    await spaceService.joinSpace(spaceId, userId);
+  Future<void> joinSpace(String spaceId) async {
+    final user = _currentUser;
+    if (user == null) return;
+
+    await spaceService.joinSpace(spaceId, user.id, user.identity_key_public);
     await placeService.joinUserToExistingPlaces(
-        userId: userId, spaceId: spaceId);
+        userId: user.id, spaceId: spaceId);
     currentSpaceId = spaceId;
-    await _distributeSenderKeyToSpaceMembers(spaceId, userId);
   }
 
   Stream<List<SpaceInfo>> streamAllSpace(String userId) {
@@ -261,16 +276,5 @@ class SpaceService {
     return CombineLatestStream.list(placeStreams).map((placesLists) {
       return placesLists.expand((places) => places).toList();
     });
-  }
-
-  Future<void> _distributeSenderKeyToSpaceMembers(
-      String spaceId, String userId) async {
-    final spaceMembers = await spaceService.getMembersBySpaceId(spaceId);
-    final membersKeyData = await generateMemberKeyData(spaceId,
-        senderUserId: userId,
-        spaceMembers: spaceMembers,
-        bufferedSenderKeyStore: bufferedSenderKeystore);
-
-    await spaceService.updateGroupKeys(spaceId, userId, membersKeyData);
   }
 }

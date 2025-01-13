@@ -29,10 +29,8 @@ _$EncryptedApiLocationImpl _$$EncryptedApiLocationImplFromJson(
     _$EncryptedApiLocationImpl(
       id: json['id'] as String,
       user_id: json['user_id'] as String,
-      latitude: const BlobConverter()
-          .fromJson(json['latitude'] as Map<String, dynamic>?),
-      longitude: const BlobConverter()
-          .fromJson(json['longitude'] as Map<String, dynamic>?),
+      latitude: const BlobConverter().fromJson(json['latitude']),
+      longitude: const BlobConverter().fromJson(json['longitude']),
       created_at: (json['created_at'] as num).toInt(),
     );
 

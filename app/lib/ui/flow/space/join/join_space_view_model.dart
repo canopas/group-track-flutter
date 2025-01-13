@@ -88,7 +88,7 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
     try {
       if (state.space == null || _currentUser == null) return;
       state = state.copyWith(verifying: true, error: null);
-      await spaceService.joinSpace(state.space?.id ?? '', _currentUser.id);
+      await spaceService.joinSpace(state.space?.id ?? '');
       state = state.copyWith(verifying: false, spaceJoined: true, error: null);
     } catch (error, stack) {
       state = state.copyWith(error: error, verifying: false);

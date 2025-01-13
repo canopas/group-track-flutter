@@ -42,9 +42,10 @@ final goRouterProvider = FutureProvider<GoRouter>((ref) async {
     final isIntroScreenShown = ref.read(isIntroScreenShownPod);
     final user = ref.read(currentUserPod);
 
+    print("XXX user $user");
     if (!isIntroScreenShown) return IntroRoute().location;
     if (user == null) return SignInMethodRoute().location;
-    if (user.first_name?.isEmpty ?? true) return PickNameRoute(user).location;
+    if (user.first_name?.isEmpty ?? true) return const PickNameRoute().location;
     return HomeRoute().location;
   }
 
@@ -86,15 +87,11 @@ class SignInMethodRoute extends GoRouteData {
   path: '/pick-name',
 )
 class PickNameRoute extends GoRouteData {
-  final ApiUser $extra;
-
-  const PickNameRoute(this.$extra);
+  const PickNameRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return PickNameScreen(
-      user: $extra,
-    );
+    return const PickNameScreen();
   }
 }
 

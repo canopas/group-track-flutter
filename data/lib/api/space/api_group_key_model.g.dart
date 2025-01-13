@@ -8,8 +8,8 @@ part of 'api_group_key_model.dart';
 
 _$ApiGroupKeyImpl _$$ApiGroupKeyImplFromJson(Map<String, dynamic> json) =>
     _$ApiGroupKeyImpl(
-      docUpdatedAt: (json['docUpdatedAt'] as num).toInt(),
-      memberKeys: (json['memberKeys'] as Map<String, dynamic>?)?.map(
+      doc_updated_at: (json['doc_updated_at'] as num).toInt(),
+      member_keys: (json['member_keys'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(
                 k, ApiMemberKeyData.fromJson(e as Map<String, dynamic>)),
           ) ??
@@ -18,8 +18,9 @@ _$ApiGroupKeyImpl _$$ApiGroupKeyImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$ApiGroupKeyImplToJson(_$ApiGroupKeyImpl instance) =>
     <String, dynamic>{
-      'docUpdatedAt': instance.docUpdatedAt,
-      'memberKeys': instance.memberKeys.map((k, e) => MapEntry(k, e.toJson())),
+      'doc_updated_at': instance.doc_updated_at,
+      'member_keys':
+          instance.member_keys.map((k, e) => MapEntry(k, e.toJson())),
     };
 
 _$ApiMemberKeyDataImpl _$$ApiMemberKeyDataImplFromJson(
@@ -46,11 +47,9 @@ _$EncryptedDistributionImpl _$$EncryptedDistributionImplFromJson(
         Map<String, dynamic> json) =>
     _$EncryptedDistributionImpl(
       recipientId: json['recipientId'] as String? ?? "",
-      ephemeralPub: const BlobConverter()
-          .fromJson(json['ephemeralPub'] as Map<String, dynamic>?),
-      iv: const BlobConverter().fromJson(json['iv'] as Map<String, dynamic>?),
-      ciphertext: const BlobConverter()
-          .fromJson(json['ciphertext'] as Map<String, dynamic>?),
+      ephemeralPub: const BlobConverter().fromJson(json['ephemeralPub']),
+      iv: const BlobConverter().fromJson(json['iv']),
+      ciphertext: const BlobConverter().fromJson(json['ciphertext']),
     );
 
 Map<String, dynamic> _$$EncryptedDistributionImplToJson(
@@ -68,8 +67,7 @@ _$ApiSenderKeyRecordImpl _$$ApiSenderKeyRecordImplFromJson(
       id: json['id'] as String,
       device_id: (json['device_id'] as num).toInt(),
       distribution_id: json['distribution_id'] as String,
-      record: const BlobConverter()
-          .fromJson(json['record'] as Map<String, dynamic>?),
+      record: const BlobConverter().fromJson(json['record']),
       address: json['address'] as String? ?? '',
       created_at: (json['created_at'] as num).toInt(),
     );

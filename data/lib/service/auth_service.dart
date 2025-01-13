@@ -15,12 +15,20 @@ import '../storage/app_preferences.dart';
 
 const NETWORK_STATUS_CHECK_INTERVAL = 5 * 60 * 1000;
 
-final authServiceProvider = Provider((ref) => AuthService(
-    ref.read(currentUserPod),
-    ref.read(apiUserServiceProvider),
-    ref.read(currentUserJsonPod.notifier),
-    ref.read(currentUserSessionJsonPod.notifier),
-    ref.read(userPassKeyPod.notifier)));
+final authServiceProvider = Provider((ref) {
+  final provider = AuthService(
+      ref.read(currentUserPod),
+      ref.read(apiUserServiceProvider),
+      ref.read(currentUserJsonPod.notifier),
+      ref.read(currentUserSessionJsonPod.notifier),
+      ref.read(userPassKeyPod.notifier));
+
+  ref.listen(currentUserPod, (prev, user) {
+    provider._onUpdateUser(prevUser: prev, currentUser: user);
+  });
+
+  return provider;
+});
 
 class AuthService {
   ApiUser? _currentUser;
@@ -59,8 +67,30 @@ class AuthService {
         (data['session'] as ApiSession).toJsonString();
 
     final isNewUser = data['isNewUser'] as bool;
-    if (isNewUser) generateAndSaveUserKeys("1111");
+    if (isNewUser) await generateAndSaveUserKeys("1111");
     return isNewUser;
+  }
+
+  Future<void> updateUserName(
+      {required String firstName, String? lastName}) async {
+    final user =
+        currentUser?.copyWith(first_name: firstName, last_name: lastName);
+    if (user == null) {
+      throw Exception("No user logged in");
+    }
+
+    await userService.updateUserName(user.id,
+        firstName: firstName, lastName: lastName);
+
+    userJsonNotifier.state = user.toJsonString();
+  }
+
+  void saveUser(ApiUser? user) {
+    userJsonNotifier.state = user?.toJsonString();
+  }
+
+  void _onUpdateUser({ApiUser? prevUser, ApiUser? currentUser}) {
+    _currentUser = currentUser;
   }
 
   Future<void> updateCurrentUser(ApiUser user) async {

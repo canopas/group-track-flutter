@@ -7,8 +7,7 @@ import 'package:libsignal_protocol_dart/libsignal_protocol_dart.dart';
 import '../api/space/api_group_key_model.dart';
 
 class EphemeralECDHUtils {
-  static const int syntheticIvLength =
-      16; // Length of the synthetic initialization vector (IV).
+  static const int syntheticIvLength = 16; // Length of the synthetic initialization vector (IV).
 
   /// Encrypts the provided plaintext for a specific recipient using their public key.
   static Future<EncryptedDistribution> encrypt(
@@ -17,7 +16,7 @@ class EphemeralECDHUtils {
     ECPublicKey receiverPub,
   ) async {
     final ephemeralPubKey = Curve.generateKeyPair();
-    final ephemeralPrivateKeyBytes = Curve.decodePrivatePoint(plaintext);
+    final ephemeralPrivateKeyBytes = ephemeralPubKey.privateKey;
     final masterSecret =
         Curve.calculateAgreement(receiverPub, ephemeralPrivateKeyBytes);
 
@@ -79,12 +78,11 @@ class EphemeralECDHUtils {
       utf8.encode("cipher"),
       secretKey: masterSecret,
     );
-
     final cipherKey = await mac.calculateMac(
       syntheticIv,
       secretKey: SecretKey(cipherKeyMaterial.bytes),
     );
 
-    return Uint8List.fromList(cipherKey.bytes);
+    return Uint8List.fromList(cipherKey.bytes.sublist(0, syntheticIvLength)); // TODO check if this is correct, getting 32 instead of 16
   }
 }
