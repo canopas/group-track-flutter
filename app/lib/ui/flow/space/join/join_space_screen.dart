@@ -14,7 +14,6 @@ import 'package:yourspace_flutter/ui/flow/navigation/routes.dart';
 import 'package:yourspace_flutter/ui/flow/space/join/join_space_view_model.dart';
 
 import '../../../components/app_page.dart';
-import '../../../components/no_internet_screen.dart';
 
 class JoinSpace extends ConsumerStatefulWidget {
   final bool fromOnboard;
@@ -33,7 +32,6 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     notifier = ref.watch(joinSpaceViewStateProvider.notifier);
     _observeError();
     _showCongratulationPrompt();
-    _observePop();
 
     return AppPage(
       title: widget.fromOnboard ? '' : context.l10n.join_space_title,
@@ -159,7 +157,7 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
             progress: state.verifying,
             enabled: state.enabled,
             onPressed: () {
-              notifier.getSpace();
+              notifier.verifyAndJoinSpace();
             },
           ),
           if (widget.fromOnboard) ...[
@@ -203,39 +201,20 @@ class _JoinSpaceState extends ConsumerState<JoinSpace> {
     });
   }
 
-  void _observePop() {
-    ref.listen(joinSpaceViewStateProvider.select((state) => state.spaceJoined),
-        (previous, next) {
-      if (next) {
-        context.pop();
-      }
-    });
-  }
-
   void _showCongratulationPrompt() {
-    final state = ref.watch(joinSpaceViewStateProvider);
     ref.listen(joinSpaceViewStateProvider.select((state) => state.space),
         (previous, next) {
       if (next != null) {
-        showConfirmation(
+        showOkayConfirmation(
           context,
-          title: context.l10n.join_space_title,
+          title: context.l10n.join_space_prompt_title,
           message: context.l10n.join_space_prompt_subtitle(next.name),
-          onConfirm: () {
-            _checkInternet(state.invitationCode);
+          barrierDismissible: false,
+          onOkay: () {
+            context.pop();
           },
-          onCancel: () => context.pop(),
         );
       }
     });
-  }
-
-  void _checkInternet(String inviteCode) async {
-    final isNetworkOff = await checkInternetConnectivity();
-    isNetworkOff ? _showSnackBar() : notifier.joinSpace();
-  }
-
-  void _showSnackBar() {
-    showErrorSnackBar(context, context.l10n.on_internet_error_sub_title);
   }
 }

@@ -109,7 +109,6 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
           .getStreamPlacesByUserId(_currentUser?.space_ids ?? List.empty())
           .listen((places) {
         if (places.isEmpty) {
-          logger.e('No places found for spaces.');
           return;
         }
 

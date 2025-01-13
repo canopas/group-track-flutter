@@ -101,7 +101,7 @@ class EditSpaceViewNotifier extends StateNotifier<EditSpaceViewState> {
       }
       await spaceService.leaveSpace(state.spaceInfo!.space.id, memberId);
       state = state.copyWith(
-          deleting: false, deleted: needToChangeAdmin ? true : false);
+          deleting: false, deleted: state.isAdmin ? false : true);
       if (state.spaceInfo?.space.admin_id == user?.id) {
         getSpaceDetails(state.spaceInfo!.space.id);
       }

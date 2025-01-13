@@ -84,64 +84,46 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
     state = state.copyWith(enabled: enabled);
   }
 
-  Future<void> joinSpace() async {
+  void verifyAndJoinSpace() async {
     try {
-      if (state.space == null || _currentUser == null) return;
-      state = state.copyWith(verifying: true, error: null);
-      await spaceService.joinSpace(state.space?.id ?? '', _currentUser.id);
-      state = state.copyWith(verifying: false, spaceJoined: true, error: null);
-    } catch (error, stack) {
-      state = state.copyWith(error: error, verifying: false);
-      logger.e(
-        'JoinSpaceViewNotifier: Error while join space with invitation code',
-        error: error,
-        stackTrace: stack,
-      );
-    }
-  }
+      if (_currentUser == null) return;
 
-  Future<String?> getInvitation(String code) async {
-    try {
       state = state.copyWith(
           verifying: true,
           errorInvalidInvitationCode: false,
-          alreadySpaceMember: false);
-      final invitation = await spaceInvitationService.getInvitation(code);
+          alreadySpaceMember: false,
+          error: null);
+
+      final invitation =
+          await spaceInvitationService.getInvitation(state.invitationCode);
       if (invitation == null) {
         state =
             state.copyWith(errorInvalidInvitationCode: true, verifying: false);
         _resetFlagsAfter30Sec();
-        return '';
+        return;
       }
       var spaceId = invitation.space_id;
       final userSpaces = authService.currentUser?.space_ids ?? [];
 
       if (userSpaces.contains(spaceId)) {
-        state = state.copyWith(
-            verifying: false, alreadySpaceMember: true, error: null);
+        state = state.copyWith(verifying: false, alreadySpaceMember: true);
         _resetFlagsAfter30Sec();
-        return '';
+        return;
       }
-      return spaceId;
+
+      if (spaceId.isEmpty) {
+        state = state.copyWith(verifying: false);
+        return;
+      }
+
+      await spaceService.joinSpace(spaceId, _currentUser.id);
+      final space = await spaceService.getSpace(spaceId);
+      state = state.copyWith(space: space, verifying: false, spaceJoined: true);
+
     } catch (error, stack) {
-      logger.e('JoinSpaceViewNotifier: Error while get group invitation',
+      logger.e('JoinSpaceViewNotifier: Error while verify and join space',
           error: error, stackTrace: stack);
       state = state.copyWith(error: error, verifying: false);
-      return null;
-    }
-  }
-
-  void getSpace() async {
-    try {
-      final spaceId = await getInvitation(state.invitationCode);
-      if (spaceId == null || spaceId.isEmpty) return;
-
-      final space = await spaceService.getSpace(spaceId);
-      state = state.copyWith(space: space);
-    } catch (error, stack) {
-      logger.e('JoinSpaceViewNotifier: Error while get space',
-          error: error, stackTrace: stack);
-      state = state.copyWith(error: error);
     }
   }
 

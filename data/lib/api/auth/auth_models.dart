@@ -7,6 +7,7 @@ import 'package:data/api/location/location.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_models.freezed.dart';
+
 part 'auth_models.g.dart';
 
 const LOGIN_TYPE_GOOGLE = 1;
@@ -54,7 +55,9 @@ class ApiUser with _$ApiUser {
   }
 
   String get firstChar {
-    return first_name!.isNotEmpty ? first_name![0].toUpperCase() : '';
+    return (first_name?.isNotEmpty ?? false)
+        ? first_name![0].toUpperCase()
+        : '';
   }
 
   bool get noNetWork {
