@@ -59,7 +59,9 @@ class ApiUser with _$ApiUser {
   }
 
   String get firstChar {
-    return first_name!.isNotEmpty ? first_name![0].toUpperCase() : '';
+    return (first_name?.isNotEmpty ?? false)
+        ? first_name![0].toUpperCase()
+        : '';
   }
 
   bool get noNetWork {

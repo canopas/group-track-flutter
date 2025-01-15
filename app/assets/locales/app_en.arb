@@ -104,7 +104,8 @@
   "join_space_get_code_from_space_text": "Get the code from the group creator to join.",
   "join_space_already_joined_error_text": "You are already member of this group",
   "join_space_invalid_code_error_text": "It appears the code is no longer valid or has expired. please review and enter valid code.",
-  "join_space_prompt_subtitle": "Are you sure you want to join this {spaceName} group.",
+  "join_space_prompt_title": "Congratulations!",
+  "join_space_prompt_subtitle": "You're now a member of the {spaceName} group for sharing your real-time location.",
   "@join_space_prompt_subtitle": {
     "placeholders": {
       "spaceName": {

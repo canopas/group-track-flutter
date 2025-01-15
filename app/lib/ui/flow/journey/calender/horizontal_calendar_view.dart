@@ -75,8 +75,9 @@ class _HorizontalCalendarViewState extends State<HorizontalCalendarView> {
 
   Widget _weekDayItem({required BuildContext context, required DateTime date}) {
     final bool isSelected = date.isSameDay(widget.selectedDate);
+    final groupCreatedDate = widget.allowedAfterDate.add(const Duration(days: -1));
     final isDayAfter = date.isAfter(DateTime.now());
-    final isDayBefore = date.isBefore(widget.allowedAfterDate);
+    final isDayBefore = date.isBefore(groupCreatedDate);
     final textColor = isDayAfter || isDayBefore
         ? context.colorScheme.textDisabled
         : context.colorScheme.textPrimary;
