@@ -34,37 +34,37 @@ void main() async {
   }
 
   final container = await _initContainer();
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage((message) {
+    return firebaseMessagingBackgroundHandler(message, container);
+  });
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
-  if (Platform.isAndroid) _configureService();
+  if (Platform.isAndroid) _configureService(container);
 
   if (await Permission.location.isGranted && Platform.isIOS) {
     await locationMethodChannel.invokeMethod('startTracking');
   }
 
-  locationMethodChannel.setMethodCallHandler(_handleLocationUpdates);
+  locationMethodChannel.setMethodCallHandler((call) {
+    return _handleLocationUpdates(call, container);
+  });
 
   runApp(
     UncontrolledProviderScope(container: container, child: const App()),
   );
 }
 
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+Future<void> firebaseMessagingBackgroundHandler(
+    RemoteMessage message, ProviderContainer container) async {
   await Firebase.initializeApp();
-  final networkService = NetworkService();
-  updateCurrentUserState(message, networkService);
-}
+  final networkService = container.read(networkServiceProvider);
 
-void updateCurrentUserState(
-    RemoteMessage message, NetworkService networkService) {
   final String? userId =
       message.data[NotificationNetworkStatusConst.KEY_USER_ID];
-  final bool isTypeNetworkStatus =
-  message
+  final bool isTypeNetworkStatus = message
       .data[NotificationNetworkStatusConst.NOTIFICATION_TYPE_NETWORK_STATUS];
   final bool isTypeUpdateState =
-  message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
+      message.data[NotificationUpdateStateConst.NOTIFICATION_TYPE_UPDATE_STATE];
 
   if (userId != null && (isTypeNetworkStatus || isTypeUpdateState)) {
     networkService.updateUserNetworkState(userId);
@@ -88,7 +88,8 @@ Future<ProviderContainer> _initContainer() async {
   return container;
 }
 
-Future<void> _handleLocationUpdates(MethodCall call) async {
+Future<void> _handleLocationUpdates(
+    MethodCall call, ProviderContainer container) async {
   if (call.method == 'onLocationUpdate') {
     final Map<String, dynamic> locationData =
         Map<String, dynamic>.from(call.arguments);
@@ -101,17 +102,20 @@ Future<void> _handleLocationUpdates(MethodCall call) async {
     );
 
     if (locationPosition.latitude != 0 && locationPosition.longitude != 0) {
-
-      await LocationManager.instance.updateUserLocation(locationPosition);
+      await container
+          .read(locationManagerProvider)
+          .updateUserLocation(locationPosition);
     }
   }
 }
 
 // Android background location getting
-void _configureService() async {
+void _configureService(ProviderContainer container) async {
   await bgService.configure(
     androidConfiguration: AndroidConfiguration(
-      onStart: onStart,
+      onStart: (service) {
+        onStart(service, container);
+      },
       autoStart: false,
       isForegroundMode: true,
       notificationChannelId: NOTIFICATION_CHANNEL_ID,
@@ -121,12 +125,13 @@ void _configureService() async {
   );
 
   if (await Permission.location.isGranted) {
-    LocationManager.instance.startService();
+    container.read(locationManagerProvider).startService();
   }
 }
 
 @pragma('vm:entry-point')
-Future<void> onStart(ServiceInstance service) async {
+Future<void> onStart(
+    ServiceInstance service, ProviderContainer container) async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!await Permission.location.isGranted) return;
 
@@ -153,7 +158,7 @@ Future<void> onStart(ServiceInstance service) async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  LocationManager.instance.startTracking();
+  container.read(locationManagerProvider).startTracking();
 
   service.on('stopService').listen((event) {
     service.stopSelf();

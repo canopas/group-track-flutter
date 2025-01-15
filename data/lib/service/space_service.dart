@@ -247,7 +247,7 @@ class SpaceService {
       List<Stream<ApiUserInfo>> userInfoStreams = members.map((member) {
         return CombineLatestStream.combine4(
           userService.getUserStream(member.user_id),
-          locationService.getCurrentLocationStream(member.user_id),
+          locationService.getCurrentLocationStream(spaceId, member.user_id),
           Stream.value(member.location_enabled),
           userService.getUserSessionStream(member.user_id),
           (user, location, isLocationEnabled, session) {

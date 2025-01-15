@@ -8,6 +8,7 @@ import 'package:libsignal_protocol_dart/libsignal_protocol_dart.dart';
 
 import '../api/network/client.dart';
 import '../api/space/api_group_key_model.dart';
+import '../api/space/api_space_service.dart';
 import '../storage/app_preferences.dart';
 
 final bufferedSenderKeystoreProvider = Provider((ref) => BufferedSenderKeystore(
@@ -28,11 +29,11 @@ class BufferedSenderKeystore extends SenderKeyStore {
   CollectionReference<ApiSenderKeyRecord> senderKeyRef(
       String spaceId, String userId) {
     return _db
-        .collection('spaces')
+        .collection(FIRESTORE_SPACE_PATH)
         .doc(spaceId)
-        .collection('space_members')
+        .collection(FIRESTORE_SPACE_MEMBER_PATH)
         .doc(userId)
-        .collection('sender_key_record')
+        .collection(FIRESTORE_SPACE_MEMBER_SENDER_KEY_RECORD)
         .withConverter<ApiSenderKeyRecord>(
             fromFirestore: ApiSenderKeyRecord.fromFireStore,
             toFirestore: (senderKey, options) => senderKey.toJson());

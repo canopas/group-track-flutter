@@ -1,50 +1,52 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/log/logger.dart';
-import 'package:data/storage/app_preferences.dart';
+import 'package:data/utils/buffered_sender_keystore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/auth/auth_models.dart';
 import '../api/location/location.dart';
 import '../api/network/client.dart';
 import '../api/space/api_group_key_model.dart';
+import '../api/space/api_space_service.dart';
 import '../utils/private_key_helper.dart';
 
-final locationServiceProvider =
-    Provider((ref) => LocationService(ref.read(firestoreProvider)));
+final locationServiceProvider = Provider((ref) => LocationService(
+    ref.read(firestoreProvider), ref.read(bufferedSenderKeystoreProvider)));
 
 class LocationService {
   final FirebaseFirestore _db;
+  final BufferedSenderKeystore _bufferedSenderKeystore;
 
-  LocationService(this._db);
+  LocationService(this._db, this._bufferedSenderKeystore);
 
-  CollectionReference get _userRef =>
-      _db.collection("users").withConverter<ApiUser>(
-          fromFirestore: ApiUser.fromFireStore,
-          toFirestore: (user, options) => user.toJson());
-
-  CollectionReference _locationRef(String userId) => _userRef
+  CollectionReference _locationRef(String spaceID, String userId) => _db
+      .collection(FIRESTORE_SPACE_PATH)
+      .doc(spaceID)
+      .collection(FIRESTORE_SPACE_MEMBER_PATH)
       .doc(userId)
-      .collection("user_locations")
+      .collection(FIRESTORE_SPACE_MEMBER_LOCATION_PATH)
       .withConverter<ApiLocation>(
           fromFirestore: ApiLocation.fromFireStore,
           toFirestore: (location, _) => location.toJson());
 
   DocumentReference<ApiGroupKey> spaceGroupKeysDocRef(String spaceId) {
-    return FirebaseFirestore.instance
-        .collection('spaces')
+    return _db
+        .collection(FIRESTORE_SPACE_PATH)
         .doc(spaceId)
-        .collection('group_keys')
-        .doc('group_keys')
+        .collection(FIRESTORE_SPACE_GROUP_KEYS_PATH)
+        .doc(FIRESTORE_SPACE_GROUP_KEYS_PATH)
         .withConverter<ApiGroupKey>(
             fromFirestore: ApiGroupKey.fromFireStore,
             toFirestore: (key, options) => key.toJson());
   }
 
-  Stream<List<ApiLocation>?> getCurrentLocationStream(String userId) {
-    return _locationRef(userId)
-        .where("user_id", isEqualTo: userId)
+  Stream<List<ApiLocation>?> getCurrentLocationStream(
+      String spaceId, String userId) {
+    return _locationRef(spaceId, userId)
         .orderBy('created_at', descending: true)
         .limit(1)
         .snapshots()
@@ -56,9 +58,8 @@ class LocationService {
     });
   }
 
-  Future<ApiLocation?> getCurrentLocation(String userId) async {
-    var snapshot = await _locationRef(userId)
-        .where("user_id", isEqualTo: userId)
+  Future<ApiLocation?> getCurrentLocation(String spaceId, String userId) async {
+    var snapshot = await _locationRef(spaceId, userId)
         .orderBy('created_at', descending: true)
         .limit(1)
         .get();
@@ -108,15 +109,37 @@ class LocationService {
         return;
       }
 
-      final data = getGroupCipherAndDistributionMessage(
+      final groupCipher = await getGroupCipher(
         spaceId: spaceId,
         deviceId: memberKeyData.member_device_id,
         distribution: distribution,
         privateKeyBytes: user.identity_key_private!.bytes,
         salt: user.identity_key_salt!.bytes,
         passkey: passKey,
-        bufferedSenderKeyStore: ,
+        bufferedSenderKeyStore: _bufferedSenderKeystore,
       );
+
+      if (groupCipher == null) {
+        logger.e('LocationService: Error while getting group cipher');
+        return;
+      }
+
+      final encryptedLatitude = await groupCipher.encrypt(
+          Uint8List.fromList(utf8.encode(locationData.latitude.toString())));
+      final encryptedLongitude = await groupCipher.encrypt(
+          Uint8List.fromList(utf8.encode(locationData.longitude.toString())));
+
+      final docRef = _locationRef(spaceId, user.id).doc();
+
+      final location = EncryptedApiLocation(
+        id: docRef.id,
+        user_id: user.id,
+        latitude: Blob(encryptedLatitude),
+        longitude: Blob(encryptedLongitude),
+        created_at: locationData.timestamp.millisecondsSinceEpoch,
+      );
+
+      await docRef.set(location);
     });
   }
 }

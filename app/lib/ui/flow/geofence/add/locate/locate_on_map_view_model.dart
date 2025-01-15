@@ -44,14 +44,15 @@ class LocateOnMapVieNotifier extends StateNotifier<LocateOnMapState> {
 
   void getCurrentUserLocation() async {
     try {
+      if (spaceService.currentSpaceId?.isEmpty ?? true) return;
+
       final isEnabled = await permissionService.isLocationPermissionGranted();
       if (isEnabled && _currentUser != null) {
         state = state.copyWith(loading: true);
-        final location =
-            await locationService.getCurrentLocation(_currentUser.id);
+        final location = await locationService.getCurrentLocation(
+            spaceService.currentSpaceId!, _currentUser.id);
         if (location != null) {
-          final latLng =
-              LatLng(location.latitude, location.longitude);
+          final latLng = LatLng(location.latitude, location.longitude);
           state = state.copyWith(
             currentLatLng: latLng,
             centerPosition:
@@ -81,9 +82,9 @@ class LocateOnMapVieNotifier extends StateNotifier<LocateOnMapState> {
   void onTapAddPlaceBtn(String spaceId, String placeName) async {
     try {
       if (_currentUser != null && state.cameraLatLng != null) {
-      state = state.copyWith(addingPlace: true);
-      final members = await spaceService.getMemberBySpaceId(spaceId);
-      final memberIds = members.map((member) => member.user_id).toList();
+        state = state.copyWith(addingPlace: true);
+        final members = await spaceService.getMemberBySpaceId(spaceId);
+        final memberIds = members.map((member) => member.user_id).toList();
         await placesService.addPlace(
             spaceId,
             placeName,

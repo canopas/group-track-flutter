@@ -17,31 +17,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api/location/location.dart';
 import '../log/logger.dart';
-import '../utils/private_key_helper.dart';
 
 const MOVING_DISTANCE = 10; // meters
 const STEADY_DISTANCE = 50; // meters
 
-final locationManagerProvider = Provider((ref) => LocationManager.instance);
+final locationManagerProvider = Provider((ref) => LocationManager(
+      ref.read(locationServiceProvider),
+      ref.read(journeyRepositoryProvider),
+    ));
 
 final bgService = FlutterBackgroundService();
 const locationMethodChannel = MethodChannel('com.grouptrack/location');
 
 class LocationManager {
-  static LocationManager? _instance;
-
   final LocationService _locationService;
   final JourneyRepository _journeyRepository;
 
   LocationManager(this._locationService, this._journeyRepository);
-
-  static LocationManager get instance {
-    _instance ??= LocationManager(
-      LocationService(FirebaseFirestore.instance),
-      JourneyRepository.instance,
-    );
-    return _instance!;
-  }
 
   StreamSubscription<Position>? positionSubscription;
   Position? _lastPosition;
@@ -154,6 +146,7 @@ class LocationManager {
     if (user == null) return;
 
     try {
+      print("XXX updateUserLocation ${locationPosition}");
       await saveLocation(locationPosition);
 
       await _journeyRepository.saveLocationJourney(

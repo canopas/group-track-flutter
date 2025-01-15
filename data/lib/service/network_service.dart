@@ -2,15 +2,25 @@ import 'package:battery_plus/battery_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../api/auth/auth_models.dart';
 import '../api/location/location.dart';
+import '../api/network/client.dart';
 import '../log/logger.dart';
 import 'location_manager.dart';
 
+final networkServiceProvider = Provider((ref) => NetworkService(
+      ref.read(locationManagerProvider),
+      ref.read(firestoreProvider),
+    ));
+
 class NetworkService {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final LocationManager locationManager;
+  final FirebaseFirestore _db;
+
+  NetworkService(this.locationManager, this._db);
 
   CollectionReference get _userRef =>
       _db.collection("users").withConverter<ApiUser>(
@@ -45,16 +55,15 @@ class NetworkService {
 
   void _updateLocation(String userId) async {
     try {
-      final position = await LocationManager.instance
-          .getLastLocation(timeout: const Duration(seconds: 30));
+      final position = await locationManager.getLastLocation(
+          timeout: const Duration(seconds: 30));
 
       if (position != null) {
         final location = LocationData(
             latitude: position.latitude,
             longitude: position.longitude,
             timestamp: position.timestamp);
-        LocationManager.instance.saveLocation(location);
-
+        locationManager.saveLocation(location);
       }
     } catch (e, s) {
       logger.e("NetworkService: Error while update user location",

@@ -7,30 +7,24 @@ import 'package:data/api/location/journey/journey.dart';
 import 'package:data/api/location/location.dart';
 import 'package:data/log/logger.dart';
 import 'package:data/repository/journey_generator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/location/journey/api_journey_service.dart';
 import '../storage/location_caches.dart';
 
-class JourneyRepository {
-  static JourneyRepository? _instance;
+final journeyRepositoryProvider =
+    Provider((ref) => JourneyRepository(ref.read(journeyServiceProvider)));
 
+class JourneyRepository {
   final ApiJourneyService journeyService;
   final LocationCache locationCache = LocationCache.instance;
 
   JourneyRepository(this.journeyService);
 
-  static JourneyRepository get instance {
-    _instance ??= JourneyRepository(
-      ApiJourneyService(FirebaseFirestore.instance),
-    );
-    return _instance!;
-  }
-
   Future<void> saveLocationJourney({
     required LocationData extractedLocation,
     required String userId,
   }) async {
-
     try {
       _cacheLocations(extractedLocation, userId);
 

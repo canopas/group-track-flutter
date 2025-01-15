@@ -98,8 +98,8 @@ Future<Uint8List> _decryptData(
   }
 }
 
-Future<Pair<SenderKeyDistributionMessageWrapper, GroupCipher>?>
-    getGroupCipherAndDistributionMessage({
+Future<GroupCipher?>
+    getGroupCipher({
   required String spaceId,
   required int deviceId,
   required Uint8List privateKeyBytes,
@@ -145,7 +145,7 @@ Future<Pair<SenderKeyDistributionMessageWrapper, GroupCipher>?>
     GroupSessionBuilder(bufferedSenderKeyStore)
         .process(senderKey, distributionMessage);
     final groupCipher = GroupCipher(bufferedSenderKeyStore, senderKey);
-    return Pair(distributionMessage, groupCipher);
+    return groupCipher;
   } catch (e, s) {
     logger.e("Error processing group session", error: e, stackTrace: s);
     return null;
@@ -164,11 +164,4 @@ Future<ECPrivateKey?> _decodePrivateKey(
         await _decryptData(privateKeyBytes, salt, passkey);
     return Curve.decodePrivatePoint(decodedPrivateKey);
   }
-}
-
-class Pair<T1, T2> {
-  final T1 first;
-  final T2 second;
-
-  Pair(this.first, this.second);
 }
