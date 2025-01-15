@@ -31,6 +31,7 @@ mixin _$MapViewState {
   String get mapType => throw _privateConstructorUsedError;
   Object? get error => throw _privateConstructorUsedError;
   DateTime? get showLocationDialog => throw _privateConstructorUsedError;
+  bool get isDarMode => throw _privateConstructorUsedError;
   GoogleMapController? get mapController => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -60,6 +61,7 @@ abstract class $MapViewStateCopyWith<$Res> {
       String mapType,
       Object? error,
       DateTime? showLocationDialog,
+      bool isDarMode,
       GoogleMapController? mapController});
 
   $ApiUserCopyWith<$Res>? get selectedUser;
@@ -93,6 +95,7 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
     Object? mapType = null,
     Object? error = freezed,
     Object? showLocationDialog = freezed,
+    Object? isDarMode = null,
     Object? mapController = freezed,
   }) {
     return _then(_value.copyWith(
@@ -153,6 +156,10 @@ class _$MapViewStateCopyWithImpl<$Res, $Val extends MapViewState>
           ? _value.showLocationDialog
           : showLocationDialog // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      isDarMode: null == isDarMode
+          ? _value.isDarMode
+          : isDarMode // ignore: cast_nullable_to_non_nullable
+              as bool,
       mapController: freezed == mapController
           ? _value.mapController
           : mapController // ignore: cast_nullable_to_non_nullable
@@ -197,6 +204,7 @@ abstract class _$$MapViewStateImplCopyWith<$Res>
       String mapType,
       Object? error,
       DateTime? showLocationDialog,
+      bool isDarMode,
       GoogleMapController? mapController});
 
   @override
@@ -229,6 +237,7 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
     Object? mapType = null,
     Object? error = freezed,
     Object? showLocationDialog = freezed,
+    Object? isDarMode = null,
     Object? mapController = freezed,
   }) {
     return _then(_$MapViewStateImpl(
@@ -286,6 +295,10 @@ class __$$MapViewStateImplCopyWithImpl<$Res>
           ? _value.showLocationDialog
           : showLocationDialog // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      isDarMode: null == isDarMode
+          ? _value.isDarMode
+          : isDarMode // ignore: cast_nullable_to_non_nullable
+              as bool,
       mapController: freezed == mapController
           ? _value.mapController
           : mapController // ignore: cast_nullable_to_non_nullable
@@ -313,6 +326,7 @@ class _$MapViewStateImpl implements _MapViewState {
       required this.mapType,
       this.error,
       this.showLocationDialog,
+      this.isDarMode = false,
       this.mapController})
       : _places = places,
         _userInfos = userInfos;
@@ -369,11 +383,14 @@ class _$MapViewStateImpl implements _MapViewState {
   @override
   final DateTime? showLocationDialog;
   @override
+  @JsonKey()
+  final bool isDarMode;
+  @override
   final GoogleMapController? mapController;
 
   @override
   String toString() {
-    return 'MapViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, hasLocationEnabled: $hasLocationEnabled, hasLocationServiceEnabled: $hasLocationServiceEnabled, hasNotificationEnabled: $hasNotificationEnabled, hasFineLocationEnabled: $hasFineLocationEnabled, places: $places, userInfos: $userInfos, selectedUser: $selectedUser, currentUserLocation: $currentUserLocation, defaultPosition: $defaultPosition, spaceInvitationCode: $spaceInvitationCode, mapType: $mapType, error: $error, showLocationDialog: $showLocationDialog, mapController: $mapController)';
+    return 'MapViewState(loading: $loading, fetchingInviteCode: $fetchingInviteCode, hasLocationEnabled: $hasLocationEnabled, hasLocationServiceEnabled: $hasLocationServiceEnabled, hasNotificationEnabled: $hasNotificationEnabled, hasFineLocationEnabled: $hasFineLocationEnabled, places: $places, userInfos: $userInfos, selectedUser: $selectedUser, currentUserLocation: $currentUserLocation, defaultPosition: $defaultPosition, spaceInvitationCode: $spaceInvitationCode, mapType: $mapType, error: $error, showLocationDialog: $showLocationDialog, isDarMode: $isDarMode, mapController: $mapController)';
   }
 
   @override
@@ -408,6 +425,8 @@ class _$MapViewStateImpl implements _MapViewState {
             const DeepCollectionEquality().equals(other.error, error) &&
             (identical(other.showLocationDialog, showLocationDialog) ||
                 other.showLocationDialog == showLocationDialog) &&
+            (identical(other.isDarMode, isDarMode) ||
+                other.isDarMode == isDarMode) &&
             (identical(other.mapController, mapController) ||
                 other.mapController == mapController));
   }
@@ -430,6 +449,7 @@ class _$MapViewStateImpl implements _MapViewState {
       mapType,
       const DeepCollectionEquality().hash(error),
       showLocationDialog,
+      isDarMode,
       mapController);
 
   @JsonKey(ignore: true)
@@ -456,6 +476,7 @@ abstract class _MapViewState implements MapViewState {
       required final String mapType,
       final Object? error,
       final DateTime? showLocationDialog,
+      final bool isDarMode,
       final GoogleMapController? mapController}) = _$MapViewStateImpl;
 
   @override
@@ -489,6 +510,8 @@ abstract class _MapViewState implements MapViewState {
   @override
   DateTime? get showLocationDialog;
   @override
+  bool get isDarMode;
+  @override
   GoogleMapController? get mapController;
   @override
   @JsonKey(ignore: true)
@@ -500,7 +523,7 @@ abstract class _MapViewState implements MapViewState {
 mixin _$MapUserInfo {
   String get userId => throw _privateConstructorUsedError;
   ApiUser get user => throw _privateConstructorUsedError;
-  ui.Image? get imageUrl => throw _privateConstructorUsedError;
+  String? get imageUrl => throw _privateConstructorUsedError;
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
   bool get isSelected => throw _privateConstructorUsedError;
@@ -520,7 +543,7 @@ abstract class $MapUserInfoCopyWith<$Res> {
   $Res call(
       {String userId,
       ApiUser user,
-      ui.Image? imageUrl,
+      String? imageUrl,
       double latitude,
       double longitude,
       bool isSelected,
@@ -562,7 +585,7 @@ class _$MapUserInfoCopyWithImpl<$Res, $Val extends MapUserInfo>
       imageUrl: freezed == imageUrl
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
-              as ui.Image?,
+              as String?,
       latitude: null == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
@@ -602,7 +625,7 @@ abstract class _$$MapUserInfoImplCopyWith<$Res>
   $Res call(
       {String userId,
       ApiUser user,
-      ui.Image? imageUrl,
+      String? imageUrl,
       double latitude,
       double longitude,
       bool isSelected,
@@ -643,7 +666,7 @@ class __$$MapUserInfoImplCopyWithImpl<$Res>
       imageUrl: freezed == imageUrl
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
-              as ui.Image?,
+              as String?,
       latitude: null == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
@@ -682,7 +705,7 @@ class _$MapUserInfoImpl extends _MapUserInfo {
   @override
   final ApiUser user;
   @override
-  final ui.Image? imageUrl;
+  final String? imageUrl;
   @override
   final double latitude;
   @override
@@ -732,7 +755,7 @@ abstract class _MapUserInfo extends MapUserInfo {
   const factory _MapUserInfo(
       {required final String userId,
       required final ApiUser user,
-      required final ui.Image? imageUrl,
+      required final String? imageUrl,
       required final double latitude,
       required final double longitude,
       required final bool isSelected,
@@ -744,7 +767,7 @@ abstract class _MapUserInfo extends MapUserInfo {
   @override
   ApiUser get user;
   @override
-  ui.Image? get imageUrl;
+  String? get imageUrl;
   @override
   double get latitude;
   @override

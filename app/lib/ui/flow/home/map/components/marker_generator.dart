@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:style/extenstions/context_extenstions.dart';
 import 'package:style/text/app_text_dart.dart';
@@ -12,17 +14,17 @@ double markerRadius = Platform.isAndroid ? 60.0 : 30.0;
 
 Future<List<Marker>> createMarkerFromAsset(
   BuildContext context,
-  List<MapUserInfo> users, {
+  List<MapUserInfo> users,
+  Color markerColor, {
   required Function(String)? onTap,
 }) async {
   if (!context.mounted) return [];
   final markers = await Future.wait(users.map((item) async {
     final marker = await _mapMarker(
+      context,
       item.user.fullName,
       item.imageUrl,
-      item.isSelected
-          ? context.colorScheme.secondary
-          : context.colorScheme.surface,
+      item.isSelected ? context.colorScheme.primary : markerColor,
       context.colorScheme.primary,
       AppTextStyle.subtitle2.copyWith(
           fontSize: Platform.isAndroid ? 70 : 40,
@@ -43,14 +45,16 @@ Future<List<Marker>> createMarkerFromAsset(
 }
 
 Future<BitmapDescriptor> _mapMarker(
+  BuildContext context,
   String userName,
-  ui.Image? imageUrl,
+  String? imageUrl,
   Color markerBgColor,
   Color iconBgColor,
   TextStyle textStyle,
 ) async {
-  if (imageUrl != null) {
-    return await _userImageMarker(imageUrl, markerBgColor, iconBgColor);
+  if (imageUrl != null && imageUrl.isNotEmpty) {
+    return await _userImageMarker(
+        context, imageUrl, markerBgColor, iconBgColor);
   } else {
     return await _userCharMarker(
         userName, markerBgColor, iconBgColor, textStyle);
@@ -83,11 +87,8 @@ Future<BitmapDescriptor> _userCharMarker(
   final picture = pictureRecorder.endRecording();
   final img = await picture.toImage(markerSize.toInt(), markerSize.toInt());
   final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
-  final bitmapDescriptor = BitmapDescriptor.bytes(
-      byteData!.buffer.asUint8List(),
+  return BitmapDescriptor.bytes(byteData!.buffer.asUint8List(),
       bitmapScaling: MapBitmapScaling.none);
-
-  return bitmapDescriptor;
 }
 
 void _drawUserName(
@@ -116,14 +117,14 @@ void _drawUserName(
 }
 
 Future<BitmapDescriptor> _userImageMarker(
-  ui.Image uiImage,
+  BuildContext context,
+  String path,
   Color markerBgColor,
   Color iconBgColor,
 ) async {
-  // Prepare the canvas to draw the rounded rectangle and the image
+  final imageInfo = await getImageInfoFromUrl(context, path);
   final recorder = ui.PictureRecorder();
-  final canvas = ui.Canvas(recorder,
-      Rect.fromPoints(const Offset(0, 0), Offset(markerSize, markerSize)));
+  final canvas = Canvas(recorder);
 
   // Draw the rounded rectangle
   canvas.drawRRect(
@@ -136,21 +137,32 @@ Future<BitmapDescriptor> _userImageMarker(
     ),
     Paint()..color = markerBgColor,
   );
-
-  // Calculate the position to center the image
-  final double imageOffset = (markerSize - uiImage.width.toDouble()) / 2;
+  //
+  final center = Offset(markerSize / 2, markerSize / 2);
+  final double imageOffset =
+      (markerSize - imageInfo.image.width.toDouble()) / 2;
   final Offset offset = Offset(imageOffset, imageOffset);
 
-  // Draw the image on the canvas centered
-  canvas.drawImage(uiImage, offset, Paint()..color = iconBgColor);
+  final Path circlePath = Path()
+    ..addOval(Rect.fromCircle(center: center, radius: 48));
+  canvas.clipPath(circlePath);
+  canvas.drawImage(imageInfo.image, offset, Paint()..color = iconBgColor);
 
-  // End recording and create an image from the canvas
   final picture = recorder.endRecording();
-  final imgData = await picture.toImage(markerSize.toInt(), markerSize.toInt());
-  final data = await imgData.toByteData(format: ui.ImageByteFormat.png);
-
-  final bitmapDescriptor = BitmapDescriptor.bytes(data!.buffer.asUint8List(),
+  final img = await picture.toImage(markerSize.toInt(), markerSize.toInt());
+  final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+  return BitmapDescriptor.bytes(byteData!.buffer.asUint8List(),
       bitmapScaling: MapBitmapScaling.none);
+}
 
-  return bitmapDescriptor;
+Future<ImageInfo> getImageInfoFromUrl(
+    BuildContext context, String imageUrl) async {
+  NetworkImage networkImage = NetworkImage(imageUrl);
+  ImageStream stream =
+      networkImage.resolve(createLocalImageConfiguration(context));
+  Completer<ImageInfo> completer = Completer();
+  stream.addListener(ImageStreamListener((ImageInfo imageInfo, _) {
+    return completer.complete(imageInfo);
+  }));
+  return completer.future;
 }
