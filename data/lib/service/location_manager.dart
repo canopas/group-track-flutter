@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data/api/auth/auth_models.dart';
 import 'package:data/repository/journey_repository.dart';
 import 'package:data/service/location_service.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api/location/location.dart';
 import '../log/logger.dart';
+import '../utils/private_key_helper.dart';
 
 const MOVING_DISTANCE = 10; // meters
 const STEADY_DISTANCE = 50; // meters
@@ -80,10 +82,12 @@ class LocationManager {
     isTrackingStarted = false;
   }
 
-  Future<String?> _getUserIdFromPreferences() async {
+  Future<ApiUser?> _getUserFromPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     final encodedUser = prefs.getString("user_account");
-    return encodedUser != null ? jsonDecode(encodedUser)['id'] : null;
+    return encodedUser != null
+        ? ApiUser.fromJson(jsonDecode(encodedUser))
+        : null;
   }
 
   void startTracking() async {
@@ -91,8 +95,8 @@ class LocationManager {
 
     positionSubscription?.cancel();
 
-    final userId = await _getUserIdFromPreferences();
-    if (userId == null) return;
+    final user = await _getUserFromPreferences();
+    if (user == null) return;
 
     positionSubscription = Geolocator.getPositionStream(
       locationSettings: LocationSettings(
@@ -146,27 +150,20 @@ class LocationManager {
   }
 
   Future<void> updateUserLocation(LocationData locationPosition) async {
-    final userId = await _getUserIdFromPreferences();
-    if (userId != null) {
-      try {
-        await _locationService.saveCurrentLocation(userId, locationPosition);
+    final user = await _getUserFromPreferences();
+    if (user == null) return;
 
-        await _journeyRepository.saveLocationJourney(
-            extractedLocation: locationPosition, userId: userId);
-      } catch (error, stack) {
-        logger.e(
-          'Error while updating user location and journey',
-          error: error,
-          stackTrace: stack,
-        );
-      }
-    }
-  }
+    try {
+      await saveLocation(locationPosition);
 
-  Future<void> saveLocation(LocationData locationPosition) async {
-    final userId = await _getUserIdFromPreferences();
-    if (userId != null) {
-      await _locationService.saveCurrentLocation(userId, locationPosition);
+      await _journeyRepository.saveLocationJourney(
+          extractedLocation: locationPosition, userId: user.id);
+    } catch (error, stack) {
+      logger.e(
+        'Error while updating user location and journey',
+        error: error,
+        stackTrace: stack,
+      );
     }
   }
 
@@ -187,5 +184,20 @@ class LocationManager {
     this.isMoving = isMoving;
     movingDistance = isMoving ? MOVING_DISTANCE : STEADY_DISTANCE;
     startTracking();
+  }
+
+  Future<void> saveLocation(LocationData location) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final user = await _getUserFromPreferences();
+      if (user == null) return;
+
+      final passKey = prefs.getString("user_passkey");
+      if (passKey == null) return;
+
+      await _locationService.saveCurrentLocation(user, location, passKey);
+    } catch (e, s) {
+      logger.d("Failed to save encrypted location", error: e, stackTrace: s);
+    }
   }
 }

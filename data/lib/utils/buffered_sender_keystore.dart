@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/auth/auth_models.dart';
-import 'package:data/api/space/api_space_service.dart';
 import 'package:data/log/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:libsignal_protocol_dart/libsignal_protocol_dart.dart';
@@ -16,14 +15,6 @@ final bufferedSenderKeystoreProvider = Provider((ref) => BufferedSenderKeystore(
       ref.read(senderKeyJsonPod.notifier),
       ref.read(currentUserJsonPod.notifier),
     ));
-
-class StoreKey {
-  final SignalProtocolAddress address;
-  final String groupId;
-  final int senderDeviceId;
-
-  StoreKey(this.address, this.groupId, this.senderDeviceId);
-}
 
 class BufferedSenderKeystore extends SenderKeyStore {
   final StateController<String?> senderKeyJsonState;
@@ -158,4 +149,12 @@ class BufferedSenderKeystore extends SenderKeyStore {
       return null;
     }
   }
+}
+
+class StoreKey {
+  final SignalProtocolAddress address;
+  final String groupId;
+  final int senderDeviceId;
+
+  StoreKey(this.address, this.groupId, this.senderDeviceId);
 }

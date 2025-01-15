@@ -46,19 +46,21 @@ Map<String, dynamic> _$$ApiMemberKeyDataImplToJson(
 _$EncryptedDistributionImpl _$$EncryptedDistributionImplFromJson(
         Map<String, dynamic> json) =>
     _$EncryptedDistributionImpl(
-      recipientId: json['recipientId'] as String? ?? "",
-      ephemeralPub: const BlobConverter().fromJson(json['ephemeralPub']),
+      recipient_id: json['recipient_id'] as String? ?? "",
+      ephemeral_pub: const BlobConverter().fromJson(json['ephemeral_pub']),
       iv: const BlobConverter().fromJson(json['iv']),
       ciphertext: const BlobConverter().fromJson(json['ciphertext']),
+      created_at: (json['created_at'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$EncryptedDistributionImplToJson(
         _$EncryptedDistributionImpl instance) =>
     <String, dynamic>{
-      'recipientId': instance.recipientId,
-      'ephemeralPub': const BlobConverter().toJson(instance.ephemeralPub),
+      'recipient_id': instance.recipient_id,
+      'ephemeral_pub': const BlobConverter().toJson(instance.ephemeral_pub),
       'iv': const BlobConverter().toJson(instance.iv),
       'ciphertext': const BlobConverter().toJson(instance.ciphertext),
+      'created_at': instance.created_at,
     };
 
 _$ApiSenderKeyRecordImpl _$$ApiSenderKeyRecordImplFromJson(

@@ -116,7 +116,7 @@ class JoinSpaceViewNotifier extends StateNotifier<JoinSpaceViewState> {
         return;
       }
 
-      await spaceService.joinSpace(spaceId, _currentUser.id);
+      await spaceService.joinSpace(spaceId);
       final space = await spaceService.getSpace(spaceId);
       state = state.copyWith(space: space, verifying: false, spaceJoined: true);
 

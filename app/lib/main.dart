@@ -101,6 +101,7 @@ Future<void> _handleLocationUpdates(MethodCall call) async {
     );
 
     if (locationPosition.latitude != 0 && locationPosition.longitude != 0) {
+
       await LocationManager.instance.updateUserLocation(locationPosition);
     }
   }

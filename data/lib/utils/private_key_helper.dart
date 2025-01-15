@@ -1,7 +1,14 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:cryptography/cryptography.dart';
+import 'package:data/log/logger.dart';
+import 'package:data/utils/ephemeral_distribution_helper.dart';
 import 'dart:typed_data';
+
+import 'package:libsignal_protocol_dart/libsignal_protocol_dart.dart';
+
+import '../api/space/api_group_key_model.dart';
+import 'buffered_sender_keystore.dart';
 
 class EncryptionException implements Exception {
   final String message;
@@ -56,4 +63,112 @@ Future<Uint8List> encryptPrivateKey(
   }
   final key = await _deriveKeyFromPasskey(passkey, salt);
   return await _encryptData(privateKey, key);
+}
+
+// Decrypts the provided ciphertext using the provided private key.
+Future<Uint8List> _decryptData(
+    Uint8List encryptedPrivateKey, Uint8List salt, String passkey) async {
+  try {
+    final key = await _deriveKeyFromPasskey(passkey, salt);
+    if (encryptedPrivateKey.length < GCM_IV_SIZE) {
+      throw EncryptionException("Encrypted data is too short");
+    }
+
+    final iv = Uint8List(GCM_IV_SIZE)
+      ..setAll(0, List.generate(GCM_IV_SIZE, (i) => (i + 1) % 256));
+
+    final ciphertext = encryptedPrivateKey.sublist(GCM_IV_SIZE);
+
+    final algorithm = AesCtr.with128bits(macAlgorithm: MacAlgorithm.empty);
+
+    final secretBox = SecretBox(
+      ciphertext,
+      nonce: iv,
+      mac: Mac.empty,
+    );
+
+    final clearText = await algorithm.decrypt(
+      secretBox,
+      secretKey: key,
+    );
+
+    return Uint8List.fromList(clearText);
+  } catch (e) {
+    throw EncryptionException("Decryption failed", e);
+  }
+}
+
+Future<Pair<SenderKeyDistributionMessageWrapper, GroupCipher>?>
+    getGroupCipherAndDistributionMessage({
+  required String spaceId,
+  required int deviceId,
+  required Uint8List privateKeyBytes,
+  required Uint8List salt,
+  required String passkey,
+  required EncryptedDistribution distribution,
+  required BufferedSenderKeystore bufferedSenderKeyStore,
+}) async {
+  final privateKey = await _decodePrivateKey(
+    privateKeyBytes: privateKeyBytes,
+    salt: salt,
+    passkey: passkey,
+  );
+
+  if (privateKey == null) {
+    return null;
+  }
+
+  final decryptedDistribution =
+      await EphemeralECDHUtils.decrypt(distribution, privateKey);
+
+  if (decryptedDistribution == null) {
+    return null;
+  }
+
+  final distributionMessage =
+      SenderKeyDistributionMessageWrapper.fromSerialized(
+    decryptedDistribution,
+  );
+
+  final groupAddress = SignalProtocolAddress(spaceId, deviceId);
+
+  final senderKey = SenderKeyName(
+    distributionMessage.id.toString(),
+    groupAddress,
+  );
+
+  bufferedSenderKeyStore.loadSenderKey(senderKey);
+
+  // TODO rotate sender key
+
+  try {
+    GroupSessionBuilder(bufferedSenderKeyStore)
+        .process(senderKey, distributionMessage);
+    final groupCipher = GroupCipher(bufferedSenderKeyStore, senderKey);
+    return Pair(distributionMessage, groupCipher);
+  } catch (e, s) {
+    logger.e("Error processing group session", error: e, stackTrace: s);
+    return null;
+  }
+}
+
+Future<ECPrivateKey?> _decodePrivateKey(
+    {required Uint8List privateKeyBytes,
+    required Uint8List salt,
+    required String passkey}) async {
+  try {
+    return Curve.decodePrivatePoint(privateKeyBytes);
+  } catch (e, s) {
+    logger.d("Error decoding private key", error: e, stackTrace: s);
+    final decodedPrivateKey =
+        await _decryptData(privateKeyBytes, salt, passkey);
+    return Curve.decodePrivatePoint(decodedPrivateKey);
+  }
+}
+
+class Pair<T1, T2> {
+  final T1 first;
+  final T2 second;
+
+  Pair(this.first, this.second);
 }

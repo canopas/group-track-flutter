@@ -412,13 +412,14 @@ EncryptedDistribution _$EncryptedDistributionFromJson(
 
 /// @nodoc
 mixin _$EncryptedDistribution {
-  String get recipientId => throw _privateConstructorUsedError;
+  String get recipient_id => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob get ephemeralPub => throw _privateConstructorUsedError;
+  Blob get ephemeral_pub => throw _privateConstructorUsedError;
   @BlobConverter()
   Blob get iv => throw _privateConstructorUsedError;
   @BlobConverter()
   Blob get ciphertext => throw _privateConstructorUsedError;
+  int get created_at => throw _privateConstructorUsedError;
 
   /// Serializes this EncryptedDistribution to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -437,10 +438,11 @@ abstract class $EncryptedDistributionCopyWith<$Res> {
       _$EncryptedDistributionCopyWithImpl<$Res, EncryptedDistribution>;
   @useResult
   $Res call(
-      {String recipientId,
-      @BlobConverter() Blob ephemeralPub,
+      {String recipient_id,
+      @BlobConverter() Blob ephemeral_pub,
       @BlobConverter() Blob iv,
-      @BlobConverter() Blob ciphertext});
+      @BlobConverter() Blob ciphertext,
+      int created_at});
 }
 
 /// @nodoc
@@ -459,19 +461,20 @@ class _$EncryptedDistributionCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? recipientId = null,
-    Object? ephemeralPub = null,
+    Object? recipient_id = null,
+    Object? ephemeral_pub = null,
     Object? iv = null,
     Object? ciphertext = null,
+    Object? created_at = null,
   }) {
     return _then(_value.copyWith(
-      recipientId: null == recipientId
-          ? _value.recipientId
-          : recipientId // ignore: cast_nullable_to_non_nullable
+      recipient_id: null == recipient_id
+          ? _value.recipient_id
+          : recipient_id // ignore: cast_nullable_to_non_nullable
               as String,
-      ephemeralPub: null == ephemeralPub
-          ? _value.ephemeralPub
-          : ephemeralPub // ignore: cast_nullable_to_non_nullable
+      ephemeral_pub: null == ephemeral_pub
+          ? _value.ephemeral_pub
+          : ephemeral_pub // ignore: cast_nullable_to_non_nullable
               as Blob,
       iv: null == iv
           ? _value.iv
@@ -481,6 +484,10 @@ class _$EncryptedDistributionCopyWithImpl<$Res,
           ? _value.ciphertext
           : ciphertext // ignore: cast_nullable_to_non_nullable
               as Blob,
+      created_at: null == created_at
+          ? _value.created_at
+          : created_at // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -495,10 +502,11 @@ abstract class _$$EncryptedDistributionImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String recipientId,
-      @BlobConverter() Blob ephemeralPub,
+      {String recipient_id,
+      @BlobConverter() Blob ephemeral_pub,
       @BlobConverter() Blob iv,
-      @BlobConverter() Blob ciphertext});
+      @BlobConverter() Blob ciphertext,
+      int created_at});
 }
 
 /// @nodoc
@@ -515,19 +523,20 @@ class __$$EncryptedDistributionImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? recipientId = null,
-    Object? ephemeralPub = null,
+    Object? recipient_id = null,
+    Object? ephemeral_pub = null,
     Object? iv = null,
     Object? ciphertext = null,
+    Object? created_at = null,
   }) {
     return _then(_$EncryptedDistributionImpl(
-      recipientId: null == recipientId
-          ? _value.recipientId
-          : recipientId // ignore: cast_nullable_to_non_nullable
+      recipient_id: null == recipient_id
+          ? _value.recipient_id
+          : recipient_id // ignore: cast_nullable_to_non_nullable
               as String,
-      ephemeralPub: null == ephemeralPub
-          ? _value.ephemeralPub
-          : ephemeralPub // ignore: cast_nullable_to_non_nullable
+      ephemeral_pub: null == ephemeral_pub
+          ? _value.ephemeral_pub
+          : ephemeral_pub // ignore: cast_nullable_to_non_nullable
               as Blob,
       iv: null == iv
           ? _value.iv
@@ -537,6 +546,10 @@ class __$$EncryptedDistributionImplCopyWithImpl<$Res>
           ? _value.ciphertext
           : ciphertext // ignore: cast_nullable_to_non_nullable
               as Blob,
+      created_at: null == created_at
+          ? _value.created_at
+          : created_at // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -545,10 +558,11 @@ class __$$EncryptedDistributionImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$EncryptedDistributionImpl extends _EncryptedDistribution {
   const _$EncryptedDistributionImpl(
-      {this.recipientId = "",
-      @BlobConverter() required this.ephemeralPub,
+      {this.recipient_id = "",
+      @BlobConverter() required this.ephemeral_pub,
       @BlobConverter() required this.iv,
-      @BlobConverter() required this.ciphertext})
+      @BlobConverter() required this.ciphertext,
+      this.created_at = 0})
       : super._();
 
   factory _$EncryptedDistributionImpl.fromJson(Map<String, dynamic> json) =>
@@ -556,20 +570,23 @@ class _$EncryptedDistributionImpl extends _EncryptedDistribution {
 
   @override
   @JsonKey()
-  final String recipientId;
+  final String recipient_id;
   @override
   @BlobConverter()
-  final Blob ephemeralPub;
+  final Blob ephemeral_pub;
   @override
   @BlobConverter()
   final Blob iv;
   @override
   @BlobConverter()
   final Blob ciphertext;
+  @override
+  @JsonKey()
+  final int created_at;
 
   @override
   String toString() {
-    return 'EncryptedDistribution(recipientId: $recipientId, ephemeralPub: $ephemeralPub, iv: $iv, ciphertext: $ciphertext)';
+    return 'EncryptedDistribution(recipient_id: $recipient_id, ephemeral_pub: $ephemeral_pub, iv: $iv, ciphertext: $ciphertext, created_at: $created_at)';
   }
 
   @override
@@ -577,19 +594,21 @@ class _$EncryptedDistributionImpl extends _EncryptedDistribution {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$EncryptedDistributionImpl &&
-            (identical(other.recipientId, recipientId) ||
-                other.recipientId == recipientId) &&
-            (identical(other.ephemeralPub, ephemeralPub) ||
-                other.ephemeralPub == ephemeralPub) &&
+            (identical(other.recipient_id, recipient_id) ||
+                other.recipient_id == recipient_id) &&
+            (identical(other.ephemeral_pub, ephemeral_pub) ||
+                other.ephemeral_pub == ephemeral_pub) &&
             (identical(other.iv, iv) || other.iv == iv) &&
             (identical(other.ciphertext, ciphertext) ||
-                other.ciphertext == ciphertext));
+                other.ciphertext == ciphertext) &&
+            (identical(other.created_at, created_at) ||
+                other.created_at == created_at));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, recipientId, ephemeralPub, iv, ciphertext);
+  int get hashCode => Object.hash(
+      runtimeType, recipient_id, ephemeral_pub, iv, ciphertext, created_at);
 
   /// Create a copy of EncryptedDistribution
   /// with the given fields replaced by the non-null parameter values.
@@ -610,27 +629,29 @@ class _$EncryptedDistributionImpl extends _EncryptedDistribution {
 
 abstract class _EncryptedDistribution extends EncryptedDistribution {
   const factory _EncryptedDistribution(
-          {final String recipientId,
-          @BlobConverter() required final Blob ephemeralPub,
-          @BlobConverter() required final Blob iv,
-          @BlobConverter() required final Blob ciphertext}) =
-      _$EncryptedDistributionImpl;
+      {final String recipient_id,
+      @BlobConverter() required final Blob ephemeral_pub,
+      @BlobConverter() required final Blob iv,
+      @BlobConverter() required final Blob ciphertext,
+      final int created_at}) = _$EncryptedDistributionImpl;
   const _EncryptedDistribution._() : super._();
 
   factory _EncryptedDistribution.fromJson(Map<String, dynamic> json) =
       _$EncryptedDistributionImpl.fromJson;
 
   @override
-  String get recipientId;
+  String get recipient_id;
   @override
   @BlobConverter()
-  Blob get ephemeralPub;
+  Blob get ephemeral_pub;
   @override
   @BlobConverter()
   Blob get iv;
   @override
   @BlobConverter()
   Blob get ciphertext;
+  @override
+  int get created_at;
 
   /// Create a copy of EncryptedDistribution
   /// with the given fields replaced by the non-null parameter values.

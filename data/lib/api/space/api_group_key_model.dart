@@ -47,19 +47,20 @@ class EncryptedDistribution with _$EncryptedDistribution {
   const EncryptedDistribution._();
 
   const factory EncryptedDistribution({
-    @Default("") String recipientId,
-    @BlobConverter() required Blob ephemeralPub,
+    @Default("") String recipient_id,
+    @BlobConverter() required Blob ephemeral_pub,
     @BlobConverter() required Blob iv,
     @BlobConverter() required Blob ciphertext,
+    @Default(0) int created_at,
   }) = _EncryptedDistribution;
 
   factory EncryptedDistribution.fromJson(Map<String, dynamic> data) =>
       _$EncryptedDistributionFromJson(data);
 
   void validateFieldSizes() {
-    if (ephemeralPub.bytes.length != 33 && ephemeralPub.bytes.isNotEmpty) {
+    if (ephemeral_pub.bytes.length != 33 && ephemeral_pub.bytes.isNotEmpty) {
       throw ArgumentError(
-          "Invalid size for ephemeralPub: expected 33 bytes, got ${ephemeralPub.bytes.length} bytes.");
+          "Invalid size for ephemeralPub: expected 33 bytes, got ${ephemeral_pub.bytes.length} bytes.");
     }
     if (iv.bytes.length != 16 && iv.bytes.isNotEmpty) {
       throw ArgumentError(

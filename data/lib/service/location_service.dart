@@ -1,15 +1,18 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data/log/logger.dart';
+import 'package:data/storage/app_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/auth/auth_models.dart';
 import '../api/location/location.dart';
 import '../api/network/client.dart';
+import '../api/space/api_group_key_model.dart';
+import '../utils/private_key_helper.dart';
 
-final locationServiceProvider = Provider((ref) => LocationService(
-      ref.read(firestoreProvider),
-    ));
+final locationServiceProvider =
+    Provider((ref) => LocationService(ref.read(firestoreProvider)));
 
 class LocationService {
   final FirebaseFirestore _db;
@@ -27,6 +30,17 @@ class LocationService {
       .withConverter<ApiLocation>(
           fromFirestore: ApiLocation.fromFireStore,
           toFirestore: (location, _) => location.toJson());
+
+  DocumentReference<ApiGroupKey> spaceGroupKeysDocRef(String spaceId) {
+    return FirebaseFirestore.instance
+        .collection('spaces')
+        .doc(spaceId)
+        .collection('group_keys')
+        .doc('group_keys')
+        .withConverter<ApiGroupKey>(
+            fromFirestore: ApiGroupKey.fromFireStore,
+            toFirestore: (key, options) => key.toJson());
+  }
 
   Stream<List<ApiLocation>?> getCurrentLocationStream(String userId) {
     return _locationRef(userId)
@@ -55,19 +69,54 @@ class LocationService {
     return null;
   }
 
+  Future<ApiGroupKey?> _getGroupKey(String spaceId) async {
+    final doc = await spaceGroupKeysDocRef(spaceId).get();
+    return doc.data();
+  }
+
   Future<void> saveCurrentLocation(
-    String userId,
+    ApiUser user,
     LocationData locationData,
+    String passKey,
   ) async {
-    final docRef = _locationRef(userId).doc();
+    if (user.identity_key_private == null ||
+        (user.identity_key_private?.bytes.isEmpty ?? true)) return;
 
-    final location = ApiLocation(
-        id: docRef.id,
-        user_id: userId,
-        latitude: locationData.latitude,
-        longitude: locationData.longitude,
-        created_at: DateTime.now().millisecondsSinceEpoch);
+    user.space_ids?.forEach((spaceId) async {
+      final groupKey = await _getGroupKey(spaceId);
+      if (groupKey == null) {
+        logger.e('LocationService: Group key not found for space $spaceId');
+        return;
+      }
 
-    await docRef.set(location);
+      final memberKeyData = groupKey.member_keys[user.id];
+      if (memberKeyData == null) {
+        logger.e(
+            'LocationService: Member key not found for user ${user.id} in space $spaceId');
+        return;
+      }
+
+      final distributions = memberKeyData.distributions
+          .where((d) => d.recipient_id == user.id)
+          .toList()
+        ..sort((a, b) => b.created_at.compareTo(a.created_at));
+
+      final distribution = distributions.firstOrNull;
+      if (distribution == null) {
+        logger.e(
+            'LocationService: Distribution not found for user ${user.id} in space $spaceId');
+        return;
+      }
+
+      final data = getGroupCipherAndDistributionMessage(
+        spaceId: spaceId,
+        deviceId: memberKeyData.member_device_id,
+        distribution: distribution,
+        privateKeyBytes: user.identity_key_private!.bytes,
+        salt: user.identity_key_salt!.bytes,
+        passkey: passKey,
+        bufferedSenderKeyStore: ,
+      );
+    });
   }
 }
