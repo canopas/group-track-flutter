@@ -61,21 +61,15 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     final calendarState = ref.watch(horizontalCalendarViewStateProvider);
 
     final state = ref.watch(journeyTimelineStateProvider);
-    final title = (state.selectedUser == null)
-        ? context.l10n.journey_timeline_title
-        : (state.isCurrentUser)
-            ? context.l10n.journey_timeline_title_your_timeline
-            : context.l10n.journey_timeline_title_other_user(
-                state.selectedUser?.first_name ?? '');
 
     _observeShowDatePicker(calendarState.selectedDate);
 
     return AppPage(
-      title: title,
+      titleWidget: _title(state, calendarState),
       actions: [
         actionButton(
           context: context,
-          onPressed: () => notifier.showDatePicker(),
+          onPressed: () => notifier.showDatePicker(true),
           icon: SvgPicture.asset(
             Assets.images.icCalendarIcon,
             colorFilter: ColorFilter.mode(
@@ -91,6 +85,42 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     );
   }
 
+  Widget _title(JourneyTimelineState state, CalendarViewState calendarState) {
+    final title = (state.selectedUser == null)
+        ? context.l10n.journey_timeline_title
+        : (state.isCurrentUser)
+            ? context.l10n.journey_timeline_title_your_timeline
+            : context.l10n.journey_timeline_title_other_user(
+                state.selectedUser?.first_name ?? '');
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (!state.isCurrentUser) ...[
+          Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontFamily: AppTextStyle.interFontFamily),
+          ),
+          Text(
+              calendarState.selectedDate
+                  .format(context, DateFormatType.relativeDate),
+              style: AppTextStyle.body2.copyWith(
+                color: context.colorScheme.textSecondary,
+              )),
+        ],
+        if (state.isCurrentUser)
+          Text(
+            calendarState.selectedDate
+                .format(context, DateFormatType.relativeDate),
+            style: const TextStyle(fontFamily: AppTextStyle.interFontFamily),
+          )
+      ],
+    );
+  }
+
   Widget _body(JourneyTimelineState state, CalendarViewState calendarState) {
     if (state.isNetworkOff) {
       return NoInternetScreen(onPressed: () {
@@ -100,11 +130,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
 
     return Column(
       children: [
-        _dateHeaderView(
-            calendarState.selectedDate, !calendarState.containsToday, () {
-          calendarNotifier.goToToday();
-          notifier.onSelectDateFromPicker(DateTime.now());
-        }),
         HorizontalCalendarView(
           allowedAfterDate: DateTime.fromMillisecondsSinceEpoch(
               widget.group.created_at ?? DateTime.now().millisecondsSinceEpoch),
@@ -166,37 +191,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
     );
   }
 
-  Widget _dateHeaderView(
-    DateTime selectedDate,
-    bool showTodayBtn,
-    VoidCallback onTodayTap,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 4, left: 16, right: 16),
-      child: Row(
-        children: [
-          Text(selectedDate.format(context, DateFormatType.relativeDate),
-              style: AppTextStyle.subtitle1.copyWith(
-                color: context.colorScheme.textPrimary,
-              )),
-          const Spacer(),
-          Visibility(
-            visible: showTodayBtn,
-            child: OnTapScale(
-              onTap: () => onTodayTap(),
-              child: Text(
-                context.l10n.common_today,
-                style: AppTextStyle.button.copyWith(
-                  color: context.colorScheme.primary,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _emptyHistoryView() {
     return Center(
       child: Column(
@@ -226,7 +220,6 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
         notifier.getSteadyDuration(journey.created_at!, journey.update_at!);
     final formattedTime = _getFormattedJourneyTime(
         journey.created_at ?? 0, journey.update_at ?? 0);
-
     return Padding(
       padding: EdgeInsets.only(top: isFirstItem ? 16 : 0),
       child: SizedBox(
@@ -236,28 +229,34 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           children: [
             DottedLineView(isSteadyLocation: true, isLastItem: isLastItem),
             Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  JourneyDetailsRoute(journey).push(context);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildPlaceInfo(location, formattedTime,
-                          journey.isSteady(), steadyDuration, isFirstItem),
-                      const SizedBox(height: 16),
-                      _appPlaceButton(location, spaceId),
-                      const SizedBox(height: 8),
-                      Visibility(
-                          visible: !isLastItem,
-                          child: Divider(
-                            thickness: 1,
-                            color: context.colorScheme.outline,
-                          )),
-                    ],
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        JourneyDetailsRoute(journey).push(context);
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildPlaceInfo(location, formattedTime,
+                              journey.isSteady(), steadyDuration, isFirstItem),
+                          const SizedBox(height: 16),
+                          _appPlaceButton(location, spaceId),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
+                    ),
+                    Visibility(
+                        visible: !isLastItem,
+                        child: Divider(
+                          thickness: 1,
+                          color: context.colorScheme.outline,
+                        )),
+                  ],
                 ),
               ),
             )
@@ -605,10 +604,10 @@ class _JourneyTimelineScreenState extends ConsumerState<JourneyTimelineScreen> {
           lastDate: DateTime.now(),
           confirmText: context.l10n.journey_timeline_date_picker_select_text,
         );
-        notifier.showDatePicker();
         if (pickedDate != null) {
           onSelectDate(pickedDate, true);
         }
+        notifier.showDatePicker(false);
       }
     });
   }

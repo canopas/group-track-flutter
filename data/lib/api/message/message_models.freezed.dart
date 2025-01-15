@@ -31,8 +31,12 @@ mixin _$ApiThread {
   @ServerTimestampConverter()
   DateTime? get last_message_at => throw _privateConstructorUsedError;
 
+  /// Serializes this ApiThread to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiThread
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ApiThreadCopyWith<ApiThread> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -64,6 +68,8 @@ class _$ApiThreadCopyWithImpl<$Res, $Val extends ApiThread>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ApiThread
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -146,6 +152,8 @@ class __$$ApiThreadImplCopyWithImpl<$Res>
       _$ApiThreadImpl _value, $Res Function(_$ApiThreadImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiThread
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -291,7 +299,7 @@ class _$ApiThreadImpl extends _ApiThread {
                 other.last_message_at == last_message_at));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -305,7 +313,9 @@ class _$ApiThreadImpl extends _ApiThread {
       last_message,
       last_message_at);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiThread
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiThreadImplCopyWith<_$ApiThreadImpl> get copyWith =>
@@ -355,8 +365,11 @@ abstract class _ApiThread extends ApiThread {
   @override
   @ServerTimestampConverter()
   DateTime? get last_message_at;
+
+  /// Create a copy of ApiThread
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiThreadImplCopyWith<_$ApiThreadImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -376,8 +389,12 @@ mixin _$ApiThreadMessage {
   @ServerTimestampConverter()
   DateTime? get created_at => throw _privateConstructorUsedError;
 
+  /// Serializes this ApiThreadMessage to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiThreadMessage
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ApiThreadMessageCopyWith<ApiThreadMessage> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -408,6 +425,8 @@ class _$ApiThreadMessageCopyWithImpl<$Res, $Val extends ApiThreadMessage>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ApiThreadMessage
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -478,6 +497,8 @@ class __$$ApiThreadMessageImplCopyWithImpl<$Res>
       $Res Function(_$ApiThreadMessageImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiThreadMessage
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -593,7 +614,7 @@ class _$ApiThreadMessageImpl extends _ApiThreadMessage {
                 other.created_at == created_at));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -605,7 +626,9 @@ class _$ApiThreadMessageImpl extends _ApiThreadMessage {
       const DeepCollectionEquality().hash(_archived_for),
       created_at);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiThreadMessage
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiThreadMessageImplCopyWith<_$ApiThreadMessageImpl> get copyWith =>
@@ -650,8 +673,11 @@ abstract class _ApiThreadMessage extends ApiThreadMessage {
   @override
   @ServerTimestampConverter()
   DateTime? get created_at;
+
+  /// Create a copy of ApiThreadMessage
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ApiThreadMessageImplCopyWith<_$ApiThreadMessageImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -667,8 +693,12 @@ mixin _$ThreadInfo {
       throw _privateConstructorUsedError;
   List<ApiUserInfo> get members => throw _privateConstructorUsedError;
 
+  /// Serializes this ThreadInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ThreadInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ThreadInfoCopyWith<ThreadInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -697,6 +727,8 @@ class _$ThreadInfoCopyWithImpl<$Res, $Val extends ThreadInfo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ThreadInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -720,6 +752,8 @@ class _$ThreadInfoCopyWithImpl<$Res, $Val extends ThreadInfo>
     ) as $Val);
   }
 
+  /// Create a copy of ThreadInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ApiThreadCopyWith<$Res> get thread {
@@ -754,6 +788,8 @@ class __$$ThreadInfoImplCopyWithImpl<$Res>
       _$ThreadInfoImpl _value, $Res Function(_$ThreadInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ThreadInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -826,7 +862,7 @@ class _$ThreadInfoImpl extends _ThreadInfo {
             const DeepCollectionEquality().equals(other._members, _members));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -834,7 +870,9 @@ class _$ThreadInfoImpl extends _ThreadInfo {
       const DeepCollectionEquality().hash(_threadMessage),
       const DeepCollectionEquality().hash(_members));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ThreadInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ThreadInfoImplCopyWith<_$ThreadInfoImpl> get copyWith =>
@@ -864,8 +902,11 @@ abstract class _ThreadInfo extends ThreadInfo {
   List<ApiThreadMessage> get threadMessage;
   @override
   List<ApiUserInfo> get members;
+
+  /// Create a copy of ThreadInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ThreadInfoImplCopyWith<_$ThreadInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

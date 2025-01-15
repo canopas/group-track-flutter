@@ -43,23 +43,30 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
           profileUrl: user?.profile_image ?? '',
         ));
 
-  Future<void> isCurrentUserIsAdminOfAnyGroup() async {
+  Future<void> onDeleteAccountClicked() async {
     try {
-      if (state.isUserAdminOfAnyGroup || state.currentUserSpace.isNotEmpty) return;
-      final spaces = await spaceService.getUserSpaces(user?.id ?? '');
-      final adminSpaces = spaces
-          .where((space) => space?.admin_id == user?.id)
-          .whereType<ApiSpace>()
-          .toList();
-      state = state.copyWith(currentUserSpace: adminSpaces);
-      for (final space in adminSpaces) {
+      if (user?.id == null) return;
+      if (user?.space_ids?.isNotEmpty ?? false) {
+        final spaces = await spaceService.getUserSpaces(user?.id ?? '');
+        final adminSpaces = spaces
+            .where((space) => space?.admin_id == user?.id)
+            .whereType<ApiSpace>()
+            .toList();
+
+        for (final space in adminSpaces) {
           final members = await spaceService.getMemberBySpaceId(space.id);
           if (members.length > 1) {
-            state = state.copyWith(isUserAdminOfAnyGroup: true);
+            state = state.copyWith(
+                isUserAdminOfAnyGroup: DateTime.now().millisecondsSinceEpoch);
+            return;
           }
+        }
       }
+
+      state = state.copyWith(
+          showDeleteAccountConfirmation: DateTime.now().millisecondsSinceEpoch);
     } catch (error, stack) {
-      logger.e('EditProfileViewModel: error while all user groups',
+      logger.e('EditProfileViewModel: error while fetching user groups',
           error: error, stackTrace: stack);
     }
   }
@@ -67,11 +74,12 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
   void deleteAccount() async {
     try {
       if (user?.id == null) return;
-      state = state.copyWith(deletingAccount: true);
+      state = state.copyWith(deletingAccount: true, error: null);
       await spaceService.deleteUserSpaces(user!.id);
       await authService.deleteAccount(currentUserId: user!.id);
       state = state.copyWith(
-          deletingAccount: false, accountDeleted: true, error: null);
+          deletingAccount: false,
+          accountDeleted: DateTime.now().millisecondsSinceEpoch);
       locationManager.stopTrackingService();
     } catch (error, stack) {
       logger.e(
@@ -79,7 +87,7 @@ class EditProfileViewNotifier extends StateNotifier<EditProfileViewState> {
         error: error,
         stackTrace: stack,
       );
-      state = state.copyWith(error: error);
+      state = state.copyWith(error: error, deletingAccount: false);
     }
   }
 
@@ -161,10 +169,11 @@ class EditProfileViewState with _$EditProfileViewState {
     @Default(false) bool allowSave,
     @Default(false) bool enablePhone,
     @Default(false) bool enableEmail,
-    @Default(false) bool accountDeleted,
+    int? accountDeleted,
+    int? showDeleteAccountConfirmation,
     @Default(false) bool uploadingImage,
     @Default(false) bool deletingAccount,
-    @Default(false) bool isUserAdminOfAnyGroup,
+    int? isUserAdminOfAnyGroup,
     @Default([]) List<ApiSpace> currentUserSpace,
     required TextEditingController firstName,
     required TextEditingController lastName,

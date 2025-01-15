@@ -21,10 +21,11 @@ mixin _$EditProfileViewState {
   bool get allowSave => throw _privateConstructorUsedError;
   bool get enablePhone => throw _privateConstructorUsedError;
   bool get enableEmail => throw _privateConstructorUsedError;
-  bool get accountDeleted => throw _privateConstructorUsedError;
+  int? get accountDeleted => throw _privateConstructorUsedError;
+  int? get showDeleteAccountConfirmation => throw _privateConstructorUsedError;
   bool get uploadingImage => throw _privateConstructorUsedError;
   bool get deletingAccount => throw _privateConstructorUsedError;
-  bool get isUserAdminOfAnyGroup => throw _privateConstructorUsedError;
+  int? get isUserAdminOfAnyGroup => throw _privateConstructorUsedError;
   List<ApiSpace> get currentUserSpace => throw _privateConstructorUsedError;
   TextEditingController get firstName => throw _privateConstructorUsedError;
   TextEditingController get lastName => throw _privateConstructorUsedError;
@@ -49,10 +50,11 @@ abstract class $EditProfileViewStateCopyWith<$Res> {
       bool allowSave,
       bool enablePhone,
       bool enableEmail,
-      bool accountDeleted,
+      int? accountDeleted,
+      int? showDeleteAccountConfirmation,
       bool uploadingImage,
       bool deletingAccount,
-      bool isUserAdminOfAnyGroup,
+      int? isUserAdminOfAnyGroup,
       List<ApiSpace> currentUserSpace,
       TextEditingController firstName,
       TextEditingController lastName,
@@ -80,10 +82,11 @@ class _$EditProfileViewStateCopyWithImpl<$Res,
     Object? allowSave = null,
     Object? enablePhone = null,
     Object? enableEmail = null,
-    Object? accountDeleted = null,
+    Object? accountDeleted = freezed,
+    Object? showDeleteAccountConfirmation = freezed,
     Object? uploadingImage = null,
     Object? deletingAccount = null,
-    Object? isUserAdminOfAnyGroup = null,
+    Object? isUserAdminOfAnyGroup = freezed,
     Object? currentUserSpace = null,
     Object? firstName = null,
     Object? lastName = null,
@@ -112,10 +115,14 @@ class _$EditProfileViewStateCopyWithImpl<$Res,
           ? _value.enableEmail
           : enableEmail // ignore: cast_nullable_to_non_nullable
               as bool,
-      accountDeleted: null == accountDeleted
+      accountDeleted: freezed == accountDeleted
           ? _value.accountDeleted
           : accountDeleted // ignore: cast_nullable_to_non_nullable
-              as bool,
+              as int?,
+      showDeleteAccountConfirmation: freezed == showDeleteAccountConfirmation
+          ? _value.showDeleteAccountConfirmation
+          : showDeleteAccountConfirmation // ignore: cast_nullable_to_non_nullable
+              as int?,
       uploadingImage: null == uploadingImage
           ? _value.uploadingImage
           : uploadingImage // ignore: cast_nullable_to_non_nullable
@@ -124,10 +131,10 @@ class _$EditProfileViewStateCopyWithImpl<$Res,
           ? _value.deletingAccount
           : deletingAccount // ignore: cast_nullable_to_non_nullable
               as bool,
-      isUserAdminOfAnyGroup: null == isUserAdminOfAnyGroup
+      isUserAdminOfAnyGroup: freezed == isUserAdminOfAnyGroup
           ? _value.isUserAdminOfAnyGroup
           : isUserAdminOfAnyGroup // ignore: cast_nullable_to_non_nullable
-              as bool,
+              as int?,
       currentUserSpace: null == currentUserSpace
           ? _value.currentUserSpace
           : currentUserSpace // ignore: cast_nullable_to_non_nullable
@@ -167,10 +174,11 @@ abstract class _$$EditProfileViewStateImplCopyWith<$Res>
       bool allowSave,
       bool enablePhone,
       bool enableEmail,
-      bool accountDeleted,
+      int? accountDeleted,
+      int? showDeleteAccountConfirmation,
       bool uploadingImage,
       bool deletingAccount,
-      bool isUserAdminOfAnyGroup,
+      int? isUserAdminOfAnyGroup,
       List<ApiSpace> currentUserSpace,
       TextEditingController firstName,
       TextEditingController lastName,
@@ -195,10 +203,11 @@ class __$$EditProfileViewStateImplCopyWithImpl<$Res>
     Object? allowSave = null,
     Object? enablePhone = null,
     Object? enableEmail = null,
-    Object? accountDeleted = null,
+    Object? accountDeleted = freezed,
+    Object? showDeleteAccountConfirmation = freezed,
     Object? uploadingImage = null,
     Object? deletingAccount = null,
-    Object? isUserAdminOfAnyGroup = null,
+    Object? isUserAdminOfAnyGroup = freezed,
     Object? currentUserSpace = null,
     Object? firstName = null,
     Object? lastName = null,
@@ -227,10 +236,14 @@ class __$$EditProfileViewStateImplCopyWithImpl<$Res>
           ? _value.enableEmail
           : enableEmail // ignore: cast_nullable_to_non_nullable
               as bool,
-      accountDeleted: null == accountDeleted
+      accountDeleted: freezed == accountDeleted
           ? _value.accountDeleted
           : accountDeleted // ignore: cast_nullable_to_non_nullable
-              as bool,
+              as int?,
+      showDeleteAccountConfirmation: freezed == showDeleteAccountConfirmation
+          ? _value.showDeleteAccountConfirmation
+          : showDeleteAccountConfirmation // ignore: cast_nullable_to_non_nullable
+              as int?,
       uploadingImage: null == uploadingImage
           ? _value.uploadingImage
           : uploadingImage // ignore: cast_nullable_to_non_nullable
@@ -239,10 +252,10 @@ class __$$EditProfileViewStateImplCopyWithImpl<$Res>
           ? _value.deletingAccount
           : deletingAccount // ignore: cast_nullable_to_non_nullable
               as bool,
-      isUserAdminOfAnyGroup: null == isUserAdminOfAnyGroup
+      isUserAdminOfAnyGroup: freezed == isUserAdminOfAnyGroup
           ? _value.isUserAdminOfAnyGroup
           : isUserAdminOfAnyGroup // ignore: cast_nullable_to_non_nullable
-              as bool,
+              as int?,
       currentUserSpace: null == currentUserSpace
           ? _value._currentUserSpace
           : currentUserSpace // ignore: cast_nullable_to_non_nullable
@@ -277,10 +290,11 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
       this.allowSave = false,
       this.enablePhone = false,
       this.enableEmail = false,
-      this.accountDeleted = false,
+      this.accountDeleted,
+      this.showDeleteAccountConfirmation,
       this.uploadingImage = false,
       this.deletingAccount = false,
-      this.isUserAdminOfAnyGroup = false,
+      this.isUserAdminOfAnyGroup,
       final List<ApiSpace> currentUserSpace = const [],
       required this.firstName,
       required this.lastName,
@@ -305,8 +319,9 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
   @JsonKey()
   final bool enableEmail;
   @override
-  @JsonKey()
-  final bool accountDeleted;
+  final int? accountDeleted;
+  @override
+  final int? showDeleteAccountConfirmation;
   @override
   @JsonKey()
   final bool uploadingImage;
@@ -314,8 +329,7 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
   @JsonKey()
   final bool deletingAccount;
   @override
-  @JsonKey()
-  final bool isUserAdminOfAnyGroup;
+  final int? isUserAdminOfAnyGroup;
   final List<ApiSpace> _currentUserSpace;
   @override
   @JsonKey()
@@ -339,7 +353,7 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
 
   @override
   String toString() {
-    return 'EditProfileViewState(saving: $saving, saved: $saved, allowSave: $allowSave, enablePhone: $enablePhone, enableEmail: $enableEmail, accountDeleted: $accountDeleted, uploadingImage: $uploadingImage, deletingAccount: $deletingAccount, isUserAdminOfAnyGroup: $isUserAdminOfAnyGroup, currentUserSpace: $currentUserSpace, firstName: $firstName, lastName: $lastName, email: $email, profileUrl: $profileUrl, error: $error)';
+    return 'EditProfileViewState(saving: $saving, saved: $saved, allowSave: $allowSave, enablePhone: $enablePhone, enableEmail: $enableEmail, accountDeleted: $accountDeleted, showDeleteAccountConfirmation: $showDeleteAccountConfirmation, uploadingImage: $uploadingImage, deletingAccount: $deletingAccount, isUserAdminOfAnyGroup: $isUserAdminOfAnyGroup, currentUserSpace: $currentUserSpace, firstName: $firstName, lastName: $lastName, email: $email, profileUrl: $profileUrl, error: $error)';
   }
 
   @override
@@ -357,6 +371,10 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
                 other.enableEmail == enableEmail) &&
             (identical(other.accountDeleted, accountDeleted) ||
                 other.accountDeleted == accountDeleted) &&
+            (identical(other.showDeleteAccountConfirmation,
+                    showDeleteAccountConfirmation) ||
+                other.showDeleteAccountConfirmation ==
+                    showDeleteAccountConfirmation) &&
             (identical(other.uploadingImage, uploadingImage) ||
                 other.uploadingImage == uploadingImage) &&
             (identical(other.deletingAccount, deletingAccount) ||
@@ -384,6 +402,7 @@ class _$EditProfileViewStateImpl implements _EditProfileViewState {
       enablePhone,
       enableEmail,
       accountDeleted,
+      showDeleteAccountConfirmation,
       uploadingImage,
       deletingAccount,
       isUserAdminOfAnyGroup,
@@ -410,10 +429,11 @@ abstract class _EditProfileViewState implements EditProfileViewState {
       final bool allowSave,
       final bool enablePhone,
       final bool enableEmail,
-      final bool accountDeleted,
+      final int? accountDeleted,
+      final int? showDeleteAccountConfirmation,
       final bool uploadingImage,
       final bool deletingAccount,
-      final bool isUserAdminOfAnyGroup,
+      final int? isUserAdminOfAnyGroup,
       final List<ApiSpace> currentUserSpace,
       required final TextEditingController firstName,
       required final TextEditingController lastName,
@@ -432,13 +452,15 @@ abstract class _EditProfileViewState implements EditProfileViewState {
   @override
   bool get enableEmail;
   @override
-  bool get accountDeleted;
+  int? get accountDeleted;
+  @override
+  int? get showDeleteAccountConfirmation;
   @override
   bool get uploadingImage;
   @override
   bool get deletingAccount;
   @override
-  bool get isUserAdminOfAnyGroup;
+  int? get isUserAdminOfAnyGroup;
   @override
   List<ApiSpace> get currentUserSpace;
   @override

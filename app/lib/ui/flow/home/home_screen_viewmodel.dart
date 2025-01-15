@@ -32,6 +32,7 @@ final homeViewStateProvider =
     ref.read(locationManagerProvider),
     ref.read(currentUserPod),
     ref.read(apiUserServiceProvider),
+    ref.read(authServiceProvider),
     ref.read(currentUserSessionPod),
   );
   ref.listen(currentUserPod, (prev, user) {
@@ -52,6 +53,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
   final StateController<String?> _lastBatteryDialogDate;
   final LocationManager locationManager;
   ApiUser? _currentUser;
+  final AuthService authService;
   final ApiUserService userService;
   final ApiSession? _userSession;
 
@@ -63,6 +65,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
     this.locationManager,
     this._currentUser,
     this.userService,
+    this.authService,
     this._userSession,
   ) : super(const HomeViewState()) {
     updateUser();
@@ -92,7 +95,7 @@ class HomeViewNotifier extends StateNotifier<HomeViewState> {
       final user = await userService.getUser(_currentUser!.id);
       if (user != null) {
         _currentUser = user;
-        userService.updateUser(user);
+        authService.saveUserState(user);
       }
     } catch (error) {
       logger.e(

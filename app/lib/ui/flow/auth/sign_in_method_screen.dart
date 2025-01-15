@@ -110,9 +110,7 @@ class _SignInMethodScreenState extends ConsumerState<SignInMethodScreen> {
 
     if (mounted && (user?.first_name == null || user!.first_name!.isEmpty)) {
       PickNameRoute(user!).go(context);
-    }
-
-    if (state.isNewUser && mounted) {
+    } else if (state.isNewUser && mounted) {
       ConnectionRoute().go(context);
     } else {
       navigateToHome();

@@ -33,8 +33,12 @@ mixin _$ApiLocationJourney {
   int? get update_at => throw _privateConstructorUsedError;
   String? get type => throw _privateConstructorUsedError;
 
+  /// Serializes this ApiLocationJourney to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ApiLocationJourney
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ApiLocationJourneyCopyWith<ApiLocationJourney> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -70,6 +74,8 @@ class _$ApiLocationJourneyCopyWithImpl<$Res, $Val extends ApiLocationJourney>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ApiLocationJourney
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -170,6 +176,8 @@ class __$$LocationJourneyImplCopyWithImpl<$Res>
       _$LocationJourneyImpl _value, $Res Function(_$LocationJourneyImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ApiLocationJourney
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -325,7 +333,7 @@ class _$LocationJourneyImpl extends _LocationJourney {
             (identical(other.type, type) || other.type == type));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -342,7 +350,9 @@ class _$LocationJourneyImpl extends _LocationJourney {
       update_at,
       type);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ApiLocationJourney
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$LocationJourneyImplCopyWith<_$LocationJourneyImpl> get copyWith =>
@@ -400,8 +410,11 @@ abstract class _LocationJourney extends ApiLocationJourney {
   int? get update_at;
   @override
   String? get type;
+
+  /// Create a copy of ApiLocationJourney
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LocationJourneyImplCopyWith<_$LocationJourneyImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -415,8 +428,12 @@ mixin _$JourneyRoute {
   double get latitude => throw _privateConstructorUsedError;
   double get longitude => throw _privateConstructorUsedError;
 
+  /// Serializes this JourneyRoute to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of JourneyRoute
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $JourneyRouteCopyWith<JourneyRoute> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -440,6 +457,8 @@ class _$JourneyRouteCopyWithImpl<$Res, $Val extends JourneyRoute>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of JourneyRoute
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -478,6 +497,8 @@ class __$$JourneyRouteImplCopyWithImpl<$Res>
       _$JourneyRouteImpl _value, $Res Function(_$JourneyRouteImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of JourneyRoute
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -526,11 +547,13 @@ class _$JourneyRouteImpl implements _JourneyRoute {
                 other.longitude == longitude));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, latitude, longitude);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of JourneyRoute
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$JourneyRouteImplCopyWith<_$JourneyRouteImpl> get copyWith =>
@@ -556,8 +579,11 @@ abstract class _JourneyRoute implements JourneyRoute {
   double get latitude;
   @override
   double get longitude;
+
+  /// Create a copy of JourneyRoute
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$JourneyRouteImplCopyWith<_$JourneyRouteImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
