@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:data/log/logger.dart';
@@ -105,7 +104,10 @@ class EphemeralECDHUtils {
       final syntheticIv = message.iv;
       final cipherText = message.ciphertext;
 
+
       final ephemeralPublic = Curve.decodePoint(message.ephemeral_pub.bytes, 0);
+      print("XXX receiverPrivateKey ${receiverPrivateKey.serialize().length}");
+
       final masterSecret =
           Curve.calculateAgreement(ephemeralPublic, receiverPrivateKey);
 

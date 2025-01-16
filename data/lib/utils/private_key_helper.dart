@@ -43,15 +43,11 @@ Future<SecretKey> _deriveKeyFromPasskey(String passkey, Uint8List salt) async {
 
 // Encrypt data using AES-GCM with the provided key. Returns the IV prepended to the ciphertext.
 Future<Uint8List> _encryptData(Uint8List data, SecretKey key) async {
-  try {
     final gcm = AesGcm.with256bits();
-    final iv = Uint8List(GCM_IV_SIZE)
-      ..setAll(0, List.generate(GCM_IV_SIZE, (i) => (i + 1) % 256));
+    final iv =
+        Uint8List.fromList(List.generate(GCM_IV_SIZE, (i) => (i + 1) % 256));
     final secretBox = await gcm.encrypt(data, secretKey: key, nonce: iv);
     return Uint8List.fromList(iv + secretBox.cipherText);
-  } catch (e) {
-    throw EncryptionException("Encryption failed", e);
-  }
 }
 
 /// Encrypts the private key using the user's passkey/PIN.
@@ -59,7 +55,7 @@ Future<Uint8List> _encryptData(Uint8List data, SecretKey key) async {
 Future<Uint8List> encryptPrivateKey(
     Uint8List privateKey, String passkey, Uint8List salt) async {
   if (salt.isEmpty) {
-    throw EncryptionException('Salt is empty');
+    throw Exception('Salt is empty');
   }
   final key = await _deriveKeyFromPasskey(passkey, salt);
   return await _encryptData(privateKey, key);
@@ -68,38 +64,38 @@ Future<Uint8List> encryptPrivateKey(
 // Decrypts the provided ciphertext using the provided private key.
 Future<Uint8List> _decryptData(
     Uint8List encryptedPrivateKey, Uint8List salt, String passkey) async {
-  try {
-    final key = await _deriveKeyFromPasskey(passkey, salt);
-    if (encryptedPrivateKey.length < GCM_IV_SIZE) {
-      throw EncryptionException("Encrypted data is too short");
-    }
 
-    final iv = Uint8List(GCM_IV_SIZE)
-      ..setAll(0, List.generate(GCM_IV_SIZE, (i) => (i + 1) % 256));
+  final key = await _deriveKeyFromPasskey(passkey, salt);
 
-    final ciphertext = encryptedPrivateKey.sublist(GCM_IV_SIZE);
-
-    final algorithm = AesCtr.with128bits(macAlgorithm: MacAlgorithm.empty);
-
-    final secretBox = SecretBox(
-      ciphertext,
-      nonce: iv,
-      mac: Mac.empty,
-    );
-
-    final clearText = await algorithm.decrypt(
-      secretBox,
-      secretKey: key,
-    );
-
-    return Uint8List.fromList(clearText);
-  } catch (e) {
-    throw EncryptionException("Decryption failed", e);
+  if (encryptedPrivateKey.length < GCM_IV_SIZE) {
+    throw Exception("Encrypted data is too short");
   }
+
+  print("XXX  encryptedPrivateKey ${encryptedPrivateKey}");
+
+  final iv = encryptedPrivateKey.sublist(0, GCM_IV_SIZE);
+
+  final ciphertext = encryptedPrivateKey.sublist(GCM_IV_SIZE);
+
+  print("XXX _decryptData iv ${iv} ciphertext ${ciphertext}");
+
+  final algorithm = AesCtr.with128bits(macAlgorithm: MacAlgorithm.empty);
+
+  final secretBox = SecretBox(
+    ciphertext,
+    nonce: iv,
+    mac: Mac.empty,
+  );
+
+  final clearText = await algorithm.decrypt(
+    secretBox,
+    secretKey: key,
+  );
+
+  return Uint8List.fromList(clearText);
 }
 
-Future<GroupCipher?>
-    getGroupCipher({
+Future<GroupCipher?> getGroupCipher({
   required String spaceId,
   required int deviceId,
   required Uint8List privateKeyBytes,
@@ -113,6 +109,9 @@ Future<GroupCipher?>
     salt: salt,
     passkey: passkey,
   );
+
+  print(
+      "XXX privateKeyBytes ${privateKeyBytes.length} _decodePrivateKey ${privateKey?.serialize().length}");
 
   if (privateKey == null) {
     return null;
@@ -156,12 +155,11 @@ Future<ECPrivateKey?> _decodePrivateKey(
     {required Uint8List privateKeyBytes,
     required Uint8List salt,
     required String passkey}) async {
-  try {
-    return Curve.decodePrivatePoint(privateKeyBytes);
-  } catch (e, s) {
-    logger.d("Error decoding private key", error: e, stackTrace: s);
-    final decodedPrivateKey =
-        await _decryptData(privateKeyBytes, salt, passkey);
-    return Curve.decodePrivatePoint(decodedPrivateKey);
-  }
+  // try {
+  //   return Curve.decodePrivatePoint(privateKeyBytes);
+  // } catch (e, s) {
+  //   logger.d("Error decoding private key", error: e, stackTrace: s);
+  final decodedPrivateKey = await _decryptData(privateKeyBytes, salt, passkey);
+  return Curve.decodePrivatePoint(decodedPrivateKey);
+  // }
 }

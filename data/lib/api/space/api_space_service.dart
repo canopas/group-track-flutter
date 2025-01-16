@@ -17,7 +17,7 @@ final apiSpaceServiceProvider = StateProvider((ref) => ApiSpaceService(
       ref.read(bufferedSenderKeystoreProvider),
     ));
 
-const FIRESTORE_SPACE_PATH = 'space';
+const FIRESTORE_SPACE_PATH = 'spaces';
 const FIRESTORE_SPACE_MEMBER_PATH = 'space_members';
 const FIRESTORE_SPACE_MEMBER_SENDER_KEY_RECORD = 'sender_key_record';
 const FIRESTORE_SPACE_MEMBER_LOCATION_PATH = 'user_locations';
@@ -76,8 +76,9 @@ class ApiSpaceService {
     final emptyGroupKeys =
         ApiGroupKey(doc_updated_at: DateTime.now().millisecondsSinceEpoch);
 
-    await joinSpace(doc.id, adminId, identityKeyPublic);
     await spaceGroupKeysDocRef(doc.id).set(emptyGroupKeys);
+    await joinSpace(doc.id, adminId, identityKeyPublic);
+
     return doc.id;
   }
 

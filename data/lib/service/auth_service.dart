@@ -144,14 +144,14 @@ class AuthService {
 
   Future<ApiUser> _generateAndSaveUserKeys(ApiUser user, String passKey) async {
     final identityKeyPair = generateIdentityKeyPair();
-    final salt = Uint8List(16)
-      ..setAll(0, List.generate(16, (_) => Random().nextInt(256)));
+    final salt = Uint8List.fromList(List.generate(16, (_) => Random().nextInt(256)));
     final encryptedPrivateKey = await encryptPrivateKey(
       identityKeyPair.getPrivateKey().serialize(),
       passKey,
       salt,
     );
 
+    print("XXX _generateAndSaveUserKeys encryptedPrivateKey ${encryptedPrivateKey.length}");
     final publicKey =
         Blob(identityKeyPair.getPublicKey().publicKey.serialize());
     final privateKey = Blob(encryptedPrivateKey);
@@ -167,6 +167,7 @@ class AuthService {
     );
 
     return user.copyWith(
+      updated_at: DateTime.now().millisecondsSinceEpoch,
       identity_key_public: publicKey,
       identity_key_private: privateKey,
       identity_key_salt: saltBlob,

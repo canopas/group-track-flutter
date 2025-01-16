@@ -181,14 +181,7 @@ class LocationManager {
 
   Future<void> saveLocation(LocationData location) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final user = await _getUserFromPreferences();
-      if (user == null) return;
-
-      final passKey = prefs.getString("user_passkey");
-      if (passKey == null) return;
-
-      await _locationService.saveCurrentLocation(user, location, passKey);
+      await _locationService.saveCurrentLocation(location);
     } catch (e, s) {
       logger.d("Failed to save encrypted location", error: e, stackTrace: s);
     }

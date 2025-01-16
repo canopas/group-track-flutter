@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../api/network/client.dart';
+import '../api/space/api_space_service.dart';
 import '../api/space/space_models.dart';
 import '../config.dart';
 
@@ -25,7 +26,7 @@ class PlaceService {
   PlaceService(this._db);
 
   CollectionReference<ApiSpace> get _spaceRef =>
-      _db.collection('spaces').withConverter<ApiSpace>(
+      _db.collection(FIRESTORE_SPACE_PATH).withConverter<ApiSpace>(
           fromFirestore: ApiSpace.fromFireStore,
           toFirestore: (space, options) => space.toJson());
 
