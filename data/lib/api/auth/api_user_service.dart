@@ -297,6 +297,7 @@ class ApiUserService {
 
   Future<void> updateKeys(
       String id, Blob publicKey, Blob privateKey, Blob saltBlob) async {
+
     await _userRef.doc(id).update({
       "identity_key_public": publicKey,
       "identity_key_private": privateKey,

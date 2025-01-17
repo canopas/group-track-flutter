@@ -104,7 +104,6 @@ class EphemeralECDHUtils {
       final syntheticIv = message.iv;
       final cipherText = message.ciphertext;
 
-
       final ephemeralPublic = Curve.decodePoint(message.ephemeral_pub.bytes, 0);
       print("XXX receiverPrivateKey ${receiverPrivateKey.serialize().length}");
 
@@ -115,22 +114,23 @@ class EphemeralECDHUtils {
         utf8.encode("cipher"),
         secretKey: SecretKey(masterSecret),
       );
-
-      final cipherKey = await mac.calculateMac(
-        cipherKeyPart1.bytes,
-        secretKey: SecretKey(syntheticIv.bytes),
+      //
+      // Derive cipherKey
+      final cipherKeyFull = await mac.calculateMac(
+        syntheticIv.bytes,
+        secretKey: SecretKey(cipherKeyPart1.bytes),
       );
 
-      // Encrypt plaintext
+      // // Truncate the cipherKey to 16 bytes for AES-128
+      final cipherKeyBytes = cipherKeyFull.bytes.sublist(0, 16);
+      final macBytes = cipherKeyFull.bytes.sublist(16);
+
       final algorithm = AesCtr.with128bits(macAlgorithm: MacAlgorithm.empty);
-      final secretKey = SecretKey(cipherKey.bytes);
-      final secretBox = await algorithm.encrypt(
-        cipherText.bytes,
-        secretKey: secretKey,
-        nonce: syntheticIv.bytes,
-      );
 
-      final plaintext = Uint8List.fromList(secretBox.cipherText);
+      final decrypted = await algorithm.decrypt(
+        secretKey: SecretKey(cipherKeyBytes),
+        SecretBox(cipherText.bytes, nonce: syntheticIv.bytes, mac: Mac.empty),
+      );
 
       final verificationPart1 = await mac.calculateMac(
         utf8.encode("auth"),
@@ -138,18 +138,20 @@ class EphemeralECDHUtils {
       );
 
       final verificationPart2 = await mac.calculateMac(
-        plaintext,
+        decrypted,
         secretKey: SecretKey(verificationPart1.bytes),
       );
 
       final ourSyntheticIv = verificationPart2.bytes.sublist(0, 16);
 
+      print(
+          "XXXX ourSyntheticIv ${ourSyntheticIv} syntheticIv ${syntheticIv.bytes}");
       if (!listEquals(ourSyntheticIv, syntheticIv.bytes)) {
         throw Exception(
             "The computed syntheticIv didn't match the actual syntheticIv.");
       }
 
-      return plaintext;
+      return Uint8List.fromList(decrypted);
     } catch (e, s) {
       logger.e("Error while decrypting", error: e, stackTrace: s);
       return null;

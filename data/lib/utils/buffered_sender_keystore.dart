@@ -39,8 +39,8 @@ class BufferedSenderKeystore extends SenderKeyStore {
             toFirestore: (senderKey, options) => senderKey.toJson());
   }
 
-  ApiUser? get currentUser => userJsonState.state == null
-      ? ApiUser.fromJson(jsonDecode(userJsonState.state ?? ''))
+  ApiUser? get currentUser => userJsonState.state != null
+      ? ApiUser.fromJson(jsonDecode(userJsonState.state!))
       : null;
 
   @override
@@ -133,14 +133,18 @@ class BufferedSenderKeystore extends SenderKeyStore {
       final distributionId = senderKeyName.groupId;
       final deviceId = senderKeyName.sender.getDeviceId();
       final uniqueDocId = "$deviceId-$distributionId";
+      final spaceId = senderKeyName.sender.getName();
       final senderKeyRecord = ApiSenderKeyRecord(
           id: uniqueDocId,
           device_id: deviceId,
+          address: spaceId,
           distribution_id: distributionId,
           record: Blob(record.serialize()),
           created_at: DateTime.now().millisecondsSinceEpoch);
 
-      await senderKeyRef(senderKeyRecord.distribution_id, currentUser.id)
+      print("XXX store senderKeyRecord ${senderKeyName.sender.getName()}");
+
+      await senderKeyRef(spaceId, currentUser.id)
           .doc(uniqueDocId)
           .set(senderKeyRecord);
 

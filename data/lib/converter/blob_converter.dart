@@ -15,7 +15,8 @@ class BlobConverter implements JsonConverter<Blob, dynamic> {
 
     if (json is Map<String, dynamic> && json.containsKey('_byteString')) {
       final base64String = json['_byteString'] as String;
-      return Blob(base64Decode(base64String));
+      print("XXX base64String $base64String");
+      return Blob(Uint8List.fromList(base64String.codeUnits));
     }
 
 

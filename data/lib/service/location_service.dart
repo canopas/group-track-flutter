@@ -67,11 +67,11 @@ class LocationService {
         .limit(1)
         .snapshots()
         .asyncMap<List<ApiLocation?>>((snapshot) async {
-      if (snapshot.docs.isNotEmpty) {
-        return await Future.wait(snapshot.docs.map((doc) async {
-          return toApiLocation(doc.data(), spaceId);
-        }));
-      }
+      // if (snapshot.docs.isNotEmpty) {
+      //   return await Future.wait(snapshot.docs.map((doc) async {
+      //     return toApiLocation(doc.data(), spaceId);
+      //   }));
+      // }
       return List.empty();
     });
   }
@@ -82,11 +82,11 @@ class LocationService {
         .limit(1)
         .get();
 
-    if (snapshot.docs.isNotEmpty) {
-      return snapshot.docs.map((doc) async {
-        return await toApiLocation(doc.data(), spaceId);
-      }).first;
-    }
+    // if (snapshot.docs.isNotEmpty) {
+    //   return snapshot.docs.map((doc) async {
+    //     return await toApiLocation(doc.data(), spaceId);
+    //   }).first;
+    // }
     return null;
   }
 

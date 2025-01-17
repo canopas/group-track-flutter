@@ -30,7 +30,7 @@ Future<ApiMemberKeyData> generateMemberKeyData(String spaceId,
     try {
       final publicKeyBytes = publicBlob.bytes;
       if (publicKeyBytes.length != 33) {
-        logger.e("Invalid public key size for member ${member.user_id}");
+        logger.e("Invalid public key size for member ${member.user_id} length: ${publicKeyBytes.length}");
         continue;
       }
 

@@ -200,6 +200,7 @@ class ApiSpaceService {
         spaceMembers: spaceMembers,
         bufferedSenderKeyStore: bufferedSenderKeystore);
 
+    print("XXX membersKeyData $membersKeyData");
     await _updateGroupKeys(spaceId, userId, membersKeyData);
   }
 
