@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/auth/api_user_service.dart';
@@ -63,7 +64,7 @@ class SpaceService {
   Future<String> createSpaceAndGetInviteCode({
     required String spaceName,
     required String userId,
-    required Blob? identityKeyPublic,
+    required Uint8List? identityKeyPublic,
   }) async {
     final spaceId =
         await spaceService.createSpace(spaceName, userId, identityKeyPublic);

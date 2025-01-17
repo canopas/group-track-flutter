@@ -598,13 +598,13 @@ mixin _$EncryptedLocationJourney {
   String? get id => throw _privateConstructorUsedError;
   String get user_id => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob get from_latitude => throw _privateConstructorUsedError;
+  Uint8List get from_latitude => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob get from_longitude => throw _privateConstructorUsedError;
+  Uint8List get from_longitude => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob? get to_latitude => throw _privateConstructorUsedError;
+  Uint8List? get to_latitude => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob? get to_longitude => throw _privateConstructorUsedError;
+  Uint8List? get to_longitude => throw _privateConstructorUsedError;
   List<EncryptedJourneyRoute> get routes => throw _privateConstructorUsedError;
   double? get route_distance => throw _privateConstructorUsedError;
   int? get route_duration => throw _privateConstructorUsedError;
@@ -631,10 +631,10 @@ abstract class $EncryptedLocationJourneyCopyWith<$Res> {
   $Res call(
       {String? id,
       String user_id,
-      @BlobConverter() Blob from_latitude,
-      @BlobConverter() Blob from_longitude,
-      @BlobConverter() Blob? to_latitude,
-      @BlobConverter() Blob? to_longitude,
+      @BlobConverter() Uint8List from_latitude,
+      @BlobConverter() Uint8List from_longitude,
+      @BlobConverter() Uint8List? to_latitude,
+      @BlobConverter() Uint8List? to_longitude,
       List<EncryptedJourneyRoute> routes,
       double? route_distance,
       int? route_duration,
@@ -684,19 +684,19 @@ class _$EncryptedLocationJourneyCopyWithImpl<$Res,
       from_latitude: null == from_latitude
           ? _value.from_latitude
           : from_latitude // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       from_longitude: null == from_longitude
           ? _value.from_longitude
           : from_longitude // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       to_latitude: freezed == to_latitude
           ? _value.to_latitude
           : to_latitude // ignore: cast_nullable_to_non_nullable
-              as Blob?,
+              as Uint8List?,
       to_longitude: freezed == to_longitude
           ? _value.to_longitude
           : to_longitude // ignore: cast_nullable_to_non_nullable
-              as Blob?,
+              as Uint8List?,
       routes: null == routes
           ? _value.routes
           : routes // ignore: cast_nullable_to_non_nullable
@@ -737,10 +737,10 @@ abstract class _$$EncryptedLocationJourneyImplCopyWith<$Res>
   $Res call(
       {String? id,
       String user_id,
-      @BlobConverter() Blob from_latitude,
-      @BlobConverter() Blob from_longitude,
-      @BlobConverter() Blob? to_latitude,
-      @BlobConverter() Blob? to_longitude,
+      @BlobConverter() Uint8List from_latitude,
+      @BlobConverter() Uint8List from_longitude,
+      @BlobConverter() Uint8List? to_latitude,
+      @BlobConverter() Uint8List? to_longitude,
       List<EncryptedJourneyRoute> routes,
       double? route_distance,
       int? route_duration,
@@ -789,19 +789,19 @@ class __$$EncryptedLocationJourneyImplCopyWithImpl<$Res>
       from_latitude: null == from_latitude
           ? _value.from_latitude
           : from_latitude // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       from_longitude: null == from_longitude
           ? _value.from_longitude
           : from_longitude // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       to_latitude: freezed == to_latitude
           ? _value.to_latitude
           : to_latitude // ignore: cast_nullable_to_non_nullable
-              as Blob?,
+              as Uint8List?,
       to_longitude: freezed == to_longitude
           ? _value.to_longitude
           : to_longitude // ignore: cast_nullable_to_non_nullable
-              as Blob?,
+              as Uint8List?,
       routes: null == routes
           ? _value._routes
           : routes // ignore: cast_nullable_to_non_nullable
@@ -858,16 +858,16 @@ class _$EncryptedLocationJourneyImpl extends _EncryptedLocationJourney {
   final String user_id;
   @override
   @BlobConverter()
-  final Blob from_latitude;
+  final Uint8List from_latitude;
   @override
   @BlobConverter()
-  final Blob from_longitude;
+  final Uint8List from_longitude;
   @override
   @BlobConverter()
-  final Blob? to_latitude;
+  final Uint8List? to_latitude;
   @override
   @BlobConverter()
-  final Blob? to_longitude;
+  final Uint8List? to_longitude;
   final List<EncryptedJourneyRoute> _routes;
   @override
   @JsonKey()
@@ -900,14 +900,14 @@ class _$EncryptedLocationJourneyImpl extends _EncryptedLocationJourney {
             other is _$EncryptedLocationJourneyImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.user_id, user_id) || other.user_id == user_id) &&
-            (identical(other.from_latitude, from_latitude) ||
-                other.from_latitude == from_latitude) &&
-            (identical(other.from_longitude, from_longitude) ||
-                other.from_longitude == from_longitude) &&
-            (identical(other.to_latitude, to_latitude) ||
-                other.to_latitude == to_latitude) &&
-            (identical(other.to_longitude, to_longitude) ||
-                other.to_longitude == to_longitude) &&
+            const DeepCollectionEquality()
+                .equals(other.from_latitude, from_latitude) &&
+            const DeepCollectionEquality()
+                .equals(other.from_longitude, from_longitude) &&
+            const DeepCollectionEquality()
+                .equals(other.to_latitude, to_latitude) &&
+            const DeepCollectionEquality()
+                .equals(other.to_longitude, to_longitude) &&
             const DeepCollectionEquality().equals(other._routes, _routes) &&
             (identical(other.route_distance, route_distance) ||
                 other.route_distance == route_distance) &&
@@ -926,10 +926,10 @@ class _$EncryptedLocationJourneyImpl extends _EncryptedLocationJourney {
       runtimeType,
       id,
       user_id,
-      from_latitude,
-      from_longitude,
-      to_latitude,
-      to_longitude,
+      const DeepCollectionEquality().hash(from_latitude),
+      const DeepCollectionEquality().hash(from_longitude),
+      const DeepCollectionEquality().hash(to_latitude),
+      const DeepCollectionEquality().hash(to_longitude),
       const DeepCollectionEquality().hash(_routes),
       route_distance,
       route_duration,
@@ -958,10 +958,10 @@ abstract class _EncryptedLocationJourney extends EncryptedLocationJourney {
   const factory _EncryptedLocationJourney(
       {final String? id,
       required final String user_id,
-      @BlobConverter() required final Blob from_latitude,
-      @BlobConverter() required final Blob from_longitude,
-      @BlobConverter() final Blob? to_latitude,
-      @BlobConverter() final Blob? to_longitude,
+      @BlobConverter() required final Uint8List from_latitude,
+      @BlobConverter() required final Uint8List from_longitude,
+      @BlobConverter() final Uint8List? to_latitude,
+      @BlobConverter() final Uint8List? to_longitude,
       final List<EncryptedJourneyRoute> routes,
       final double? route_distance,
       final int? route_duration,
@@ -979,16 +979,16 @@ abstract class _EncryptedLocationJourney extends EncryptedLocationJourney {
   String get user_id;
   @override
   @BlobConverter()
-  Blob get from_latitude;
+  Uint8List get from_latitude;
   @override
   @BlobConverter()
-  Blob get from_longitude;
+  Uint8List get from_longitude;
   @override
   @BlobConverter()
-  Blob? get to_latitude;
+  Uint8List? get to_latitude;
   @override
   @BlobConverter()
-  Blob? get to_longitude;
+  Uint8List? get to_longitude;
   @override
   List<EncryptedJourneyRoute> get routes;
   @override
@@ -1018,9 +1018,9 @@ EncryptedJourneyRoute _$EncryptedJourneyRouteFromJson(
 /// @nodoc
 mixin _$EncryptedJourneyRoute {
   @BlobConverter()
-  Blob get latitude => throw _privateConstructorUsedError;
+  Uint8List get latitude => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob get longitude => throw _privateConstructorUsedError;
+  Uint8List get longitude => throw _privateConstructorUsedError;
 
   /// Serializes this EncryptedJourneyRoute to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1038,7 +1038,9 @@ abstract class $EncryptedJourneyRouteCopyWith<$Res> {
           $Res Function(EncryptedJourneyRoute) then) =
       _$EncryptedJourneyRouteCopyWithImpl<$Res, EncryptedJourneyRoute>;
   @useResult
-  $Res call({@BlobConverter() Blob latitude, @BlobConverter() Blob longitude});
+  $Res call(
+      {@BlobConverter() Uint8List latitude,
+      @BlobConverter() Uint8List longitude});
 }
 
 /// @nodoc
@@ -1064,11 +1066,11 @@ class _$EncryptedJourneyRouteCopyWithImpl<$Res,
       latitude: null == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       longitude: null == longitude
           ? _value.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
     ) as $Val);
   }
 }
@@ -1082,7 +1084,9 @@ abstract class _$$EncryptedJourneyRouteImplCopyWith<$Res>
       __$$EncryptedJourneyRouteImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({@BlobConverter() Blob latitude, @BlobConverter() Blob longitude});
+  $Res call(
+      {@BlobConverter() Uint8List latitude,
+      @BlobConverter() Uint8List longitude});
 }
 
 /// @nodoc
@@ -1106,11 +1110,11 @@ class __$$EncryptedJourneyRouteImplCopyWithImpl<$Res>
       latitude: null == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       longitude: null == longitude
           ? _value.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
     ));
   }
 }
@@ -1127,10 +1131,10 @@ class _$EncryptedJourneyRouteImpl implements _EncryptedJourneyRoute {
 
   @override
   @BlobConverter()
-  final Blob latitude;
+  final Uint8List latitude;
   @override
   @BlobConverter()
-  final Blob longitude;
+  final Uint8List longitude;
 
   @override
   String toString() {
@@ -1142,15 +1146,16 @@ class _$EncryptedJourneyRouteImpl implements _EncryptedJourneyRoute {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$EncryptedJourneyRouteImpl &&
-            (identical(other.latitude, latitude) ||
-                other.latitude == latitude) &&
-            (identical(other.longitude, longitude) ||
-                other.longitude == longitude));
+            const DeepCollectionEquality().equals(other.latitude, latitude) &&
+            const DeepCollectionEquality().equals(other.longitude, longitude));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, latitude, longitude);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(latitude),
+      const DeepCollectionEquality().hash(longitude));
 
   /// Create a copy of EncryptedJourneyRoute
   /// with the given fields replaced by the non-null parameter values.
@@ -1171,8 +1176,8 @@ class _$EncryptedJourneyRouteImpl implements _EncryptedJourneyRoute {
 
 abstract class _EncryptedJourneyRoute implements EncryptedJourneyRoute {
   const factory _EncryptedJourneyRoute(
-          {@BlobConverter() required final Blob latitude,
-          @BlobConverter() required final Blob longitude}) =
+          {@BlobConverter() required final Uint8List latitude,
+          @BlobConverter() required final Uint8List longitude}) =
       _$EncryptedJourneyRouteImpl;
 
   factory _EncryptedJourneyRoute.fromJson(Map<String, dynamic> json) =
@@ -1180,10 +1185,10 @@ abstract class _EncryptedJourneyRoute implements EncryptedJourneyRoute {
 
   @override
   @BlobConverter()
-  Blob get latitude;
+  Uint8List get latitude;
   @override
   @BlobConverter()
-  Blob get longitude;
+  Uint8List get longitude;
 
   /// Create a copy of EncryptedJourneyRoute
   /// with the given fields replaced by the non-null parameter values.

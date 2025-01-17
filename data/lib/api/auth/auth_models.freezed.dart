@@ -32,11 +32,11 @@ mixin _$ApiUser {
   int? get battery_pct => throw _privateConstructorUsedError;
   String? get fcm_token => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob? get identity_key_public => throw _privateConstructorUsedError;
+  Uint8List? get identity_key_public => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob? get identity_key_private => throw _privateConstructorUsedError;
+  Uint8List? get identity_key_private => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob? get identity_key_salt => throw _privateConstructorUsedError;
+  Uint8List? get identity_key_salt => throw _privateConstructorUsedError;
   int? get state => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
   int? get updated_at => throw _privateConstructorUsedError;
@@ -67,9 +67,9 @@ abstract class $ApiUserCopyWith<$Res> {
       List<String>? space_ids,
       int? battery_pct,
       String? fcm_token,
-      @BlobConverter() Blob? identity_key_public,
-      @BlobConverter() Blob? identity_key_private,
-      @BlobConverter() Blob? identity_key_salt,
+      @BlobConverter() Uint8List? identity_key_public,
+      @BlobConverter() Uint8List? identity_key_private,
+      @BlobConverter() Uint8List? identity_key_salt,
       int? state,
       int? created_at,
       int? updated_at});
@@ -156,15 +156,15 @@ class _$ApiUserCopyWithImpl<$Res, $Val extends ApiUser>
       identity_key_public: freezed == identity_key_public
           ? _value.identity_key_public
           : identity_key_public // ignore: cast_nullable_to_non_nullable
-              as Blob?,
+              as Uint8List?,
       identity_key_private: freezed == identity_key_private
           ? _value.identity_key_private
           : identity_key_private // ignore: cast_nullable_to_non_nullable
-              as Blob?,
+              as Uint8List?,
       identity_key_salt: freezed == identity_key_salt
           ? _value.identity_key_salt
           : identity_key_salt // ignore: cast_nullable_to_non_nullable
-              as Blob?,
+              as Uint8List?,
       state: freezed == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -200,9 +200,9 @@ abstract class _$$ApiUserImplCopyWith<$Res> implements $ApiUserCopyWith<$Res> {
       List<String>? space_ids,
       int? battery_pct,
       String? fcm_token,
-      @BlobConverter() Blob? identity_key_public,
-      @BlobConverter() Blob? identity_key_private,
-      @BlobConverter() Blob? identity_key_salt,
+      @BlobConverter() Uint8List? identity_key_public,
+      @BlobConverter() Uint8List? identity_key_private,
+      @BlobConverter() Uint8List? identity_key_salt,
       int? state,
       int? created_at,
       int? updated_at});
@@ -287,15 +287,15 @@ class __$$ApiUserImplCopyWithImpl<$Res>
       identity_key_public: freezed == identity_key_public
           ? _value.identity_key_public
           : identity_key_public // ignore: cast_nullable_to_non_nullable
-              as Blob?,
+              as Uint8List?,
       identity_key_private: freezed == identity_key_private
           ? _value.identity_key_private
           : identity_key_private // ignore: cast_nullable_to_non_nullable
-              as Blob?,
+              as Uint8List?,
       identity_key_salt: freezed == identity_key_salt
           ? _value.identity_key_salt
           : identity_key_salt // ignore: cast_nullable_to_non_nullable
-              as Blob?,
+              as Uint8List?,
       state: freezed == state
           ? _value.state
           : state // ignore: cast_nullable_to_non_nullable
@@ -374,13 +374,13 @@ class _$ApiUserImpl extends _ApiUser {
   final String? fcm_token;
   @override
   @BlobConverter()
-  final Blob? identity_key_public;
+  final Uint8List? identity_key_public;
   @override
   @BlobConverter()
-  final Blob? identity_key_private;
+  final Uint8List? identity_key_private;
   @override
   @BlobConverter()
-  final Blob? identity_key_salt;
+  final Uint8List? identity_key_salt;
   @override
   final int? state;
   @override
@@ -420,12 +420,12 @@ class _$ApiUserImpl extends _ApiUser {
                 other.battery_pct == battery_pct) &&
             (identical(other.fcm_token, fcm_token) ||
                 other.fcm_token == fcm_token) &&
-            (identical(other.identity_key_public, identity_key_public) ||
-                other.identity_key_public == identity_key_public) &&
-            (identical(other.identity_key_private, identity_key_private) ||
-                other.identity_key_private == identity_key_private) &&
-            (identical(other.identity_key_salt, identity_key_salt) ||
-                other.identity_key_salt == identity_key_salt) &&
+            const DeepCollectionEquality()
+                .equals(other.identity_key_public, identity_key_public) &&
+            const DeepCollectionEquality()
+                .equals(other.identity_key_private, identity_key_private) &&
+            const DeepCollectionEquality()
+                .equals(other.identity_key_salt, identity_key_salt) &&
             (identical(other.state, state) || other.state == state) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at) &&
@@ -448,9 +448,9 @@ class _$ApiUserImpl extends _ApiUser {
       const DeepCollectionEquality().hash(_space_ids),
       battery_pct,
       fcm_token,
-      identity_key_public,
-      identity_key_private,
-      identity_key_salt,
+      const DeepCollectionEquality().hash(identity_key_public),
+      const DeepCollectionEquality().hash(identity_key_private),
+      const DeepCollectionEquality().hash(identity_key_salt),
       state,
       created_at,
       updated_at);
@@ -484,9 +484,9 @@ abstract class _ApiUser extends ApiUser {
       final List<String>? space_ids,
       final int? battery_pct,
       final String? fcm_token,
-      @BlobConverter() final Blob? identity_key_public,
-      @BlobConverter() final Blob? identity_key_private,
-      @BlobConverter() final Blob? identity_key_salt,
+      @BlobConverter() final Uint8List? identity_key_public,
+      @BlobConverter() final Uint8List? identity_key_private,
+      @BlobConverter() final Uint8List? identity_key_salt,
       final int? state,
       final int? created_at,
       final int? updated_at}) = _$ApiUserImpl;
@@ -518,13 +518,13 @@ abstract class _ApiUser extends ApiUser {
   String? get fcm_token;
   @override
   @BlobConverter()
-  Blob? get identity_key_public;
+  Uint8List? get identity_key_public;
   @override
   @BlobConverter()
-  Blob? get identity_key_private;
+  Uint8List? get identity_key_private;
   @override
   @BlobConverter()
-  Blob? get identity_key_salt;
+  Uint8List? get identity_key_salt;
   @override
   int? get state;
   @override

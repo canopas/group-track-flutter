@@ -47,9 +47,10 @@ _$EncryptedDistributionImpl _$$EncryptedDistributionImplFromJson(
         Map<String, dynamic> json) =>
     _$EncryptedDistributionImpl(
       recipient_id: json['recipient_id'] as String? ?? "",
-      ephemeral_pub: const BlobConverter().fromJson(json['ephemeral_pub']),
-      iv: const BlobConverter().fromJson(json['iv']),
-      ciphertext: const BlobConverter().fromJson(json['ciphertext']),
+      ephemeral_pub:
+          const BlobConverter().fromJson(json['ephemeral_pub'] as String),
+      iv: const BlobConverter().fromJson(json['iv'] as String),
+      ciphertext: const BlobConverter().fromJson(json['ciphertext'] as String),
       created_at: (json['created_at'] as num?)?.toInt() ?? 0,
     );
 
@@ -69,7 +70,7 @@ _$ApiSenderKeyRecordImpl _$$ApiSenderKeyRecordImplFromJson(
       id: json['id'] as String,
       device_id: (json['device_id'] as num).toInt(),
       distribution_id: json['distribution_id'] as String,
-      record: const BlobConverter().fromJson(json['record']),
+      record: const BlobConverter().fromJson(json['record'] as String),
       address: json['address'] as String? ?? '',
       created_at: (json['created_at'] as num).toInt(),
     );

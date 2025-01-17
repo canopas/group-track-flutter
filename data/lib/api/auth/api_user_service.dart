@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/network/client.dart';
 import 'package:data/service/device_service.dart';
@@ -295,13 +298,14 @@ class ApiUserService {
     userPassKeyNotifier.state = null;
   }
 
-  Future<void> updateKeys(
-      String id, Blob publicKey, Blob privateKey, Blob saltBlob) async {
-
+  Future<void> updateKeys(String id, Uint8List? publicKey,
+      Uint8List? privateKey, Uint8List? saltBlob) async {
     await _userRef.doc(id).update({
-      "identity_key_public": publicKey,
-      "identity_key_private": privateKey,
-      "identity_key_salt": saltBlob,
+      "identity_key_public":
+          publicKey != null ? base64UrlEncode(publicKey) : null,
+      "identity_key_private":
+          privateKey != null ? base64UrlEncode(privateKey) : null,
+      "identity_key_salt": saltBlob != null ? base64UrlEncode(saltBlob) : null,
     });
   }
 }

@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../converter/blob_converter.dart';
+import 'dart:typed_data';
 
 part 'api_sender_key_record.freezed.dart';
 part 'api_sender_key_record.g.dart';
@@ -17,7 +18,7 @@ class ApiSenderKeyRecord with _$ApiSenderKeyRecord {
     @Default('') String address,
     @Default('') String distributionId,
     required int created_at,
-    @BlobConverter() required Blob record,
+    @BlobConverter() required Uint8List record,
   }) = _ApiSenderKeyRecord;
 
   factory ApiSenderKeyRecord.fromJson(Map<String, dynamic> data) =>

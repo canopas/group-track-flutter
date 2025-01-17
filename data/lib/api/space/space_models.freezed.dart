@@ -234,7 +234,7 @@ mixin _$ApiSpaceMember {
   int get role => throw _privateConstructorUsedError;
   bool get location_enabled => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob? get identity_key_public => throw _privateConstructorUsedError;
+  Uint8List? get identity_key_public => throw _privateConstructorUsedError;
   int? get created_at => throw _privateConstructorUsedError;
 
   /// Serializes this ApiSpaceMember to a JSON map.
@@ -259,7 +259,7 @@ abstract class $ApiSpaceMemberCopyWith<$Res> {
       String user_id,
       int role,
       bool location_enabled,
-      @BlobConverter() Blob? identity_key_public,
+      @BlobConverter() Uint8List? identity_key_public,
       int? created_at});
 }
 
@@ -310,7 +310,7 @@ class _$ApiSpaceMemberCopyWithImpl<$Res, $Val extends ApiSpaceMember>
       identity_key_public: freezed == identity_key_public
           ? _value.identity_key_public
           : identity_key_public // ignore: cast_nullable_to_non_nullable
-              as Blob?,
+              as Uint8List?,
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -333,7 +333,7 @@ abstract class _$$ApiSpaceMemberImplCopyWith<$Res>
       String user_id,
       int role,
       bool location_enabled,
-      @BlobConverter() Blob? identity_key_public,
+      @BlobConverter() Uint8List? identity_key_public,
       int? created_at});
 }
 
@@ -382,7 +382,7 @@ class __$$ApiSpaceMemberImplCopyWithImpl<$Res>
       identity_key_public: freezed == identity_key_public
           ? _value.identity_key_public
           : identity_key_public // ignore: cast_nullable_to_non_nullable
-              as Blob?,
+              as Uint8List?,
       created_at: freezed == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -419,7 +419,7 @@ class _$ApiSpaceMemberImpl extends _ApiSpaceMember {
   final bool location_enabled;
   @override
   @BlobConverter()
-  final Blob? identity_key_public;
+  final Uint8List? identity_key_public;
   @override
   final int? created_at;
 
@@ -440,16 +440,23 @@ class _$ApiSpaceMemberImpl extends _ApiSpaceMember {
             (identical(other.role, role) || other.role == role) &&
             (identical(other.location_enabled, location_enabled) ||
                 other.location_enabled == location_enabled) &&
-            (identical(other.identity_key_public, identity_key_public) ||
-                other.identity_key_public == identity_key_public) &&
+            const DeepCollectionEquality()
+                .equals(other.identity_key_public, identity_key_public) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, space_id, user_id, role,
-      location_enabled, identity_key_public, created_at);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      space_id,
+      user_id,
+      role,
+      location_enabled,
+      const DeepCollectionEquality().hash(identity_key_public),
+      created_at);
 
   /// Create a copy of ApiSpaceMember
   /// with the given fields replaced by the non-null parameter values.
@@ -475,7 +482,7 @@ abstract class _ApiSpaceMember extends ApiSpaceMember {
       required final String user_id,
       required final int role,
       required final bool location_enabled,
-      @BlobConverter() final Blob? identity_key_public,
+      @BlobConverter() final Uint8List? identity_key_public,
       final int? created_at}) = _$ApiSpaceMemberImpl;
   const _ApiSpaceMember._() : super._();
 
@@ -494,7 +501,7 @@ abstract class _ApiSpaceMember extends ApiSpaceMember {
   bool get location_enabled;
   @override
   @BlobConverter()
-  Blob? get identity_key_public;
+  Uint8List? get identity_key_public;
   @override
   int? get created_at;
 

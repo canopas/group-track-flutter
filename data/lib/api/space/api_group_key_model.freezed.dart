@@ -414,11 +414,11 @@ EncryptedDistribution _$EncryptedDistributionFromJson(
 mixin _$EncryptedDistribution {
   String get recipient_id => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob get ephemeral_pub => throw _privateConstructorUsedError;
+  Uint8List get ephemeral_pub => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob get iv => throw _privateConstructorUsedError;
+  Uint8List get iv => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob get ciphertext => throw _privateConstructorUsedError;
+  Uint8List get ciphertext => throw _privateConstructorUsedError;
   int get created_at => throw _privateConstructorUsedError;
 
   /// Serializes this EncryptedDistribution to a JSON map.
@@ -439,9 +439,9 @@ abstract class $EncryptedDistributionCopyWith<$Res> {
   @useResult
   $Res call(
       {String recipient_id,
-      @BlobConverter() Blob ephemeral_pub,
-      @BlobConverter() Blob iv,
-      @BlobConverter() Blob ciphertext,
+      @BlobConverter() Uint8List ephemeral_pub,
+      @BlobConverter() Uint8List iv,
+      @BlobConverter() Uint8List ciphertext,
       int created_at});
 }
 
@@ -475,15 +475,15 @@ class _$EncryptedDistributionCopyWithImpl<$Res,
       ephemeral_pub: null == ephemeral_pub
           ? _value.ephemeral_pub
           : ephemeral_pub // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       iv: null == iv
           ? _value.iv
           : iv // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       ciphertext: null == ciphertext
           ? _value.ciphertext
           : ciphertext // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       created_at: null == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -503,9 +503,9 @@ abstract class _$$EncryptedDistributionImplCopyWith<$Res>
   @useResult
   $Res call(
       {String recipient_id,
-      @BlobConverter() Blob ephemeral_pub,
-      @BlobConverter() Blob iv,
-      @BlobConverter() Blob ciphertext,
+      @BlobConverter() Uint8List ephemeral_pub,
+      @BlobConverter() Uint8List iv,
+      @BlobConverter() Uint8List ciphertext,
       int created_at});
 }
 
@@ -537,15 +537,15 @@ class __$$EncryptedDistributionImplCopyWithImpl<$Res>
       ephemeral_pub: null == ephemeral_pub
           ? _value.ephemeral_pub
           : ephemeral_pub // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       iv: null == iv
           ? _value.iv
           : iv // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       ciphertext: null == ciphertext
           ? _value.ciphertext
           : ciphertext // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       created_at: null == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -573,13 +573,13 @@ class _$EncryptedDistributionImpl extends _EncryptedDistribution {
   final String recipient_id;
   @override
   @BlobConverter()
-  final Blob ephemeral_pub;
+  final Uint8List ephemeral_pub;
   @override
   @BlobConverter()
-  final Blob iv;
+  final Uint8List iv;
   @override
   @BlobConverter()
-  final Blob ciphertext;
+  final Uint8List ciphertext;
   @override
   @JsonKey()
   final int created_at;
@@ -596,11 +596,11 @@ class _$EncryptedDistributionImpl extends _EncryptedDistribution {
             other is _$EncryptedDistributionImpl &&
             (identical(other.recipient_id, recipient_id) ||
                 other.recipient_id == recipient_id) &&
-            (identical(other.ephemeral_pub, ephemeral_pub) ||
-                other.ephemeral_pub == ephemeral_pub) &&
-            (identical(other.iv, iv) || other.iv == iv) &&
-            (identical(other.ciphertext, ciphertext) ||
-                other.ciphertext == ciphertext) &&
+            const DeepCollectionEquality()
+                .equals(other.ephemeral_pub, ephemeral_pub) &&
+            const DeepCollectionEquality().equals(other.iv, iv) &&
+            const DeepCollectionEquality()
+                .equals(other.ciphertext, ciphertext) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at));
   }
@@ -608,7 +608,12 @@ class _$EncryptedDistributionImpl extends _EncryptedDistribution {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, recipient_id, ephemeral_pub, iv, ciphertext, created_at);
+      runtimeType,
+      recipient_id,
+      const DeepCollectionEquality().hash(ephemeral_pub),
+      const DeepCollectionEquality().hash(iv),
+      const DeepCollectionEquality().hash(ciphertext),
+      created_at);
 
   /// Create a copy of EncryptedDistribution
   /// with the given fields replaced by the non-null parameter values.
@@ -630,9 +635,9 @@ class _$EncryptedDistributionImpl extends _EncryptedDistribution {
 abstract class _EncryptedDistribution extends EncryptedDistribution {
   const factory _EncryptedDistribution(
       {final String recipient_id,
-      @BlobConverter() required final Blob ephemeral_pub,
-      @BlobConverter() required final Blob iv,
-      @BlobConverter() required final Blob ciphertext,
+      @BlobConverter() required final Uint8List ephemeral_pub,
+      @BlobConverter() required final Uint8List iv,
+      @BlobConverter() required final Uint8List ciphertext,
       final int created_at}) = _$EncryptedDistributionImpl;
   const _EncryptedDistribution._() : super._();
 
@@ -643,13 +648,13 @@ abstract class _EncryptedDistribution extends EncryptedDistribution {
   String get recipient_id;
   @override
   @BlobConverter()
-  Blob get ephemeral_pub;
+  Uint8List get ephemeral_pub;
   @override
   @BlobConverter()
-  Blob get iv;
+  Uint8List get iv;
   @override
   @BlobConverter()
-  Blob get ciphertext;
+  Uint8List get ciphertext;
   @override
   int get created_at;
 
@@ -671,7 +676,7 @@ mixin _$ApiSenderKeyRecord {
   int get device_id => throw _privateConstructorUsedError;
   String get distribution_id => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob get record => throw _privateConstructorUsedError;
+  Uint8List get record => throw _privateConstructorUsedError;
   String get address => throw _privateConstructorUsedError;
   int get created_at => throw _privateConstructorUsedError;
 
@@ -695,7 +700,7 @@ abstract class $ApiSenderKeyRecordCopyWith<$Res> {
       {String id,
       int device_id,
       String distribution_id,
-      @BlobConverter() Blob record,
+      @BlobConverter() Uint8List record,
       String address,
       int created_at});
 }
@@ -738,7 +743,7 @@ class _$ApiSenderKeyRecordCopyWithImpl<$Res, $Val extends ApiSenderKeyRecord>
       record: null == record
           ? _value.record
           : record // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       address: null == address
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -763,7 +768,7 @@ abstract class _$$ApiSenderKeyRecordImplCopyWith<$Res>
       {String id,
       int device_id,
       String distribution_id,
-      @BlobConverter() Blob record,
+      @BlobConverter() Uint8List record,
       String address,
       int created_at});
 }
@@ -804,7 +809,7 @@ class __$$ApiSenderKeyRecordImplCopyWithImpl<$Res>
       record: null == record
           ? _value.record
           : record // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       address: null == address
           ? _value.address
           : address // ignore: cast_nullable_to_non_nullable
@@ -840,7 +845,7 @@ class _$ApiSenderKeyRecordImpl extends _ApiSenderKeyRecord {
   final String distribution_id;
   @override
   @BlobConverter()
-  final Blob record;
+  final Uint8List record;
   @override
   @JsonKey()
   final String address;
@@ -862,7 +867,7 @@ class _$ApiSenderKeyRecordImpl extends _ApiSenderKeyRecord {
                 other.device_id == device_id) &&
             (identical(other.distribution_id, distribution_id) ||
                 other.distribution_id == distribution_id) &&
-            (identical(other.record, record) || other.record == record) &&
+            const DeepCollectionEquality().equals(other.record, record) &&
             (identical(other.address, address) || other.address == address) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at));
@@ -870,8 +875,8 @@ class _$ApiSenderKeyRecordImpl extends _ApiSenderKeyRecord {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, device_id, distribution_id, record, address, created_at);
+  int get hashCode => Object.hash(runtimeType, id, device_id, distribution_id,
+      const DeepCollectionEquality().hash(record), address, created_at);
 
   /// Create a copy of ApiSenderKeyRecord
   /// with the given fields replaced by the non-null parameter values.
@@ -895,7 +900,7 @@ abstract class _ApiSenderKeyRecord extends ApiSenderKeyRecord {
       {required final String id,
       required final int device_id,
       required final String distribution_id,
-      @BlobConverter() required final Blob record,
+      @BlobConverter() required final Uint8List record,
       final String address,
       required final int created_at}) = _$ApiSenderKeyRecordImpl;
   const _ApiSenderKeyRecord._() : super._();
@@ -911,7 +916,7 @@ abstract class _ApiSenderKeyRecord extends ApiSenderKeyRecord {
   String get distribution_id;
   @override
   @BlobConverter()
-  Blob get record;
+  Uint8List get record;
   @override
   String get address;
   @override

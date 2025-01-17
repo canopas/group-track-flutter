@@ -26,7 +26,7 @@ mixin _$ApiSenderKeyRecord {
   String get distributionId => throw _privateConstructorUsedError;
   int get created_at => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob get record => throw _privateConstructorUsedError;
+  Uint8List get record => throw _privateConstructorUsedError;
 
   /// Serializes this ApiSenderKeyRecord to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -50,7 +50,7 @@ abstract class $ApiSenderKeyRecordCopyWith<$Res> {
       String address,
       String distributionId,
       int created_at,
-      @BlobConverter() Blob record});
+      @BlobConverter() Uint8List record});
 }
 
 /// @nodoc
@@ -99,7 +99,7 @@ class _$ApiSenderKeyRecordCopyWithImpl<$Res, $Val extends ApiSenderKeyRecord>
       record: null == record
           ? _value.record
           : record // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
     ) as $Val);
   }
 }
@@ -118,7 +118,7 @@ abstract class _$$ApiSenderKeyRecordImplCopyWith<$Res>
       String address,
       String distributionId,
       int created_at,
-      @BlobConverter() Blob record});
+      @BlobConverter() Uint8List record});
 }
 
 /// @nodoc
@@ -165,7 +165,7 @@ class __$$ApiSenderKeyRecordImplCopyWithImpl<$Res>
       record: null == record
           ? _value.record
           : record // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
     ));
   }
 }
@@ -200,7 +200,7 @@ class _$ApiSenderKeyRecordImpl extends _ApiSenderKeyRecord {
   final int created_at;
   @override
   @BlobConverter()
-  final Blob record;
+  final Uint8List record;
 
   @override
   String toString() {
@@ -220,13 +220,13 @@ class _$ApiSenderKeyRecordImpl extends _ApiSenderKeyRecord {
                 other.distributionId == distributionId) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at) &&
-            (identical(other.record, record) || other.record == record));
+            const DeepCollectionEquality().equals(other.record, record));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, deviceId, address, distributionId, created_at, record);
+  int get hashCode => Object.hash(runtimeType, id, deviceId, address,
+      distributionId, created_at, const DeepCollectionEquality().hash(record));
 
   /// Create a copy of ApiSenderKeyRecord
   /// with the given fields replaced by the non-null parameter values.
@@ -247,12 +247,13 @@ class _$ApiSenderKeyRecordImpl extends _ApiSenderKeyRecord {
 
 abstract class _ApiSenderKeyRecord extends ApiSenderKeyRecord {
   const factory _ApiSenderKeyRecord(
-      {required final String id,
-      final int deviceId,
-      final String address,
-      final String distributionId,
-      required final int created_at,
-      @BlobConverter() required final Blob record}) = _$ApiSenderKeyRecordImpl;
+          {required final String id,
+          final int deviceId,
+          final String address,
+          final String distributionId,
+          required final int created_at,
+          @BlobConverter() required final Uint8List record}) =
+      _$ApiSenderKeyRecordImpl;
   const _ApiSenderKeyRecord._() : super._();
 
   factory _ApiSenderKeyRecord.fromJson(Map<String, dynamic> json) =
@@ -270,7 +271,7 @@ abstract class _ApiSenderKeyRecord extends ApiSenderKeyRecord {
   int get created_at;
   @override
   @BlobConverter()
-  Blob get record;
+  Uint8List get record;
 
   /// Create a copy of ApiSenderKeyRecord
   /// with the given fields replaced by the non-null parameter values.

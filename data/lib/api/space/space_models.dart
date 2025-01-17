@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/converter/blob_converter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'dart:typed_data';
+
 part 'space_models.freezed.dart';
 part 'space_models.g.dart';
 
@@ -41,7 +43,7 @@ class ApiSpaceMember with _$ApiSpaceMember {
     required String user_id,
     required int role,
     required bool location_enabled,
-    @BlobConverter() Blob? identity_key_public,
+    @BlobConverter() Uint8List? identity_key_public,
     int? created_at,
   }) = _ApiSpaceMember;
 

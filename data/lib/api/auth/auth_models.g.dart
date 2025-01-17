@@ -22,12 +22,12 @@ _$ApiUserImpl _$$ApiUserImplFromJson(Map<String, dynamic> json) =>
           const [],
       battery_pct: (json['battery_pct'] as num?)?.toInt(),
       fcm_token: json['fcm_token'] as String? ?? "",
-      identity_key_public:
-          const BlobConverter().fromJson(json['identity_key_public']),
-      identity_key_private:
-          const BlobConverter().fromJson(json['identity_key_private']),
-      identity_key_salt:
-          const BlobConverter().fromJson(json['identity_key_salt']),
+      identity_key_public: _$JsonConverterFromJson<String, Uint8List>(
+          json['identity_key_public'], const BlobConverter().fromJson),
+      identity_key_private: _$JsonConverterFromJson<String, Uint8List>(
+          json['identity_key_private'], const BlobConverter().fromJson),
+      identity_key_salt: _$JsonConverterFromJson<String, Uint8List>(
+          json['identity_key_salt'], const BlobConverter().fromJson),
       state: (json['state'] as num?)?.toInt(),
       created_at: (json['created_at'] as num?)?.toInt(),
       updated_at: (json['updated_at'] as num?)?.toInt(),
@@ -46,16 +46,22 @@ Map<String, dynamic> _$$ApiUserImplToJson(_$ApiUserImpl instance) =>
       'space_ids': instance.space_ids,
       'battery_pct': instance.battery_pct,
       'fcm_token': instance.fcm_token,
-      'identity_key_public': _$JsonConverterToJson<dynamic, Blob>(
+      'identity_key_public': _$JsonConverterToJson<String, Uint8List>(
           instance.identity_key_public, const BlobConverter().toJson),
-      'identity_key_private': _$JsonConverterToJson<dynamic, Blob>(
+      'identity_key_private': _$JsonConverterToJson<String, Uint8List>(
           instance.identity_key_private, const BlobConverter().toJson),
-      'identity_key_salt': _$JsonConverterToJson<dynamic, Blob>(
+      'identity_key_salt': _$JsonConverterToJson<String, Uint8List>(
           instance.identity_key_salt, const BlobConverter().toJson),
       'state': instance.state,
       'created_at': instance.created_at,
       'updated_at': instance.updated_at,
     };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) =>
+    json == null ? null : fromJson(json as Json);
 
 Json? _$JsonConverterToJson<Json, Value>(
   Value? value,

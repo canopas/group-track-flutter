@@ -1,5 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/network/client.dart';
 import 'package:data/api/space/api_group_key_model.dart';
@@ -63,7 +65,7 @@ class ApiSpaceService {
   Future<String> createSpace(
     String name,
     String adminId,
-    Blob? identityKeyPublic,
+    Uint8List? identityKeyPublic,
   ) async {
     final doc = _spaceRef.doc();
     final space = ApiSpace(
@@ -91,7 +93,7 @@ class ApiSpaceService {
     return null;
   }
 
-  Future<void> joinSpace(String spaceId, String userId, Blob? identityKeyPublic,
+  Future<void> joinSpace(String spaceId, String userId, Uint8List? identityKeyPublic,
       {int role = SPACE_MEMBER_ROLE_MEMBER}) async {
     final member = ApiSpaceMember(
       space_id: spaceId,

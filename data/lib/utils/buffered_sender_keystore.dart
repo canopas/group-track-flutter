@@ -59,7 +59,7 @@ class BufferedSenderKeystore extends SenderKeyStore {
         ? Future.value(cache)
         : (cacheSenderKey != null
                 ? Future.value(
-                    SenderKeyRecord.fromSerialized(cacheSenderKey.record.bytes))
+                    SenderKeyRecord.fromSerialized(cacheSenderKey.record))
                 : null) ??
             fetchSenderKeyFromServer(sender);
 
@@ -109,7 +109,7 @@ class BufferedSenderKeystore extends SenderKeyStore {
 
       final apiSenderKeyRecord = doc.data();
       try {
-        return SenderKeyRecord.fromSerialized(apiSenderKeyRecord.record.bytes);
+        return SenderKeyRecord.fromSerialized(apiSenderKeyRecord.record);
       } catch (e, s) {
         logger.e("Failed to deserialize sender key record",
             error: e, stackTrace: s);
@@ -139,7 +139,7 @@ class BufferedSenderKeystore extends SenderKeyStore {
           device_id: deviceId,
           address: spaceId,
           distribution_id: distributionId,
-          record: Blob(record.serialize()),
+          record: record.serialize(),
           created_at: DateTime.now().millisecondsSinceEpoch);
 
       print("XXX store senderKeyRecord ${senderKeyName.sender.getName()}");

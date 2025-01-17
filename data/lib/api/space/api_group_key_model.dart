@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/converter/blob_converter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'dart:typed_data';
 
 part 'api_group_key_model.freezed.dart';
 part 'api_group_key_model.g.dart';
@@ -49,9 +50,9 @@ class EncryptedDistribution with _$EncryptedDistribution {
 
   const factory EncryptedDistribution({
     @Default("") String recipient_id,
-    @BlobConverter() required Blob ephemeral_pub,
-    @BlobConverter() required Blob iv,
-    @BlobConverter() required Blob ciphertext,
+    @BlobConverter() required Uint8List ephemeral_pub,
+    @BlobConverter() required Uint8List iv,
+    @BlobConverter() required Uint8List ciphertext,
     @Default(0) int created_at,
   }) = _EncryptedDistribution;
 
@@ -59,17 +60,17 @@ class EncryptedDistribution with _$EncryptedDistribution {
       _$EncryptedDistributionFromJson(data);
 
   void validateFieldSizes() {
-    if (ephemeral_pub.bytes.length != 33 && ephemeral_pub.bytes.isNotEmpty) {
+    if (ephemeral_pub.length != 33 && ephemeral_pub.isNotEmpty) {
       throw ArgumentError(
-          "Invalid size for ephemeralPub: expected 33 bytes, got ${ephemeral_pub.bytes.length} bytes.");
+          "Invalid size for ephemeralPub: expected 33 bytes, got ${ephemeral_pub.length} bytes.");
     }
-    if (iv.bytes.length != 16 && iv.bytes.isNotEmpty) {
+    if (iv.length != 16 && iv.isNotEmpty) {
       throw ArgumentError(
-          "Invalid size for iv: expected 16 bytes, got ${iv.bytes.length} bytes.");
+          "Invalid size for iv: expected 16 bytes, got ${iv.length} bytes.");
     }
-    if (ciphertext.bytes.length > 64 * 1024 && ciphertext.bytes.isNotEmpty) {
+    if (ciphertext.length > 64 * 1024 && ciphertext.isNotEmpty) {
       throw ArgumentError(
-          "Invalid size for ciphertext: maximum allowed size is 64 KB, got ${ciphertext.bytes.length} bytes.");
+          "Invalid size for ciphertext: maximum allowed size is 64 KB, got ${ciphertext.length} bytes.");
     }
   }
 }
@@ -82,7 +83,7 @@ class ApiSenderKeyRecord with _$ApiSenderKeyRecord {
     required String id,
     required int device_id,
     required String distribution_id,
-    @BlobConverter() required Blob record,
+    @BlobConverter() required Uint8List record,
     @Default('') String address,
     required int created_at,
   }) = _ApiSenderKeyRecord;

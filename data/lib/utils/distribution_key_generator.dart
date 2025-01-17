@@ -23,12 +23,11 @@ Future<ApiMemberKeyData> generateMemberKeyData(String spaceId,
   final List<EncryptedDistribution> distributions = [];
 
   for (final member in spaceMembers) {
-    final publicBlob = member.identity_key_public;
+    final publicKeyBytes = member.identity_key_public;
 
-    if (publicBlob == null) continue;
+    if (publicKeyBytes == null) continue;
 
     try {
-      final publicKeyBytes = publicBlob.bytes;
       if (publicKeyBytes.length != 33) {
         logger.e("Invalid public key size for member ${member.user_id} length: ${publicKeyBytes.length}");
         continue;

@@ -153,9 +153,9 @@ class AuthService {
     );
 
     final publicKey =
-        Blob(identityKeyPair.getPublicKey().publicKey.serialize());
-    final privateKey = Blob(encryptedPrivateKey);
-    final saltBlob = Blob(salt);
+       identityKeyPair.getPublicKey().publicKey.serialize();
+    final privateKey = encryptedPrivateKey;
+    final saltBlob = salt;
 
     // Store passkey in preferences
     userPassKeyNotifier.state = passKey;

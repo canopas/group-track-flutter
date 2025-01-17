@@ -42,9 +42,9 @@ class EphemeralECDHUtils {
     final ciphertext = Uint8List.fromList(secretBox.cipherText);
     final distribution = EncryptedDistribution(
       recipient_id: receiverId,
-      ephemeral_pub: Blob(ephemeralPubKey.publicKey.serialize()),
-      iv: Blob(Uint8List.fromList(syntheticIv)),
-      ciphertext: Blob(ciphertext),
+      ephemeral_pub: ephemeralPubKey.publicKey.serialize(),
+      iv: Uint8List.fromList(syntheticIv),
+      ciphertext: ciphertext,
     );
     distribution.validateFieldSizes();
     return distribution;
@@ -104,7 +104,7 @@ class EphemeralECDHUtils {
       final syntheticIv = message.iv;
       final cipherText = message.ciphertext;
 
-      final ephemeralPublic = Curve.decodePoint(message.ephemeral_pub.bytes, 0);
+      final ephemeralPublic = Curve.decodePoint(message.ephemeral_pub, 0);
       print("XXX receiverPrivateKey ${receiverPrivateKey.serialize().length}");
 
       final masterSecret =
@@ -117,7 +117,7 @@ class EphemeralECDHUtils {
       //
       // Derive cipherKey
       final cipherKeyFull = await mac.calculateMac(
-        syntheticIv.bytes,
+        syntheticIv,
         secretKey: SecretKey(cipherKeyPart1.bytes),
       );
 
@@ -129,7 +129,7 @@ class EphemeralECDHUtils {
 
       final decrypted = await algorithm.decrypt(
         secretKey: SecretKey(cipherKeyBytes),
-        SecretBox(cipherText.bytes, nonce: syntheticIv.bytes, mac: Mac.empty),
+        SecretBox(cipherText, nonce: syntheticIv, mac: Mac.empty),
       );
 
       final verificationPart1 = await mac.calculateMac(
@@ -145,8 +145,8 @@ class EphemeralECDHUtils {
       final ourSyntheticIv = verificationPart2.bytes.sublist(0, 16);
 
       print(
-          "XXXX ourSyntheticIv ${ourSyntheticIv} syntheticIv ${syntheticIv.bytes}");
-      if (!listEquals(ourSyntheticIv, syntheticIv.bytes)) {
+          "XXXX ourSyntheticIv ${ourSyntheticIv} syntheticIv ${syntheticIv}");
+      if (!listEquals(ourSyntheticIv, syntheticIv)) {
         throw Exception(
             "The computed syntheticIv didn't match the actual syntheticIv.");
       }

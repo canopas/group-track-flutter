@@ -14,7 +14,7 @@ _$ApiSenderKeyRecordImpl _$$ApiSenderKeyRecordImplFromJson(
       address: json['address'] as String? ?? '',
       distributionId: json['distributionId'] as String? ?? '',
       created_at: (json['created_at'] as num).toInt(),
-      record: const BlobConverter().fromJson(json['record']),
+      record: const BlobConverter().fromJson(json['record'] as String),
     );
 
 Map<String, dynamic> _$$ApiSenderKeyRecordImplToJson(

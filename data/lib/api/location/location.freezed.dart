@@ -262,9 +262,9 @@ mixin _$EncryptedApiLocation {
   String get id => throw _privateConstructorUsedError;
   String get user_id => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob get latitude => throw _privateConstructorUsedError;
+  Uint8List get latitude => throw _privateConstructorUsedError;
   @BlobConverter()
-  Blob get longitude => throw _privateConstructorUsedError;
+  Uint8List get longitude => throw _privateConstructorUsedError;
   int get created_at => throw _privateConstructorUsedError;
 
   /// Serializes this EncryptedApiLocation to a JSON map.
@@ -286,8 +286,8 @@ abstract class $EncryptedApiLocationCopyWith<$Res> {
   $Res call(
       {String id,
       String user_id,
-      @BlobConverter() Blob latitude,
-      @BlobConverter() Blob longitude,
+      @BlobConverter() Uint8List latitude,
+      @BlobConverter() Uint8List longitude,
       int created_at});
 }
 
@@ -325,11 +325,11 @@ class _$EncryptedApiLocationCopyWithImpl<$Res,
       latitude: null == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       longitude: null == longitude
           ? _value.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       created_at: null == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -349,8 +349,8 @@ abstract class _$$EncryptedApiLocationImplCopyWith<$Res>
   $Res call(
       {String id,
       String user_id,
-      @BlobConverter() Blob latitude,
-      @BlobConverter() Blob longitude,
+      @BlobConverter() Uint8List latitude,
+      @BlobConverter() Uint8List longitude,
       int created_at});
 }
 
@@ -385,11 +385,11 @@ class __$$EncryptedApiLocationImplCopyWithImpl<$Res>
       latitude: null == latitude
           ? _value.latitude
           : latitude // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       longitude: null == longitude
           ? _value.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
-              as Blob,
+              as Uint8List,
       created_at: null == created_at
           ? _value.created_at
           : created_at // ignore: cast_nullable_to_non_nullable
@@ -418,10 +418,10 @@ class _$EncryptedApiLocationImpl extends _EncryptedApiLocation {
   final String user_id;
   @override
   @BlobConverter()
-  final Blob latitude;
+  final Uint8List latitude;
   @override
   @BlobConverter()
-  final Blob longitude;
+  final Uint8List longitude;
   @override
   final int created_at;
 
@@ -437,18 +437,21 @@ class _$EncryptedApiLocationImpl extends _EncryptedApiLocation {
             other is _$EncryptedApiLocationImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.user_id, user_id) || other.user_id == user_id) &&
-            (identical(other.latitude, latitude) ||
-                other.latitude == latitude) &&
-            (identical(other.longitude, longitude) ||
-                other.longitude == longitude) &&
+            const DeepCollectionEquality().equals(other.latitude, latitude) &&
+            const DeepCollectionEquality().equals(other.longitude, longitude) &&
             (identical(other.created_at, created_at) ||
                 other.created_at == created_at));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, user_id, latitude, longitude, created_at);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      user_id,
+      const DeepCollectionEquality().hash(latitude),
+      const DeepCollectionEquality().hash(longitude),
+      created_at);
 
   /// Create a copy of EncryptedApiLocation
   /// with the given fields replaced by the non-null parameter values.
@@ -472,8 +475,8 @@ abstract class _EncryptedApiLocation extends EncryptedApiLocation {
   const factory _EncryptedApiLocation(
       {required final String id,
       required final String user_id,
-      @BlobConverter() required final Blob latitude,
-      @BlobConverter() required final Blob longitude,
+      @BlobConverter() required final Uint8List latitude,
+      @BlobConverter() required final Uint8List longitude,
       required final int created_at}) = _$EncryptedApiLocationImpl;
   const _EncryptedApiLocation._() : super._();
 
@@ -486,10 +489,10 @@ abstract class _EncryptedApiLocation extends EncryptedApiLocation {
   String get user_id;
   @override
   @BlobConverter()
-  Blob get latitude;
+  Uint8List get latitude;
   @override
   @BlobConverter()
-  Blob get longitude;
+  Uint8List get longitude;
   @override
   int get created_at;
 

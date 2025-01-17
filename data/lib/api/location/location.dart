@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/converter/blob_converter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:geolocator/geolocator.dart';
+import 'dart:typed_data';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 part 'location.freezed.dart';
@@ -42,8 +43,8 @@ class EncryptedApiLocation with _$EncryptedApiLocation {
   const factory EncryptedApiLocation({
     required String id,
     required String user_id,
-    @BlobConverter() required Blob latitude,
-    @BlobConverter() required Blob longitude,
+    @BlobConverter() required Uint8List latitude,
+    @BlobConverter() required Uint8List longitude,
     required int created_at,
   }) = _EncryptedApiLocation;
 

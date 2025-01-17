@@ -67,11 +67,11 @@ class LocationService {
         .limit(1)
         .snapshots()
         .asyncMap<List<ApiLocation?>>((snapshot) async {
-      // if (snapshot.docs.isNotEmpty) {
-      //   return await Future.wait(snapshot.docs.map((doc) async {
-      //     return toApiLocation(doc.data(), spaceId);
-      //   }));
-      // }
+      if (snapshot.docs.isNotEmpty) {
+        return await Future.wait(snapshot.docs.map((doc) async {
+          return toApiLocation(doc.data(), spaceId);
+        }));
+      }
       return List.empty();
     });
   }
@@ -82,11 +82,11 @@ class LocationService {
         .limit(1)
         .get();
 
-    // if (snapshot.docs.isNotEmpty) {
-    //   return snapshot.docs.map((doc) async {
-    //     return await toApiLocation(doc.data(), spaceId);
-    //   }).first;
-    // }
+    if (snapshot.docs.isNotEmpty) {
+      return snapshot.docs.map((doc) async {
+        return await toApiLocation(doc.data(), spaceId);
+      }).first;
+    }
     return null;
   }
 
@@ -101,7 +101,7 @@ class LocationService {
       }
 
       if (user.identity_key_private == null ||
-          (user.identity_key_private?.bytes.isEmpty ?? true)) return null;
+          (user.identity_key_private?.isEmpty ?? true)) return null;
 
       final groupKey = await _getGroupKey(spaceId);
       if (groupKey == null) {
@@ -132,8 +132,8 @@ class LocationService {
         spaceId: spaceId,
         deviceId: memberKeyData.member_device_id,
         distribution: distribution,
-        privateKeyBytes: user.identity_key_private!.bytes,
-        salt: user.identity_key_salt!.bytes,
+        privateKeyBytes: user.identity_key_private!,
+        salt: user.identity_key_salt!,
         passkey: passKey,
         bufferedSenderKeyStore: _bufferedSenderKeystore,
       );
@@ -143,10 +143,8 @@ class LocationService {
         return null;
       }
 
-      final decryptedLatitude =
-          await groupCipher.decrypt(location.latitude.bytes);
-      final decryptedLongitude =
-          await groupCipher.decrypt(location.longitude.bytes);
+      final decryptedLatitude = await groupCipher.decrypt(location.latitude);
+      final decryptedLongitude = await groupCipher.decrypt(location.longitude);
 
       final latitude = double.tryParse(utf8.decode(decryptedLatitude));
       final longitude = double.tryParse(utf8.decode(decryptedLongitude));
@@ -185,7 +183,7 @@ class LocationService {
     }
 
     if (user.identity_key_private == null ||
-        (user.identity_key_private?.bytes.isEmpty ?? true)) return;
+        (user.identity_key_private?.isEmpty ?? true)) return;
 
     user.space_ids?.forEach((spaceId) async {
       print("XXX saveCurrentLocation ${spaceId}");
@@ -218,8 +216,8 @@ class LocationService {
         spaceId: spaceId,
         deviceId: memberKeyData.member_device_id,
         distribution: distribution,
-        privateKeyBytes: user.identity_key_private!.bytes,
-        salt: user.identity_key_salt!.bytes,
+        privateKeyBytes: user.identity_key_private!,
+        salt: user.identity_key_salt!,
         passkey: passKey,
         bufferedSenderKeyStore: _bufferedSenderKeystore,
       );
@@ -239,8 +237,8 @@ class LocationService {
       final location = EncryptedApiLocation(
         id: docRef.id,
         user_id: user.id,
-        latitude: Blob(encryptedLatitude),
-        longitude: Blob(encryptedLongitude),
+        latitude: encryptedLatitude,
+        longitude: encryptedLongitude,
         created_at: locationData.timestamp.millisecondsSinceEpoch,
       );
 

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/location/location.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:typed_data';
 
 import '../../../converter/blob_converter.dart';
 
@@ -99,10 +100,10 @@ class EncryptedLocationJourney with _$EncryptedLocationJourney {
   const factory EncryptedLocationJourney({
     String? id,
     required String user_id,
-    @BlobConverter() required Blob from_latitude,
-    @BlobConverter() required Blob from_longitude,
-    @BlobConverter() Blob? to_latitude,
-    @BlobConverter() Blob? to_longitude,
+    @BlobConverter() required Uint8List from_latitude,
+    @BlobConverter() required Uint8List from_longitude,
+    @BlobConverter() Uint8List? to_latitude,
+    @BlobConverter() Uint8List? to_longitude,
     @Default([]) List<EncryptedJourneyRoute> routes,
     double? route_distance,
     int? route_duration,
@@ -125,8 +126,8 @@ class EncryptedLocationJourney with _$EncryptedLocationJourney {
 @freezed
 class EncryptedJourneyRoute with _$EncryptedJourneyRoute {
   const factory EncryptedJourneyRoute({
-    @BlobConverter() required Blob latitude,
-    @BlobConverter() required Blob longitude,
+    @BlobConverter() required Uint8List latitude,
+    @BlobConverter() required Uint8List longitude,
   }) = _EncryptedJourneyRoute;
 
   factory EncryptedJourneyRoute.fromJson(Map<String, dynamic> json) =>
