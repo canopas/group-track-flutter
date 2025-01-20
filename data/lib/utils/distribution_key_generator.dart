@@ -16,15 +16,14 @@ Future<ApiMemberKeyData> generateMemberKeyData(String spaceId,
   final deviceId = Random.secure().nextInt(0x7FFFFFFF);
   final groupAddress = SignalProtocolAddress(spaceId, deviceId);
   final sessionBuilder = GroupSessionBuilder(bufferedSenderKeyStore);
-  final senderKey =
-      SenderKeyName("1111", groupAddress);
+  final senderKey = SenderKeyName(Random().nextInt(0x7FFFFFFF).toString(), groupAddress);
 
-  print("XXXX create senderKey groupId ${senderKey.groupId}");
-  print(
-      "XXXX create senderKey name ${senderKey.sender.getName()}, devicId ${senderKey.sender.getDeviceId()}");
+  print("XXXX generateMemberKeyData");
 
   final distributionMessage = await sessionBuilder.create(senderKey);
   final distributionBytes = distributionMessage.serialize();
+
+  print("XXXX create senderKey groupId ${senderKey.groupId} sender name ${senderKey.sender.getName()}, devicId ${senderKey.sender.getDeviceId()}");
 
   final List<EncryptedDistribution> distributions = [];
 

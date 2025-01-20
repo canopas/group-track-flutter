@@ -42,7 +42,6 @@ final goRouterProvider = FutureProvider<GoRouter>((ref) async {
     final isIntroScreenShown = ref.read(isIntroScreenShownPod);
     final user = ref.read(currentUserPod);
 
-    print("XXX user $user");
     if (!isIntroScreenShown) return IntroRoute().location;
     if (user == null) return SignInMethodRoute().location;
     if (user.first_name?.isEmpty ?? true) return const PickNameRoute().location;

@@ -128,10 +128,9 @@ Future<GroupCipher?> getGroupCipher({
 /*create senderKey groupId 1111
 flutter: XXXX create senderKey name V2clL6Z09pnUXzPOptGg, devicId 2068516999*/
   final senderKey = SenderKeyName(
+    // deviceId.toString(),
     //groupAddress.getDeviceId().toString(),
-    // distributionMessage.id.toString(),
-    "1111",
-    //spaceId,
+    distributionMessage.id.toString(),
     groupAddress,
   );
 
@@ -140,12 +139,11 @@ flutter: XXXX create senderKey name V2clL6Z09pnUXzPOptGg, devicId 2068516999*/
   // TODO rotate sender key
 
   try {
-    print("XXXX process senderKey ${senderKey.groupId}");
-    print(
-        "XXXX process senderKey name ${senderKey.sender.getName()}: device ${senderKey.sender.getDeviceId()}");
-
     await GroupSessionBuilder(bufferedSenderKeyStore)
         .process(senderKey, distributionMessage);
+    print(
+        "XXXX process senderKey ${senderKey.groupId} senderKey name ${senderKey.sender.getName()}: device ${senderKey.sender.getDeviceId()}");
+
     final groupCipher = GroupCipher(bufferedSenderKeyStore, senderKey);
     return groupCipher;
   } catch (e, s) {

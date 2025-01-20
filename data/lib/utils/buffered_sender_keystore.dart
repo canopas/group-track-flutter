@@ -4,12 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data/api/auth/auth_models.dart';
 import 'package:data/log/logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:libsignal_protocol_dart/libsignal_protocol_dart.dart';
 
 import '../api/network/client.dart';
 import '../api/space/api_group_key_model.dart';
 import '../api/space/api_space_service.dart';
 import '../storage/app_preferences.dart';
+
+part 'buffered_sender_keystore.freezed.dart';
 
 final bufferedSenderKeystoreProvider = Provider((ref) => BufferedSenderKeystore(
       ref.read(firestoreProvider),
@@ -46,7 +49,10 @@ class BufferedSenderKeystore extends SenderKeyStore {
   @override
   Future<SenderKeyRecord> loadSenderKey(SenderKeyName senderKeyName) {
     final sender = senderKeyName.sender;
-    final key = StoreKey(sender, senderKeyName.groupId, sender.getDeviceId());
+    final key = StoreKey(
+        address: sender,
+        groupId: senderKeyName.groupId,
+        senderDeviceId: sender.getDeviceId());
 
     final cache = _inMemoryStore[key];
 
@@ -55,34 +61,38 @@ class BufferedSenderKeystore extends SenderKeyStore {
         ? null
         : ApiSenderKeyRecord.fromJson(jsonDecode(stateFromPref));
 
-    print("XXX cacheSenderKey  record ${cacheSenderKey?.record}");
+    print(
+        "XXX  loadSenderKey: ${cacheSenderKey?.record.length} cache : ${cache?.serialize().length}");
 
     final keyRecordFuture = cache != null
         ? Future.value(cache)
-        : (cacheSenderKey != null
-                ? Future.value(
-                    SenderKeyRecord.fromSerialized(cacheSenderKey.record))
-                : null) ??
-            fetchSenderKeyFromServer(sender);
+        : (cacheSenderKey != null)
+            ? Future.value(
+                SenderKeyRecord.fromSerialized(cacheSenderKey.record))
+            : fetchSenderKeyFromServer(sender);
 
-    return keyRecordFuture.then((keyRecord) {
-      _inMemoryStore[key] = keyRecord;
-      return keyRecord;
-    });
-    ;
+    // keyRecordFuture.then((keyRecord) {
+    //   _inMemoryStore[key] = keyRecord;
+    //   print("XXX loadSenderKey update cache: ${keyRecord.serialize().length}");
+    // });
+    return keyRecordFuture;
   }
 
   @override
   Future<void> storeSenderKey(
       SenderKeyName senderKeyName, SenderKeyRecord record) {
     final sender = senderKeyName.sender;
-    final key = StoreKey(sender, senderKeyName.groupId, sender.getDeviceId());
+    final key = StoreKey(
+        address: sender,
+        groupId: senderKeyName.groupId,
+        senderDeviceId: sender.getDeviceId());
+
+    print(
+        "XXX storeSenderKey: ${_inMemoryStore[key]?.serialize().length} key ${key.hashCode}");
+
     if (_inMemoryStore.containsKey(key)) {
       return Future.value();
     }
-
-    print(
-        "XXX storeSenderKey record ${record.serialize()}");
 
     _inMemoryStore[key] = record;
 
@@ -114,7 +124,7 @@ class BufferedSenderKeystore extends SenderKeyStore {
       try {
         final record =
             SenderKeyRecord.fromSerialized(apiSenderKeyRecord.record);
-        print("XXX fetchSenderKeyFromServer  record ${record.serialize()}");
+        print("XXX fetchSenderKeyFromServer: ${record.serialize().length}");
 
         if (record.getSenderKeyState().signingKeyPrivate.serialize().isEmpty) {
           logger.e("Fetched record is incomplete, initializing new key.");
@@ -142,6 +152,7 @@ class BufferedSenderKeystore extends SenderKeyStore {
         return null;
       }
 
+      print("XXX save to store");
       final distributionId = senderKeyName.groupId;
       final deviceId = senderKeyName.sender.getDeviceId();
       final uniqueDocId = "$deviceId-$distributionId";
@@ -166,10 +177,10 @@ class BufferedSenderKeystore extends SenderKeyStore {
   }
 }
 
-class StoreKey {
-  final SignalProtocolAddress address;
-  final String groupId;
-  final int senderDeviceId;
-
-  StoreKey(this.address, this.groupId, this.senderDeviceId);
+@freezed
+class StoreKey with _$StoreKey {
+  const factory StoreKey(
+      {required SignalProtocolAddress address,
+      required String groupId,
+      required int senderDeviceId}) = _StoreKey;
 }
