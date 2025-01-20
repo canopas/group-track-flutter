@@ -105,7 +105,6 @@ class EphemeralECDHUtils {
       final cipherText = message.ciphertext;
 
       final ephemeralPublic = Curve.decodePoint(message.ephemeral_pub, 0);
-      print("XXX receiverPrivateKey ${receiverPrivateKey.serialize().length}");
 
       final masterSecret =
           Curve.calculateAgreement(ephemeralPublic, receiverPrivateKey);
@@ -144,8 +143,6 @@ class EphemeralECDHUtils {
 
       final ourSyntheticIv = verificationPart2.bytes.sublist(0, 16);
 
-      print(
-          "XXXX ourSyntheticIv ${ourSyntheticIv} syntheticIv ${syntheticIv}");
       if (!listEquals(ourSyntheticIv, syntheticIv)) {
         throw Exception(
             "The computed syntheticIv didn't match the actual syntheticIv.");

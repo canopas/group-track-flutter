@@ -146,7 +146,6 @@ class LocationManager {
     if (user == null) return;
 
     try {
-      print("XXX updateUserLocation ${locationPosition}");
       await saveLocation(locationPosition);
 
       await _journeyRepository.saveLocationJourney(

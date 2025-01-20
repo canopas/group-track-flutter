@@ -182,6 +182,9 @@ class LocationService {
       return;
     }
 
+    print("XXX updateUserLocation ${locationData.latitude}:${locationData.longitude}");
+
+
     if (user.identity_key_private == null ||
         (user.identity_key_private?.isEmpty ?? true)) return;
 

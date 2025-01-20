@@ -85,7 +85,6 @@ class ApiSpaceService {
   }
 
   Future<ApiSpace?> getSpace(String spaceId) async {
-    print("XXX getSpace $spaceId");
     final docSnapshot = await _spaceRef.doc(spaceId).get();
     if (docSnapshot.exists) {
       return docSnapshot.data();
@@ -202,7 +201,6 @@ class ApiSpaceService {
         spaceMembers: spaceMembers,
         bufferedSenderKeyStore: bufferedSenderKeystore);
 
-    print("XXX membersKeyData $membersKeyData");
     await _updateGroupKeys(spaceId, userId, membersKeyData);
   }
 

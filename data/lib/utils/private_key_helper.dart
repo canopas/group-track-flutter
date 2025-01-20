@@ -82,9 +82,6 @@ Future<Uint8List> _decryptData(
       encryptedPrivateKey.sublist(GCM_IV_SIZE, encryptedPrivateKey.length - 16);
   final mac = encryptedPrivateKey.sublist(encryptedPrivateKey.length - 16);
 
-  print(
-      "XXX _decryptData iv ${iv.length} ciphertext ${ciphertext.length} mac ${mac.length}");
-
   final algorithm = AesGcm.with128bits();
 
   final secretBox = SecretBox(
@@ -116,9 +113,6 @@ Future<GroupCipher?> getGroupCipher({
     passkey: passkey,
   );
 
-  print(
-      "XXX privateKeyBytes ${privateKeyBytes.length} _decodePrivateKey ${privateKey?.serialize().length}");
-
   if (privateKey == null) {
     return null;
   }
@@ -136,18 +130,18 @@ Future<GroupCipher?> getGroupCipher({
   final groupAddress = SignalProtocolAddress(spaceId, deviceId);
 
   final senderKey = SenderKeyName(
-   // groupAddress.getDeviceId().toString(),
+    // groupAddress.getDeviceId().toString(),
     distributionMessage.id.toString(),
     groupAddress,
   );
-
 
   bufferedSenderKeyStore.loadSenderKey(senderKey);
 
   // TODO rotate sender key
 
   try {
-    GroupSessionBuilder(bufferedSenderKeyStore).process(senderKey, distributionMessage);
+    await GroupSessionBuilder(bufferedSenderKeyStore)
+        .process(senderKey, distributionMessage);
     final groupCipher = GroupCipher(bufferedSenderKeyStore, senderKey);
     return groupCipher;
   } catch (e, s) {
