@@ -23,7 +23,8 @@ final apiUserServiceProvider = StateProvider((ref) => ApiUserService(
     ref.read(isOnboardingShownPod.notifier),
     ref.read(currentUserPod),
     ref.read(locationManagerProvider),
-    ref.read(userPassKeyPod.notifier)));
+    ref.read(userPassKeyPod.notifier),
+    ref.read(senderKeyJsonPod.notifier)));
 
 class ApiUserService {
   final FirebaseFirestore _db;
@@ -33,6 +34,8 @@ class ApiUserService {
   final StateController<String?> userSessionJsonNotifier;
   final StateController<bool?> onBoardNotifier;
   final StateController<String?> userPassKeyNotifier;
+  final StateController<String?> senderKeyNotifier;
+
   ApiUser? currentUser;
   final LocationManager locationManager;
 
@@ -45,7 +48,8 @@ class ApiUserService {
       this.onBoardNotifier,
       this.currentUser,
       this.locationManager,
-      this.userPassKeyNotifier);
+      this.userPassKeyNotifier,
+      this.senderKeyNotifier);
 
   CollectionReference<ApiUser> get _userRef =>
       _db.collection("users").withConverter<ApiUser>(
@@ -296,6 +300,7 @@ class ApiUserService {
     onBoardNotifier.state = false;
     currentUserSpaceId.state = null;
     userPassKeyNotifier.state = null;
+    senderKeyNotifier.state = null;
   }
 
   Future<void> updateKeys(String id, Uint8List? publicKey,

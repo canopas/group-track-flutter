@@ -55,6 +55,8 @@ class BufferedSenderKeystore extends SenderKeyStore {
         ? null
         : ApiSenderKeyRecord.fromJson(jsonDecode(stateFromPref));
 
+    print("XXX cacheSenderKey  record ${cacheSenderKey?.record}");
+
     final keyRecordFuture = cache != null
         ? Future.value(cache)
         : (cacheSenderKey != null
@@ -63,11 +65,11 @@ class BufferedSenderKeystore extends SenderKeyStore {
                 : null) ??
             fetchSenderKeyFromServer(sender);
 
-    keyRecordFuture.then((keyRecord) {
+    return keyRecordFuture.then((keyRecord) {
       _inMemoryStore[key] = keyRecord;
+      return keyRecord;
     });
-
-    return keyRecordFuture;
+    ;
   }
 
   @override
@@ -79,15 +81,16 @@ class BufferedSenderKeystore extends SenderKeyStore {
       return Future.value();
     }
 
+    print(
+        "XXX storeSenderKey record ${record.serialize()}");
+
     _inMemoryStore[key] = record;
 
-    saveSenderKeyToServer(senderKeyName, record).then((value) {
+    return saveSenderKeyToServer(senderKeyName, record).then((value) {
       if (value != null) {
         senderKeyJsonState.state = jsonEncode(value.toJson());
       }
     });
-
-    return Future.value();
   }
 
   Future<SenderKeyRecord> fetchSenderKeyFromServer(
@@ -109,7 +112,16 @@ class BufferedSenderKeystore extends SenderKeyStore {
 
       final apiSenderKeyRecord = doc.data();
       try {
-        return SenderKeyRecord.fromSerialized(apiSenderKeyRecord.record);
+        final record =
+            SenderKeyRecord.fromSerialized(apiSenderKeyRecord.record);
+        print("XXX fetchSenderKeyFromServer  record ${record.serialize()}");
+
+        if (record.getSenderKeyState().signingKeyPrivate.serialize().isEmpty) {
+          logger.e("Fetched record is incomplete, initializing new key.");
+          return SenderKeyRecord(); // Ensure this initializes all fields correctly.
+        }
+
+        return record;
       } catch (e, s) {
         logger.e("Failed to deserialize sender key record",
             error: e, stackTrace: s);
@@ -141,8 +153,6 @@ class BufferedSenderKeystore extends SenderKeyStore {
           distribution_id: distributionId,
           record: record.serialize(),
           created_at: DateTime.now().millisecondsSinceEpoch);
-
-      print("XXX store senderKeyRecord ${senderKeyName.sender.getName()}");
 
       await senderKeyRef(spaceId, currentUser.id)
           .doc(uniqueDocId)

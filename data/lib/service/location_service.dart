@@ -184,12 +184,10 @@ class LocationService {
 
     print("XXX updateUserLocation ${locationData.latitude}:${locationData.longitude}");
 
-
     if (user.identity_key_private == null ||
         (user.identity_key_private?.isEmpty ?? true)) return;
 
     user.space_ids?.forEach((spaceId) async {
-      print("XXX saveCurrentLocation ${spaceId}");
       final groupKey = await _getGroupKey(spaceId);
       if (groupKey == null) {
         logger.d('LocationService: Group key not found for space $spaceId');

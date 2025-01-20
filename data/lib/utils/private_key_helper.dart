@@ -73,9 +73,6 @@ Future<Uint8List> _decryptData(
     throw Exception("Encrypted data is too short");
   }
 
-  print(
-      "XXX  encryptedPrivateKey ${encryptedPrivateKey.length} key ${encryptedPrivateKey}");
-
   final iv = encryptedPrivateKey.sublist(0, GCM_IV_SIZE);
 
   final ciphertext =
@@ -128,18 +125,25 @@ Future<GroupCipher?> getGroupCipher({
       SenderKeyDistributionMessageWrapper.fromSerialized(decryptedDistribution);
 
   final groupAddress = SignalProtocolAddress(spaceId, deviceId);
-
+/*create senderKey groupId 1111
+flutter: XXXX create senderKey name V2clL6Z09pnUXzPOptGg, devicId 2068516999*/
   final senderKey = SenderKeyName(
-    // groupAddress.getDeviceId().toString(),
-    distributionMessage.id.toString(),
+    //groupAddress.getDeviceId().toString(),
+    // distributionMessage.id.toString(),
+    "1111",
+    //spaceId,
     groupAddress,
   );
 
-  bufferedSenderKeyStore.loadSenderKey(senderKey);
+  // await bufferedSenderKeyStore.loadSenderKey(senderKey);
 
   // TODO rotate sender key
 
   try {
+    print("XXXX process senderKey ${senderKey.groupId}");
+    print(
+        "XXXX process senderKey name ${senderKey.sender.getName()}: device ${senderKey.sender.getDeviceId()}");
+
     await GroupSessionBuilder(bufferedSenderKeyStore)
         .process(senderKey, distributionMessage);
     final groupCipher = GroupCipher(bufferedSenderKeyStore, senderKey);

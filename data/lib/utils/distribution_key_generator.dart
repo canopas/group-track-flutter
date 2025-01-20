@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:data/log/logger.dart';
 import 'package:libsignal_protocol_dart/libsignal_protocol_dart.dart';
+import 'package:uuid/uuid.dart';
 
 import '../api/space/api_group_key_model.dart';
 import '../api/space/space_models.dart';
@@ -15,7 +16,12 @@ Future<ApiMemberKeyData> generateMemberKeyData(String spaceId,
   final deviceId = Random.secure().nextInt(0x7FFFFFFF);
   final groupAddress = SignalProtocolAddress(spaceId, deviceId);
   final sessionBuilder = GroupSessionBuilder(bufferedSenderKeyStore);
-  final senderKey = SenderKeyName(Random().nextInt(0x7FFFFFFF).toString(), groupAddress);
+  final senderKey =
+      SenderKeyName("1111", groupAddress);
+
+  print("XXXX create senderKey groupId ${senderKey.groupId}");
+  print(
+      "XXXX create senderKey name ${senderKey.sender.getName()}, devicId ${senderKey.sender.getDeviceId()}");
 
   final distributionMessage = await sessionBuilder.create(senderKey);
   final distributionBytes = distributionMessage.serialize();
@@ -29,7 +35,8 @@ Future<ApiMemberKeyData> generateMemberKeyData(String spaceId,
 
     try {
       if (publicKeyBytes.length != 33) {
-        logger.e("Invalid public key size for member ${member.user_id} length: ${publicKeyBytes.length}");
+        logger.e(
+            "Invalid public key size for member ${member.user_id} length: ${publicKeyBytes.length}");
         continue;
       }
 
@@ -46,7 +53,6 @@ Future<ApiMemberKeyData> generateMemberKeyData(String spaceId,
       continue;
     }
   }
-
 
   return ApiMemberKeyData(
       data_updated_at: DateTime.now().millisecondsSinceEpoch,
