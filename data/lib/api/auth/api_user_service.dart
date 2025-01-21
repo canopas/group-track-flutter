@@ -307,10 +307,10 @@ class ApiUserService {
       Uint8List? privateKey, Uint8List? saltBlob) async {
     await _userRef.doc(id).update({
       "identity_key_public":
-          publicKey != null ? base64UrlEncode(publicKey) : null,
+          publicKey != null ? base64Encode(publicKey) : null,
       "identity_key_private":
-          privateKey != null ? base64UrlEncode(privateKey) : null,
-      "identity_key_salt": saltBlob != null ? base64UrlEncode(saltBlob) : null,
+          privateKey != null ? base64Encode(privateKey) : null,
+      "identity_key_salt": saltBlob != null ? base64Encode(saltBlob) : null,
     });
   }
 }
