@@ -14,6 +14,6 @@ class BlobConverter implements JsonConverter<Uint8List, String> {
 
   @override
   String toJson(Uint8List object) {
-    return base64UrlEncode(object);
+    return base64Encode(object);
   }
 }

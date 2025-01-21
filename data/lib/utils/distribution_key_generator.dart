@@ -16,7 +16,7 @@ Future<ApiMemberKeyData> generateMemberKeyData(String spaceId,
   final deviceId = Random.secure().nextInt(0x7FFFFFFF);
   final groupAddress = SignalProtocolAddress(spaceId, deviceId);
   final sessionBuilder = GroupSessionBuilder(bufferedSenderKeyStore);
-  final senderKey = SenderKeyName(Random().nextInt(0x7FFFFFFF).toString(), groupAddress);
+  final senderKey = SenderKeyName(spaceId, groupAddress);
 
   print("XXXX generateMemberKeyData");
 

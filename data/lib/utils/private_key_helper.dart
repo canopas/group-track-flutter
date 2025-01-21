@@ -125,14 +125,7 @@ Future<GroupCipher?> getGroupCipher({
       SenderKeyDistributionMessageWrapper.fromSerialized(decryptedDistribution);
 
   final groupAddress = SignalProtocolAddress(spaceId, deviceId);
-/*create senderKey groupId 1111
-flutter: XXXX create senderKey name V2clL6Z09pnUXzPOptGg, devicId 2068516999*/
-  final senderKey = SenderKeyName(
-    // deviceId.toString(),
-    //groupAddress.getDeviceId().toString(),
-    distributionMessage.id.toString(),
-    groupAddress,
-  );
+  final senderKey = SenderKeyName(spaceId, groupAddress);
 
   // await bufferedSenderKeyStore.loadSenderKey(senderKey);
 
@@ -159,8 +152,8 @@ Future<ECPrivateKey?> _decodePrivateKey(
   // try {
   //   return Curve.decodePrivatePoint(privateKeyBytes);
   // } catch (e, s) {
-  // logger.d("Error decoding private key", error: e, stackTrace: s);
+  //logger.d("Error decoding private key", error: e, stackTrace: s);
   final decodedPrivateKey = await _decryptData(privateKeyBytes, salt, passkey);
   return Curve.decodePrivatePoint(decodedPrivateKey);
-  //}
+  // }
 }
