@@ -216,16 +216,16 @@ class SpaceService {
   }
 
   Future<void> deleteSpace(String spaceId) async {
+    await userService.removeSpaceIdForAllSpaceMember(spaceId: spaceId);
     await spaceInvitationService.deleteInvitations(spaceId);
     await spaceService.deleteSpace(spaceId);
-    await userService.removeSpaceIdForAllSpaceMember(spaceId: spaceId);
     currentSpaceId = null;
   }
 
   Future<void> leaveSpace(String spaceId, String userId) async {
+    await userService.removeSpaceId(userId: userId, spaceId: spaceId);
     await placeService.removedUserFromExistingPlaces(spaceId, userId);
     await spaceService.removeUserFromSpace(spaceId, userId);
-    await userService.removeSpaceId(userId: userId, spaceId: spaceId);
     currentSpaceId = null;
   }
 
