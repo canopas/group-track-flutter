@@ -41,11 +41,11 @@ class EphemeralECDHUtils {
 
     final ciphertext = Uint8List.fromList(secretBox.cipherText);
     final distribution = EncryptedDistribution(
-      recipient_id: receiverId,
-      ephemeral_pub: ephemeralPubKey.publicKey.serialize(),
-      iv: Uint8List.fromList(syntheticIv),
-      ciphertext: ciphertext,
-    );
+        recipient_id: receiverId,
+        ephemeral_pub: ephemeralPubKey.publicKey.serialize(),
+        iv: Uint8List.fromList(syntheticIv),
+        ciphertext: ciphertext,
+        created_at: DateTime.now().millisecondsSinceEpoch);
     distribution.validateFieldSizes();
     return distribution;
   }
