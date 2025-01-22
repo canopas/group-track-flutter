@@ -12,18 +12,23 @@ import 'ephemeral_distribution_helper.dart';
 Future<ApiMemberKeyData> generateMemberKeyData(String spaceId,
     {required String senderUserId,
     required List<ApiSpaceMember> spaceMembers,
-    required BufferedSenderKeystore bufferedSenderKeyStore}) async {
-  final deviceId = Random.secure().nextInt(0x7FFFFFFF);
+    required BufferedSenderKeystore bufferedSenderKeyStore,
+    int? memberDeviceId}) async {
+  final deviceId = memberDeviceId ?? Random.secure().nextInt(0x7FFFFFFF);
   final groupAddress = SignalProtocolAddress(spaceId, deviceId);
   final sessionBuilder = GroupSessionBuilder(bufferedSenderKeyStore);
   final senderKey = SenderKeyName(spaceId, groupAddress);
 
-  print("XXXX generateMemberKeyData");
+  //print("XXXX generateMemberKeyData senderUserId $senderUserId");
 
   final distributionMessage = await sessionBuilder.create(senderKey);
   final distributionBytes = distributionMessage.serialize();
 
-  print("XXXX create senderKey groupId ${senderKey.groupId} sender name ${senderKey.sender.getName()}, devicId ${senderKey.sender.getDeviceId()}");
+  // print("XXX create DM:${distributionMessage.serialize()}");
+  //print("XXX create SK ${senderKey.serialize()}");
+
+  // print(
+  //     "XXXX create senderKey groupId ${senderKey.groupId} sender name ${senderKey.sender.getName()}, devicId ${senderKey.sender.getDeviceId()}");
 
   final List<EncryptedDistribution> distributions = [];
 

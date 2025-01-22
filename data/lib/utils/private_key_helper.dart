@@ -95,7 +95,55 @@ Future<Uint8List> _decryptData(
   return Uint8List.fromList(decrypted);
 }
 
-Future<GroupCipher?> getGroupCipher({
+Future<GroupCipher?> getDecryptGroupCipher({
+  required String spaceId,
+  required int deviceId,
+  required Uint8List privateKeyBytes,
+  required Uint8List salt,
+  required String passkey,
+  required EncryptedDistribution distribution,
+  required BufferedSenderKeystore bufferedSenderKeyStore,
+}) async {
+  final bufferedSenderKeyStore = InMemorySenderKeyStore();
+
+  final privateKey = await _decodePrivateKey(
+    privateKeyBytes: privateKeyBytes,
+    salt: salt,
+    passkey: passkey,
+  );
+
+  if (privateKey == null) {
+    return null;
+  }
+
+  final decryptedDistribution =
+      await EphemeralECDHUtils.decrypt(distribution, privateKey);
+
+  if (decryptedDistribution == null) {
+    return null;
+  }
+
+  final distributionMessage =
+      SenderKeyDistributionMessageWrapper.fromSerialized(decryptedDistribution);
+
+  final groupAddress = SignalProtocolAddress(spaceId, deviceId);
+  final senderKey = SenderKeyName(spaceId, groupAddress);
+
+  // print("XXX distributionMessage ${distributionMessage.serialize()}");
+  //  print("XXX senderKey ${senderKey.serialize()}");
+
+  try {
+    await GroupSessionBuilder(bufferedSenderKeyStore)
+        .process(senderKey, distributionMessage);
+
+    return GroupCipher(bufferedSenderKeyStore, senderKey);
+  } catch (e, s) {
+    logger.e("Error processing group session", error: e, stackTrace: s);
+    return null;
+  }
+}
+
+Future<GroupCipher?> getEncryptGroupCipher({
   required String spaceId,
   required int deviceId,
   required Uint8List privateKeyBytes,
@@ -121,24 +169,11 @@ Future<GroupCipher?> getGroupCipher({
     return null;
   }
 
-  final distributionMessage =
-      SenderKeyDistributionMessageWrapper.fromSerialized(decryptedDistribution);
-
   final groupAddress = SignalProtocolAddress(spaceId, deviceId);
   final senderKey = SenderKeyName(spaceId, groupAddress);
 
-  // await bufferedSenderKeyStore.loadSenderKey(senderKey);
-
-  // TODO rotate sender key
-
   try {
-    await GroupSessionBuilder(bufferedSenderKeyStore)
-        .process(senderKey, distributionMessage);
-    print(
-        "XXXX process senderKey ${senderKey.groupId} senderKey name ${senderKey.sender.getName()}: device ${senderKey.sender.getDeviceId()}");
-
-    final groupCipher = GroupCipher(bufferedSenderKeyStore, senderKey);
-    return groupCipher;
+    return GroupCipher(bufferedSenderKeyStore, senderKey);
   } catch (e, s) {
     logger.e("Error processing group session", error: e, stackTrace: s);
     return null;
@@ -149,11 +184,6 @@ Future<ECPrivateKey?> _decodePrivateKey(
     {required Uint8List privateKeyBytes,
     required Uint8List salt,
     required String passkey}) async {
-  // try {
-  //   return Curve.decodePrivatePoint(privateKeyBytes);
-  // } catch (e, s) {
-  //logger.d("Error decoding private key", error: e, stackTrace: s);
   final decodedPrivateKey = await _decryptData(privateKeyBytes, salt, passkey);
   return Curve.decodePrivatePoint(decodedPrivateKey);
-  // }
 }

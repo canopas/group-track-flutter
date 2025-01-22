@@ -108,7 +108,7 @@ class ApiSpaceService {
     await spaceMemberRef(spaceId).doc(userId).set(member);
     await userService.addSpaceId(userId, spaceId);
 
-    await distributeSenderKeyToSpaceMembers(spaceId, userId);
+    await _distributeSenderKeyToSpaceMembers(spaceId, userId);
   }
 
   Future<List<ApiSpaceMember>> getMembersBySpaceId(String spaceId) async {
@@ -176,6 +176,13 @@ class ApiSpaceService {
   }
 
   Future<void> removeUserFromSpace(String spaceId, String userId) async {
+
+    final docRef = spaceGroupKeysDocRef(spaceId);
+    await docRef.update({
+      "doc_updated_at": DateTime.now().millisecondsSinceEpoch,
+      "member_keys.$userId": FieldValue.delete()
+    });
+
     final querySnapshot =
         await spaceMemberRef(spaceId).where("user_id", isEqualTo: userId).get();
 
@@ -183,18 +190,13 @@ class ApiSpaceService {
       await doc.reference.delete();
     }
 
-    final docRef = spaceGroupKeysDocRef(spaceId);
-    await docRef.update({
-      "doc_updated_at": DateTime.now().millisecondsSinceEpoch,
-      "member_keys.$userId": FieldValue.delete()
-    });
   }
 
   Future<void> updateSpace(ApiSpace space) async {
     await _spaceRef.doc(space.id).set(space);
   }
 
-  Future<void> distributeSenderKeyToSpaceMembers(
+  Future<void> _distributeSenderKeyToSpaceMembers(
       String spaceId, String userId) async {
     final spaceMembers = await getMembersBySpaceId(spaceId);
     final membersKeyData = await generateMemberKeyData(spaceId,
@@ -202,11 +204,6 @@ class ApiSpaceService {
         spaceMembers: spaceMembers,
         bufferedSenderKeyStore: bufferedSenderKeystore);
 
-    await _updateGroupKeys(spaceId, userId, membersKeyData);
-  }
-
-  Future<void> _updateGroupKeys(
-      String spaceId, String userId, ApiMemberKeyData membersKeyData) async {
     await _db.runTransaction((transaction) async {
       final groupKeysDocRef = spaceGroupKeysDocRef(spaceId);
       final snapshot = await transaction.get(groupKeysDocRef);

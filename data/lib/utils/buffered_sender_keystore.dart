@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,8 +13,6 @@ import '../api/space/api_group_key_model.dart';
 import '../api/space/api_space_service.dart';
 import '../storage/app_preferences.dart';
 
-part 'buffered_sender_keystore.freezed.dart';
-
 final bufferedSenderKeystoreProvider = Provider((ref) => BufferedSenderKeystore(
       ref.read(firestoreProvider),
       ref.read(senderKeyJsonPod.notifier),
@@ -27,7 +26,7 @@ class BufferedSenderKeystore extends SenderKeyStore {
 
   BufferedSenderKeystore(this._db, this.senderKeyJsonState, this.userJsonState);
 
-  final Map<StoreKey, SenderKeyRecord> _inMemoryStore = {};
+  final _inMemoryStore = HashMap<SenderKeyName, SenderKeyRecord>();
 
   CollectionReference<ApiSenderKeyRecord> senderKeyRef(
       String spaceId, String userId) {
@@ -49,12 +48,7 @@ class BufferedSenderKeystore extends SenderKeyStore {
   @override
   Future<SenderKeyRecord> loadSenderKey(SenderKeyName senderKeyName) {
     final sender = senderKeyName.sender;
-    final key = StoreKey(
-        address: sender,
-        groupId: senderKeyName.groupId,
-        senderDeviceId: sender.getDeviceId());
-
-    final cache = _inMemoryStore[key];
+    final cache = _inMemoryStore[senderKeyName];
 
     final stateFromPref = senderKeyJsonState.state;
     final cacheSenderKey = stateFromPref == null
@@ -71,30 +65,20 @@ class BufferedSenderKeystore extends SenderKeyStore {
                 SenderKeyRecord.fromSerialized(cacheSenderKey.record))
             : fetchSenderKeyFromServer(sender);
 
-    // keyRecordFuture.then((keyRecord) {
-    //   _inMemoryStore[key] = keyRecord;
-    //   print("XXX loadSenderKey update cache: ${keyRecord.serialize().length}");
-    // });
     return keyRecordFuture;
   }
 
   @override
   Future<void> storeSenderKey(
       SenderKeyName senderKeyName, SenderKeyRecord record) {
-    final sender = senderKeyName.sender;
-    final key = StoreKey(
-        address: sender,
-        groupId: senderKeyName.groupId,
-        senderDeviceId: sender.getDeviceId());
+    // print(
+    //     "XXX storeSenderKey: ${_inMemoryStore[key]?.serialize().length} key ${key.hashCode}");
 
-    print(
-        "XXX storeSenderKey: ${_inMemoryStore[key]?.serialize().length} key ${key.hashCode}");
-
-    if (_inMemoryStore.containsKey(key)) {
+    if (_inMemoryStore.containsKey(senderKeyName)) {
       return Future.value();
     }
 
-    _inMemoryStore[key] = record;
+    _inMemoryStore[senderKeyName] = record;
 
     return saveSenderKeyToServer(senderKeyName, record).then((value) {
       if (value != null) {
@@ -177,10 +161,3 @@ class BufferedSenderKeystore extends SenderKeyStore {
   }
 }
 
-@freezed
-class StoreKey with _$StoreKey {
-  const factory StoreKey(
-      {required SignalProtocolAddress address,
-      required String groupId,
-      required int senderDeviceId}) = _StoreKey;
-}

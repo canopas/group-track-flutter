@@ -7,12 +7,15 @@ import 'package:data/log/logger.dart';
 import 'package:data/storage/app_preferences.dart';
 import 'package:data/utils/buffered_sender_keystore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:libsignal_protocol_dart/libsignal_protocol_dart.dart';
 
 import '../api/auth/auth_models.dart';
 import '../api/location/location.dart';
 import '../api/network/client.dart';
 import '../api/space/api_group_key_model.dart';
 import '../api/space/api_space_service.dart';
+import '../api/space/space_models.dart';
+import '../utils/distribution_key_generator.dart';
 import '../utils/private_key_helper.dart';
 
 final locationServiceProvider = Provider((ref) {
@@ -60,6 +63,16 @@ class LocationService {
             toFirestore: (key, options) => key.toJson());
   }
 
+  CollectionReference<ApiSpaceMember> spaceMemberRef(String spaceId) {
+    return FirebaseFirestore.instance
+        .collection(FIRESTORE_SPACE_PATH)
+        .doc(spaceId)
+        .collection(FIRESTORE_SPACE_MEMBER_PATH)
+        .withConverter<ApiSpaceMember>(
+            fromFirestore: ApiSpaceMember.fromFireStore,
+            toFirestore: (member, options) => member.toJson());
+  }
+
   Stream<List<ApiLocation?>> getCurrentLocationStream(
       String spaceId, String userId) {
     return _locationRef(spaceId, userId)
@@ -94,7 +107,7 @@ class LocationService {
       EncryptedApiLocation location, String spaceId) async {
     try {
       final user = currentUser;
-      final passKey = userPasskey;
+      final passKey = "1111";
       if (user == null || passKey == null) {
         logger.d('LocationService: User not found');
         return null;
@@ -109,12 +122,15 @@ class LocationService {
         return null;
       }
 
-      final memberKeyData = groupKey.member_keys[user.id];
+      final memberKeyData = groupKey.member_keys[location.user_id];
       if (memberKeyData == null) {
         logger.d(
             'LocationService: Member key not found for user ${user.id} in space $spaceId');
         return null;
       }
+
+      // print(
+      //     "XXX toApiLocation of ${location.user_id} memberKeyData $memberKeyData ");
 
       final distributions = memberKeyData.distributions
           .where((d) => d.recipient_id == user.id)
@@ -122,13 +138,16 @@ class LocationService {
         ..sort((a, b) => b.created_at.compareTo(a.created_at));
 
       final distribution = distributions.firstOrNull;
+
+      // print("XXX toApiLocation of user ${user.id} distribution $distribution ");
+
       if (distribution == null) {
         logger.d(
-            'LocationService: Distribution not found for user ${user.id} in space $spaceId');
+            'LocationService: Distribution not found for user ${location.user_id} in space $spaceId');
         return null;
       }
 
-      final groupCipher = await getGroupCipher(
+      final groupCipher = await getDecryptGroupCipher(
         spaceId: spaceId,
         deviceId: memberKeyData.member_device_id,
         distribution: distribution,
@@ -213,7 +232,7 @@ class LocationService {
         return;
       }
 
-      final groupCipher = await getGroupCipher(
+      final groupCipher = await getEncryptGroupCipher(
         spaceId: spaceId,
         deviceId: memberKeyData.member_device_id,
         distribution: distribution,
@@ -226,6 +245,16 @@ class LocationService {
       if (groupCipher == null) {
         logger.d('LocationService: Error while getting group cipher');
         return;
+      }
+
+      print(
+          "XXX rotateSenderKey : ${memberKeyData.data_updated_at }:${groupKey.doc_updated_at}");
+      if (memberKeyData.data_updated_at < groupKey.doc_updated_at) {
+        // Here means the sender key data is outdated, so we need to distribute the sender key to the users.
+        print(
+            "XXX rotateSenderKey : ${memberKeyData.data_updated_at < groupKey.doc_updated_at}");
+        rotateSenderKey(spaceId,
+            deviceId: memberKeyData.member_device_id, currentUser: user);
       }
 
       final encryptedLatitude = await groupCipher.encrypt(
@@ -244,6 +273,45 @@ class LocationService {
       );
 
       await docRef.set(location);
+    });
+  }
+
+  void rotateSenderKey(String spaceId,
+      {required int deviceId, required ApiUser currentUser}) async {
+    final userId = currentUser.id;
+
+    final querySnapshot = await spaceMemberRef(spaceId).get();
+    final spaceMembers = querySnapshot.docs.map((doc) {
+      return doc.data();
+    }).toList();
+
+    final membersKeyData = await generateMemberKeyData(spaceId,
+        senderUserId: currentUser.id,
+        spaceMembers: spaceMembers,
+        bufferedSenderKeyStore: _bufferedSenderKeystore,
+        memberDeviceId: deviceId);
+
+    await _db.runTransaction((transaction) async {
+      final groupKeysDocRef = spaceGroupKeysDocRef(spaceId);
+      final snapshot = await transaction.get(groupKeysDocRef);
+
+      final updatedAt = DateTime.now().millisecondsSinceEpoch;
+      final data = snapshot.data() ?? ApiGroupKey(doc_updated_at: updatedAt);
+
+      final oldMemberKeyData =
+          data.member_keys[userId] ?? const ApiMemberKeyData();
+
+      final newMemberKeyData = oldMemberKeyData.copyWith(
+        member_device_id: membersKeyData.member_device_id,
+        data_updated_at: updatedAt,
+        distributions: membersKeyData.distributions,
+      );
+
+      final updates = {
+        'member_keys.$userId': newMemberKeyData.toJson(),
+      };
+
+      transaction.update(groupKeysDocRef, updates);
     });
   }
 }
