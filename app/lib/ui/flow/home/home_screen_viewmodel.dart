@@ -33,7 +33,7 @@ final homeViewStateProvider =
     ref.read(currentUserPod),
     ref.read(apiUserServiceProvider),
     ref.read(currentUserSessionPod),
-    ref.read(authServiceProvider)
+    ref.read(authServiceProvider),
   );
   ref.listen(currentUserPod, (prev, user) {
     notifier._onUpdateUser(prevUser: prev, currentUser: user);

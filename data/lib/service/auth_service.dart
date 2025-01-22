@@ -95,6 +95,10 @@ class AuthService {
 
   Future<void> updateCurrentUser(ApiUser user) async {
     await userService.updateUser(user);
+    saveUserState(user);
+  }
+
+  void saveUserState(ApiUser user) {
     userJsonNotifier.state = user.toJsonString();
   }
 

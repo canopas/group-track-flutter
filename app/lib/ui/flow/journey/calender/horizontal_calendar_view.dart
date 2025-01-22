@@ -98,8 +98,8 @@ class _HorizontalCalendarViewState extends State<HorizontalCalendarView> {
                       : Colors.transparent,
                   border: Border.all(
                     color: (isSelected || !date.isToday)
-                        ? Colors.transparent
-                        : context.colorScheme.containerLow,
+                        ? context.colorScheme.containerNormal
+                        : context.colorScheme.primary,
                     width: 1,
                   ),
                 ),

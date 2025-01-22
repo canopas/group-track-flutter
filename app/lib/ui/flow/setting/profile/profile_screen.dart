@@ -45,6 +45,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _observeAccountDeleted();
     _observeError();
     _observeIsUserAdminOfAnyGroup();
+    _observeAccountConfirmation();
 
     return AppPage(
       title: context.l10n.edit_profile_title,
@@ -280,16 +281,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         background: context.colorScheme.containerLow,
         progress: state.deletingAccount,
         onPressed: () async {
-          await notifier.isCurrentUserIsAdminOfAnyGroup();
-          if (!state.isUserAdminOfAnyGroup) {
-            showDeleteAccountConfirmation();
-          }
+          await notifier.onDeleteAccountClicked();
         },
       ),
     );
   }
 
-  void showDeleteAccountConfirmation() {
+  void _showDeleteAccountConfirmation() {
     showConfirmation(
       context,
       confirmBtnText: context.l10n.common_delete,
@@ -301,15 +299,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  void showChangeAdminConfirmation() {
-    showConfirmation(
+  void _showChangeAdminConfirmation() {
+    showOkayConfirmation(
       context,
-      confirmBtnText: context.l10n.edit_profile_change_admin_text,
       title: context.l10n.edit_profile_change_admin_title,
       message: context.l10n.edit_profile_change_admin_subtitle,
-      onConfirm: () {
-        Navigator.pop(context);
-      },
     );
   }
 
@@ -326,16 +320,28 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     ref.listen(
         editProfileViewStateProvider.select((state) => state.accountDeleted),
         (previous, next) {
-      if (next) {
+      if (next != null && next != previous) {
         SignInMethodRoute().go(context);
       }
     });
   }
 
+  void _observeAccountConfirmation() {
+    ref.listen(
+        editProfileViewStateProvider.select(
+            (state) => state.showDeleteAccountConfirmation), (previous, next) {
+      if (next != null && next != previous) {
+        _showDeleteAccountConfirmation();
+      }
+    });
+  }
+
   void _observeIsUserAdminOfAnyGroup() {
-    ref.listen(editProfileViewStateProvider.select((state) => state.isUserAdminOfAnyGroup), (previous, next) {
-      if (next) {
-        showChangeAdminConfirmation();
+    ref.listen(
+        editProfileViewStateProvider
+            .select((state) => state.isUserAdminOfAnyGroup), (previous, next) {
+      if (next != null && next != previous) {
+        _showChangeAdminConfirmation();
       }
     });
   }
@@ -344,7 +350,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     ref.listen(editProfileViewStateProvider.select((state) => state.error),
         (previous, next) {
       if (next != null) {
-        showErrorSnackBar(context, next. l10nMessage(context));
+        showErrorSnackBar(context, next.l10nMessage(context));
       }
     });
   }
