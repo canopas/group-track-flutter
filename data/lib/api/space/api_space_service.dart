@@ -7,6 +7,7 @@ import 'package:data/api/network/client.dart';
 import 'package:data/api/space/api_group_key_model.dart';
 import 'package:data/api/space/space_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:libsignal_protocol_dart/libsignal_protocol_dart.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../utils/buffered_sender_keystore.dart';
@@ -107,7 +108,7 @@ class ApiSpaceService {
     await spaceMemberRef(spaceId).doc(userId).set(member);
     await userService.addSpaceId(userId, spaceId);
 
-    await _distributeSenderKeyToSpaceMembers(spaceId, userId);
+    await distributeSenderKeyToSpaceMembers(spaceId, userId);
   }
 
   Future<List<ApiSpaceMember>> getMembersBySpaceId(String spaceId) async {
@@ -193,7 +194,7 @@ class ApiSpaceService {
     await _spaceRef.doc(space.id).set(space);
   }
 
-  Future<void> _distributeSenderKeyToSpaceMembers(
+  Future<void> distributeSenderKeyToSpaceMembers(
       String spaceId, String userId) async {
     final spaceMembers = await getMembersBySpaceId(spaceId);
     final membersKeyData = await generateMemberKeyData(spaceId,
@@ -224,7 +225,7 @@ class ApiSpaceService {
 
       final updates = {
         'member_keys.$userId': newMemberKeyData.toJson(),
-        'doc_updated_at': DateTime.now().millisecondsSinceEpoch,
+        'doc_updated_at': updatedAt,
       };
 
       transaction.update(groupKeysDocRef, updates);
