@@ -21,7 +21,7 @@ You can contact us by phone at +91 97274 52045, email at contact@canopas.com, or
 Laxmi Enclave 2, Katargam, Surat, Gujarat 395004, India.
 
 These Legal Terms constitute a legally binding agreement made between you, whether personally or on
-behalf of an entity ("you"), and Canopas Software, concerning your access to and use of the
+behalf of an entity (**"you"**), and **Canopas Software**, concerning your access to and use of the
 Services. You agree that by accessing the Services, you have read, understood, and agreed to be
 bound by all of these Legal Terms. IF YOU DO NOT AGREE WITH ALL OF THESE LEGAL TERMS, THEN YOU ARE
 EXPRESSLY PROHIBITED FROM USING THE SERVICES AND YOU MUST DISCONTINUE USE IMMEDIATELY.
@@ -40,33 +40,34 @@ We recommend that you print a copy of these Legal Terms for your records.
 
 ### TABLE OF CONTENTS
 
-1. OUR SERVICES
-2. INTELLECTUAL PROPERTY RIGHTS
-3. USER REPRESENTATIONS
-4. USER REGISTRATION
-5. SUBSCRIPTIONS
-6. PROHIBITED ACTIVITIES
-7. USER GENERATED CONTRIBUTIONS
-8. CONTRIBUTION LICENSE
-9. GUIDELINES FOR REVIEWS
-10. MOBILE APPLICATION LICENSE
-11. SOCIAL MEDIA
-12. SERVICES MANAGEMENT
-13. PRIVACY POLICY
-14. DIGITAL MILLENNIUM COPYRIGHT ACT (DMCA) NOTICE AND POLICY
-15. TERM AND TERMINATION
-16. MODIFICATIONS AND INTERRUPTIONS
-17. GOVERNING LAW
-18. DISPUTE RESOLUTION
-19. CORRECTIONS
-20. DISCLAIMER
-21. LIMITATIONS OF LIABILITY
-22. INDEMNIFICATION
-23. USER DATA
-24. ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES
-25. CALIFORNIA USERS AND RESIDENTS
-26. MISCELLANEOUS
-27. CONTACT US
+1. [OUR SERVICES]()
+2. [INTELLECTUAL PROPERTY RIGHTS]()
+3. [USER REPRESENTATIONS]()
+4. [USER REGISTRATION]()
+5. [SUBSCRIPTIONS]()
+6. [PROHIBITED ACTIVITIES]()
+7. [USER GENERATED CONTRIBUTIONS]()
+8. [CONTRIBUTION LICENSE]()
+9. [GUIDELINES FOR REVIEWS]()
+10. [MOBILE APPLICATION LICENSE]()
+11. [SOCIAL MEDIA]()
+12. [SERVICES MANAGEMENT]()
+13. [PRIVACY POLICY]()
+14. [DIGITAL MILLENNIUM COPYRIGHT ACT (DMCA) NOTICE AND POLICY]()
+15. [TERM AND TERMINATION]()
+16. [MODIFICATIONS AND INTERRUPTIONS]()
+17. [GOVERNING LAW]()
+18. [DISPUTE RESOLUTION]()
+19. [CORRECTIONS]()
+20. [DISCLAIMER]()
+21. [LIMITATIONS OF LIABILITY]()
+22. [INDEMNIFICATION]()
+23. [USER DATA]()
+24. [ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES]()
+25. [CALIFORNIA USERS AND RESIDENTS]()
+26. [MISCELLANEOUS]()
+27. [OPEN-SOURCE CODE & LICENSING]()
+28. [CONTACT US]()
 
 ## 1. OUR SERVICES
 
@@ -84,7 +85,8 @@ may not use the Services in a way that would violate the Gramm-Leach-Bliley Act 
 
 ## 2. INTELLECTUAL PROPERTY RIGHTS
 
-Our intellectual property
+**Our intellectual property**
+
 We are the owner or the licensee of all intellectual property rights in our Services, including all
 source code, databases, functionality, software, website designs, audio, video, text, photographs,
 and graphics in the Services (collectively, the "Content"), as well as the trademarks, service
@@ -95,8 +97,10 @@ property rights and unfair competition laws) and treaties in the United States a
 
 The Content and Marks are provided in or through the Services "AS IS" for your personal,
 non-commercial use or internal business purpose only.
-Your use of our Services
-Subject to your compliance with these Legal Terms, including the "PROHIBITED ACTIVITIES" section
+
+**Your use of our Services**
+
+Subject to your compliance with these Legal Terms, including the "[PROHIBITED ACTIVITIES]()" section
 below, we grant you a non-exclusive, non-transferable, revocable license to:
 access the Services; and
 download or print a copy of any portion of the Content to which you have properly gained access,
@@ -118,18 +122,21 @@ We reserve all rights not expressly granted to you in and to the Services, Conte
 
 Any breach of these Intellectual Property Rights will constitute a material breach of our Legal
 Terms and your right to use our Services will terminate immediately.
-Your submissions and contributions
-Please review this section and the "PROHIBITED ACTIVITIES" section carefully prior to using our
+
+**Your submissions and contributions**
+
+Please review this section and the "[PROHIBITED ACTIVITIES]()" section carefully prior to using our
 Services to understand the (a) rights you give us and (b) obligations you have when you post or
 upload any content through the Services.
 
-Submissions: By directly sending us any question, comment, suggestion, idea, feedback, or other
+**Submissions:** By directly sending us any question, comment, suggestion, idea, feedback, or other
 information about the Services ("Submissions"), you agree to assign to us all intellectual property
 rights in such Submission. You agree that we shall own this Submission and be entitled to its
 unrestricted use and dissemination for any lawful purpose, commercial or otherwise, without
 acknowledgment or compensation to you.
 
-Contributions: The Services may invite you to chat, contribute to, or participate in blogs, message
+**Contributions:** The Services may invite you to chat, contribute to, or participate in blogs,
+message
 boards, online forums, and other functionality during which you may create, submit, post, display,
 transmit, publish, distribute, or broadcast content and materials to us or through the Services,
 including but not limited to text, writings, video, audio, photographs, music, graphics, comments,
@@ -138,8 +145,8 @@ Submission that is publicly posted shall also be treated as a Contribution.
 
 You understand that Contributions may be viewable by other users of the Services.
 
-When you post Contributions, you grant us a license (including use of your name, trademarks, and
-logos): By posting any Contributions, you grant us an unrestricted, unlimited, irrevocable,
+**When you post Contributions, you grant us a license (including use of your name, trademarks, and
+logos):** By posting any Contributions, you grant us an unrestricted, unlimited, irrevocable,
 perpetual, non-exclusive, transferable, royalty-free, fully-paid, worldwide right, and license to:
 use, copy, reproduce, distribute, sell, resell, publish, broadcast, retitle, store, publicly
 perform, publicly display, reformat, translate, excerpt (in whole or in part), and exploit your
@@ -152,11 +159,11 @@ This license includes our use of your name, company name, and franchise name, as
 of the trademarks, service marks, trade names, logos, and personal and commercial images you
 provide.
 
-You are responsible for what you post or upload: By sending us Submissions and/or posting
+**You are responsible for what you post or upload:** By sending us Submissions and/or posting
 Contributions through any part of the Services or making Contributions accessible through the
 Services by linking your account through the Services to any of your social networking accounts,
 you:
-confirm that you have read and agree with our "PROHIBITED ACTIVITIES" and will not post, send,
+confirm that you have read and agree with our "[PROHIBITED ACTIVITIES]()" and will not post, send,
 publish, upload, or transmit through the Services any Submission nor post any Contribution that is
 illegal, harassing, hateful, harmful, defamatory, obscene, bullying, abusive, discriminatory,
 threatening to any person or group, sexually explicit, false, inaccurate, deceitful, or misleading;
@@ -172,7 +179,8 @@ You are solely responsible for your Submissions and/or Contributions and you exp
 reimburse us for any and all losses that we may suffer because of your breach of (a) this section, (
 b) any third party’s intellectual property rights, or (c) applicable law.
 
-We may remove or edit your Content: Although we have no obligation to monitor any Contributions, we
+**We may remove or edit your Content:** Although we have no obligation to monitor any Contributions,
+we
 shall have the right to remove or edit any Contributions at any time without notice if in our
 reasonable opinion we consider such Contributions harmful or in breach of these Legal Terms. If we
 remove or edit any such Contributions, we may also suspend or disable your account and report you to
@@ -182,7 +190,7 @@ the authorities.
 
 We respect the intellectual property rights of others. If you believe that any material available on
 or through the Services infringes upon any copyright you own or control, please immediately refer to
-the "DIGITAL MILLENNIUM COPYRIGHT ACT (DMCA) NOTICE AND POLICY" section below.
+the "[DIGITAL MILLENNIUM COPYRIGHT ACT (DMCA) NOTICE AND POLICY]()" section below.
 
 ## 3. USER REPRESENTATIONS
 
@@ -199,6 +207,26 @@ If you provide any information that is untrue, inaccurate, not current, or incom
 right to suspend or terminate your account and refuse any and all current or future use of the
 Services (or any portion thereof).
 
+**Child/Minor Usage & Parental Responsibilities**
+If you permit a minor (in the jurisdiction where they reside) to use the Services, you represent and
+warrant that:
+
+**Parental Consent:** You are the child’s parent or legal guardian (or have obtained permission from
+the
+parent/guardian), and you consent to the collection, use, and disclosure of any data submitted by or
+about the minor through the Services, as described in these Terms and our Privacy Policy.
+
+**Parental Supervision:** You agree to supervise the minor’s use of the Services at all times and
+accept
+full responsibility for all actions taken and any fees or charges incurred by the minor through the
+Services.
+
+**Accuracy of Information:** You will ensure all registration details for the minor are accurate and
+remain updated.
+
+If you are a minor using the Services, you confirm that your parent or legal guardian has reviewed
+these Terms with you and consents to your use of the Services.
+
 ## 4. USER REGISTRATION
 
 You may be required to register to use the Services. You agree to keep your password confidential
@@ -208,21 +236,44 @@ is inappropriate, obscene, or otherwise objectionable.
 
 ## 5. SUBSCRIPTIONS
 
-Billing and Renewal
+**Billing and Renewal**
+
 Your subscription will continue and automatically renew unless canceled. You consent to our charging
 your payment method on a recurring basis without requiring your prior approval for each recurring
 charge, until such time as you cancel the applicable order. The length of your billing cycle is
 monthly.
-Free Trial
+
+**Free Trial**
+
 We offer a 7-day free trial to new users who register with the Services. The account will be charged
 according to the user's chosen subscription at the end of the free trial.
-Cancellation
+
+**Cancellation**
+
 You can cancel your subscription at any time by logging into your account. Your cancellation will
 take effect at the end of the current paid term. If you have any questions or are unsatisfied with
 our Services, please email us at contact@canopas.com.
-Fee Changes
+
+**Fee Changes**
+
 We may, from time to time, make changes to the subscription fee and will communicate any price
 changes to you in accordance with applicable law.
+
+**Subscription Auto-Renewal**
+
+By subscribing, you authorize us to automatically charge your chosen payment method at the beginning
+of each billing cycle for the subscription fee then in effect, without further notice to you. You
+can cancel your subscription at any time prior to the next billing date to avoid further charges.
+
+**Free Trial and Post-Trial Billing**
+
+If you sign up for our 7-day free trial, at the end of that period, you will automatically be
+charged for the subscription unless you cancel before the trial ends.
+
+**Refunds**
+
+Unless required by law, fees are non-refundable and we do not provide refunds or credits for any
+unused subscription periods, partial service use, or any changes to the Services.
 
 ## 6. PROHIBITED ACTIVITIES
 
@@ -279,6 +330,12 @@ As a user of the Services, you agree not to:
   Content for any revenue-generating endeavor or commercial enterprise.
 - Sell or otherwise transfer your profile.
 - Use the Services to advertise or offer to sell goods and services.
+
+**No Stalking, Surveillance, or Unlawful Monitoring**
+You agree not to use the Services (including any location-sharing features) to stalk, harass, track,
+or monitor another person without their explicit knowledge and consent, or in any manner that
+violates applicable stalking, privacy, or harassment laws. We reserve the right to suspend or
+terminate your access to the Services if we become aware of unlawful or unauthorized usage.
 
 ## 7. USER GENERATED CONTRIBUTIONS
 
@@ -378,7 +435,8 @@ distribute all content relating to review.
 
 ## 10. MOBILE APPLICATION LICENSE
 
-Use License
+**Use License**
+
 If you access the Services via the App, then we grant you a revocable, non-exclusive,
 non-transferable, limited right to install and use the App on wireless electronic devices owned or
 controlled by you, and to access and use the App on such devices strictly in accordance with the
@@ -396,7 +454,9 @@ any way a substitute for the App; (8) use the App to send automated queries to a
 send any unsolicited commercial email; or (9) use any proprietary information or any of our
 interfaces or our other intellectual property in the design, development, manufacture, licensing, or
 distribution of any applications, accessories, or devices for use with the App.
-Apple and Android Devices
+
+**Apple and Android Devices**
+
 The following terms apply when you use the App obtained from either the Apple Store or Google Play (
 each an "App Distributor") to access the Services: (1) the license granted to you for our App is
 limited to a non-transferable license to use the application on a device that utilizes the Apple iOS
@@ -532,14 +592,17 @@ misrepresent that the disabled or removed content was removed by mistake or misi
 may be liable for damages, including costs and attorney's fees. Filing a false Counter Notification
 constitutes perjury.
 
-### Designated Copyright Agent
+**Copyright Complaints**
 
-Canopas Software LLP
-552-554, Laxmi Enclave 2
-Katargam
-Surat, Gujarat 395004
-India
-__________
+If you believe that content on our Services infringes your copyright, please send us a detailed
+notice at [contact@canopas.com] with the following information:
+
+1. A description of the copyrighted work or a list of works you claim are infringed;
+2. Where on our Services the infringing material is located;
+3. Your contact information (including mailing address, email address, and phone number); and
+4. A statement of good faith and that you believe this use is not authorized by the copyright owner.
+
+______________________
 
 ## 15. TERM AND TERMINATION
 
@@ -572,6 +635,14 @@ You agree that we have no liability whatsoever for any loss, damage, or inconven
 inability to access or use the Services during any downtime or discontinuance of the Services.
 Nothing in these Legal Terms will be construed to obligate us to maintain and support the Services
 or to supply any corrections, updates, or releases in connection therewith.
+
+**Periodic Terms Updates**
+
+We reserve the right to review and update these Terms periodically to reflect changes in our
+Services, operational requirements, or applicable legal obligations. We will notify you if
+significant changes are made, consistent with the “Modifications” or “Changes” section of these
+Terms. Your continued use of the Services after any such update constitutes your acceptance of the
+revised Terms.
 
 ## 17. GOVERNING LAW
 
@@ -632,8 +703,8 @@ CONTENT AND MATERIALS, (2) PERSONAL INJURY OR PROPERTY DAMAGE, OF ANY NATURE WHA
 FROM YOUR ACCESS TO AND USE OF THE SERVICES, (3) ANY UNAUTHORIZED ACCESS TO OR USE OF OUR SECURE
 SERVERS AND/OR ANY AND ALL PERSONAL INFORMATION AND/OR FINANCIAL INFORMATION STORED THEREIN, (4) ANY
 INTERRUPTION OR CESSATION OF TRANSMISSION TO OR FROM THE SERVICES, (5) ANY BUGS, VIRUSES, TROJAN
-HORSES, OR THE LIKE WHICH MAY BE TRANSMITTED TO OR THROUGH THE SERVICES BY ANY THIRD PARTY, AND/OR (
-6) ANY ERRORS OR OMISSIONS IN ANY CONTENT AND MATERIALS OR FOR ANY LOSS OR DAMAGE OF ANY KIND
+HORSES, OR THE LIKE WHICH MAY BE TRANSMITTED TO OR THROUGH THE SERVICES BY ANY THIRD PARTY, AND/OR
+(6) ANY ERRORS OR OMISSIONS IN ANY CONTENT AND MATERIALS OR FOR ANY LOSS OR DAMAGE OF ANY KIND
 INCURRED AS A RESULT OF THE USE OF ANY CONTENT POSTED, TRANSMITTED, OR OTHERWISE MADE AVAILABLE VIA
 THE SERVICES. WE DO NOT WARRANT, ENDORSE, GUARANTEE, OR ASSUME RESPONSIBILITY FOR ANY PRODUCT OR
 SERVICE ADVERTISED OR OFFERED BY A THIRD PARTY THROUGH THE SERVICES, ANY HYPERLINKED WEBSITE, OR ANY
@@ -641,6 +712,32 @@ WEBSITE OR MOBILE APPLICATION FEATURED IN ANY BANNER OR OTHER ADVERTISING, AND W
 PARTY TO OR IN ANY WAY BE RESPONSIBLE FOR MONITORING ANY TRANSACTION BETWEEN YOU AND ANY THIRD-PARTY
 PROVIDERS OF PRODUCTS OR SERVICES. AS WITH THE PURCHASE OF A PRODUCT OR SERVICE THROUGH ANY MEDIUM
 OR IN ANY ENVIRONMENT, YOU SHOULD USE YOUR BEST JUDGMENT AND EXERCISE CAUTION WHERE APPROPRIATE.
+
+**Location Data and Accuracy Disclaimer**
+Our Services may display, estimate, or collect your real-time location or the location of other
+users (“Location Data”). You acknowledge and agree that Location Data is inherently imprecise and
+may not always be timely or accurate due to factors such as signal strength, network availability,
+device settings, third-party services, and satellite or environmental conditions.
+
+**No Guarantee of Accuracy**
+We do not guarantee the accuracy, completeness, reliability, or timeliness of any Location Data
+provided through the Services. You should not rely on the Services as your sole means of
+communication or location verification, and we disclaim all liability for any damages or losses
+arising from inaccurate or delayed Location Data.
+
+**User Responsibility**
+You are solely responsible for any decisions or actions taken based on information provided through
+the Services, including Location Data. If precise or real-time location information is critical, you
+agree to use alternate methods to verify it.
+
+**No Emergency Services**
+The Services are not intended, designed, or suitable for use as emergency locator or dispatch
+systems. We do not provide emergency response services or actively contact law enforcement,
+firefighting, medical, or other emergency personnel on your behalf.
+
+In the event of any emergency or life-threatening situation, you must contact the appropriate
+emergency services (e.g., by dialing local emergency numbers) and should not rely on our Services to
+do so.
 
 ## 21. LIMITATIONS OF LIABILITY
 
@@ -661,13 +758,18 @@ all of our respective officers, agents, partners, and employees, from and agains
 liability, claim, or demand, including reasonable attorneys’ fees and expenses, made by any third
 party due to or arising out of: (1) your Contributions; (2) use of the Services; (3) breach of these
 Legal Terms; (4) any breach of your representations and warranties set forth in these Legal Terms; (
+
 5) your violation of the rights of a third party, including but not limited to intellectual property
-rights; or (6) any overt harmful act toward any other user of the Services with whom you connected
-via the Services. Notwithstanding the foregoing, we reserve the right, at your expense, to assume
-the exclusive defense and control of any matter for which you are required to indemnify us, and you
-agree to cooperate, at your expense, with our defense of such claims. We will use reasonable efforts
-to notify you of any such claim, action, or proceeding which is subject to this indemnification upon
-becoming aware of it.
+   rights; or (6) any overt harmful act toward any other user of the Services with whom you
+   connected
+   via the Services. Notwithstanding the foregoing, we reserve the right, at your expense, to assume
+   the exclusive defense and control of any matter for which you are required to indemnify us, and
+   you
+   agree to cooperate, at your expense, with our defense of such claims. We will use reasonable
+   efforts
+   to notify you of any such claim, action, or proceeding which is subject to this indemnification
+   upon
+   becoming aware of it.
 
 ## 23. USER DATA
 
@@ -696,6 +798,7 @@ than electronic means.
 If any complaint with us is not satisfactorily resolved, you can contact the Complaint Assistance
 Unit of the Division of Consumer Services of the California Department of Consumer Affairs in
 writing at 1625 North Market Blvd., Suite N 112, Sacramento, California 95834 or by telephone at (
+
 800) 952-5210 or (916) 445-1254.
 
 ## 26. MISCELLANEOUS
@@ -715,15 +818,44 @@ against us by virtue of having drafted them. You hereby waive any and all defens
 based on the electronic form of these Legal Terms and the lack of signing by the parties hereto to
 execute these Legal Terms.
 
-## 27. CONTACT US
+## 27. OPEN-SOURCE CODE & LICENSING
+
+Portions of the Services (including the Grouptrack app) may be offered or made available under an
+open-source license (e.g., MIT License). Any open-source software we develop or incorporate is
+subject to the license terms accompanying such software, which are incorporated by reference into
+these Legal Terms. In the event of a conflict between these Terms and the applicable open-source
+license, the terms of the open-source license will govern with respect to that portion of the
+software.
+
+**User Contributions to Open-Source**
+
+If you contribute code or documentation to our open-source project (for instance, via pull requests
+on GitHub), you grant us, and the community at large, a license to use, copy, modify, and distribute
+your contributions under the applicable open-source license.
+You represent and warrant that you have the authority to submit such contributions and that they do
+not infringe any third-party rights.
+
+**Disclaimer of Warranty for Open-Source**
+
+Any open-source software is provided “as is,” without warranty of any kind, whether express or
+implied, including but not limited to the warranties of merchantability, fitness for a particular
+purpose, and non-infringement.
+
+## 28. CONTACT US
 
 In order to resolve a complaint regarding the Services or to receive further information regarding
 use of the Services, please contact us at:
 
-Canopas Software
-552-554, Laxmi Enclave 2
-Katargam
-Surat, Gujarat 395004
-India
-Phone: +91 97274 52045
-contact@canopas.com
+**Canopas Software**
+
+**552-554, Laxmi Enclave 2**
+
+**Katargam**
+
+**Surat, Gujarat 395004**
+
+**India**
+
+**Phone: +91 97274 52045**
+
+**contact@canopas.com**
