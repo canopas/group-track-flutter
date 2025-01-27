@@ -40,34 +40,34 @@ We recommend that you print a copy of these Legal Terms for your records.
 
 ### TABLE OF CONTENTS
 
-1. [OUR SERVICES]()
-2. [INTELLECTUAL PROPERTY RIGHTS]()
-3. [USER REPRESENTATIONS]()
-4. [USER REGISTRATION]()
-5. [SUBSCRIPTIONS]()
-6. [PROHIBITED ACTIVITIES]()
-7. [USER GENERATED CONTRIBUTIONS]()
-8. [CONTRIBUTION LICENSE]()
-9. [GUIDELINES FOR REVIEWS]()
-10. [MOBILE APPLICATION LICENSE]()
-11. [SOCIAL MEDIA]()
-12. [SERVICES MANAGEMENT]()
-13. [PRIVACY POLICY]()
-14. [COPYRIGHT COMPLAINTS]()
-15. [TERM AND TERMINATION]()
-16. [MODIFICATIONS AND INTERRUPTIONS]()
-17. [GOVERNING LAW]()
-18. [DISPUTE RESOLUTION]()
-19. [CORRECTIONS]()
-20. [DISCLAIMER]()
-21. [LIMITATIONS OF LIABILITY]()
-22. [INDEMNIFICATION]()
-23. [USER DATA]()
-24. [ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES]()
-25. [CALIFORNIA USERS AND RESIDENTS]()
-26. [MISCELLANEOUS]()
-27. [OPEN-SOURCE CODE & LICENSING]()
-28. [CONTACT US]()
+1. [OUR SERVICES](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#1-our-services)
+2. [INTELLECTUAL PROPERTY RIGHTS](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#2-intellectual-property-rights)
+3. [USER REPRESENTATIONS](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#3-user-representations)
+4. [USER REGISTRATION](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#4-user-registration)
+5. [SUBSCRIPTIONS](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#5-subscriptions)
+6. [PROHIBITED ACTIVITIES](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#6-prohibited-activities)
+7. [USER GENERATED CONTRIBUTIONS](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#7-user-generated-contributions)
+8. [CONTRIBUTION LICENSE](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#8-contribution-license)
+9. [GUIDELINES FOR REVIEWS](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#9-guidelines-for-reviews)
+10. [MOBILE APPLICATION LICENSE](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#10-mobile-application-license)
+11. [SOCIAL MEDIA](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#11-social-media)
+12. [SERVICES MANAGEMENT](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#12-services-management)
+13. [PRIVACY POLICY](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#13-privacy-policy)
+14. [COPYRIGHT COMPLAINTS](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#14-copyright-complaints)
+15. [TERM AND TERMINATION](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#15-term-and-termination)
+16. [MODIFICATIONS AND INTERRUPTIONS](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#16-modifications-and-interruptions)
+17. [GOVERNING LAW](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#17-governing-law)
+18. [DISPUTE RESOLUTION](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#18-dispute-resolution)
+19. [CORRECTIONS](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#19-corrections)
+20. [DISCLAIMER](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#20-disclaimer)
+21. [LIMITATIONS OF LIABILITY](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#21-limitations-of-liability)
+22. [INDEMNIFICATION](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#22-indemnification)
+23. [USER DATA](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#23-user-data)
+24. [ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#24-electronic-communications-transactions-and-signatures)
+25. [CALIFORNIA USERS AND RESIDENTS](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#25-california-users-and-residents)
+26. [MISCELLANEOUS](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#26-miscellaneous)
+27. [OPEN-SOURCE CODE & LICENSING](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#27-open-source-code--licensing)
+28. [CONTACT US](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#28-contact-us)
 
 ## 1. OUR SERVICES
 
@@ -100,7 +100,9 @@ non-commercial use or internal business purpose only.
 
 **Your use of our Services**
 
-Subject to your compliance with these Legal Terms, including the "[PROHIBITED ACTIVITIES]()" section
+Subject to your compliance with these Legal Terms, including
+the "[PROHIBITED ACTIVITIES](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#6-prohibited-activities)"
+section
 below, we grant you a non-exclusive, non-transferable, revocable license to:
 access the Services; and
 download or print a copy of any portion of the Content to which you have properly gained access,
@@ -125,7 +127,9 @@ Terms and your right to use our Services will terminate immediately.
 
 **Your submissions and contributions**
 
-Please review this section and the "[PROHIBITED ACTIVITIES]()" section carefully prior to using our
+Please review this section and
+the "[PROHIBITED ACTIVITIES](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#6-prohibited-activities)"
+section carefully prior to using our
 Services to understand the (a) rights you give us and (b) obligations you have when you post or
 upload any content through the Services.
 
@@ -163,7 +167,9 @@ provide.
 Contributions through any part of the Services or making Contributions accessible through the
 Services by linking your account through the Services to any of your social networking accounts,
 you:
-confirm that you have read and agree with our "[PROHIBITED ACTIVITIES]()" and will not post, send,
+confirm that you have read and agree with
+our "[PROHIBITED ACTIVITIES](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#6-prohibited-activities)"
+and will not post, send,
 publish, upload, or transmit through the Services any Submission nor post any Contribution that is
 illegal, harassing, hateful, harmful, defamatory, obscene, bullying, abusive, discriminatory,
 threatening to any person or group, sexually explicit, false, inaccurate, deceitful, or misleading;
@@ -190,7 +196,8 @@ the authorities.
 
 We respect the intellectual property rights of others. If you believe that any material available on
 or through the Services infringes upon any copyright you own or control, please immediately refer to
-the "[COPYRIGHT COMPLAINTS]()" section below.
+the "[COPYRIGHT COMPLAINTS](https://github.com/canopas/group-track-flutter/blob/c4e21f7518c4e24e9c6bca1f877fcf78fed1ca76/docs/terms-of-services.md#14-copyright-complaints)"
+section below.
 
 ## 3. USER REPRESENTATIONS
 
