@@ -53,7 +53,7 @@ We recommend that you print a copy of these Legal Terms for your records.
 11. [SOCIAL MEDIA]()
 12. [SERVICES MANAGEMENT]()
 13. [PRIVACY POLICY]()
-14. [DIGITAL MILLENNIUM COPYRIGHT ACT (DMCA) NOTICE AND POLICY]()
+14. [COPYRIGHT COMPLAINTS]()
 15. [TERM AND TERMINATION]()
 16. [MODIFICATIONS AND INTERRUPTIONS]()
 17. [GOVERNING LAW]()
@@ -190,7 +190,7 @@ the authorities.
 
 We respect the intellectual property rights of others. If you believe that any material available on
 or through the Services infringes upon any copyright you own or control, please immediately refer to
-the "[DIGITAL MILLENNIUM COPYRIGHT ACT (DMCA) NOTICE AND POLICY]()" section below.
+the "[COPYRIGHT COMPLAINTS]()" section below.
 
 ## 3. USER REPRESENTATIONS
 
@@ -540,69 +540,42 @@ differ from applicable laws in India, then through your continued use of the Ser
 transferring your data to India, and you expressly consent to have your data transferred to and
 processed in India.
 
-## 14. DIGITAL MILLENNIUM COPYRIGHT ACT (DMCA) NOTICE AND POLICY
+## 14. COPYRIGHT COMPLAINTS
 
-### Notifications
-
-We respect the intellectual property rights of others. If you believe that any material available on
-or through the Services infringes upon any copyright you own or control, please immediately notify
-our Designated Copyright Agent using the contact information provided below (a "Notification"). A
-copy of your Notification will be sent to the person who posted or stored the material addressed in
-the Notification. Please be advised that pursuant to federal law you may be held liable for damages
-if you make material misrepresentations in a Notification. Thus, if you are not sure that material
-located on or linked to by the Services infringes your copyright, you should consider first
-contacting an attorney.
-
-All Notifications should meet the requirements of DMCA 17 U.S.C. § 512(c)(3) and include the
-following information: (1) A physical or electronic signature of a person authorized to act on
-behalf of the owner of an exclusive right that is allegedly infringed; (2) identification of the
-copyrighted work claimed to have been infringed, or, if multiple copyrighted works on the Services
-are covered by the Notification, a representative list of such works on the Services; (3)
-identification of the material that is claimed to be infringing or to be the subject of infringing
-activity and that is to be removed or access to which is to be disabled, and information reasonably
-sufficient to permit us to locate the material; (4) information reasonably sufficient to permit us
-to contact the complaining party, such as an address, telephone number, and, if available, an email
-address at which the complaining party may be contacted; (5) a statement that the complaining party
-has a good faith belief that use of the material in the manner complained of is not authorized by
-the copyright owner, its agent, or the law; and (6) a statement that the information in the
-notification is accurate, and under penalty of perjury, that the complaining party is authorized to
-act on behalf of the owner of an exclusive right that is allegedly infringed upon.
-
-### Counter Notification
-
-If you believe your own copyrighted material has been removed from the Services as a result of a
-mistake or misidentification, you may submit a written counter notification to our Designated
-Copyright Agent using the contact information provided below (a "Counter Notification"). To be an
-effective Counter Notification under the DMCA, your Counter Notification must include substantially
-the following: (1) identification of the material that has been removed or disabled and the location
-at which the material appeared before it was removed or disabled; (2) a statement that you consent
-to the jurisdiction of the Federal District Court in which your address is located, or if your
-address is outside the United States, for any judicial district in which we are located; (3) a
-statement that you will accept service of process from the party that filed the Notification or the
-party's agent; (4) your name, address, and telephone number; (5) a statement under penalty of
-perjury that you have a good faith belief that the material in question was removed or disabled as a
-result of a mistake or misidentification of the material to be removed or disabled; and (6) your
-physical or electronic signature.
-
-If you send us a valid, written Counter Notification meeting the requirements described above, we
-will restore your removed or disabled material, unless we first receive notice from the party filing
-the Notification informing us that such party has filed a court action to restrain you from engaging
-in infringing activity related to the material in question. Please note that if you materially
-misrepresent that the disabled or removed content was removed by mistake or misidentification, you
-may be liable for damages, including costs and attorney's fees. Filing a false Counter Notification
-constitutes perjury.
-
-**Copyright Complaints**
-
-If you believe that content on our Services infringes your copyright, please send us a detailed
+We respect intellectual property rights and expect our users to do the same. If you believe that
+content available on or through our Services infringes your copyright, please send us a written
 notice at [contact@canopas.com] with the following information:
 
-1. A description of the copyrighted work or a list of works you claim are infringed;
-2. Where on our Services the infringing material is located;
-3. Your contact information (including mailing address, email address, and phone number); and
-4. A statement of good faith and that you believe this use is not authorized by the copyright owner.
+1. **Identification of Your Work**
+   A description or representative list of the copyrighted work(s) you claim has been infringed.
 
-______________________
+2. **Location of Allegedly Infringing Content**
+   A clear description (e.g., direct link or screenshot) showing where on our Services the allegedly
+   infringing material is located, so we can locate it.
+
+3. **Your Contact Information**
+   Your name, physical address, phone number, and email address.
+
+4. **Statement of Good Faith**
+   A statement that you have a good faith belief that the use of the copyrighted material is not
+   authorized by the copyright owner, its agent, or the law.
+
+5. **Accuracy and Authority**
+   A statement, under penalty of perjury, that the information in your notice is accurate and that
+   you
+   are the copyright owner or are authorized to act on the copyright owner’s behalf.
+
+Once we receive your notice, we will review your claim. If we find that removal of the content is
+justified, we may remove or disable access to the material. We reserve the right to contact the user
+who posted the material to give them an opportunity to respond or to provide them with information
+about your claim. We may, at our sole discretion, restore the content if we determine the claim of
+infringement was unfounded, or if the user provides valid reasons or proof of appropriate
+permissions.
+
+Please note that **knowingly submitting a false or misleading claim** of copyright infringement may
+lead
+to legal consequences. If you are unsure whether certain material on our Services infringes your
+copyright, you may wish to seek legal advice before submitting a complaint.
 
 ## 15. TERM AND TERMINATION
 
