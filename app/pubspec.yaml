@@ -68,7 +68,7 @@ dependencies:
   collection: any
 
   # map
-  google_maps_flutter: ^2.3.1
+  google_maps_flutter: ^2.10.1
   geocoding: ^3.0.0
   geolocator: ^12.0.0
 
